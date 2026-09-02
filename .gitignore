@@ -1,0 +1,56 @@
+# 白名单式忽略：默认全忽略，显式列出的才进版本库。
+# 原则：仿真器 / 算法 / RTL 的核心代码 + 核心结果报告进库；
+#       数据块（权重、流数据、样本、npz/npy/pt、第三方库）一律不进，留在内部完整库。
+
+/*
+
+!/README.md
+!/.gitignore
+!/CLAUDE.md
+!/handoff_r3c/
+!/research_holobrain/
+!/hb_fpga_impl/
+
+# ---- 数据块不推 ----
+# a3 编译产物流数据：只保留 segments/*/seq.mem（r3c_model/pe_sizing 复算依赖），
+# 其余（权重 blob 188MB、各段 ctx/w/ddr mem）全部不推
+hb_fpga_impl/12_actv/a3/build_a3/*
+!hb_fpga_impl/12_actv/a3/build_a3/segments
+hb_fpga_impl/12_actv/a3/build_a3/segments/**
+!hb_fpga_impl/12_actv/a3/build_a3/segments/*/
+!hb_fpga_impl/12_actv/a3/build_a3/segments/*/seq.mem
+# a3 根下的 numpy 数据快照
+hb_fpga_impl/12_actv/a3/*.npy
+# 数据集轮（npz 样本）
+hb_fpga_impl/04_dataset/
+# 算法侧：量化 fixture（18.5MB .pt）与第三方上游库 robo_orchard_lab（另行从上游克隆）
+research_holobrain/quant_harness/*.pt
+research_holobrain/robo_orchard_lab/
+
+# ---- 历史重轮（Evo-1 时代存档，非 R3C 交接范围） ----
+hb_fpga_impl/03_compiler/
+hb_fpga_impl/09_cbound/
+hb_fpga_impl/09_int4_impl/
+hb_fpga_impl/12_actv/a4/
+hb_fpga_impl/12_actv/a3/tmp_repro/
+hb_fpga_impl/12_actv/a3/tmp_repro2/
+hb_fpga_impl/12_actv/a3/tmp_nofuse/
+
+# ---- 通用生成物 ----
+**/__pycache__/
+*.vvp
+*.pyc
+**/obj_dir/
+**/.Xil/
+*.jou
+*.backup.jou
+*.backup.log
+*.str
+vivado*.log
+
+# aux.json：Windows 保留设备名（AUX），git 无法打开；由 05_sim/measure.py 重新生成
+hb_fpga_impl/05_sim/results/aux.json
+
+# 仿真波形/功耗生成物
+*.vcd
+*.saif

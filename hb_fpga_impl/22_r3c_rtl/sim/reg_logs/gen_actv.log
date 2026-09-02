@@ -1,0 +1,4 @@
+[golden] REF  exec=66 macs=86016 skip_stages=0 skip_macs=0
+[golden] PRIM exec=66 macs=82944 skip_stages=2 skip_macs=2048
+[golden] REF==PRIM 帧一 ctx:True ddr:True
+[golden] 写出 seq.mem (40 条) / ddr_init.mem / expected_* (frames=1)

@@ -1,0 +1,149 @@
+{
+ "meta": {
+  "date": "2026-08-31",
+  "baseline_cycles_pf1": 1080821046,
+  "baseline_ms_at_198p5": 5444.9,
+  "mac_util_baseline_pct": 7.81,
+  "cost_model": "gem_cycles.py RTL 实测常数（STORE 3.2B/cyc、LOAD_CTX 8B/cyc、COPY 2+3*k*组、SM16 3n+45/16 行组）",
+  "attribution": "边界往返 = 前段全部 STORE + 后段全部 LOAD_CTX（理想模型拍）；共边界多算子均摊",
+  "engine_models": "AE_ACTV 16-lane：norm 2 遍 + 45 拍/行组；eltwise/rotary/scatter 1 遍 + 8 拍/行组；softmax = bias 遍 + SM16 三遍（S 元素取自 host_plan attn 几何）"
+ },
+ "per_op": [
+  {
+   "op": "actv",
+   "plan": "AE_ACTV eltwise 模式（256×8 直查 ROM ×16 lane）",
+   "host_steps": 331,
+   "boundaries": 321,
+   "roundtrip_cycles": 15414208,
+   "tensor_elements": 19644992,
+   "engine_cycles": 1298905,
+   "net_save_cycles": 14115303,
+   "net_save_ms": 71.1,
+   "lut_est": 1500,
+   "bram36_est": 0,
+   "net_cycles_per_klut": 9410202
+  },
+  {
+   "op": "softmax",
+   "plan": "SM16 复用 + 独立 softmax 描述符 + swin/bimha bias 预加遍",
+   "host_steps": 220,
+   "boundaries": 220,
+   "roundtrip_cycles": 22721760,
+   "tensor_elements": 28798304,
+   "engine_cycles": 7201336,
+   "net_save_cycles": 15520424,
+   "net_save_ms": 78.2,
+   "lut_est": 1800,
+   "bram36_est": 1,
+   "net_cycles_per_klut": 8622458
+  },
+  {
+   "op": "norm",
+   "plan": "AE_ACTV LN/RMS 模式（整数累加 + rsqrt LUT + 两级缩放）",
+   "host_steps": 423,
+   "boundaries": 404,
+   "roundtrip_cycles": 73376375,
+   "tensor_elements": 116021772,
+   "engine_cycles": 15525540,
+   "net_save_cycles": 57850835,
+   "net_save_ms": 291.4,
+   "lut_est": 9000,
+   "bram36_est": 3,
+   "net_cycles_per_klut": 6427871
+  },
+  {
+   "op": "rotary",
+   "plan": "AE_ACTV rotary 模式（cos/sin 表 + 成对双乘，复用乘法器）",
+   "host_steps": 180,
+   "boundaries": 180,
+   "roundtrip_cycles": 7648680,
+   "tensor_elements": 15016960,
+   "engine_cycles": 1055880,
+   "net_save_cycles": 6592800,
+   "net_save_ms": 33.2,
+   "lut_est": 1000,
+   "bram36_est": 3,
+   "net_cycles_per_klut": 6592800
+  },
+  {
+   "op": "bias",
+   "plan": "AE_ACTV bias 模式（rq_v2 同款 + 加法）——其他算子融合的前置",
+   "host_steps": 0,
+   "boundaries": 0,
+   "roundtrip_cycles": 0,
+   "tensor_elements": 0,
+   "engine_cycles": 0,
+   "net_save_cycles": 0,
+   "net_save_ms": 0.0,
+   "lut_est": 500,
+   "bram36_est": 1,
+   "net_cycles_per_klut": 0
+  },
+  {
+   "op": "swin",
+   "plan": "散射引擎（16×16 字节交叉 + 窗地址 ALU）：partition/reverse/split/prep",
+   "host_steps": 88,
+   "boundaries": 88,
+   "roundtrip_cycles": 17778585,
+   "tensor_elements": 61597440,
+   "engine_cycles": 3918831,
+   "net_save_cycles": 13859754,
+   "net_save_ms": 69.8,
+   "lut_est": 2500,
+   "bram36_est": 0,
+   "net_cycles_per_klut": 5543902
+  },
+  {
+   "op": "im2col",
+   "plan": "不做硬件（0.94M 拍太小）；保留编译期布局",
+   "host_steps": 30,
+   "boundaries": 29,
+   "roundtrip_cycles": 935762,
+   "tensor_elements": 2003383,
+   "engine_cycles": 140460,
+   "net_save_cycles": 795302,
+   "net_save_ms": 4.0,
+   "lut_est": 0,
+   "bram36_est": 0,
+   "net_cycles_per_klut": 0
+  },
+  {
+   "op": "deform",
+   "plan": "不做（4-tap gather + solve 性价比低，留 host）",
+   "host_steps": 6,
+   "boundaries": 6,
+   "roundtrip_cycles": 4585470,
+   "tensor_elements": 10444800,
+   "engine_cycles": 673200,
+   "net_save_cycles": 3912270,
+   "net_save_ms": 19.7,
+   "lut_est": 0,
+   "bram36_est": 0,
+   "net_cycles_per_klut": 0
+  }
+ ],
+ "subsets": {
+  "MVP": {
+   "boundaries": 935,
+   "host_steps": 977,
+   "roundtrip": 103086895,
+   "engine": 20328099,
+   "net": 82758796
+  },
+  "MVP+swin": {
+   "boundaries": 1011,
+   "host_steps": 1093,
+   "roundtrip": 131289913,
+   "engine": 34301115,
+   "net": 96988798
+  }
+ },
+ "totals": {
+  "lut_total_est": 16300,
+  "lut_with_50pct_margin": 24500,
+  "lut_budget": 60000,
+  "bram36_total_est": 7,
+  "bram36_free": 189,
+  "dsp_new": 0
+ }
+}

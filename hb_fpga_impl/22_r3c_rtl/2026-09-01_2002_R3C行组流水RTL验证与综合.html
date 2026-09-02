@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>R3C 行组流水 RTL 验证与综合 2026-09-01</title>
+<style>
+  body{font-family:"Microsoft YaHei",SimSun,serif;max-width:1000px;margin:24px auto;padding:0 16px;color:#111;background:#fff;line-height:1.75}
+  h1{font-size:22px;border-bottom:2px solid #000;padding-bottom:6px}
+  h2{font-size:18px;border-left:5px solid #000;padding-left:8px;margin-top:32px}
+  h3{font-size:15px;margin-top:22px}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14px}
+  th,td{border:1px solid #444;padding:5px 8px;text-align:left}
+  th{background:#eee}
+  .num{text-align:right;font-variant-numeric:tabular-nums}
+  .mono{font-family:Consolas,monospace;font-size:13px;background:#f4f4f4;padding:1px 4px}
+  .meta{color:#555;font-size:13px}
+  .box{border:1px dashed #888;padding:10px 14px;margin:12px 0;background:#fafafa}
+  .hint{color:#555;font-size:13px;margin:4px 0}
+  svg text{font-family:"Microsoft YaHei",SimSun,serif}
+</style>
+</head>
+<body>
+
+<h1>R3C 行组流水落 RTL：GEMM 引擎拍数 −24%，阵列缩到 16×96，综合 DSP 恰好 1536</h1>
+<p class="meta">生成时刻：2026-09-01 20:02:46　|　RTL：22_r3c_rtl/（从 14_rtl_r1r2 复制起步，原目录零改动）　|　综合工作区：e:/ae_syn/r3c_c96/（Vivado 2021.2，OOC，只综合未实现）　|　回归 12 项全过、位精确硬门全绿</p>
+
+<h2>零、这轮干了什么</h2>
+<p>上一轮（19_r3c_arch）定案了方案 C：GEMM 阵列每个 PE 加 27 位快照寄存器，算完一行 16 个输出就抄走、清零，读出（量化+写回）和下一行的喂数并行干。这一轮把它写成 RTL、跑通验证、做了综合。同时按 PE 选型定案（见同目录《PE 阵列选型》页）把阵列从 16×108 缩到 16×96。</p>
+<p>三个数字先放这：</p>
+<div class="box">
+<p><b>1. 快了：</b>回归基准里 GEMM 引擎拍数 REF 5975→4526（<b>−24.2%</b>）、PRIM 5723→4310（<b>−24.7%</b>）。</p>
+<p><b>2. 小了：</b>DSP48E2 占用 1728→<b>1536</b>（100%→88.9%），腾出 192 颗；LUT 还顺带降了 10.5%。</p>
+<p><b>3. 没变的：</b>位精确——12 项回归全部逐字节一致（含 CTX/DDR 双区全量比对），WNS 与基线持平（−1.36 ns，OOC 口径既有问题，本轮未恶化）。</p>
+</div>
+
+<h2>一、改了哪三个文件</h2>
+<table>
+<tr><th>文件</th><th>改动</th><th>为什么这么改</th></tr>
+<tr><td class="mono">ae_pe.sv</td><td>每个 PE 加 27 位快照寄存器 <span class="mono">snap_r</span>；末脉冲随 A 链传播，脉冲到拍执行 <span class="mono">snap_r &lt;= acc_r; acc_r &lt;= 0</span></td><td>乘加必须留在 DSP 里（<span class="mono">use_dsp="yes"</span> 保留），但结果一落地就抄进快照，清零立刻可做——下一行组的喂数不用等整排排空</td></tr>
+<tr><td class="mono">ae_sysarr.sv</td><td>acc_row 组合读改从快照侧出（符号扩展回 32 位）；clr 退化为复位兜底；旧的 busy/done 波前排空检测整段删除</td><td>读出侧不再碰 DSP 累加器；排空检测是为旧串行流程服务的，新流程里没有"排空"这个概念</td></tr>
+<tr><td class="mono">ae_gemm.sv</td><td>FSM 拆喂数道（st_f）与读出道（st_r）两段并行；requant 组数改由 COLS/4 推导（96 列→24 套）</td><td>两条流水各自跑，行组周期 = max(喂数 k+2, 读出链 68+wb)，谁长谁定</td></tr>
+</table>
+<p>另有 COLS 默认值 108→96 一处（ae_pkg/ae_top/ae_core/ae_gemm/ae_dma/ae_copy 六个文件改参数，grep 确认无残留硬编码 108），和一处计划外修复（第四节）。</p>
+
+<h2>二、验证结果：12 项全过，位精确一个字节都不差</h2>
+<table>
+<tr><th>用例</th><th>验证什么</th><th>结果</th></tr>
+<tr><td class="mono">gen_vectors / sim_ae / compare</td><td>全芯片双遍（REF/PRIM）仿真 + CTX/DDR 全量比对</td><td><b>PASS</b>（16384B CTX + 65536B DDR 逐字节一致）</td></tr>
+<tr><td class="mono">tb_rq / tb_sm16</td><td>量化器、softmax 对拍</td><td><b>PASS</b></td></tr>
+<tr><td class="mono">tb_pe_pack / tb_pe_pack_dsp</td><td>PE 行为级 vs DSP48E2 硬原语对拍</td><td><b>PASS</b></td></tr>
+<tr><td class="mono">gem_cycles</td><td>周期模型 vs 实测对账</td><td><b>PASS</b>（GEMM 偏差 −0.53%/−0.65%，MAC 精确命中）</td></tr>
+<tr><td class="mono">gen_actv / sim_ae_actv / compare_actv / tb_ae_actv</td><td>AE_ACTV 片上算子负载（含 PF=1 预取路径）</td><td><b>PASS</b>（PF1 dump 与 PF0 逐位一致）</td></tr>
+</table>
+<h3>2.1 周期账（回归基准，同日基线对比）</h3>
+<table>
+<tr><th>项</th><th class="num">改前（R2 基线）</th><th class="num">改后（R3C）</th><th class="num">变化</th></tr>
+<tr><td>GEMM 引擎拍数（REF）</td><td class="num">5975</td><td class="num">4526</td><td class="num"><b>−24.2%</b></td></tr>
+<tr><td>GEMM 引擎拍数（PRIM）</td><td class="num">5723</td><td class="num">4310</td><td class="num"><b>−24.7%</b></td></tr>
+<tr><td>总周期（REF / PRIM）</td><td class="num">8255 / 7999</td><td class="num">6814 / 6618</td><td class="num">−17.5% / −17.3%</td></tr>
+</table>
+<p class="hint">注意口径：这是回归基准（小规模随机段）的实测拍数。全帧 2580 段的模型口径是 GEMM 336.4M→185.2M（−45%），因为真实流的行组大得多（k=257 的注意力段省得更多）；基准段偏小，所以显示 −24%。两个数都对，衡量口径不同。</p>
+<h3>2.2 模型重标定（这轮的额外收获）</h3>
+<p>gem_cycles.py 的周期公式按 R3C 行组流水重写，DMA 模型用命令级探针逐条实测重标（发现写引擎每 16B 行实际 6 拍不是原模型的 5 拍——wvalid 断言拍+握手拍各 1 拍，这是主控自己的节奏）。重标后模型与 RTL 偏差全部 &lt;5%。PF 预取档也换成了实测值：预取发射探针 11 次，与模型 n_pf=11 精确一致。</p>
+
+<h2>三、综合结果：DSP 恰好 1536，LUT 还赚了</h2>
+<p>Vivado 2021.2，OOC + RuntimeOptimized + <span class="mono">flatten_hierarchy none</span>，时钟约束 4.000 ns（250 MHz 目标），只综合不实现。</p>
+<table>
+<tr><th>资源</th><th class="num">基线 16×108</th><th class="num">R3C 16×96</th><th class="num">变化</th></tr>
+<tr><td>LUT</td><td class="num">134 734（58.5%）</td><td class="num">120 619（52.4%）</td><td class="num"><b>−10.5%</b></td></tr>
+<tr><td>FF</td><td class="num">118 336（25.7%）</td><td class="num">150 221（32.6%）</td><td class="num">+26.9%</td></tr>
+<tr><td>BRAM</td><td class="num">126.5</td><td class="num">114.5</td><td class="num">−9.5%</td></tr>
+<tr><td>DSP48E2</td><td class="num">1 728（100%）</td><td class="num"><b>1 536（88.9%）</b></td><td class="num">−192</td></tr>
+<tr><td>WNS</td><td class="num">−1.359 ns</td><td class="num">−1.363 ns</td><td class="num">持平</td></tr>
+</table>
+<p class="hint">怎么看这张表：FF 涨 26.9% 是这次改动的直接成本——1536 个 PE 每个 27 位快照加上脉冲延迟线，全在 u_gemm 里（FF 105657→137097）。换来的是 DSP −192、LUT −1.4 万（u_gemm LUT −14.1%：旧流程的排空/对齐控制逻辑比新流水简单控制还费）。WNS 两版都欠 250 MHz 目标约 1.36 ns，这是 OOC 口径下之前就有的问题（做实现时 OOC 估算会松），本轮没有恶化。</p>
+<h3>3.1 每模块资源 × 计算时间占比</h3>
+<table>
+<tr><th>模块</th><th class="num">LUT</th><th class="num">FF</th><th class="num">DSP</th><th class="num">BRAM/URAM</th><th class="num">全帧计算占比（拍数）</th></tr>
+<tr><td>u_gemm（阵列+量化+读出）</td><td class="num">65 452</td><td class="num">137 097</td><td class="num">1 536</td><td class="num">—</td><td class="num">185.2M（GEMM，占计算 79%）</td></tr>
+<tr><td>u_actv（片上算子）</td><td class="num">25 298</td><td class="num">6 641</td><td class="num">0</td><td class="num">4×B36</td><td class="num">10.0M（4%）</td></tr>
+<tr><td>u_cp（COPY 引擎）</td><td class="num">14 732</td><td class="num">1 072</td><td class="num">0</td><td class="num">—</td><td class="num">40.3M（17%）</td></tr>
+<tr><td>u_sm（softmax）</td><td class="num">10 279</td><td class="num">2 545</td><td class="num">0</td><td class="num">—</td><td class="num">计入 ACTV 10M 内</td></tr>
+<tr><td>u_dma（双引擎）</td><td class="num">2 177</td><td class="num">1 656</td><td class="num">0</td><td class="num">—</td><td class="num">与计算重叠（R1）</td></tr>
+<tr><td>u_sched（调度器）</td><td class="num">1 030</td><td class="num">622</td><td class="num">0</td><td class="num">—</td><td class="num">与计算重叠</td></tr>
+<tr><td>u_ctx（CTX 驻留）+ WRAM</td><td class="num">260</td><td class="num">6</td><td class="num">0</td><td class="num">64 URAM + 114 B36</td><td class="num">存储，无计算</td></tr>
+</table>
+<p class="hint">怎么看这张表：面积大头是 u_gemm（LUT 54%、DSP 100%），它也承担 79% 的计算——面积和活儿是匹配的。u_actv 的 LUT/活儿比最差（21% 的 LUT 换 4% 的活），但它是功能需要（片上 GELU/eltwise），且只超预算门槛 106% 的历史决策已经接受。WRAM 的 114 块 BRAM 是 96 列×每列一个 bank 的结构，跟随列数从 126.5 降下来。</p>
+
+<h2>四、一处计划外修复：R2 旧死锁（如实说明）</h2>
+<p>验证 AE_ACTV 负载开预取（PF=1）时挂死。排查发现<b>不是 R3C 改坏的</b>：把未改动的 R2 基线（14_rtl_r1r2 副本）跑同样负载，同样挂死。根因在 <span class="mono">ae_core.sv</span> 的 pf_ctx_stall 表达式里有一项 <span class="mono">(eng_dma &amp;&amp; !dma_iswr)</span>：主 FSM 走"LOAD 命中预取"路径等预取完成时，这一项会把它正在等的那个后台预取冻住——自己等自己，死锁。</p>
+<p>修法是删掉这一项。安全性论证：真正的前台 LOAD 和后台预取不可能同时为真（发起新 DMA 命令前要求 DMA 空闲，而后台预取占用时 DMA 不空闲），所以这一项在合法状态下只有死锁那一种触发路径，删了没有副作用。修复后 PF=1 正常完成，dump 与 PF=0 逐位一致。</p>
+<p class="hint">为什么以前没炸：R2 验证时的负载没有撞上"LOAD 命中预取"和这一项同时为真的窗口；AE_ACTV 的负载模式（4096B 大块 CTX 预取）第一次踩中它。</p>
+
+<h2>五、坑清单（交接相关，新坑）</h2>
+<ol>
+<li><b>iverilog 全芯片回归太慢</b>：本轮回归串行 12 项跑了数小时，已裁决（CLAUDE.md 第 9 节）：之后 RTL 验证走服务器 Verilator（模板 14_rtl_r1r2/sim/vlbuild_vgate.sh，快一个量级），iverilog 只做秒级冒烟，每轮实验 ≤10 分钟。</li>
+<li><b>调试台首遍出 X</b>：自写 testbench 时 LFSR 在 t=0 的声明初始化和读值有 delta 竞争，先空跑一遍或 #1 错开。原版 tb 先跑 REF 遍所以从不触发。</li>
+<li><b>旧 gem_cycles 的"PASS"是假象</b>：旧模型对旧硬编码常量自洽，RTL 一改两边一起过期。这次全部用命令级探针实测重标（每命令 busy 窗口逐条对账）。</li>
+<li><b>写引擎每 16B 行 6 拍不是 5 拍</b>：wvalid 断言拍+握手拍各 1 拍，是主控自己的节奏，换理想从机也省不掉。旧模型从一开始就标错。</li>
+<li><b>探针路径</b>：dma_c_r 不在顶层，要走 dut.u_sched.dma_c_r。</li>
+</ol>
+
+<h2>六、复现命令</h2>
+<pre class="mono">cd hb_fpga_impl\22_r3c_rtl\sim
+bash regression.sh          :: 12 项回归（注意：iverilog 串行较慢，日常验证走服务器 Verilator）
+
+:: 综合（约 20-40 分钟）
+cd e:\ae_syn\r3c_c96 &amp;&amp; D:\software\Vivado\2021.2\bin\vivado.bat -mode batch -source synth.tcl
+:: 产物：out\utilization.rpt（DSP=1536）、timing.rpt（WNS）、util_hier_d2.rpt（层级资源）</pre>
+<p class="meta">基线来源：e:/ae_syn/actv_v122_fullchip/out/（16×108，actv_v122 轮次）；周期基线：14_rtl_r1r2/sim/reg_logs/sim_ae.log（2026-09-01 10:15 实测）。全帧模型口径：19_r3c_arch/r3c_model.py + pe_sizing.py。</p>
+
+</body>
+</html>

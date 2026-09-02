@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>R3 行组流水改造方案 2026-09-01</title>
+<style>
+  body{font-family:"Microsoft YaHei",SimSun,serif;max-width:1000px;margin:24px auto;padding:0 16px;color:#111;background:#fff;line-height:1.75}
+  h1{font-size:22px;border-bottom:2px solid #000;padding-bottom:6px}
+  h2{font-size:18px;border-left:5px solid #000;padding-left:8px;margin-top:32px}
+  h3{font-size:15px;margin-top:22px}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14px}
+  th,td{border:1px solid #444;padding:5px 8px;text-align:left}
+  th{background:#eee}
+  .num{text-align:right;font-variant-numeric:tabular-nums}
+  .ok{font-weight:bold}
+  .mono{font-family:Consolas,monospace;font-size:13px;background:#f4f4f4;padding:1px 4px}
+  .meta{color:#555;font-size:13px}
+  .box{border:1px dashed #888;padding:10px 14px;margin:12px 0;background:#fafafa}
+  .warn{border-left:4px solid #000;background:#f6f6f6;padding:8px 12px;margin:12px 0}
+  .hint{color:#555;font-size:13px;margin:4px 0}
+  svg text{font-family:"Microsoft YaHei",SimSun,serif}
+</style>
+</head>
+<body>
+
+<h1>R3 行组流水改造方案：怎么做、能赚多少、有什么坑</h1>
+<p class="meta">生成时刻：2026-09-01 11:17:00　|　状态：方案（未写 RTL）　|　数据基础：a3 真实流（2580 段 / 69.2 万行组）+ R1+R2 校准模型　|　上一轮：R1+R2 已硬件实证（427.2M / 2.15ms / GEMM 78.9%）</p>
+
+<h2>零、先说结论</h2>
+<div class="box">
+<p><b>GEMM 现在 336.9M 拍里，只有 133.9M 拍（39.7%）在真正算乘加，另外 185.8M 拍（55.1%）是每个行组算完之后排队等出来的固定开销。</b>R3 就是把行组和行组之间的这些排队重叠掉：上一组还在读结果、写结果的时候，下一组就开始喂数据。</p>
+<p>做完之后 GEMM 从 336.9M 降到约 185M（模型口径，下同），总时间在当前验证平台（TB）上从 427.2M 降到约 332M（<b>−22.3%</b>），在真机 HP64 口径下降到约 276M（<b>−35.4%</b>）。改动集中在 3 个 RTL 文件，描述符格式、编译器、调度器一行都不用动。</p>
+<p><b>必须先讲清楚的一个修正：</b>上一轮总结页里写的"427→~297M、GEMM 占比升到 ~88%"是两个口径混在一起了，这个方案页里重新算过：297M 是真机 HP64 口径的保守值，当前验证平台（TB）上 R3 只能到 332M——因为读通道 292.1M 拍会变成新瓶颈；88% 只有在"其它一切开销全部藏住"的理想口径下才成立，真实口径 GEMM 占比是 55.9%（TB）/ 67.3%（HP64）。详见第五节。</p>
+</div>
+
+<h2>一、背景：R1+R2 之后，时间花在哪了</h2>
+<p>R1（独立写通道）和 R2（CTX 预取）把 LOAD/STORE 基本藏进了计算里，现在总时间 427.2M 拍由三路并行的"车道"里最慢的一条决定：</p>
+<table>
+<tr><th>车道</th><th>内容</th><th>拍数（M）</th><th>说明</th></tr>
+<tr><td><b>计算</b></td><td>GEMM 336.9 + COPY 40.3 + AE_ACTV 10.0</td><td class="num"><b>387.2</b></td><td><b>当前瓶颈</b></td></tr>
+<tr><td>读</td><td>LOAD_CTX 184.0 + LOAD_W 108.1</td><td class="num">292.1</td><td>读写都在计算背后排队，没露出来</td></tr>
+<tr><td>写</td><td>STORE 218.4</td><td class="num">218.4</td><td>同上</td></tr>
+</table>
+<p class="hint">怎么看：总拍 = 最慢车道 + 依赖停顿 θ（40M）。计算车道压到 292.1M 以下之前，读写都不露头——这就是 R3 的操作空间；压过这条线之后，读车道接班成瓶颈。</p>
+<p>计算车道里 GEMM 占 336.9M（87%），是绝对大头。GEMM 本身再拆一层：真正做乘加的"稳态"只有 133.9M，剩下 185.8M 是行组固定开销。<b>也就是说，阵列里 1728 个 DSP 有一半以上的时间是空转的（利用率 39.7%）。</b>这不是读数据慢造成的（数据早就在片上），是 GEMM 引擎自己的状态机在串行排队。</p>
+
+<h2>二、行组开销到底是什么</h2>
+<p>GEMM 一次算一个 16 行 × 108 列的块，行数超过 16 就切成多个"行组"（整帧 HoloBrain 计算共有 69.2 万个行组）。每个行组内部，状态机（[ae_gemm.sv](../14_rtl_r1r2/rtl/ae_gemm.sv) 的 S_CLR→S_FEED→…→S_NEXTMT 链）一步一步走：</p>
+<table>
+<tr><th>阶段</th><th>拍数</th><th>在干什么</th><th>能不能和别的阶段同时做</th></tr>
+<tr><td>清零</td><td class="num">1</td><td>把 1728 个累加器清零</td><td>能（本来就该藏在上一组尾部）</td></tr>
+<tr><td>喂数</td><td class="num">k+2</td><td><b>真正算乘加的阶段</b>，A 从 CTX、B 从 WRAM 每拍喂一个 k 切片</td><td>——这是本职工作</td></tr>
+<tr><td>排空等待</td><td class="num">127</td><td>脉动阵列是流水线（行延迟 i 拍、列延迟 j 拍），最后一个乘积要 16+108+3 拍才落到角落的累加器里，引擎干等</td><td>能——下一组的喂数本可以现在就开始</td></tr>
+<tr><td>量化读出</td><td class="num">64</td><td>16 行 × 4 拍：累加结果过 requant（27 套量化乘法器时分复用，每拍出 27 列）存进 tile_buf</td><td>能——和下一组喂数互不干涉</td></tr>
+<tr><td>对齐/捕获尾</td><td class="num">4</td><td>slot 相位对齐 + 量化流水排空</td><td>能</td></tr>
+<tr><td>写回</td><td class="num">wb（平均 70）</td><td>tile_buf 逐列写回 CTX（普通模式 n_loc 拍 / 转置模式 16×组数拍）</td><td>能——CTX 的 A 口读、B 口写本来就是两个口</td></tr>
+<tr><td>切换</td><td class="num">1</td><td>行组号 +1、算下一个 A 基地址</td><td>能</td></tr>
+</table>
+<p>把 69.2 万个行组的账加起来：平均每个行组花 465 拍，其中喂数只有 196 拍——<b>一半以上的时间阵列在等自己排空、等结果读出、等写回，全都是串行排队，不是硬件做不到并发。</b>三个"能"列里没有一条有资源冲突：喂数用 CTX A 口 + WRAM，读出走量化器，写回走 CTX B 口，硬件上本来就是三条独立的路。</p>
+
+<h2>三、那为什么现在不并发？——一个真障碍和两个假障碍</h2>
+<p><b>真障碍：累加器只有一套。</b>每个 PE 的 32 位累加器映射在 DSP48E2 里（[ae_pe.sv](../14_rtl_r1r2/rtl/ae_pe.sv)），DSP 只有一个累加寄存器。上一组的结果还在累加器里没读走，下一组的乘加结果就会加进去把它污染掉。所以必须"读干净 → 清零 → 才能喂下一组"，这是当前串行设计的根源。另外 DSP 已经满片（1728/1728），不可能用双倍 DSP 绕过去。</p>
+<p>假障碍一：排空等待 127 拍。它是脉动阵列的固有流水深度，但两个行组的波前各自带着各自的延迟，在流水稳态里这 127 拍只是错位，不占周期。</p>
+<p>假障碍二：写回抢 CTX B 口。GEMM 写回和 DMA 预取的让拍关系 R2 已经修好（pf_ctx_stall），下一组的喂数走的是 A 口，跟写回不抢。</p>
+
+<h3>解法：每个 PE 加一份"快照"寄存器（方案 C，推荐）</h3>
+<p>思路一句话：<b>乘加留在 DSP 里，但结果一到手就抄一份到旁边的触发器里，抄完立刻清零，下一组马上开喂数；读出、量化、写回全部从快照那一份走。</b></p>
+<p>具体机制（都能用现成的硬件规律做出来）：</p>
+<ol>
+<li>"结果到手"怎么知道：最后一个 k 切片进阵列时，控制器在 A 数据流上打一个"末脉冲"标记。这个标记顺着 A 链一拍一拍往东传，传到哪个 PE，就是那个 PE 的最后一笔乘加落地的时刻——<b>每个 PE 在自己该快照的那一拍自动快照</b>，不需要全局计数器。传 1728 个 PE 只花 1728 个触发器。</li>
+<li>快照拍上做两件事：快照寄存器抄走累加值（27 位就够，|acc| ≤ 2^26）；累加器同时清零。组与组的喂数之间留 2 拍缝，让"清零"和"下一组第一笔乘加"不挤同一拍。</li>
+<li>读出（量化 64 拍）从快照读，不再从 DSP 输出读。<b>副产品可能是时序变好</b>：现在最紧的路径（WNS −1.038）恰恰是 DSP 输出直通量化器的组合读，改成从触发器读会短一截。</li>
+<li>tile_buf（16×108 字节的结果暂存）做双缓冲：上一组的写回和下一组的量化读出各用各的，互不等待。</li>
+</ol>
+
+<h3>保底方案 A：不动 PE，只重叠写回</h3>
+<p>如果快照方案的时序收不了，退一步：累加器保持单套，但把"写回"挪出关键路径——喂数等量化读出结束就开始（现在要等写回也结束）。PE 一行不改，改动只在 ae_gemm 的状态机。代价是收益打折：GEMM 只降到约 240M（回收 95M，是方案 C 的 65%），且真机 HP64 口径下比方案 C 少赚 55M。两个方案先做 A 的 FSM 骨架、再插快照，可以分两步落地。</p>
+
+<h2>四、具体改哪些文件</h2>
+<table>
+<tr><th>文件</th><th>改动</th><th>规模估计</th></tr>
+<tr><td><span class="mono">ae_pe.sv</span></td><td>加 27b 快照寄存器、末脉冲传播（a 链 +1 FF）、end 拍"快照+清零"</td><td>+28b/PE ≈ 4.7 万 FF</td></tr>
+<tr><td><span class="mono">ae_sysarr.sv</span></td><td>acc_row 读口从快照侧出；clr 退化为兜底</td><td>近零</td></tr>
+<tr><td><span class="mono">ae_gemm.sv</span></td><td>FSM 拆成"喂数"和"读出/写回"两段并发；tile_buf 双缓冲；slot 对齐改稳态对齐</td><td>~300 行级重写</td></tr>
+</table>
+<p><b>零改动清单（这是本方案便宜的原因）：</b>描述符 256b 格式、编译器、调度器（u_sched）、CTX 仲裁、WRAM、DMA、R2 的 pf_ctx_stall 握手、TB——全部不动。R3 完全藏在一条 GEMM 描述符内部。</p>
+
+<h2>五、能赚多少（修正过的账）</h2>
+<p>行组周期从"串行全流程"变成 <b>max(喂数 k+2, 读出链 68+wb)</b>——谁长谁定周期，短的一方整个被藏掉。按 a3 真实流逐行组算：</p>
+<table>
+<tr><th>方案</th><th>GEMM 拍数</th><th>回收</th><th>阵列利用率</th></tr>
+<tr><td>现状（R1+R2）</td><td class="num">336.9M</td><td class="num">—</td><td class="num">39.7%</td></tr>
+<tr><td>方案 A（保底）</td><td class="num">240.0M</td><td class="num">−28.7%</td><td class="num">55.8%</td></tr>
+<tr><td><b>方案 C（推荐）</b></td><td class="num"><b>185.5M</b></td><td class="num"><b>−45.0%</b></td><td class="num"><b>73.0%</b></td></tr>
+</table>
+<p>赚的拍从哪来（按 k 值分桶，前 8 类覆盖 87% 行组）：</p>
+<table>
+<tr><th>k 值</th><th>行组数</th><th>每组现状</th><th>每组 R3 后</th><th>每组省</th><th>省的合计</th></tr>
+<tr><td>257（注意力主段）</td><td class="num">242,859</td><td class="num">461 拍</td><td class="num">259 拍</td><td class="num">202（−44%）</td><td class="num">49.0M</td></tr>
+<tr><td>32</td><td class="num">158,432</td><td class="num">250 拍</td><td class="num">85 拍</td><td class="num">165（−66%）</td><td class="num">26.1M</td></tr>
+<tr><td>4</td><td class="num">86,784</td><td class="num">208 拍</td><td class="num">71 拍</td><td class="num">137（−66%）</td><td class="num">11.9M</td></tr>
+<tr><td>49</td><td class="num">64,000</td><td class="num">254 拍</td><td class="num">72 拍</td><td class="num">182（−72%）</td><td class="num">11.6M</td></tr>
+<tr><td>97 / 385 / 8 / 193 …</td><td class="num">73,506</td><td class="num">—</td><td class="num">—</td><td class="num">约 −60%</td><td class="num">13.7M</td></tr>
+</table>
+<p class="hint">怎么看：k 大的段（注意力）本来喽数就长，省的是"排空+读出"那 200 拍；k 小的段喂数很短，周期被读出链（约 70-176 拍）接管，省得更多。两类都赚。</p>
+
+<h3>总账（这里修正上一轮的数字）</h3>
+<table>
+<tr><th>口径</th><th>现状</th><th>R3 方案 C</th><th>降幅</th><th>R3 后瓶颈</th></tr>
+<tr><td>TB（当前验证平台）</td><td class="num">427.2M / 2.15ms</td><td class="num"><b>332.1M / 1.67ms</b></td><td class="num"><b>−22.3%</b></td><td>读通道（292.1M）</td></tr>
+<tr><td>真机 HP64</td><td class="num">427.2M / 2.15ms</td><td class="num"><b>275.8M / 1.39ms</b></td><td class="num"><b>−35.4%</b></td><td>计算通道（235.8M）</td></tr>
+</table>
+<p>两个口径不一样的原因：TB 从机的读带宽是 3.7 B/拍，292.1M 拍的读服务藏不进 235.8M 拍的计算里；真机 HP 口读带宽 64 B/拍，读只要 20M 拍，计算仍然是最慢车道。<b>上一轮总结页写的"427→~297M"其实是 HP64 口径的保守值（GEMM 按 206M 而不是 185M 算），写"~88%"则只有在"读、写、COPY、ACTV、θ 全部藏住"的理想口径下才成立（140.8/(140.8+19)=88.1%）——真实口径 GEMM 占比 TB 55.9% / HP64 67.3%。</b>占比下降不是坏事：它说明瓶颈从计算换成了读数据，计算这条车道已经压到读车道以下了。</p>
+
+<h3>时序对照图（以 k=257 的注意力段为例）</h3>
+<svg viewBox="0 0 920 330" style="width:100%;max-width:920px;background:#fff">
+  <!-- 现状：串行 -->
+  <text x="10" y="24" font-size="14" font-weight="bold">现状：一个行组内部全串行（k=257 时共 461 拍/组）</text>
+  <rect x="10"  y="36" width="14"  height="26" fill="#fff" stroke="#000"/>
+  <rect x="24"  y="36" width="222" height="26" fill="#ccc" stroke="#000"/>
+  <rect x="246" y="36" width="110" height="26" fill="#fff" stroke="#000"/>
+  <rect x="356" y="36" width="56"  height="26" fill="#ddd" stroke="#000" stroke-dasharray="4,3"/>
+  <rect x="412" y="36" width="60"  height="26" fill="#fff" stroke="#000"/>
+  <rect x="472" y="36" width="180" height="26" fill="#eee" stroke="#000"/>
+  <text x="10" y="80" font-size="11">清零1</text>
+  <text x="90" y="80" font-size="11">喂数 k+2（唯一算乘加的阶段，259 拍）</text>
+  <text x="258" y="80" font-size="11">排空等待127</text>
+  <text x="360" y="80" font-size="11">量化64</text>
+  <text x="412" y="80" font-size="11">杂项4</text>
+  <text x="492" y="80" font-size="11">写回 wb（平均70拍）</text>
+  <line x1="652" y1="36" x2="652" y2="66" stroke="#000" stroke-width="1"/>
+  <text x="660" y="56" font-size="11">→ 下一组从头再来</text>
+  <text x="10" y="106" font-size="11" fill="#555">灰色=有乘加在算；白色=阵列闲着排队。每个行组 461 拍里只有 259 拍在算（56%）。</text>
+
+  <!-- R3：两段流水 -->
+  <text x="10" y="140" font-size="14" font-weight="bold">R3 后：喂数和读出/写回两条流水并行（周期 259 拍/组，−44%）</text>
+  <text x="10" y="160" font-size="11">喂数道：</text>
+  <rect x="70"  y="150" width="222" height="24" fill="#ccc" stroke="#000"/>
+  <rect x="292" y="150" width="222" height="24" fill="#ccc" stroke="#000"/>
+  <rect x="514" y="150" width="222" height="24" fill="#ccc" stroke="#000"/>
+  <text x="140" y="167" font-size="11">第 i+1 组喂数</text>
+  <text x="362" y="167" font-size="11">第 i+2 组喂数</text>
+  <text x="584" y="167" font-size="11">第 i+3 组喂数（连续不断）</text>
+  <text x="10" y="200" font-size="11">读出道：</text>
+  <rect x="70"  y="190" width="56" height="24" fill="#ddd" stroke="#000" stroke-dasharray="4,3"/>
+  <rect x="126" y="190" width="60" height="24" fill="#fff" stroke="#000"/>
+  <rect x="292" y="190" width="56" height="24" fill="#ddd" stroke="#000" stroke-dasharray="4,3"/>
+  <rect x="348" y="190" width="60" height="24" fill="#fff" stroke="#000"/>
+  <text x="78"  y="207" font-size="11">量化64</text>
+  <text x="132" y="207" font-size="11">写回</text>
+  <text x="300" y="207" font-size="11">量化64</text>
+  <text x="354" y="207" font-size="11">写回</text>
+  <text x="10" y="240" font-size="11">（读出道走的是第 i+1 组自己那份快照，所以能与第 i+1 组的喂数并行；两组错开一个周期）</text>
+  <line x1="292" y1="150" x2="292" y2="214" stroke="#000" stroke-width="1" stroke-dasharray="3,3"/>
+  <line x1="514" y1="150" x2="514" y2="214" stroke="#000" stroke-width="1" stroke-dasharray="3,3"/>
+  <text x="10" y="270" font-size="11">k 小的段（如 k=32）：喂数只有 34 拍，周期由读出道（约 85 拍）决定，从 250 拍降到 85 拍（−66%）。</text>
+  <text x="10" y="292" font-size="11">k 大的段（如 k=257/385）：周期由喂数决定，排空等待 127 拍和量化 64 拍全部藏进下一组喂数里。</text>
+  <text x="10" y="316" font-size="11" fill="#555">怎么看：两条道谁长谁定周期，短的那条整个消失。全帧平均下来 GEMM 336.9M → 185.5M（−45.0%）。</text>
+</svg>
+
+<h2>六、R3 之后的新瓶颈（下一轮的活，本页不展开）</h2>
+<p>R3 落地后，TB 口径上读通道（LOAD_CTX 184.0M + LOAD_W 108.1M = 292.1M）成为最慢车道。想继续压，方向是读侧：第二读引擎（CTX 和权重并发行）或提高读带宽；真机 HP 口径没有这个问题。反过来讲，<b>如果先不做 R3，读侧怎么改都没收益（计算车道 387.2M 远在上），R3 是读侧改造的前置条件</b>——这是排期上的依赖关系。</p>
+
+<h2>七、资源与风险</h2>
+<p>每模块资源占用与计算时间占比（现状实测 / R3 预计增量）：</p>
+<table>
+<tr><th>模块</th><th>LUT（现状）</th><th>DSP</th><th>存储</th><th>计算时间占比</th><th>R3 增量</th></tr>
+<tr><td>ae_gemm（含阵列+量化）</td><td class="num">75,281</td><td class="num">1,728（满片）</td><td>tile_buf 寄存器</td><td class="num">GEMM 占计算车道 87.0%</td><td>LUT ≈ 0；FF +4.9 万（快照 4.7 万+末脉冲 1728+tile_buf 双缓冲 1728B）</td></tr>
+<tr><td>ae_actv（ACTV/BIAS/NORM/ELTWISE）</td><td class="num">24,959</td><td class="num">0</td><td>512 LUT 表</td><td class="num">2.6%</td><td>0</td></tr>
+<tr><td>ae_copy</td><td class="num">≈18,400</td><td class="num">0</td><td>—</td><td class="num">10.4%</td><td>0</td></tr>
+<tr><td>ae_dma（读+写双引擎）</td><td class="num">2,405</td><td class="num">0</td><td>—</td><td class="num">（读车道 292.1M，并发行）</td><td>0</td></tr>
+<tr><td>ae_sched</td><td class="num">1,030</td><td class="num">0</td><td>SEQ 2048×256b</td><td class="num">—</td><td>0</td></tr>
+<tr><td>ae_softmax</td><td class="num">—</td><td class="num">0</td><td>exp2 LUT</td><td class="num">≈0%</td><td>0</td></tr>
+<tr><td><b>全芯片</b></td><td class="num"><b>135,111 / 230,400（58.7%）</b></td><td class="num"><b>1,728</b></td><td class="num">URAM 64 / WRAM 442KB</td><td class="num">TB 总拍 427.2M</td><td class="num">LUT &lt;+1k；FF 119k→约 17 万（36%）；DSP/BRAM/URAM 零增</td></tr>
+</table>
+<p class="hint">怎么看：R3 的新代价几乎全是触发器（器件有 46 万 FF，现在只用了 12 万），最值钱的资源 DSP 和 BRAM 一个不涨——这是这个方案性价比高的根本原因。</p>
+<h3>风险清单</h3>
+<ul>
+<li><b>时序（最大风险）：</b>当前 WNS −1.038 ns，余量薄。新路径两条：DSP 输出→快照寄存器（一跳，短）；末脉冲→快照使能（长线网，要复用 A 链布线）。对策与 NORM v1.2.3 同款：拆拍手段现成，必要时读出链加一级流水（读出链本来就有 4 拍余量）。</li>
+<li><b>末脉冲波前：</b>组间只留 2 拍缝，末脉冲必须和下一组首脉冲不撞拍。验证用 iverilog 探针先在微观 TB 上确认每拍行为再上全芯片。</li>
+<li><b>稳态 slot 对齐：</b>量化器 4 拍 slot 相位在流水里要保持对齐，必要时每行组最多垫 4 拍（模型已留余量）。</li>
+<li><b>写回与预取让拍模式变化：</b>写回从"集中块"变成"每周期零散"，R2 的 pf_ctx_stall 行为模式会变——regression 必须含 PF=1 长窗口段（seg_0602 类）。</li>
+</ul>
+
+<h2>八、实施顺序与验收门</h2>
+<table>
+<tr><th>步</th><th>内容</th><th>验收门</th></tr>
+<tr><td>1</td><td>方案 A：ae_gemm FSM 两段化 + tile_buf 双缓冲（不动 PE）</td><td>iverilog 微观 21 用例位精确；全芯片 12/12</td></tr>
+<tr><td>2</td><td>方案 C：ae_pe 快照 + 末脉冲；ae_sysarr 读口改快照侧</td><td>同上 + 末脉冲探针单测</td></tr>
+<tr><td>3</td><td>Verilator 门（服务器，三代表段 PF=0/1）</td><td>全 DDR diff=0；拍数对比：seg_0602（k=257）预计 −40% 量级</td></tr>
+<tr><td>4</td><td>全芯片综合 250MHz</td><td>DSP=1,728 持平；LUT ≤+1k；FF +4.9 万内；WNS ≥ −1.038（读口改寄存器后有机会改善）</td></tr>
+<tr><td>5</td><td>模型对拍 + 更新总结页</td><td>周期模型偏差 ±15% 内（沿用既有门）</td></tr>
+</table>
+<p>工作量估计：与 NORM v1.2.3 那轮相当（RTL 一次成型 + 一到两轮时序修复），主要不确定性在第四步的 WNS。</p>
+
+<h2>九、复现</h2>
+<pre>
+# 本页所有数字的复算（a3 真实流逐行组统计）：
+cd hb_fpga_impl/12_actv/a3 && python -c "..."   # 行组周期 = max(k+2, DRAIN+4+wb_cycles)，见 18_r3_plan 附注
+# 基线分量与校准：13_rtl_plan/r1r2_matrix.py（G=336.9 = 稳态133.9 + 行组开销185.8）
+# 行组开销公式来源：09_cbound/acct.py gemm_cycles()（校准外样 99.9%）
+</pre>
+<p class="meta">本页为方案文档，RTL 未实施。方案 A/C 的周期模型均按保守口径（读出链按 68+wb 整段串行计，未拆 WB 与量化的重叠），实际收益只会更好不会更差。</p>
+
+</body>
+</html>

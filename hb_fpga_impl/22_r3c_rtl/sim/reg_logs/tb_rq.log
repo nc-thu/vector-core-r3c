@@ -1,0 +1,14 @@
+WARNING: tb_rq.sv:131: $readmemh(xa.mem): Not enough words in the file for the requested range [0:99999].
+WARNING: tb_rq.sv:132: $readmemh(ma.mem): Not enough words in the file for the requested range [0:99999].
+[PHASE-A] n=60000 err=0  (a27/a32/g27@8/ms2/ms4 vs v1)
+WARNING: tb_rq.sv:169: $readmemh(xb.mem): Not enough words in the file for the requested range [0:99999].
+WARNING: tb_rq.sv:170: $readmemh(mb.mem): Not enough words in the file for the requested range [0:99999].
+WARNING: tb_rq.sv:171: $readmemh(sb.mem): Not enough words in the file for the requested range [0:99999].
+[PHASE-B] n=30000 cmp=773 skip=29227 err=0  (g27 s∈[8,47] vs v1)
+WARNING: tb_rq.sv:209: $readmemh(xc.mem): Not enough words in the file for the requested range [0:99999].
+WARNING: tb_rq.sv:210: $readmemh(mc.mem): Not enough words in the file for the requested range [0:99999].
+WARNING: tb_rq.sv:211: $readmemh(m6c.mem): Not enough words in the file for the requested range [0:99999].
+WARNING: tb_rq.sv:212: $readmemh(t6c.mem): Not enough words in the file for the requested range [0:99999].
+[PHASE-C] n=30000 diff=238 (0.79%) mean_abs=0.0250 max_abs=4
+TB_RQ PASS (exact variants bit-identical to v1)
+tb_rq.sv:257: $finish called at 1200180000 (1ps)

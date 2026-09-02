@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>硬件工作记录 · 2026-08-30 至 2026-08-31</title>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:#f9f9f7;color:#0b0b0b;font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;line-height:1.75;font-size:15px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 22px 80px}
+header.page{border-bottom:1px solid #e1e0d9;padding-bottom:18px;margin-bottom:10px}
+h1{font-size:24px;margin:0 0 10px;line-height:1.4}
+.meta{font-size:13px;color:#52514e;display:flex;flex-wrap:wrap;gap:4px 20px}
+nav.pagenav{margin:12px 0 0;font-size:13.5px}
+nav.pagenav a{color:#2a78d6;text-decoration:none;margin-right:16px}
+h2{font-size:19px;margin:40px 0 4px}
+.hint{font-size:13px;color:#898781;margin:0 0 10px}
+.entry{background:#fcfcfb;border:1px solid rgba(11,11,11,.10);border-radius:10px;padding:16px 20px;margin:14px 0}
+.date{display:inline-block;font-size:12px;font-weight:600;color:#52514e;background:#f0efec;border-radius:5px;padding:1px 8px;margin-left:8px;vertical-align:2px;white-space:nowrap}
+.entry h3{margin:0 0 8px;font-size:16.5px;display:flex;align-items:baseline;flex-wrap:wrap}
+p{margin:8px 0}
+ul,ol{margin:8px 0;padding-left:22px}
+li{margin:4px 0}
+.tile-row{display:flex;flex-wrap:wrap;gap:12px;margin:16px 0}
+.tile{flex:1 1 170px;background:#fcfcfb;border:1px solid rgba(11,11,11,.10);border-radius:10px;padding:12px 16px}
+.tile .v{font-size:21px;font-weight:700}
+.tile .k{font-size:12.5px;color:#52514e;margin-top:2px;line-height:1.5}
+figure.chart{margin:18px 0;background:#fcfcfb;border:1px solid rgba(11,11,11,.10);border-radius:10px;padding:14px 18px 8px}
+figure.chart h4{margin:2px 0 2px;font-size:15px}
+figure.chart .how{font-size:13px;color:#52514e;margin:0 0 8px}
+table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0}
+th,td{border-bottom:1px solid #e1e0d9;text-align:left;padding:6px 8px;vertical-align:top}
+th{color:#52514e;font-weight:600;border-bottom:1px solid #c3c2b7}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.warn{border-left:3px solid #fab219;background:#fffdf3;padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0}
+.crit{border-left:3px solid #d03b3b;background:#fff8f8;padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0}
+#tip{position:fixed;opacity:0;pointer-events:none;background:#0b0b0b;color:#fff;font-size:12.5px;line-height:1.5;padding:6px 10px;border-radius:6px;max-width:280px;z-index:9}
+[data-tip]{cursor:default}
+svg path[data-tip]:hover,svg [data-tip]:hover{filter:brightness(.92)}
+footer{margin-top:44px;padding-top:14px;border-top:1px solid #e1e0d9;font-size:12.5px;color:#898781}
+code{background:#f0efec;border-radius:4px;padding:1px 5px;font-size:12.5px}
+b.k{color:#52514e}
+</style>
+</head>
+<body>
+<div id="tip"></div>
+<div class="wrap">
+
+<header class="page">
+<h1>硬件方向工作记录：RTL 定版（双发射、T_MAX 修复）与功耗基线</h1>
+<div class="meta">
+<span>生成日期：<b>2026-08-31</b></span>
+<span>覆盖时段：<b>2026-08-30 至 2026-08-31</b></span>
+<span>工程目录：hb_fpga_impl / 01_rtl、05_sim、06_power</span>
+</div>
+<nav class="pagenav">
+<a href="2026-08-31_软件工作记录.html">→ 软件方向记录</a>
+<a href="2026-08-31_架构工作记录.html">→ 架构方向记录</a>
+<a href="../WORKLOG.md">完整工作日志（WORKLOG.md）</a>
+</nav>
+</header>
+
+<p>这一页只讲硬件（RTL 电路和物理实现）这两天做了什么。背景一句话：我们在给 HoloBrain HB-GD 0.2B 这个机器人策略模型做 FPGA 加速器，目标是把它编译成一份"分段指令流"，在 ZCU104 板子的 PL（可编程逻辑）上跑。前情和软件、架构部分见另外两页。</p>
+
+<div class="tile-row">
+<div class="tile"><div class="v">110,465 / 230,400</div><div class="k">LUT 逻辑占用 47.9%——还有一半余量，是将来扩列的空间</div></div>
+<div class="tile"><div class="v">1728 / 1728</div><div class="k">DSP 乘法器 100% 用满——扩列必须靠"一个 DSP 算两个 INT8 乘"（未实测）</div></div>
+<div class="tile"><div class="v">198.5 MHz</div><div class="k">布线后最高频率（时序差 1.038 ns 没达标 250 MHz，卡在列间转置网络）</div></div>
+<div class="tile"><div class="v">4465 mW</div><div class="k">布线后功耗（推荐基线口径），其中 85% 花在矩阵乘数据通路上</div></div>
+</div>
+
+<h2>时间线</h2>
+<p class="hint">按完成时间排列，每条标注日期。</p>
+
+<div class="entry">
+<h3>一、权重预取"双发射"写进调度器：GEMM 等权重的时间被藏起来 <span class="date">2026-08-30</span></h3>
+<p><b>解决什么问题。</b>FPGA 上的矩阵乘单元（GEMM）开算之前，要先从 DDR（板载内存）把这一层的 INT8 权重搬进片上的权重存储 WRAM。搬运期间，1728 个乘法器全在闲着。数据越多，这段空等越长。</p>
+<p><b>怎么做的。</b>把 WRAM 分成上下两个半区轮流用：阵列在算第 N 块权重时，DMA（自动搬数据的部件）同时在后台把第 N+1 块搬进另一个半区。调度器里加了一个 3 拍的小状态机负责发预取命令；等待点放在"被预取的那条装载指令自己执行的时刻"——数据没到就等，到了立刻开算。</p>
+<p><b>为什么选这个方案（裁决记录）。</b>备选方案要加第二个 DMA 引擎，或者加一个 864 位宽的数据选择器。两者 LUT 代价都大，而 DSP 已经满了、LUT 余量要留给以后扩列（见第六条）。所以最终方案<b>不碰数据通路、不加第二个 DMA</b>，改动全部收在调度器里，DMA 引擎一行没改、直接复用。</p>
+<p><b>保险机制。</b>硬件上有标签和半区互斥的守卫电路。软件要是排出违规的指令顺序，硬件会自动退回"先搬完再算"的串行模式——不会算错，只是慢。另外预取开关 pf_en 复位默认是关的：关着的时候，电路行为和旧版<b>逐拍一致</b>，这是后面"零漂移"验证能成立的前提。</p>
+<p><b>效果。</b>预取用例 8409 拍 → 8001 拍，单个用例省 4.9%。全模型实测省 3.0%（33.7M 拍，见架构页）——v0 调度里权重装载本来占比就小，预取的杠杆要等"权重驻留"优化之后才真正显现。</p>
+</div>
+
+<div class="entry">
+<h3>二、四道验证门全过，RTL 定版 <span class="date">2026-08-30</span></h3>
+<p>改动过了下面四道门才算"定版"。设计逻辑是每道门只信上一道门验证过的东西：</p>
+<ol>
+<li><b>零漂移回归（8/8）</b>：预取开关关掉时，8 个老用例的拍数逐个相等、输出逐位一致——证明新电路没有污染旧路径。</li>
+<li><b>机器冒烟（10/10）</b>：编译器生成的真实程序段，RTL 仿真 vs numpy 黄金模型，整片 DDR 内容逐字节一致。</li>
+<li><b>跨工具对拍（39/39）</b>：iverilog 和 Verilator 两个仿真器跑同一套用例（含预取开/关各档），DDR 内容逐字节一致；预取开与关的数据也逐字节相同——预取只省拍数、不改数值。</li>
+<li><b>全参数代表段（10/11）</b>：11 个代表段（覆盖 9 个模型阶段、最长指令流、执行 80 次的高频段）与黄金模型位精确对拍，10 个逐字节一致。唯一失配的一段是 BERT 注意力的 softmax 路径，见下面"开问题"。</li>
+</ol>
+<p>综合一次过：LUT 110,465（47.9%），时序差 WNS 与改前完全一致（−1.038 ns）——说明双发射本身几乎不花逻辑资源，面积增量全部来自下面第三条的 T_MAX 修复。</p>
+</div>
+
+<div class="entry">
+<h3>三、T_MAX 修复：不改这一行，量化模型根本跑不了 <span class="date">2026-08-30</span></h3>
+<p><b>现象。</b>requant 电路（把 INT32 累加结果压回 INT8 的那级）的移位数 s 原来上限是 8。但拿全模型校准表一对，真模型需要的 s 在 21 到 27 之间——上限根本不够。</p>
+<p><b>后果有多严重。</b>s 不够时，缩放乘法器的常数 m 会饱和，输出直接失真，而且<b>不报任何错</b>。这条不修，端到端数值验证必然失败，还会让人误以为是量化方案的问题。</p>
+<p><b>修复。</b>参数从 8 放到 39，一行改动，代价 +3,286 LUT。追加了 s 大于 8 的位精确测试用例，四道门重跑全过。</p>
+</div>
+
+<div class="entry">
+<h3>四、功耗三口径测完：布线后 4465 mW 作为基线 <span class="date">2026-08-30</span></h3>
+<figure class="chart">
+<h4>功耗三口径（整片 xczu7ev，单位 mW）</h4>
+<p class="how">这图怎么看：三根柱子是同一块电路在三个可信度下的功耗。综合后最乐观，SAIF（真实活动注记）最接近满负荷，布线后的 vectorless（无活动假设）是推荐对外引用的基线。</p>
+<svg viewBox="0 0 560 285" role="img" aria-label="功耗三口径（mW，整片）" style="width:100%;height:auto;display:block"><line x1="92" y1="240" x2="468" y2="240" stroke="#e1e0d9" stroke-width="1"/><text x="86" y="244" text-anchor="end" font-size="11" fill="#898781">0</text><line x1="92" y1="178.46153846153845" x2="468" y2="178.46153846153845" stroke="#e1e0d9" stroke-width="1"/><text x="86" y="182.46153846153845" text-anchor="end" font-size="11" fill="#898781">2,000</text><line x1="92" y1="116.92307692307692" x2="468" y2="116.92307692307692" stroke="#e1e0d9" stroke-width="1"/><text x="86" y="120.92307692307692" text-anchor="end" font-size="11" fill="#898781">4,000</text><line x1="92" y1="55.38461538461539" x2="468" y2="55.38461538461539" stroke="#e1e0d9" stroke-width="1"/><text x="86" y="59.38461538461539" text-anchor="end" font-size="11" fill="#898781">6,000</text><line x1="92" y1="240" x2="468" y2="240" stroke="#c3c2b7" stroke-width="1"/><path d="M122,240 L122,112.15384615384616 A4,4 0 0 1 126,108.15384615384616 L194,108.15384615384616 A4,4 0 0 1 198,112.15384615384616 L198,240 Z" fill="#2a78d6" data-tip="综合后、无真实活动：4285 mW"/><text x="160" y="100.15384615384616" text-anchor="middle" font-size="12.5" font-weight="600" fill="#0b0b0b">4285</text><text x="160" y="258" text-anchor="middle" font-size="12" fill="#52514e">综合后</text><text x="160" y="273" text-anchor="middle" font-size="12" fill="#52514e">(未布线)</text><path d="M242,240 L242,106.61538461538461 A4,4 0 0 1 246,102.61538461538461 L314,102.61538461538461 A4,4 0 0 1 318,106.61538461538461 L318,240 Z" fill="#2a78d6" data-tip="布线后 vectorless：4465 mW。推荐的上板前基线"/><text x="280" y="94.61538461538461" text-anchor="middle" font-size="12.5" font-weight="600" fill="#0b0b0b">4465</text><text x="280" y="258" text-anchor="middle" font-size="12" fill="#52514e">布线后</text><text x="280" y="273" text-anchor="middle" font-size="12" fill="#52514e">(推荐基线)</text><path d="M362,240 L362,57.599999999999994 A4,4 0 0 1 366,53.599999999999994 L434,53.599999999999994 A4,4 0 0 1 438,57.599999999999994 L438,240 Z" fill="#2a78d6" data-tip="冒烟用例 SAIF 注记（真实翻转）：6058 mW。全模型 SAIF 待注记"/><text x="400" y="45.599999999999994" text-anchor="middle" font-size="12.5" font-weight="600" fill="#0b0b0b">6058</text><text x="400" y="258" text-anchor="middle" font-size="12" fill="#52514e">冒烟 SAIF</text><text x="400" y="273" text-anchor="middle" font-size="12" fill="#52514e">(真实活动)</text></svg>
+<details><summary>数据表</summary>
+<table><thead><tr><th>口径</th><th class="num">功耗 (mW)</th><th>说明</th></tr></thead><tbody>
+<tr><td>综合后（未布线）</td><td class="num">4285</td><td>最乐观，只做参考</td></tr>
+<tr><td>布线后 vectorless</td><td class="num">4465</td><td>推荐基线；无真实活动假设</td></tr>
+<tr><td>冒烟用例 SAIF</td><td class="num">6058</td><td>小用例的真实翻转注记，偏高；全模型 SAIF 注记待做（进行中被中断）</td></tr>
+</tbody></table></details>
+</figure>
+<p>电都花在哪：85% 在矩阵乘的数据通路上。PE 阵列一项就占 64%——1728 个乘法器连轴转的翻转功耗，这是算力的直接代价，降不掉；能降的是下面"优化空间"里说的搬运。</p>
+<figure class="chart">
+<h4>GEMM 子系统里电都花在哪（u_core 共 3841 mW，布线后口径）</h4>
+<p class="how">这图怎么看：一根条一个部件，长度是它在布线后功耗里的份额。PE 阵列一枝独秀是健康信号——电花在计算上，而不是控制上。</p>
+<svg viewBox="0 0 680 262" role="img" aria-label="GEMM 子系统里电都花在哪（u_core 共 3841 mW）" style="width:100%;height:auto;display:block"><line x1="175" y1="10" x2="175" y2="232" stroke="#e1e0d9" stroke-width="1"/><text x="175" y="248" text-anchor="middle" font-size="11" fill="#898781">0</text><line x1="241" y1="10" x2="241" y2="232" stroke="#e1e0d9" stroke-width="1"/><text x="241" y="248" text-anchor="middle" font-size="11" fill="#898781">500</text><line x1="307" y1="10" x2="307" y2="232" stroke="#e1e0d9" stroke-width="1"/><text x="307" y="248" text-anchor="middle" font-size="11" fill="#898781">1000</text><line x1="373" y1="10" x2="373" y2="232" stroke="#e1e0d9" stroke-width="1"/><text x="373" y="248" text-anchor="middle" font-size="11" fill="#898781">1500</text><line x1="439" y1="10" x2="439" y2="232" stroke="#e1e0d9" stroke-width="1"/><text x="439" y="248" text-anchor="middle" font-size="11" fill="#898781">2000</text><line x1="505" y1="10" x2="505" y2="232" stroke="#e1e0d9" stroke-width="1"/><text x="505" y="248" text-anchor="middle" font-size="11" fill="#898781">2500</text><line x1="175" y1="10" x2="175" y2="232" stroke="#c3c2b7" stroke-width="1"/><path d="M175,14 L497.436,14 A4,4 0 0 1 501.436,18 L501.436,28 A4,4 0 0 1 497.436,32 L175,32 Z" fill="#2a78d6" data-tip="u_arr 2473 mW：1728 个 PE 的加乘与连线翻转，占 u_core 的 64%"/><text x="165" y="27.5" text-anchor="end" font-size="12.5" fill="#52514e">PE 阵列（1728 乘法）</text><text x="509.436" y="27.5" font-size="12.5" font-weight="600" fill="#0b0b0b">2473 mW · 64%</text><path d="M175,50 L242.28,50 A4,4 0 0 1 246.28,54 L246.28,64 A4,4 0 0 1 242.28,68 L175,68 Z" fill="#2a78d6" data-tip="WRAM 540 mW：108 个权重 bank 的读写翻转"/><text x="165" y="63.5" text-anchor="end" font-size="12.5" fill="#52514e">WRAM（权重存储）</text><text x="254.28" y="63.5" font-size="12.5" font-weight="600" fill="#0b0b0b">540 mW · 14%</text><path d="M175,86 L206.64,86 A4,4 0 0 1 210.64,90 L210.64,100 A4,4 0 0 1 206.64,104 L175,104 Z" fill="#2a78d6" data-tip="27 套 requant 270 mW：INT32 累加结果压回 INT8 的移位乘法"/><text x="165" y="99.5" text-anchor="end" font-size="12.5" fill="#52514e">requant（量化回收）</text><text x="218.64" y="99.5" font-size="12.5" font-weight="600" fill="#0b0b0b">270 mW · 7%</text><path d="M175,122 L215.088,122 A4,4 0 0 1 219.088,126 L219.088,136 A4,4 0 0 1 215.088,140 L175,140 Z" fill="#2a78d6" data-tip="调度器/守卫等控制逻辑，&lt;85 mW，其余为杂项连线"/><text x="165" y="135.5" text-anchor="end" font-size="12.5" fill="#52514e">控制及其他</text><text x="227.088" y="135.5" font-size="12.5" font-weight="600" fill="#0b0b0b">334 mW · 9%</text><path d="M175,158 L187.236,158 A4,4 0 0 1 191.236,162 L191.236,172 A4,4 0 0 1 187.236,176 L175,176 Z" fill="#2a78d6" data-tip="u_ctx 123 mW：URAM 激活缓存"/><text x="165" y="171.5" text-anchor="end" font-size="12.5" fill="#52514e">CTX（上下文缓存）</text><text x="199.236" y="171.5" font-size="12.5" font-weight="600" fill="#0b0b0b">123 mW · 3%</text><path d="M175,194 L184.332,194 A4,4 0 0 1 188.332,198 L188.332,208 A4,4 0 0 1 184.332,212 L175,212 Z" fill="#2a78d6" data-tip="u_cp 101 mW：列间转置交叉网络。LUT 大头但翻转低"/><text x="165" y="207.5" text-anchor="end" font-size="12.5" fill="#52514e">copy 交叉网络</text><text x="196.332" y="207.5" font-size="12.5" font-weight="600" fill="#0b0b0b">101 mW · 3%</text></svg>
+<p class="how">（顶层还有约 624 mW 的静态功耗与 IO，不在本图内；OOC 模式没有真实 IO 负载，上板会略高。）</p>
+</figure>
+<p><b>过程里踩的坑（记给下轮）：</b>①SAIF 文件（记录信号翻转活动的注记文件）必须包完整的外壳头并声明 backward 方向，缺了不报错但注记率为 0%——静默坑，用 XSim 生成参考文件才对出来。②布线太慢，先把时钟放松到 10 ns 跑完布线、报功耗前再改回 4 ns，结果与正常流程一致。布线后的设计检查点存在 <code>E:\ae_syn\pwr\ae_top_impl_ooc.dcp</code>，后续全模型 SAIF 注记直接用它。</p>
+</div>
+
+<div class="entry">
+<h3>五、仿真引擎换成 Verilator：全模型仿真从"几十年"变"两天" <span class="date">2026-08-30 至 2026-08-31</span></h3>
+<p><b>为什么必须换。</b>全模型一次推理 10.8 亿拍。老仿真器 iverilog 在全参数档只有每秒 10-30 拍，跑完一次要几十年——不可用。Verilator（把 Verilog 编译成 C++ 的仿真器）在大负载档实测<b>每秒 6845 拍</b>，快 300 倍以上。配合架构页的"类型去重并行"方法，全模型拍数两天内测完。</p>
+<p><b>换的过程没改一行 RTL。</b>两个仿真器出现过分歧，查下来都是测试激励（TB）的写法问题：阻塞赋值在时钟沿和设计代码竞争，两个工具的调度顺序不同，导致 DMA 读停顿拍数漂移。改成非阻塞赋值后 39/39 用例逐字节一致。另一个坑是 X 态：iverilog 对没写过的存储读出 X，Verilator 读出 0——在 TB 里加了 iverilog 专属的清零，三个环境语义对齐。</p>
+<p><b>留给上板的接口也顺带验证了。</b>程序装载通道（复位后从端口灌指令进指令 RAM，模拟 PS 到 PL 的装载）、内存初值文件读入、结果整片导出，两个工具都验证过与基线一致。也就是说，仿真和上板跑的是同一套二进制。</p>
+<p>交付物在 <code>05_sim/</code>：新 TB、基准脚本、39/39 对拍脚本、吞吐数据（bench.json）。</p>
+</div>
+
+<div class="entry">
+<h3>六、资源现状：LUT 一半空闲，DSP 已满 <span class="date">2026-08-31 汇总</span></h3>
+<figure class="chart">
+<h4>FPGA 资源占用（xczu7ev，108 列形态）</h4>
+<p class="how">这图怎么看：四根条是四类资源各用了多少百分比。DSP 到顶意味着"加列"这条路要换玩法（一个 DSP 算两个 INT8 乘）；LUT 只用一半，是扩列的逻辑空间。</p>
+<svg viewBox="0 0 680 190" role="img" aria-label="FPGA 资源占用（xczu7ev）" style="width:100%;height:auto;display:block"><line x1="175" y1="10" x2="175" y2="160" stroke="#e1e0d9" stroke-width="1"/><text x="175" y="176" text-anchor="middle" font-size="11" fill="#898781">0%</text><line x1="257.5" y1="10" x2="257.5" y2="160" stroke="#e1e0d9" stroke-width="1"/><text x="257.5" y="176" text-anchor="middle" font-size="11" fill="#898781">25%</text><line x1="340" y1="10" x2="340" y2="160" stroke="#e1e0d9" stroke-width="1"/><text x="340" y="176" text-anchor="middle" font-size="11" fill="#898781">50%</text><line x1="422.5" y1="10" x2="422.5" y2="160" stroke="#e1e0d9" stroke-width="1"/><text x="422.5" y="176" text-anchor="middle" font-size="11" fill="#898781">75%</text><line x1="505" y1="10" x2="505" y2="160" stroke="#e1e0d9" stroke-width="1"/><text x="505" y="176" text-anchor="middle" font-size="11" fill="#898781">100%</text><line x1="175" y1="10" x2="175" y2="160" stroke="#c3c2b7" stroke-width="1"/><path d="M175,14 L501,14 A4,4 0 0 1 505,18 L505,28 A4,4 0 0 1 501,32 L175,32 Z" fill="#2a78d6" data-tip="DSP 乘法器：1728 个全部用满。扩列只能靠一个 DSP 算两个 INT8 乘（packed PE，未实测）"/><text x="165" y="27.5" text-anchor="end" font-size="12.5" fill="#52514e">DSP（乘法器）</text><text x="513" y="27.5" font-size="12.5" font-weight="600" fill="#0b0b0b">100% · 1728 / 1728（满）</text><path d="M175,50 L391.11,50 A4,4 0 0 1 395.11,54 L395.11,64 A4,4 0 0 1 391.11,68 L175,68 Z" fill="#2a78d6" data-tip="URAM：64 / 96。主要给上下文缓存（CTX）"/><text x="165" y="63.5" text-anchor="end" font-size="12.5" fill="#52514e">URAM</text><text x="403.11" y="63.5" font-size="12.5" font-weight="600" fill="#0b0b0b">66.7% · 64 / 96</text><path d="M175,86 L329.07,86 A4,4 0 0 1 333.07,90 L333.07,100 A4,4 0 0 1 329.07,104 L175,104 Z" fill="#2a78d6" data-tip="LUT：110,465 / 230,400。双发射+T_MAX 修复共 +3,286"/><text x="165" y="99.5" text-anchor="end" font-size="12.5" fill="#52514e">LUT（逻辑）</text><text x="341.07" y="99.5" font-size="12.5" font-weight="600" fill="#0b0b0b">47.9% · 110,465 / 230,400</text><path d="M175,122 L300.69,122 A4,4 0 0 1 304.69,126 L304.69,136 A4,4 0 0 1 300.69,140 L175,140 Z" fill="#2a78d6" data-tip="BRAM：122.5 / 312。108 列权重存储（WRAM）等"/><text x="165" y="135.5" text-anchor="end" font-size="12.5" fill="#52514e">BRAM</text><text x="312.69" y="135.5" font-size="12.5" font-weight="600" fill="#0b0b0b">39.3% · 122.5 / 312</text></svg>
+<details><summary>数据表</summary>
+<table><thead><tr><th>资源</th><th class="num">用量</th><th class="num">总量</th><th class="num">占比</th><th>备注</th></tr></thead><tbody>
+<tr><td>LUT</td><td class="num">110,465</td><td class="num">230,400</td><td class="num">47.9%</td><td>双发射 + T_MAX 共 +3,286；扩列空间还有一半</td></tr>
+<tr><td>DSP</td><td class="num">1728</td><td class="num">1728</td><td class="num">100%</td><td>已满；扩列需 packed INT8 PE（一个 DSP 两个乘，未实测）</td></tr>
+<tr><td>BRAM</td><td class="num">122.5</td><td class="num">312</td><td class="num">39.3%</td><td>108 列 WRAM 等；扩到 216 列约 +108，仍在限内</td></tr>
+<tr><td>URAM</td><td class="num">64</td><td class="num">96</td><td class="num">66.7%</td><td>激活上下文缓存（CTX）</td></tr>
+</tbody></table></details>
+</figure>
+</div>
+
+<h2>开问题（硬件方向）</h2>
+<div class="crit">
+<p><b>⚠ seg_0221 的注意力 softmax 数值失配（未定根因）。</b>11 个全参数对拍段里唯一失配的一段：BERT 单段注意力，12 个头、每头 8×8 分数矩阵。RTL 输出比黄金模型系统性偏大约 5%，5923/12288 个输出字节不一致；拍数和 MAC 计数完全相同，所以问题锁定在 softmax 数值路径，不是搬运或编码。已逐一排除 exp 查找表、argmax、减最大值、除法差 1 这些单因素假设，下一步要往 softmax 单元（SM16）内部加探针看中间量。老验收套件的 39/39 用例<b>没有覆盖 8×8 非因果这个形状</b>，所以它漏到了今天。影响评估：拍数结论不受影响（拍数与数据无关，已实证）；端到端数值验证可能因它超判据。</p>
+</div>
+<div class="warn">
+<p><b>⚠ 250 MHz 没达标（198.5 MHz）。</b>时序差 1.038 ns，卡在列间转置（copy 交叉）路径。修复方案明确（改流水级），但按分工明确不在本轮——当前所有秒数都按 198.5 MHz 折算，250 MHz 数字只作参考上界。</p>
+</div>
+
+<h2>上板缺口清单（本轮明确不做）</h2>
+<p>按之前的决定，板级工程（Vitis、bitstream）后置。目前缺的东西列在这里，恢复上板时照单补：</p>
+<table>
+<thead><tr><th>缺项</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>xdc 约束文件</td><td>管脚、时钟、电平约束；当前只有 OOC（无 IO）综合</td></tr>
+<tr><td>Vitis 工程与 PS 侧软件</td><td>host 驱动现在跑在服务器 Python 上，上板要换成 A53 C 程序</td></tr>
+<tr><td>DDR 真实接口</td><td>当前 TB 用 readmemh 直接初始化模型文件；上板要走 AXI/HPC 口，DMA 的地址映射要接真实 DDR 控制器</td></tr>
+<tr><td>时钟与复位板级方案</td><td>198.5 MHz 主时钟的生成与分发、上电复位顺序</td></tr>
+</tbody>
+</table>
+<p>已经备好的：布线后设计检查点（routed DCP）、三口径功耗数据、以及与上板同构的指令/数据装载通路（第五条）。</p>
+
+<footer>
+<p>口径说明：拍数为 TB 计数器口径，不含 host 侧 CPU 算子时间；功耗为 Vivado 2021.2 报告，OOC 模式无真实 IO 负载；位精确 = 整片 DDR 仿真导出逐字节比对。数字来源：01_rtl/CHANGES.txt、06_power/POWER_SUMMARY.txt、05_sim/bench.json、05_sim/TOTAL.json。</p>
+<p>硬件 · 生成于 2026-08-31 · 覆盖 2026-08-30 至 2026-08-31</p>
+</footer>
+
+</div>
+<script>
+(function(){
+  var tip = document.getElementById('tip');
+  document.querySelectorAll('[data-tip]').forEach(function(el){
+    el.addEventListener('mousemove', function(e){
+      tip.textContent = el.getAttribute('data-tip');
+      tip.style.opacity = 1;
+      var x = Math.min(e.clientX + 14, window.innerWidth - 300);
+      tip.style.left = x + 'px';
+      tip.style.top = (e.clientY + 18) + 'px';
+    });
+    el.addEventListener('mouseleave', function(){ tip.style.opacity = 0; });
+  });
+})();
+</script>
+</body>
+</html>

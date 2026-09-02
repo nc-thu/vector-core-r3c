@@ -1,0 +1,5 @@
+[compiler] profile=full 段=2762 描述符=255470 最大SEQ=1009 权重blob=196.46MB 预估=4242.61ms@198.5MHz
+[compiler] GEMM=83457 COPY=67472 LOADW=15871 LOADCTX=52244 STORE=33664
+[compiler] 层统计: aug=984 host_bias=290 (fp_fallback=205,k大=85) 无bias=190 豁免=1 host_gemm_k超限=1
+[compiler] 注意力: OP_ATTN_S=12 两相GEMM+hostSM: rotary=120 temporal=60 jg=4 mha=6 bimha=6 swin=24 MSDeform(host)=6 requant校准=232 占位=0
+nofuse vs a2: 段数 2762/2762, seq.mem 不一致 0

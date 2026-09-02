@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>R3 方案 C 架构改进 2026-09-01</title>
+<style>
+  body{font-family:"Microsoft YaHei",SimSun,serif;max-width:1000px;margin:24px auto;padding:0 16px;color:#111;background:#fff;line-height:1.75}
+  h1{font-size:22px;border-bottom:2px solid #000;padding-bottom:6px}
+  h2{font-size:18px;border-left:5px solid #000;padding-left:8px;margin-top:32px}
+  h3{font-size:15px;margin-top:22px}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14px}
+  th,td{border:1px solid #444;padding:5px 8px;text-align:left}
+  th{background:#eee}
+  .num{text-align:right;font-variant-numeric:tabular-nums}
+  .ok{font-weight:bold}
+  .mono{font-family:Consolas,monospace;font-size:13px;background:#f4f4f4;padding:1px 4px}
+  .meta{color:#555;font-size:13px}
+  .box{border:1px dashed #888;padding:10px 14px;margin:12px 0;background:#fafafa}
+  .hint{color:#555;font-size:13px;margin:4px 0}
+  svg text{font-family:"Microsoft YaHei",SimSun,serif}
+</style>
+</head>
+<body>
+
+<h1>R3 方案 C 架构改进：模型落地与架构定案</h1>
+<p class="meta">生成时刻：2026-09-01 11:38:00　|　范围：架构模型 + 设计定案（RTL/综合按用户指示暂不启动）　|　模型脚本：<span class="mono">19_r3c_arch/r3c_model.py</span>（结果 <span class="mono">r3c_model.json</span>）　|　上一步：18_r3_plan 方案页（2026-09-01 11:17）</p>
+
+<h2>零、这轮做了什么</h2>
+<div class="box">
+<p>把方案 C 从"纸面方案"变成了"定案架构"：行组周期公式、新数据通路、状态机结构、和其它模块的接口全部定死，并写进了周期模型（对 a3 真实流 2580 段 / 69.2 万行组逐条重算）。<b>RTL 和综合没动</b>——按指示留给下一轮，本页就是下一轮开工时的施工图。</p>
+<p>模型结果（校准口径）：GEMM 336.4M → <b>185.3M（−44.9%）</b>；总时间当前验证平台（TB）427M → <b>332.1M / 1.67ms（−22.2%）</b>，真机 HP64 口径 <b>275.6M / 1.39ms（−35.4%）</b>。</p>
+</div>
+
+<h2>一、方案 C 定案的架构（改什么、不改什么）</h2>
+<p><b>先说不改的（这是方案便宜的原因）：</b>描述符 256b 格式、编译器、调度器 u_sched、CTX 两个口的仲裁、WRAM、DMA 双引擎、R2 的 pf_ctx_stall 握手、测试平台——全部不动。R3 完全藏在一条 GEMM 描述符内部，对外只表现为"GEMM 变快了"。</p>
+<p><b>改的只有 GEMM 引擎内部三处：</b></p>
+<ol>
+<li><b>每个 PE 加一份 27 位快照寄存器</b>（1728 个 PE，各 28 位：快照 27 位 + 末脉冲 1 位）。乘加仍然在 DSP 里做，但结果一落地就抄进快照，抄完立刻清零累加器，下一行组的喂数马上开始。读出（量化、写回）全部改从快照走。</li>
+<li><b>末脉冲随 A 数据流传播</b>。控制器在最后一个 k 切片进阵列时打一个标记，这个标记顺着 A 链一拍传一个 PE，传到谁谁就"快照+清零"。每个 PE 在自己该快照的那一拍自动动手，控制器不用管 1728 个 PE 的时序。</li>
+<li><b>ae_gemm 状态机拆成两条并行流水</b>：喂数道（清零+喂阵列）和读出道（量化读出+tile_buf 双缓冲+写回），两组之间以"末行脉冲"对齐。行组周期从 465 拍（串行全流程）变成 max(喂数, 读出链)。</li>
+</ol>
+
+<h2>二、定案的数据通路（新 GEMM 引擎内部）</h2>
+<svg viewBox="0 0 920 400" style="width:100%;max-width:920px;background:#fff">
+  <!-- 喂数道 -->
+  <text x="10" y="22" font-size="14" font-weight="bold">喂数道（行组 i+1 的乘加，行组 i 还在读出时就开始）</text>
+  <rect x="10" y="32" width="120" height="46" fill="#fff" stroke="#000"/>
+  <text x="26" y="50" font-size="11">CTX A 口读 A 图</text>
+  <text x="30" y="66" font-size="11">(lane=m mod 16)</text>
+  <rect x="10" y="90" width="120" height="40" fill="#fff" stroke="#000"/>
+  <text x="30" y="108" font-size="11">WRAM 读 B 图</text>
+  <text x="34" y="124" font-size="11">(1 拍/k)</text>
+  <line x1="130" y1="55" x2="165" y2="80" stroke="#000" stroke-width="1"/>
+  <line x1="130" y1="110" x2="165" y2="90" stroke="#000" stroke-width="1"/>
+  <!-- 阵列 -->
+  <rect x="165" y="40" width="260" height="110" fill="#eee" stroke="#000" stroke-width="1.5"/>
+  <text x="200" y="62" font-size="12" font-weight="bold">16×108 脉动阵列（1728 DSP）</text>
+  <text x="180" y="84" font-size="11">乘加仍在 DSP 累加器里做</text>
+  <text x="180" y="102" font-size="11">A 链上带"末脉冲"标记，传到哪个 PE</text>
+  <text x="180" y="120" font-size="11">哪个 PE 就【抄结果进快照 + 清累加器】</text>
+  <text x="180" y="138" font-size="11">→ 下一行组立刻可喂数，不用等排空</text>
+  <!-- 快照箭头 -->
+  <line x1="425" y1="95" x2="480" y2="95" stroke="#000" stroke-width="2"/>
+  <text x="432" y="86" font-size="11">27b×1728</text>
+  <text x="432" y="112" font-size="11">快照</text>
+  <!-- 读出道 -->
+  <text x="10" y="182" font-size="14" font-weight="bold">读出道（走上一组的快照，与喂数并行）</text>
+  <rect x="480" y="190" width="130" height="46" fill="#fff" stroke="#000"/>
+  <text x="494" y="208" font-size="11">快照 → 量化读出</text>
+  <text x="494" y="224" font-size="11">(64 拍, rq_ms×27)</text>
+  <rect x="635" y="190" width="130" height="46" fill="#fff" stroke="#000"/>
+  <text x="660" y="208" font-size="11">tile_buf 双缓冲</text>
+  <text x="655" y="224" font-size="11">(16×108B × 2 组)</text>
+  <rect x="790" y="190" width="120" height="46" fill="#fff" stroke="#000"/>
+  <text x="812" y="208" font-size="11">CTX B 口写回</text>
+  <text x="806" y="224" font-size="11">(普通/转置两种)</text>
+  <line x1="610" y1="213" x2="635" y2="213" stroke="#000" stroke-width="1"/>
+  <line x1="765" y1="213" x2="790" y2="213" stroke="#000" stroke-width="1"/>
+  <!-- 控制器 -->
+  <rect x="165" y="190" width="260" height="60" fill="#fafafa" stroke="#000" stroke-dasharray="5,3"/>
+  <text x="190" y="212" font-size="11">ae_gemm 状态机（拆成两段并发）</text>
+  <text x="190" y="230" font-size="11">喂数段：清零→喂阵列→发末脉冲</text>
+  <text x="190" y="244" font-size="11">读出段：量化→双缓冲→写回（从快照侧）</text>
+  <!-- 周期注释 -->
+  <text x="10" y="280" font-size="13" font-weight="bold">行组周期：max(喂数 k+2, 读出链 68+wb)</text>
+  <text x="10" y="302" font-size="12">· k=257（注意力主段）：喂数 259 拍 > 读出链 → 周期 259 拍（现状 461，省 44%）</text>
+  <text x="10" y="322" font-size="12">· k=32（FFN 主段）：喂数 34 拍 &lt; 读出链 85 拍 → 周期 85 拍（现状 250，省 66%）</text>
+  <text x="10" y="342" font-size="12">· 全帧 69.2 万行组平均：465 拍 → 259 拍（省 44.9%）</text>
+  <text x="10" y="372" font-size="11" fill="#555">怎么看：上半部分是"算"，下半部分是"取结果"，中间那根粗箭头（快照）是两段的分界——</text>
+  <text x="10" y="388" font-size="11" fill="#555">上一组的结果从快照侧慢慢读走，不影响阵列给下一组算。以前这两件事是排队的，现在并排。</text>
+</svg>
+
+<h2>三、模型怎么改的（可复算）</h2>
+<p>新模型脚本 <span class="mono">r3c_model.py</span> 对 a3 真实流逐条 GEMM 描述符重算，公式只有一处变化：</p>
+<table>
+<tr><th></th><th>行组周期公式</th><th>整条描述符</th></tr>
+<tr><td>现状</td><td>1 + (k+2) + 排空127 + 量化64 + 对齐2 + 杂2 + 写回wb + 1</td><td rowspan="2">2 + 2 + 行组数 × 周期（方案 C 另加末组读出链整段暴露 16 拍）</td></tr>
+<tr><td>方案 C</td><td><b>max(k+2, 64+2+2+wb)</b>（喂数与读出链并行，长的一方定周期）</td></tr>
+</table>
+<p>校准沿用 a3 账本的系数（×1.0514，外样 99.9%），lane 模型（计算/读/写三路取最大 + 依赖停顿 θ=40M）沿用 13_rtl_plan 的口径，保证和上一轮数字可比。跑一遍即复现：</p>
+<pre>cd hb_fpga_impl/19_r3c_arch && python r3c_model.py    # 输出 r3c_model.json</pre>
+
+<h2>四、模型结果（校准口径）</h2>
+<table>
+<tr><th>指标</th><th>R1+R2 现状</th><th>R3 方案 C</th><th>变化</th></tr>
+<tr><td>GEMM 拍数</td><td class="num">336.4M</td><td class="num"><b>185.3M</b></td><td class="num"><b>−44.9%</b></td></tr>
+<tr><td>DSP 阵列利用率</td><td class="num">39.7%</td><td class="num">73.0%</td><td class="num">+33.3 个百分点</td></tr>
+<tr><td>计算通道（GEMM+COPY+ACTV）</td><td class="num">386.7M</td><td class="num">235.6M</td><td class="num">−39.1%</td></tr>
+<tr><td><b>总拍 · TB（当前验证平台）</b></td><td class="num">426.7M / 2.15ms</td><td class="num"><b>332.1M / 1.67ms</b></td><td class="num"><b>−22.2%</b></td></tr>
+<tr><td><b>总拍 · 真机 HP64</b></td><td class="num">426.7M / 2.15ms</td><td class="num"><b>275.6M / 1.39ms</b></td><td class="num"><b>−35.4%</b></td></tr>
+<tr><td>GEMM 时间占比（TB / HP64）</td><td class="num">78.8% / 78.8%</td><td class="num">55.8% / 67.2%</td><td>瓶颈换位（见下）</td></tr>
+</table>
+<p>省的拍按 k 值分桶（模型输出 top-k）：k=257 省 62.9M、k=32 省 25.8M、k=4 省 11.7M、k=49 省 11.5M——注意力段和 FFN 段都吃到，不是偏科。</p>
+<p><b>GEMM 占比从 78.8% 掉到 55.8%（TB）不是坏事。</b>占比下降的原因是计算这条车道从 386.7M 压到了 235.6M，压到了读车道（292.1M）下面——现在轮到"等数据"当瓶颈。这正是下一步（压缩 LOAD，见 20_read_compress 页）的进场条件。</p>
+
+<h2>五、给 RTL 轮的施工图（本轮定案，下轮照此实施）</h2>
+<table>
+<tr><th>文件</th><th>改动</th><th>验收门（照搬 18_r3_plan 的五步）</th></tr>
+<tr><td><span class="mono">ae_pe.sv</span></td><td>+27b 快照、末脉冲随 A 链传播（+1 FF）、end 拍"快照+清零"</td><td>微观 TB：末脉冲逐 PE 到拍探针</td></tr>
+<tr><td><span class="mono">ae_sysarr.sv</span></td><td>acc_row 读口从快照侧出；clr 退化为复位兜底</td><td>requant 对拍不回退</td></tr>
+<tr><td><span class="mono">ae_gemm.sv</span></td><td>FSM 两段化；tile_buf 双缓冲；slot 稳态对齐</td><td>iverilog 21 用例位精确 + 全芯片 12/12 → Verilator 三段 PF=0/1 → 综合 WNS ≥ −1.038</td></tr>
+</table>
+<p>风险与对策不变：末级 WNS −1.038 余量薄，最大的新路径是末脉冲→快照使能的长线网（复用 A 链布线解决）；读出链自带 4 拍余量可垫拆拍。R2 的 pf_ctx_stall 让拍模式会从"集中块"变"零散"，regression 必须带 PF=1 长窗口段（seg_0602 类）。</p>
+
+<h2>六、这轮的边界（如实说明）</h2>
+<ul>
+<li>本轮<b>没有写 RTL、没有跑综合</b>——按指示，方案 C 落到"架构 + 模型"为止。185.3M 是模型预测值，不是实测；RTL 位的验证门在第五节列好，下一轮开工即用。</li>
+<li>模型口径与上一轮（18_r3_plan）一致：读出链按整段串行计（保守），实际 WB 与量化可再重叠一点，真做出来只会更好不会更差。</li>
+<li>18_r3_plan 里写的 A/C 两方案：本轮定案取 C（快照）；方案 A（不动 PE 的保底）保留为 RTL 遇阻时的退路。</li>
+</ul>
+
+<div class="box">
+<b>一句话：</b>方案 C 的架构定案 + 模型账已落盘（GEMM −44.9%、TB 总拍 −22.2%、HP64 −35.4%），施工图和验收门齐备，等一声令下进 RTL。
+</div>
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+module,n_layers,n_w4,bytes_w8,bytes_after,saving_pct_of_module,share_of_total_saving
+text_bert,72,72,84934656,42467616,50.0,74.7
+vision_2d,52,52,27431424,14148288,48.4,23.4
+vision_3d,56,0,938240,938240,0.0,0.0
+fusion,103,0,23298432,23298432,0.0,0.0
+action_head,151,0,20720128,20720128,0.0,0.0
+neck_convs,4,4,2113536,1056784,50.0,1.9
+TOTAL,438,128,159469184,102629488,35.6,100.0

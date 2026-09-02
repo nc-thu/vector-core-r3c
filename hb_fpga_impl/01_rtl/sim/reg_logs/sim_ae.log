@@ -1,0 +1,33 @@
+../rtl/ae_gemm.sv:149: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_gemm.sv:149: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_gemm.sv:149: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_gemm.sv:149: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_softmax.sv:99: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_softmax.sv:99: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_core.sv:203: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_core.sv:203: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_core.sv:203: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_core.sv:203: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_core.sv:210: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_core.sv:210: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_core.sv:210: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_gemm.sv:149: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_gemm.sv:149: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_gemm.sv:149: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_gemm.sv:149: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_softmax.sv:99: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_softmax.sv:99: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_core.sv:203: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_core.sv:203: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_core.sv:203: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_core.sv:203: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_core.sv:210: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_core.sv:210: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_core.sv:210: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+WARNING: ../rtl/ae_core.sv:266: $readmemh(seq.mem): Not enough words in the file for the requested range [0:2047].
+WARNING: ../rtl/ae_core.sv:266: $readmemh(seq.mem): Not enough words in the file for the requested range [0:63].
+[tb] REF -pf0: cycles=8405 gemm=5973 dma=844 mac_total=86016 skip_macs=0 skip_stages=0
+[tb] PRIM-pf0: cycles=8149 gemm=5720 dma=843 mac_total=82944 skip_macs=2048 skip_stages=2
+[tb] PRIM-pf1: cycles=8149 gemm=5720 dma=843 mac_total=82944 skip_macs=2048 skip_stages=2
+[tb] 三遍 dump 完成（compare.py 比 REF/PRIM；prim2 vs prim 逐位 diff）
+tb_ae.sv:220: $finish called at 247326000 (1ps)

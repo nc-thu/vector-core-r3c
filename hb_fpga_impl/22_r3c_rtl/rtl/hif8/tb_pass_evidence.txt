@@ -1,0 +1,6 @@
+[tb ] ==> 全部 192 个 lane 结果位精确一致 (PD=1 SHARE_B=0) PASS
+[tb ] ==> 全部 192 个 lane 结果位精确一致 (PD=1 SHARE_B=1) PASS
+[tb ] ==> 全部 192 个 lane 结果位精确一致 (PD=2 SHARE_B=0) PASS
+[tb ] ==> 全部 192 个 lane 结果位精确一致 (PD=2 SHARE_B=1) PASS
+[tb ] ==> 全部 192 个 lane 结果位精确一致 (PD=3 SHARE_B=0) PASS
+[tb ] ==> 全部 192 个 lane 结果位精确一致 (PD=3 SHARE_B=1) PASS

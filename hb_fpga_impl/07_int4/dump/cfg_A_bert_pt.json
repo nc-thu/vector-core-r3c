@@ -1,0 +1,271 @@
+{
+ "tag": "A_bert_pt",
+ "real": [
+  {
+   "sample": 0,
+   "per_seed": [
+    {
+     "seed": 20260830,
+     "mae_all": 0.017990905791521072,
+     "max_all": 0.1615925431251526,
+     "mae_jointpos": 0.019401011988520622,
+     "max_jointpos": 0.14137399196624756,
+     "mae_rot6d": 0.01823239028453827,
+     "mae_gripper": 0.015131852589547634,
+     "max_gripper": 0.0978846549987793
+    },
+    {
+     "seed": 20260901,
+     "mae_all": 0.01864674501121044,
+     "max_all": 0.16830801963806152,
+     "mae_jointpos": 0.02062396891415119,
+     "max_jointpos": 0.13965213298797607,
+     "mae_rot6d": 0.01873648911714554,
+     "mae_gripper": 0.016131030395627022,
+     "max_gripper": 0.1319580078125
+    },
+    {
+     "seed": 20260902,
+     "mae_all": 0.018564237281680107,
+     "max_all": 0.140350341796875,
+     "mae_jointpos": 0.02069934271275997,
+     "max_jointpos": 0.13419723510742188,
+     "mae_rot6d": 0.018737776204943657,
+     "mae_gripper": 0.015387849882245064,
+     "max_gripper": 0.1052699089050293
+    }
+   ],
+   "mean": {
+    "mae_all": 0.01840062936147054,
+    "max_all": 0.1567503015200297,
+    "mae_jointpos": 0.02024144120514393,
+    "max_jointpos": 0.13840778668721518,
+    "mae_rot6d": 0.018568885202209156,
+    "mae_gripper": 0.015550244289139906,
+    "max_gripper": 0.11170419057210286
+   }
+  },
+  {
+   "sample": 1,
+   "per_seed": [
+    {
+     "seed": 20260830,
+     "mae_all": 0.022529125213623047,
+     "max_all": 0.3938795328140259,
+     "mae_jointpos": 0.030897904187440872,
+     "max_jointpos": 0.3938795328140259,
+     "mae_rot6d": 0.01999741606414318,
+     "mae_gripper": 0.029350612312555313,
+     "max_gripper": 0.38382625579833984
+    },
+    {
+     "seed": 20260901,
+     "mae_all": 0.01996448077261448,
+     "max_all": 0.3117159605026245,
+     "mae_jointpos": 0.025547852739691734,
+     "max_jointpos": 0.3117159605026245,
+     "mae_rot6d": 0.01823679730296135,
+     "mae_gripper": 0.02474719099700451,
+     "max_gripper": 0.2785782814025879
+    },
+    {
+     "seed": 20260902,
+     "mae_all": 0.02188708819448948,
+     "max_all": 0.37189996242523193,
+     "mae_jointpos": 0.029776889830827713,
+     "max_jointpos": 0.37189996242523193,
+     "mae_rot6d": 0.019649658352136612,
+     "mae_gripper": 0.027421897277235985,
+     "max_gripper": 0.3509937524795532
+    }
+   ],
+   "mean": {
+    "mae_all": 0.02146023139357567,
+    "max_all": 0.35916515191396076,
+    "mae_jointpos": 0.02874088225265344,
+    "max_jointpos": 0.35916515191396076,
+    "mae_rot6d": 0.019294623906413715,
+    "mae_gripper": 0.027173233528931934,
+    "max_gripper": 0.33779942989349365
+   }
+  },
+  {
+   "sample": 2,
+   "per_seed": [
+    {
+     "seed": 20260830,
+     "mae_all": 0.021678315475583076,
+     "max_all": 0.30272865295410156,
+     "mae_jointpos": 0.019975420087575912,
+     "max_jointpos": 0.16914939880371094,
+     "mae_rot6d": 0.021232111379504204,
+     "mae_gripper": 0.026058459654450417,
+     "max_gripper": 0.2635093927383423
+    },
+    {
+     "seed": 20260901,
+     "mae_all": 0.021763935685157776,
+     "max_all": 0.30309319496154785,
+     "mae_jointpos": 0.01898420974612236,
+     "max_jointpos": 0.1482054591178894,
+     "mae_rot6d": 0.021591903641819954,
+     "mae_gripper": 0.025575881823897362,
+     "max_gripper": 0.29695916175842285
+    },
+    {
+     "seed": 20260902,
+     "mae_all": 0.021631082519888878,
+     "max_all": 0.3117213249206543,
+     "mae_jointpos": 0.020686758682131767,
+     "max_jointpos": 0.175639808177948,
+     "mae_rot6d": 0.021098176017403603,
+     "mae_gripper": 0.02577291987836361,
+     "max_gripper": 0.29450225830078125
+    }
+   ],
+   "mean": {
+    "mae_all": 0.021691111226876576,
+    "max_all": 0.3058477242787679,
+    "mae_jointpos": 0.01988212950527668,
+    "max_jointpos": 0.1643315553665161,
+    "mae_rot6d": 0.021307397012909252,
+    "mae_gripper": 0.02580242045223713,
+    "max_gripper": 0.28499027093251544
+   }
+  }
+ ],
+ "syn": {
+  "per_seed": [
+   {
+    "seed": 1000,
+    "mae_all": 0.03085721842944622,
+    "max_all": 0.40344470739364624,
+    "mae_jointpos": 0.016949821263551712,
+    "max_jointpos": 0.1267472505569458,
+    "mae_rot6d": 0.03180558606982231,
+    "mae_gripper": 0.039074480533599854,
+    "max_gripper": 0.24799856543540955
+   },
+   {
+    "seed": 1100,
+    "mae_all": 0.030654074624180794,
+    "max_all": 0.3387829065322876,
+    "mae_jointpos": 0.021749986335635185,
+    "max_jointpos": 0.1518254280090332,
+    "mae_rot6d": 0.03088102675974369,
+    "mae_gripper": 0.03819648176431656,
+    "max_gripper": 0.24763992428779602
+   },
+   {
+    "seed": 1200,
+    "mae_all": 0.03175894916057587,
+    "max_all": 0.35007840394973755,
+    "mae_jointpos": 0.017261724919080734,
+    "max_jointpos": 0.14270824193954468,
+    "mae_rot6d": 0.0329444594681263,
+    "mae_gripper": 0.03914301469922066,
+    "max_gripper": 0.20662415027618408
+   }
+  ],
+  "mean": {
+   "mae_all": 0.031090080738067627,
+   "max_all": 0.36410200595855713,
+   "mae_jointpos": 0.01865384417275588,
+   "max_jointpos": 0.14042697350184122,
+   "mae_rot6d": 0.031877024099230766,
+   "mae_gripper": 0.03880465899904569,
+   "max_gripper": 0.23408754666646323
+  }
+ },
+ "policy": [
+  {
+   "sample": 0,
+   "mae_vs_truth_all14": 0.04172515496611595,
+   "mae_vs_w8_all14": 0.005754129029810429
+  },
+  {
+   "sample": 1,
+   "mae_vs_truth_all14": 0.05723195523023605,
+   "mae_vs_w8_all14": 0.005443095229566097
+  },
+  {
+   "sample": 2,
+   "mae_vs_truth_all14": 0.0636603906750679,
+   "mae_vs_w8_all14": 0.005038749426603317
+  }
+ ],
+ "config": {
+  "text_encoder.language_backbone.body.model.encoder.layer.0.attention.self.query": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.0.attention.self.key": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.0.attention.self.value": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.0.attention.output.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.0.intermediate.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.0.output.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.1.attention.self.query": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.1.attention.self.key": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.1.attention.self.value": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.1.attention.output.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.1.intermediate.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.1.output.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.2.attention.self.query": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.2.attention.self.key": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.2.attention.self.value": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.2.attention.output.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.2.intermediate.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.2.output.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.3.attention.self.query": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.3.attention.self.key": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.3.attention.self.value": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.3.attention.output.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.3.intermediate.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.3.output.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.4.attention.self.query": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.4.attention.self.key": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.4.attention.self.value": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.4.attention.output.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.4.intermediate.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.4.output.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.5.attention.self.query": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.5.attention.self.key": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.5.attention.self.value": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.5.attention.output.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.5.intermediate.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.5.output.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.6.attention.self.query": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.6.attention.self.key": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.6.attention.self.value": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.6.attention.output.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.6.intermediate.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.6.output.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.7.attention.self.query": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.7.attention.self.key": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.7.attention.self.value": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.7.attention.output.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.7.intermediate.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.7.output.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.8.attention.self.query": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.8.attention.self.key": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.8.attention.self.value": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.8.attention.output.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.8.intermediate.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.8.output.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.9.attention.self.query": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.9.attention.self.key": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.9.attention.self.value": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.9.attention.output.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.9.intermediate.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.9.output.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.10.attention.self.query": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.10.attention.self.key": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.10.attention.self.value": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.10.attention.output.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.10.intermediate.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.10.output.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.11.attention.self.query": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.11.attention.self.key": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.11.attention.self.value": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.11.attention.output.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.11.intermediate.dense": "w4pt",
+  "text_encoder.language_backbone.body.model.encoder.layer.11.output.dense": "w4pt"
+ }
+}

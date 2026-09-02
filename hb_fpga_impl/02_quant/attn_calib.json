@@ -1,0 +1,510 @@
+{
+ "_meta": {
+  "n_bringup": 8,
+  "samples": [
+   "/tmp/ae_hostdrv/sample_000.npz",
+   "/tmp/ae_hostdrv/sample_001.npz"
+  ],
+  "note": "absmax of the fp tensor exactly as host quantizes it into the PL QK^T GEMM (post-rotary, no attn scale, JG without query_pos, temporal without joint_distance, MHA with in_proj bias). sigma_S = absmax/127."
+ },
+ "backbone.stages.0.blocks.0.attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "backbone.stages.0.blocks.0.attn.w_msa": {
+  "family": "swin",
+  "s_absmax": 53.56056594848633,
+  "calls": 10
+ },
+ "backbone.stages.0.blocks.1.attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "backbone.stages.0.blocks.1.attn.w_msa": {
+  "family": "swin",
+  "s_absmax": 108.4782485961914,
+  "calls": 10
+ },
+ "backbone.stages.1.blocks.0.attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "backbone.stages.1.blocks.0.attn.w_msa": {
+  "family": "swin",
+  "s_absmax": 55.53581237792969,
+  "calls": 10
+ },
+ "backbone.stages.1.blocks.1.attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "backbone.stages.1.blocks.1.attn.w_msa": {
+  "family": "swin",
+  "s_absmax": 92.07471466064453,
+  "calls": 10
+ },
+ "backbone.stages.2.blocks.0.attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "backbone.stages.2.blocks.0.attn.w_msa": {
+  "family": "swin",
+  "s_absmax": 54.60274887084961,
+  "calls": 10
+ },
+ "backbone.stages.2.blocks.1.attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "backbone.stages.2.blocks.1.attn.w_msa": {
+  "family": "swin",
+  "s_absmax": 87.37432861328125,
+  "calls": 10
+ },
+ "backbone.stages.2.blocks.2.attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "backbone.stages.2.blocks.2.attn.w_msa": {
+  "family": "swin",
+  "s_absmax": 82.06407928466797,
+  "calls": 10
+ },
+ "backbone.stages.2.blocks.3.attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "backbone.stages.2.blocks.3.attn.w_msa": {
+  "family": "swin",
+  "s_absmax": 85.461181640625,
+  "calls": 10
+ },
+ "backbone.stages.2.blocks.4.attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "backbone.stages.2.blocks.4.attn.w_msa": {
+  "family": "swin",
+  "s_absmax": 79.60714721679688,
+  "calls": 10
+ },
+ "backbone.stages.2.blocks.5.attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "backbone.stages.2.blocks.5.attn.w_msa": {
+  "family": "swin",
+  "s_absmax": 80.94672393798828,
+  "calls": 10
+ },
+ "backbone.stages.3.blocks.0.attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "backbone.stages.3.blocks.0.attn.w_msa": {
+  "family": "swin",
+  "s_absmax": 75.59501647949219,
+  "calls": 10
+ },
+ "backbone.stages.3.blocks.1.attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "backbone.stages.3.blocks.1.attn.w_msa": {
+  "family": "swin",
+  "s_absmax": 89.23773956298828,
+  "calls": 10
+ },
+ "backbone_3d.stages.0.blocks.0.attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "backbone_3d.stages.0.blocks.0.attn.w_msa": {
+  "family": "swin",
+  "s_absmax": 68.88936614990234,
+  "calls": 10
+ },
+ "backbone_3d.stages.0.blocks.1.attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "backbone_3d.stages.0.blocks.1.attn.w_msa": {
+  "family": "swin",
+  "s_absmax": 77.3095474243164,
+  "calls": 10
+ },
+ "backbone_3d.stages.1.blocks.0.attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "backbone_3d.stages.1.blocks.0.attn.w_msa": {
+  "family": "swin",
+  "s_absmax": 28.293020248413086,
+  "calls": 10
+ },
+ "backbone_3d.stages.1.blocks.1.attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "backbone_3d.stages.1.blocks.1.attn.w_msa": {
+  "family": "swin",
+  "s_absmax": 50.47066116333008,
+  "calls": 10
+ },
+ "backbone_3d.stages.2.blocks.0.attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "backbone_3d.stages.2.blocks.0.attn.w_msa": {
+  "family": "swin",
+  "s_absmax": 40.373199462890625,
+  "calls": 10
+ },
+ "backbone_3d.stages.2.blocks.1.attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "backbone_3d.stages.2.blocks.1.attn.w_msa": {
+  "family": "swin",
+  "s_absmax": 26.0670166015625,
+  "calls": 10
+ },
+ "backbone_3d.stages.2.blocks.2.attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "backbone_3d.stages.2.blocks.2.attn.w_msa": {
+  "family": "swin",
+  "s_absmax": 51.33113479614258,
+  "calls": 10
+ },
+ "backbone_3d.stages.2.blocks.3.attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "backbone_3d.stages.2.blocks.3.attn.w_msa": {
+  "family": "swin",
+  "s_absmax": 93.68342590332031,
+  "calls": 10
+ },
+ "backbone_3d.stages.2.blocks.4.attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "backbone_3d.stages.2.blocks.4.attn.w_msa": {
+  "family": "swin",
+  "s_absmax": 30.00661849975586,
+  "calls": 10
+ },
+ "backbone_3d.stages.2.blocks.5.attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "backbone_3d.stages.2.blocks.5.attn.w_msa": {
+  "family": "swin",
+  "s_absmax": 48.4710578918457,
+  "calls": 10
+ },
+ "backbone_3d.stages.3.blocks.0.attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "backbone_3d.stages.3.blocks.0.attn.w_msa": {
+  "family": "swin",
+  "s_absmax": 69.87814331054688,
+  "calls": 10
+ },
+ "backbone_3d.stages.3.blocks.1.attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "backbone_3d.stages.3.blocks.1.attn.w_msa": {
+  "family": "swin",
+  "s_absmax": 79.8586196899414,
+  "calls": 10
+ },
+ "decoder.layers.1": {
+  "family": "temporal",
+  "s_absmax": 92.62318420410156,
+  "calls": 100
+ },
+ "decoder.layers.12": {
+  "family": "temporal",
+  "s_absmax": 84.56282043457031,
+  "calls": 100
+ },
+ "decoder.layers.15": {
+  "family": "rotary",
+  "s_absmax": 81.76618957519531,
+  "calls": 100
+ },
+ "decoder.layers.17": {
+  "family": "rotary",
+  "s_absmax": 39.45716857910156,
+  "calls": 100
+ },
+ "decoder.layers.23": {
+  "family": "temporal",
+  "s_absmax": 53.06926345825195,
+  "calls": 100
+ },
+ "decoder.layers.26": {
+  "family": "rotary",
+  "s_absmax": 76.28145599365234,
+  "calls": 100
+ },
+ "decoder.layers.28": {
+  "family": "rotary",
+  "s_absmax": 79.46537780761719,
+  "calls": 100
+ },
+ "decoder.layers.34": {
+  "family": "temporal",
+  "s_absmax": 52.23019790649414,
+  "calls": 100
+ },
+ "decoder.layers.37": {
+  "family": "rotary",
+  "s_absmax": 70.40009307861328,
+  "calls": 100
+ },
+ "decoder.layers.39": {
+  "family": "rotary",
+  "s_absmax": 50.59280776977539,
+  "calls": 100
+ },
+ "decoder.layers.4": {
+  "family": "rotary",
+  "s_absmax": 90.13652038574219,
+  "calls": 100
+ },
+ "decoder.layers.45": {
+  "family": "temporal",
+  "s_absmax": 65.10033416748047,
+  "calls": 100
+ },
+ "decoder.layers.48": {
+  "family": "rotary",
+  "s_absmax": 71.00352478027344,
+  "calls": 100
+ },
+ "decoder.layers.50": {
+  "family": "rotary",
+  "s_absmax": 52.56011199951172,
+  "calls": 100
+ },
+ "decoder.layers.56": {
+  "family": "temporal",
+  "s_absmax": 105.43356323242188,
+  "calls": 100
+ },
+ "decoder.layers.59": {
+  "family": "rotary",
+  "s_absmax": 62.18701171875,
+  "calls": 100
+ },
+ "decoder.layers.6": {
+  "family": "rotary",
+  "s_absmax": 56.3657341003418,
+  "calls": 100
+ },
+ "decoder.layers.61": {
+  "family": "rotary",
+  "s_absmax": 116.01493835449219,
+  "calls": 100
+ },
+ "decoder.robot_encoder.layers.1": {
+  "family": "jg",
+  "s_absmax": 51.60570526123047,
+  "calls": 10
+ },
+ "decoder.robot_encoder.layers.13": {
+  "family": "jg",
+  "s_absmax": 55.402767181396484,
+  "calls": 10
+ },
+ "decoder.robot_encoder.layers.19": {
+  "family": "jg",
+  "s_absmax": 62.9620475769043,
+  "calls": 10
+ },
+ "decoder.robot_encoder.layers.7": {
+  "family": "jg",
+  "s_absmax": 55.61313247680664,
+  "calls": 10
+ },
+ "feature_enhancer.text_attn_blocks.0.self_attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "feature_enhancer.text_attn_blocks.0.self_attn.attn": {
+  "family": "mha",
+  "s_absmax": 122.22317504882812,
+  "calls": 10
+ },
+ "feature_enhancer.text_attn_blocks.1.self_attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "feature_enhancer.text_attn_blocks.1.self_attn.attn": {
+  "family": "mha",
+  "s_absmax": 1363.6715087890625,
+  "calls": 10
+ },
+ "feature_enhancer.text_attn_blocks.2.self_attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "feature_enhancer.text_attn_blocks.2.self_attn.attn": {
+  "family": "mha",
+  "s_absmax": 190.80397033691406,
+  "calls": 10
+ },
+ "feature_enhancer.text_attn_blocks.3.self_attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "feature_enhancer.text_attn_blocks.3.self_attn.attn": {
+  "family": "mha",
+  "s_absmax": 223.18682861328125,
+  "calls": 10
+ },
+ "feature_enhancer.text_attn_blocks.4.self_attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "feature_enhancer.text_attn_blocks.4.self_attn.attn": {
+  "family": "mha",
+  "s_absmax": 683.8184204101562,
+  "calls": 10
+ },
+ "feature_enhancer.text_attn_blocks.5.self_attn": {
+  "family": null,
+  "s_absmax": null,
+  "calls": 10
+ },
+ "feature_enhancer.text_attn_blocks.5.self_attn.attn": {
+  "family": "mha",
+  "s_absmax": 382.5177917480469,
+  "calls": 10
+ },
+ "feature_enhancer.text_img_attn_blocks.0.attn": {
+  "family": "bimha",
+  "s_absmax": 175.32818603515625,
+  "calls": 10
+ },
+ "feature_enhancer.text_img_attn_blocks.1.attn": {
+  "family": "bimha",
+  "s_absmax": 265.2635192871094,
+  "calls": 10
+ },
+ "feature_enhancer.text_img_attn_blocks.2.attn": {
+  "family": "bimha",
+  "s_absmax": 219.98602294921875,
+  "calls": 10
+ },
+ "feature_enhancer.text_img_attn_blocks.3.attn": {
+  "family": "bimha",
+  "s_absmax": 192.82066345214844,
+  "calls": 10
+ },
+ "feature_enhancer.text_img_attn_blocks.4.attn": {
+  "family": "bimha",
+  "s_absmax": 267.1280822753906,
+  "calls": 10
+ },
+ "feature_enhancer.text_img_attn_blocks.5.attn": {
+  "family": "bimha",
+  "s_absmax": 230.53082275390625,
+  "calls": 10
+ },
+ "text_encoder.language_backbone.body.model.encoder.layer.0.attention": {
+  "family": "bert",
+  "s_absmax": 72.84391784667969,
+  "calls": 10
+ },
+ "text_encoder.language_backbone.body.model.encoder.layer.1.attention": {
+  "family": "bert",
+  "s_absmax": 79.50774383544922,
+  "calls": 10
+ },
+ "text_encoder.language_backbone.body.model.encoder.layer.10.attention": {
+  "family": "bert",
+  "s_absmax": 100.90619659423828,
+  "calls": 10
+ },
+ "text_encoder.language_backbone.body.model.encoder.layer.11.attention": {
+  "family": "bert",
+  "s_absmax": 79.53268432617188,
+  "calls": 10
+ },
+ "text_encoder.language_backbone.body.model.encoder.layer.2.attention": {
+  "family": "bert",
+  "s_absmax": 70.06224060058594,
+  "calls": 10
+ },
+ "text_encoder.language_backbone.body.model.encoder.layer.3.attention": {
+  "family": "bert",
+  "s_absmax": 95.601806640625,
+  "calls": 10
+ },
+ "text_encoder.language_backbone.body.model.encoder.layer.4.attention": {
+  "family": "bert",
+  "s_absmax": 54.85430908203125,
+  "calls": 10
+ },
+ "text_encoder.language_backbone.body.model.encoder.layer.5.attention": {
+  "family": "bert",
+  "s_absmax": 83.80522918701172,
+  "calls": 10
+ },
+ "text_encoder.language_backbone.body.model.encoder.layer.6.attention": {
+  "family": "bert",
+  "s_absmax": 96.65774536132812,
+  "calls": 10
+ },
+ "text_encoder.language_backbone.body.model.encoder.layer.7.attention": {
+  "family": "bert",
+  "s_absmax": 85.78701782226562,
+  "calls": 10
+ },
+ "text_encoder.language_backbone.body.model.encoder.layer.8.attention": {
+  "family": "bert",
+  "s_absmax": 75.34468078613281,
+  "calls": 10
+ },
+ "text_encoder.language_backbone.body.model.encoder.layer.9.attention": {
+  "family": "bert",
+  "s_absmax": 105.06761932373047,
+  "calls": 10
+ }
+}

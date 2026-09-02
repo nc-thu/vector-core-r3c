@@ -1,0 +1,1485 @@
+{
+ "workload": {
+  "total_gmacs": 73661456384.0,
+  "w_bytes": 333530368,
+  "params_total": 183769786,
+  "per_step_gmacs": 2333212672.0,
+  "stages": {
+   "Vision2D": {
+    "gmacs": 17259282432.0,
+    "w_mb": 59.08992
+   },
+   "Vision3D+PSE": {
+    "gmacs": 5202419712.0,
+    "w_mb": 4.498688
+   },
+   "Text": {
+    "gmacs": 1366818816.0,
+    "w_mb": 85.131264
+   },
+   "Fusion": {
+    "gmacs": 26422542336.0,
+    "w_mb": 29.73696
+   },
+   "ActionHead": {
+    "gmacs": 23410393088.0,
+    "w_mb": 155.073536
+   }
+  }
+ },
+ "gemm_items": [
+  {
+   "stage": "Swin2D/s1",
+   "name": "patch_embedSwin2D(4x4x3 conv)",
+   "m": 5120,
+   "n": 96,
+   "k": 48,
+   "count": 2,
+   "gmacs": 0.04718592,
+   "k_ok": true,
+   "out_bytes": 491520
+  },
+  {
+   "stage": "Swin2D/s1",
+   "name": "qkv",
+   "m": 5880,
+   "n": 288,
+   "k": 96,
+   "count": 4,
+   "gmacs": 0.65028096,
+   "k_ok": true,
+   "out_bytes": 1693440
+  },
+  {
+   "stage": "Swin2D/s1",
+   "name": "proj",
+   "m": 5880,
+   "n": 96,
+   "k": 96,
+   "count": 4,
+   "gmacs": 0.21676032,
+   "k_ok": true,
+   "out_bytes": 564480
+  },
+  {
+   "stage": "Swin2D/s1",
+   "name": "ffn_fc1",
+   "m": 5120,
+   "n": 384,
+   "k": 96,
+   "count": 4,
+   "gmacs": 0.75497472,
+   "k_ok": true,
+   "out_bytes": 1966080
+  },
+  {
+   "stage": "Swin2D/s1",
+   "name": "ffn_fc2",
+   "m": 5120,
+   "n": 96,
+   "k": 384,
+   "count": 4,
+   "gmacs": 0.75497472,
+   "k_ok": true,
+   "out_bytes": 491520
+  },
+  {
+   "stage": "Swin2D/s1",
+   "name": "patch_merge",
+   "m": 1280,
+   "n": 192,
+   "k": 384,
+   "count": 2,
+   "gmacs": 0.18874368,
+   "k_ok": true,
+   "out_bytes": 245760
+  },
+  {
+   "stage": "Swin2D/s2",
+   "name": "qkv",
+   "m": 1470,
+   "n": 576,
+   "k": 192,
+   "count": 4,
+   "gmacs": 0.65028096,
+   "k_ok": true,
+   "out_bytes": 846720
+  },
+  {
+   "stage": "Swin2D/s2",
+   "name": "proj",
+   "m": 1470,
+   "n": 192,
+   "k": 192,
+   "count": 4,
+   "gmacs": 0.21676032,
+   "k_ok": true,
+   "out_bytes": 282240
+  },
+  {
+   "stage": "Swin2D/s2",
+   "name": "ffn_fc1",
+   "m": 1280,
+   "n": 768,
+   "k": 192,
+   "count": 4,
+   "gmacs": 0.75497472,
+   "k_ok": true,
+   "out_bytes": 983040
+  },
+  {
+   "stage": "Swin2D/s2",
+   "name": "ffn_fc2",
+   "m": 1280,
+   "n": 192,
+   "k": 768,
+   "count": 4,
+   "gmacs": 0.75497472,
+   "k_ok": true,
+   "out_bytes": 245760
+  },
+  {
+   "stage": "Swin2D/s2",
+   "name": "patch_merge",
+   "m": 320,
+   "n": 384,
+   "k": 768,
+   "count": 2,
+   "gmacs": 0.18874368,
+   "k_ok": true,
+   "out_bytes": 122880
+  },
+  {
+   "stage": "Swin2D/s3",
+   "name": "qkv",
+   "m": 441,
+   "n": 1152,
+   "k": 384,
+   "count": 12,
+   "gmacs": 2.341011456,
+   "k_ok": true,
+   "out_bytes": 508032
+  },
+  {
+   "stage": "Swin2D/s3",
+   "name": "proj",
+   "m": 441,
+   "n": 384,
+   "k": 384,
+   "count": 12,
+   "gmacs": 0.780337152,
+   "k_ok": true,
+   "out_bytes": 169344
+  },
+  {
+   "stage": "Swin2D/s3",
+   "name": "ffn_fc1",
+   "m": 320,
+   "n": 1536,
+   "k": 384,
+   "count": 12,
+   "gmacs": 2.26492416,
+   "k_ok": true,
+   "out_bytes": 491520
+  },
+  {
+   "stage": "Swin2D/s3",
+   "name": "ffn_fc2",
+   "m": 320,
+   "n": 384,
+   "k": 1536,
+   "count": 12,
+   "gmacs": 2.26492416,
+   "k_ok": true,
+   "out_bytes": 122880
+  },
+  {
+   "stage": "Swin2D/s3",
+   "name": "patch_merge",
+   "m": 80,
+   "n": 768,
+   "k": 1536,
+   "count": 2,
+   "gmacs": 0.18874368,
+   "k_ok": true,
+   "out_bytes": 61440
+  },
+  {
+   "stage": "Swin2D/s4",
+   "name": "qkv",
+   "m": 196,
+   "n": 2304,
+   "k": 768,
+   "count": 4,
+   "gmacs": 1.387266048,
+   "k_ok": true,
+   "out_bytes": 451584
+  },
+  {
+   "stage": "Swin2D/s4",
+   "name": "proj",
+   "m": 196,
+   "n": 768,
+   "k": 768,
+   "count": 4,
+   "gmacs": 0.462422016,
+   "k_ok": true,
+   "out_bytes": 150528
+  },
+  {
+   "stage": "Swin2D/s4",
+   "name": "ffn_fc1",
+   "m": 80,
+   "n": 3072,
+   "k": 768,
+   "count": 4,
+   "gmacs": 0.75497472,
+   "k_ok": true,
+   "out_bytes": 245760
+  },
+  {
+   "stage": "Swin2D/s4",
+   "name": "ffn_fc2",
+   "m": 80,
+   "n": 768,
+   "k": 3072,
+   "count": 4,
+   "gmacs": 0.75497472,
+   "k_ok": true,
+   "out_bytes": 61440
+  },
+  {
+   "stage": "Neck2D",
+   "name": "neck_l1",
+   "m": 1280,
+   "n": 256,
+   "k": 192,
+   "count": 2,
+   "gmacs": 0.12582912,
+   "k_ok": true,
+   "out_bytes": 327680
+  },
+  {
+   "stage": "Neck2D",
+   "name": "neck_l2",
+   "m": 320,
+   "n": 256,
+   "k": 384,
+   "count": 2,
+   "gmacs": 0.06291456,
+   "k_ok": true,
+   "out_bytes": 81920
+  },
+  {
+   "stage": "Neck2D",
+   "name": "neck_l3",
+   "m": 80,
+   "n": 256,
+   "k": 768,
+   "count": 2,
+   "gmacs": 0.03145728,
+   "k_ok": true,
+   "out_bytes": 20480
+  },
+  {
+   "stage": "Neck2D",
+   "name": "neck_extra3x3s2",
+   "m": 20,
+   "n": 256,
+   "k": 6912,
+   "count": 2,
+   "gmacs": 0.07077888,
+   "k_ok": false,
+   "out_bytes": 5120
+  },
+  {
+   "stage": "Swin3D/s1",
+   "name": "patch_embedSwin3D(4x4x1 conv)",
+   "m": 5120,
+   "n": 16,
+   "k": 16,
+   "count": 2,
+   "gmacs": 0.00262144,
+   "k_ok": true,
+   "out_bytes": 81920
+  },
+  {
+   "stage": "Swin3D/s1",
+   "name": "qkv",
+   "m": 5880,
+   "n": 48,
+   "k": 16,
+   "count": 4,
+   "gmacs": 0.01806336,
+   "k_ok": true,
+   "out_bytes": 282240
+  },
+  {
+   "stage": "Swin3D/s1",
+   "name": "proj",
+   "m": 5880,
+   "n": 16,
+   "k": 16,
+   "count": 4,
+   "gmacs": 0.00602112,
+   "k_ok": true,
+   "out_bytes": 94080
+  },
+  {
+   "stage": "Swin3D/s1",
+   "name": "ffn_fc1",
+   "m": 5120,
+   "n": 64,
+   "k": 16,
+   "count": 4,
+   "gmacs": 0.02097152,
+   "k_ok": true,
+   "out_bytes": 327680
+  },
+  {
+   "stage": "Swin3D/s1",
+   "name": "ffn_fc2",
+   "m": 5120,
+   "n": 16,
+   "k": 64,
+   "count": 4,
+   "gmacs": 0.02097152,
+   "k_ok": true,
+   "out_bytes": 81920
+  },
+  {
+   "stage": "Swin3D/s1",
+   "name": "patch_merge",
+   "m": 1280,
+   "n": 32,
+   "k": 64,
+   "count": 2,
+   "gmacs": 0.00524288,
+   "k_ok": true,
+   "out_bytes": 40960
+  },
+  {
+   "stage": "Swin3D/s2",
+   "name": "qkv",
+   "m": 1470,
+   "n": 96,
+   "k": 32,
+   "count": 4,
+   "gmacs": 0.01806336,
+   "k_ok": true,
+   "out_bytes": 141120
+  },
+  {
+   "stage": "Swin3D/s2",
+   "name": "proj",
+   "m": 1470,
+   "n": 32,
+   "k": 32,
+   "count": 4,
+   "gmacs": 0.00602112,
+   "k_ok": true,
+   "out_bytes": 47040
+  },
+  {
+   "stage": "Swin3D/s2",
+   "name": "ffn_fc1",
+   "m": 1280,
+   "n": 128,
+   "k": 32,
+   "count": 4,
+   "gmacs": 0.02097152,
+   "k_ok": true,
+   "out_bytes": 163840
+  },
+  {
+   "stage": "Swin3D/s2",
+   "name": "ffn_fc2",
+   "m": 1280,
+   "n": 32,
+   "k": 128,
+   "count": 4,
+   "gmacs": 0.02097152,
+   "k_ok": true,
+   "out_bytes": 40960
+  },
+  {
+   "stage": "Swin3D/s2",
+   "name": "patch_merge",
+   "m": 320,
+   "n": 64,
+   "k": 128,
+   "count": 2,
+   "gmacs": 0.00524288,
+   "k_ok": true,
+   "out_bytes": 20480
+  },
+  {
+   "stage": "Swin3D/s3",
+   "name": "qkv",
+   "m": 441,
+   "n": 192,
+   "k": 64,
+   "count": 12,
+   "gmacs": 0.065028096,
+   "k_ok": true,
+   "out_bytes": 84672
+  },
+  {
+   "stage": "Swin3D/s3",
+   "name": "proj",
+   "m": 441,
+   "n": 64,
+   "k": 64,
+   "count": 12,
+   "gmacs": 0.021676032,
+   "k_ok": true,
+   "out_bytes": 28224
+  },
+  {
+   "stage": "Swin3D/s3",
+   "name": "ffn_fc1",
+   "m": 320,
+   "n": 256,
+   "k": 64,
+   "count": 12,
+   "gmacs": 0.06291456,
+   "k_ok": true,
+   "out_bytes": 81920
+  },
+  {
+   "stage": "Swin3D/s3",
+   "name": "ffn_fc2",
+   "m": 320,
+   "n": 64,
+   "k": 256,
+   "count": 12,
+   "gmacs": 0.06291456,
+   "k_ok": true,
+   "out_bytes": 20480
+  },
+  {
+   "stage": "Swin3D/s3",
+   "name": "patch_merge",
+   "m": 80,
+   "n": 128,
+   "k": 256,
+   "count": 2,
+   "gmacs": 0.00524288,
+   "k_ok": true,
+   "out_bytes": 10240
+  },
+  {
+   "stage": "Swin3D/s4",
+   "name": "qkv",
+   "m": 196,
+   "n": 384,
+   "k": 128,
+   "count": 4,
+   "gmacs": 0.038535168,
+   "k_ok": true,
+   "out_bytes": 75264
+  },
+  {
+   "stage": "Swin3D/s4",
+   "name": "proj",
+   "m": 196,
+   "n": 128,
+   "k": 128,
+   "count": 4,
+   "gmacs": 0.012845056,
+   "k_ok": true,
+   "out_bytes": 25088
+  },
+  {
+   "stage": "Swin3D/s4",
+   "name": "ffn_fc1",
+   "m": 80,
+   "n": 512,
+   "k": 128,
+   "count": 4,
+   "gmacs": 0.02097152,
+   "k_ok": true,
+   "out_bytes": 40960
+  },
+  {
+   "stage": "Swin3D/s4",
+   "name": "ffn_fc2",
+   "m": 80,
+   "n": 128,
+   "k": 512,
+   "count": 4,
+   "gmacs": 0.02097152,
+   "k_ok": true,
+   "out_bytes": 10240
+  },
+  {
+   "stage": "Neck3D",
+   "name": "neck_l1",
+   "m": 1280,
+   "n": 128,
+   "k": 32,
+   "count": 2,
+   "gmacs": 0.01048576,
+   "k_ok": true,
+   "out_bytes": 163840
+  },
+  {
+   "stage": "Neck3D",
+   "name": "neck_l2",
+   "m": 320,
+   "n": 128,
+   "k": 64,
+   "count": 2,
+   "gmacs": 0.00524288,
+   "k_ok": true,
+   "out_bytes": 40960
+  },
+  {
+   "stage": "Neck3D",
+   "name": "neck_l3",
+   "m": 80,
+   "n": 128,
+   "k": 128,
+   "count": 2,
+   "gmacs": 0.00262144,
+   "k_ok": true,
+   "out_bytes": 10240
+  },
+  {
+   "stage": "Neck3D",
+   "name": "neck_extra3x3s2",
+   "m": 20,
+   "n": 128,
+   "k": 1152,
+   "count": 2,
+   "gmacs": 0.00589824,
+   "k_ok": true,
+   "out_bytes": 2560
+  },
+  {
+   "stage": "PSE",
+   "name": "pts_prob_pre_fc",
+   "m": 1700,
+   "n": 128,
+   "k": 256,
+   "count": 2,
+   "gmacs": 0.1114112,
+   "k_ok": true,
+   "out_bytes": 217600
+  },
+  {
+   "stage": "PSE",
+   "name": "pts_prob_fc1",
+   "m": 1700,
+   "n": 256,
+   "k": 256,
+   "count": 2,
+   "gmacs": 0.2228224,
+   "k_ok": true,
+   "out_bytes": 435200
+  },
+  {
+   "stage": "PSE",
+   "name": "pts_prob_fc2",
+   "m": 1700,
+   "n": 128,
+   "k": 256,
+   "count": 2,
+   "gmacs": 0.1114112,
+   "k_ok": true,
+   "out_bytes": 217600
+  },
+  {
+   "stage": "PSE",
+   "name": "pts_fc(3->128)",
+   "m": 217600,
+   "n": 128,
+   "k": 3,
+   "count": 2,
+   "gmacs": 0.1671168,
+   "k_ok": true,
+   "out_bytes": 27852800
+  },
+  {
+   "stage": "PSE",
+   "name": "fusion_fc1",
+   "m": 1700,
+   "n": 1024,
+   "k": 512,
+   "count": 2,
+   "gmacs": 1.7825792,
+   "k_ok": true,
+   "out_bytes": 1740800
+  },
+  {
+   "stage": "PSE",
+   "name": "fusion_fc2",
+   "m": 1700,
+   "n": 512,
+   "k": 1024,
+   "count": 2,
+   "gmacs": 1.7825792,
+   "k_ok": true,
+   "out_bytes": 870400
+  },
+  {
+   "stage": "PSE",
+   "name": "fusion_out",
+   "m": 1700,
+   "n": 256,
+   "k": 512,
+   "count": 2,
+   "gmacs": 0.4456448,
+   "k_ok": true,
+   "out_bytes": 435200
+  },
+  {
+   "stage": "Text/BERT",
+   "name": "qkv",
+   "m": 16,
+   "n": 2304,
+   "k": 768,
+   "count": 12,
+   "gmacs": 0.339738624,
+   "k_ok": true,
+   "out_bytes": 36864
+  },
+  {
+   "stage": "Text/BERT",
+   "name": "o_proj",
+   "m": 16,
+   "n": 768,
+   "k": 768,
+   "count": 12,
+   "gmacs": 0.113246208,
+   "k_ok": true,
+   "out_bytes": 12288
+  },
+  {
+   "stage": "Text/BERT",
+   "name": "ffn_fc1",
+   "m": 16,
+   "n": 3072,
+   "k": 768,
+   "count": 12,
+   "gmacs": 0.452984832,
+   "k_ok": true,
+   "out_bytes": 49152
+  },
+  {
+   "stage": "Text/BERT",
+   "name": "ffn_fc2",
+   "m": 16,
+   "n": 768,
+   "k": 3072,
+   "count": 12,
+   "gmacs": 0.452984832,
+   "k_ok": true,
+   "out_bytes": 12288
+  },
+  {
+   "stage": "Text/BERT",
+   "name": "text_feat_map(768->256)",
+   "m": 16,
+   "n": 256,
+   "k": 768,
+   "count": 1,
+   "gmacs": 0.003145728,
+   "k_ok": true,
+   "out_bytes": 4096
+  },
+  {
+   "stage": "Fusion/bi",
+   "name": "bi_v+values_proj",
+   "m": 40,
+   "n": 2048,
+   "k": 256,
+   "count": 6,
+   "gmacs": 0.12582912,
+   "k_ok": true,
+   "out_bytes": 81920
+  },
+  {
+   "stage": "Fusion/bi",
+   "name": "bi_out_v",
+   "m": 40,
+   "n": 256,
+   "k": 1024,
+   "count": 6,
+   "gmacs": 0.06291456,
+   "k_ok": true,
+   "out_bytes": 10240
+  },
+  {
+   "stage": "Fusion/bi",
+   "name": "bi_l+values_proj",
+   "m": 16,
+   "n": 2048,
+   "k": 256,
+   "count": 6,
+   "gmacs": 0.050331648,
+   "k_ok": true,
+   "out_bytes": 32768
+  },
+  {
+   "stage": "Fusion/bi",
+   "name": "bi_out_l",
+   "m": 16,
+   "n": 256,
+   "k": 1024,
+   "count": 6,
+   "gmacs": 0.025165824,
+   "k_ok": true,
+   "out_bytes": 4096
+  },
+  {
+   "stage": "Fusion/bi",
+   "name": "bi_attn_av_l",
+   "m": 16,
+   "n": 1024,
+   "k": 40,
+   "count": 6,
+   "gmacs": 0.00393216,
+   "k_ok": true,
+   "out_bytes": 16384
+  },
+  {
+   "stage": "Fusion/img",
+   "name": "def_sampling_offsets",
+   "m": 1700,
+   "n": 256,
+   "k": 256,
+   "count": 12,
+   "gmacs": 1.3369344,
+   "k_ok": true,
+   "out_bytes": 435200
+  },
+  {
+   "stage": "Fusion/img",
+   "name": "def_attn_weights",
+   "m": 1700,
+   "n": 128,
+   "k": 256,
+   "count": 12,
+   "gmacs": 0.6684672,
+   "k_ok": true,
+   "out_bytes": 217600
+  },
+  {
+   "stage": "Fusion/img",
+   "name": "def_value_proj",
+   "m": 1700,
+   "n": 256,
+   "k": 256,
+   "count": 12,
+   "gmacs": 1.3369344,
+   "k_ok": true,
+   "out_bytes": 435200
+  },
+  {
+   "stage": "Fusion/img",
+   "name": "def_output_proj",
+   "m": 1700,
+   "n": 256,
+   "k": 256,
+   "count": 12,
+   "gmacs": 1.3369344,
+   "k_ok": true,
+   "out_bytes": 435200
+  },
+  {
+   "stage": "Fusion/img",
+   "name": "img_ffn_fc1",
+   "m": 1700,
+   "n": 2048,
+   "k": 256,
+   "count": 12,
+   "gmacs": 10.6954752,
+   "k_ok": true,
+   "out_bytes": 3481600
+  },
+  {
+   "stage": "Fusion/img",
+   "name": "img_ffn_fc2",
+   "m": 1700,
+   "n": 256,
+   "k": 2048,
+   "count": 12,
+   "gmacs": 10.6954752,
+   "k_ok": true,
+   "out_bytes": 435200
+  },
+  {
+   "stage": "Fusion/txt",
+   "name": "txt_qkv",
+   "m": 16,
+   "n": 768,
+   "k": 256,
+   "count": 6,
+   "gmacs": 0.018874368,
+   "k_ok": true,
+   "out_bytes": 12288
+  },
+  {
+   "stage": "Fusion/txt",
+   "name": "txt_out",
+   "m": 16,
+   "n": 256,
+   "k": 256,
+   "count": 6,
+   "gmacs": 0.006291456,
+   "k_ok": true,
+   "out_bytes": 4096
+  },
+  {
+   "stage": "Fusion/txt",
+   "name": "txt_ffn_fc1",
+   "m": 16,
+   "n": 1024,
+   "k": 256,
+   "count": 6,
+   "gmacs": 0.025165824,
+   "k_ok": true,
+   "out_bytes": 16384
+  },
+  {
+   "stage": "Fusion/txt",
+   "name": "txt_ffn_fc2",
+   "m": 16,
+   "n": 256,
+   "k": 1024,
+   "count": 6,
+   "gmacs": 0.025165824,
+   "k_ok": true,
+   "out_bytes": 4096
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "input_proj(32->256)",
+   "m": 128,
+   "n": 256,
+   "k": 32,
+   "count": 10,
+   "gmacs": 0.01048576,
+   "k_ok": true,
+   "out_bytes": 32768
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "input_fc2-5",
+   "m": 128,
+   "n": 256,
+   "k": 256,
+   "count": 40,
+   "gmacs": 0.33554432,
+   "k_ok": true,
+   "out_bytes": 32768
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "t_embed",
+   "m": 1,
+   "n": 256,
+   "k": 256,
+   "count": 20,
+   "gmacs": 0.00131072,
+   "k_ok": true,
+   "out_bytes": 256
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "adarm_proj(256->1536)",
+   "m": 1,
+   "n": 1536,
+   "k": 256,
+   "count": 60,
+   "gmacs": 0.02359296,
+   "k_ok": true,
+   "out_bytes": 1536
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "temp_q",
+   "m": 128,
+   "n": 256,
+   "k": 256,
+   "count": 60,
+   "gmacs": 0.50331648,
+   "k_ok": true,
+   "out_bytes": 32768
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "temp_kv",
+   "m": 136,
+   "n": 512,
+   "k": 256,
+   "count": 60,
+   "gmacs": 1.06954752,
+   "k_ok": true,
+   "out_bytes": 69632
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "temp_out",
+   "m": 128,
+   "n": 256,
+   "k": 256,
+   "count": 60,
+   "gmacs": 0.50331648,
+   "k_ok": true,
+   "out_bytes": 32768
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "temp_joint_dist_embed",
+   "m": 64,
+   "n": 256,
+   "k": 256,
+   "count": 120,
+   "gmacs": 0.50331648,
+   "k_ok": true,
+   "out_bytes": 16384
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "temp_av",
+   "m": 128,
+   "n": 32,
+   "k": 136,
+   "count": 480,
+   "gmacs": 0.26738688,
+   "k_ok": true,
+   "out_bytes": 4096
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "img_q",
+   "m": 128,
+   "n": 256,
+   "k": 256,
+   "count": 60,
+   "gmacs": 0.50331648,
+   "k_ok": true,
+   "out_bytes": 32768
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "img_kv",
+   "m": 800,
+   "n": 512,
+   "k": 256,
+   "count": 60,
+   "gmacs": 6.291456,
+   "k_ok": true,
+   "out_bytes": 409600
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "img_out",
+   "m": 128,
+   "n": 256,
+   "k": 256,
+   "count": 60,
+   "gmacs": 0.50331648,
+   "k_ok": true,
+   "out_bytes": 32768
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "txt_q",
+   "m": 128,
+   "n": 256,
+   "k": 256,
+   "count": 60,
+   "gmacs": 0.50331648,
+   "k_ok": true,
+   "out_bytes": 32768
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "txt_kv",
+   "m": 16,
+   "n": 512,
+   "k": 256,
+   "count": 60,
+   "gmacs": 0.12582912,
+   "k_ok": true,
+   "out_bytes": 8192
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "txt_out",
+   "m": 128,
+   "n": 256,
+   "k": 256,
+   "count": 60,
+   "gmacs": 0.50331648,
+   "k_ok": true,
+   "out_bytes": 32768
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "ffn_fc1",
+   "m": 128,
+   "n": 2048,
+   "k": 256,
+   "count": 60,
+   "gmacs": 4.02653184,
+   "k_ok": true,
+   "out_bytes": 262144
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "ffn_fc2",
+   "m": 128,
+   "n": 256,
+   "k": 2048,
+   "count": 60,
+   "gmacs": 4.02653184,
+   "k_ok": true,
+   "out_bytes": 32768
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "head_conv0(3x1d)",
+   "m": 256,
+   "n": 128,
+   "k": 768,
+   "count": 10,
+   "gmacs": 0.25165824,
+   "k_ok": true,
+   "out_bytes": 32768
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "head_conv1(3x1d)",
+   "m": 512,
+   "n": 64,
+   "k": 384,
+   "count": 10,
+   "gmacs": 0.12582912,
+   "k_ok": true,
+   "out_bytes": 32768
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "head_out_mlp",
+   "m": 512,
+   "n": 64,
+   "k": 64,
+   "count": 20,
+   "gmacs": 0.04194304,
+   "k_ok": true,
+   "out_bytes": 32768
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "head_out(64->8)",
+   "m": 512,
+   "n": 8,
+   "k": 64,
+   "count": 10,
+   "gmacs": 0.00262144,
+   "k_ok": true,
+   "out_bytes": 4096
+  },
+  {
+   "stage": "ActionHead/once",
+   "name": "enc_input_fc(8->256)",
+   "m": 8,
+   "n": 256,
+   "k": 8,
+   "count": 1,
+   "gmacs": 1.6384e-05,
+   "k_ok": true,
+   "out_bytes": 2048
+  },
+  {
+   "stage": "ActionHead/once",
+   "name": "enc_input_fc2-6",
+   "m": 8,
+   "n": 256,
+   "k": 256,
+   "count": 5,
+   "gmacs": 0.00262144,
+   "k_ok": true,
+   "out_bytes": 2048
+  },
+  {
+   "stage": "ActionHead/once",
+   "name": "enc_jga_qkv",
+   "m": 8,
+   "n": 768,
+   "k": 256,
+   "count": 4,
+   "gmacs": 0.006291456,
+   "k_ok": true,
+   "out_bytes": 6144
+  },
+  {
+   "stage": "ActionHead/once",
+   "name": "enc_jga_out",
+   "m": 8,
+   "n": 256,
+   "k": 256,
+   "count": 4,
+   "gmacs": 0.002097152,
+   "k_ok": true,
+   "out_bytes": 2048
+  },
+  {
+   "stage": "ActionHead/once",
+   "name": "enc_jga_dist_embed",
+   "m": 64,
+   "n": 256,
+   "k": 256,
+   "count": 8,
+   "gmacs": 0.033554432,
+   "k_ok": true,
+   "out_bytes": 16384
+  },
+  {
+   "stage": "ActionHead/once",
+   "name": "enc_ffn_fc1",
+   "m": 8,
+   "n": 2048,
+   "k": 256,
+   "count": 4,
+   "gmacs": 0.016777216,
+   "k_ok": true,
+   "out_bytes": 16384
+  },
+  {
+   "stage": "ActionHead/once",
+   "name": "enc_ffn_fc2",
+   "m": 8,
+   "n": 256,
+   "k": 2048,
+   "count": 4,
+   "gmacs": 0.016777216,
+   "k_ok": true,
+   "out_bytes": 2048
+  }
+ ],
+ "capacity": {
+  "wram_k_violations": [
+   [
+    "neck_extra3x3s2",
+    6912
+   ]
+  ],
+  "ctx_over_2mb": [
+   [
+    "pts_fc(3->128)",
+    27852800
+   ],
+   [
+    "img_ffn_fc1",
+    3481600
+   ]
+  ],
+  "boundary_dma_bytes": 655392,
+  "feat_pool_bytes": 870400
+ },
+ "hw_main": [
+  {
+   "name": "cols=108 SM16 BW64（现行硅片）LWreal",
+   "mcyc": 89.402504,
+   "sec_1985": 0.4503904483627204,
+   "sec_250": 0.357610016,
+   "util": 0.4768116744205468,
+   "lwreal_sec": 0.4503904483627204,
+   "w_gb": 0.34921047204
+  },
+  {
+   "name": "cols=108 SM16 BW64（现行硅片）CONC",
+   "mcyc": 54.309228,
+   "sec_1985": 0.2735981259445844,
+   "sec_250": 0.217236912,
+   "util": 0.7849155511772259,
+   "lwreal_sec": 0.4503904483627204,
+   "w_gb": 0.34921047204
+  },
+  {
+   "name": "cols=216 SM16 BW64（R3 packed）CONC",
+   "mcyc": 54.917854,
+   "sec_1985": 0.27666425188916877,
+   "sec_250": 0.219671416,
+   "util": 0.38810837027271344,
+   "lwreal_sec": 0.3513097732997481,
+   "w_gb": 0.38814276192
+  },
+  {
+   "name": "cols=216 SM16 BW128 CONC",
+   "mcyc": 34.829874,
+   "sec_1985": 0.17546536020151132,
+   "sec_250": 0.139319496,
+   "util": 0.6119482032813215,
+   "lwreal_sec": 0.3513097732997481,
+   "w_gb": 0.38814276192
+  },
+  {
+   "name": "cols=216 SM32 BW128 CONC",
+   "mcyc": 34.829874,
+   "sec_1985": 0.17546536020151132,
+   "sec_250": 0.139319496,
+   "util": 0.6119482032813215,
+   "lwreal_sec": 0.3044654911838791,
+   "w_gb": 0.38814276192
+  },
+  {
+   "name": "cols=216 SM32 BW128 CONC +drain52",
+   "mcyc": 35.346754,
+   "sec_1985": 0.17806928967254407,
+   "sec_250": 0.141387016,
+   "util": 0.6029996082473319,
+   "lwreal_sec": 0.3044654911838791,
+   "w_gb": 0.38814276192
+  },
+  {
+   "name": "cols=216 SM32 BW256 CONC",
+   "mcyc": 34.829874,
+   "sec_1985": 0.17546536020151132,
+   "sec_250": 0.139319496,
+   "util": 0.6119482032813215,
+   "lwreal_sec": 0.3044654911838791,
+   "w_gb": 0.38814276192
+  },
+  {
+   "name": "cols=108 SM16 BW64 CONC +drain52(仅参照)",
+   "mcyc": 55.166708,
+   "sec_1985": 0.27791792443324936,
+   "sec_250": 0.220666832,
+   "util": 0.7727152693184017,
+   "lwreal_sec": 0.4503904483627204,
+   "w_gb": 0.34921047204
+  }
+ ],
+ "walls": [
+  {
+   "cfg": "cols=108 64b",
+   "feed": 54.213798,
+   "sm": 18.59718,
+   "copy": 8.56272,
+   "W": 49.323513,
+   "elem": 7.933376,
+   "drain": 0.42874,
+   "wall": "feed"
+  },
+  {
+   "cfg": "cols=216 64b",
+   "feed": 34.734444,
+   "sm": 18.59718,
+   "copy": 8.37456,
+   "W": 54.822424,
+   "elem": 7.933376,
+   "drain": 0.25844,
+   "wall": "W"
+  },
+  {
+   "cfg": "cols=216 128b",
+   "feed": 34.734444,
+   "sm": 18.59718,
+   "copy": 8.37456,
+   "W": 27.411212,
+   "elem": 7.933376,
+   "drain": 0.25844,
+   "wall": "feed"
+  },
+  {
+   "cfg": "cols=216 256b",
+   "feed": 34.734444,
+   "sm": 18.59718,
+   "copy": 8.37456,
+   "W": 13.705606,
+   "elem": 7.933376,
+   "drain": 0.25844,
+   "wall": "feed"
+  }
+ ],
+ "sensitivity": [
+  {
+   "label": "基线 LIBERO 2视图 Nj=8 lang16 N=10",
+   "gmacs": 73661456384.0,
+   "w_gb": 0.38814276192,
+   "sec": 0.17546536020151132
+  },
+  {
+   "label": "3 视图（ur5_wsg/真机相机数）",
+   "gmacs": 102746279936.0,
+   "w_gb": 0.4313184852,
+   "sec": 0.2446111032745592
+  },
+  {
+   "label": "4 视图（RoboTwin 相机数）",
+   "gmacs": 131831103488.0,
+   "w_gb": 0.47449420848,
+   "sec": 0.31375684634760703
+  },
+  {
+   "label": "N_j=14（RoboTwin 双臂/已发布权重口径）",
+   "gmacs": 87443369984.0,
+   "w_gb": 0.39757672031999997,
+   "sec": 0.21927787405541563
+  },
+  {
+   "label": "RGB-only（depth 分支整体移除）",
+   "gmacs": 68459036672.0,
+   "w_gb": 0.38203798944,
+   "sec": 0.15920878589420656
+  },
+  {
+   "label": "去噪 4 步（外推，需精度验证）",
+   "gmacs": 59662180352.0,
+   "w_gb": 0.27058976951999997,
+   "sec": 0.13703921410579345
+  },
+  {
+   "label": "语言 32 token",
+   "gmacs": 75391606784.0,
+   "w_gb": 0.38814276192,
+   "sec": 0.17855454911838792
+  },
+  {
+   "label": "分辨率 256x256（LIBERO 原生）",
+   "gmacs": 63181903616.0,
+   "w_gb": 0.38809645872000004,
+   "sec": 0.15009905289672545
+  },
+  {
+   "label": "分辨率 384x256（真机 processor）",
+   "gmacs": 85287806720.0,
+   "w_gb": 0.38818906512,
+   "sec": 0.2028085944584383
+  }
+ ],
+ "comparison": [
+  {
+   "label": "HB-GD LIBERO 2视图 Nj8 N=10（主档）",
+   "gmacs": 73661456384.0,
+   "w_gb": 0.333530368,
+   "sec_108_64b": 0.2735981259445844,
+   "sec_216_128b": 0.17546536020151132,
+   "sec_216_256b": 0.17546536020151132,
+   "util_216": 0.6119482032813215
+  },
+  {
+   "label": "HB-GD LIBERO 2视图 +K/V hoist",
+   "gmacs": 67432914944.0,
+   "w_gb": 0.312296704,
+   "sec_108_64b": 0.2539987103274559,
+   "sec_216_128b": 0.1635929773299748,
+   "sec_216_256b": 0.1635929773299748,
+   "util_216": 0.6008596383989563
+  },
+  {
+   "label": "HB-GD RoboTwin 4视图 Nj14 lang32",
+   "gmacs": 149761445888.0,
+   "w_gb": 0.41426688,
+   "sec_108_64b": 0.5692200201511335,
+   "sec_216_128b": 0.3744808564231738,
+   "sec_216_256b": 0.3744808564231738,
+   "util_216": 0.5829565121380962
+  },
+  {
+   "label": "HB-GD RGB-only 2视图（无depth）",
+   "gmacs": 68459036672.0,
+   "w_gb": 0.32903168,
+   "sec_108_64b": 0.24977320906801007,
+   "sec_216_128b": 0.15920878589420656,
+   "sec_216_256b": 0.15920878589420656,
+   "util_216": 0.626800751127396
+  },
+  {
+   "label": "SwiftVLA 部署 3 视图 N=10（hoist）",
+   "gmacs": 417756281856.0,
+   "w_gb": 1.40917504,
+   "sec_108_64b": 1.401886604534005,
+   "sec_216_128b": 0.7986043879093199,
+   "sec_216_256b": 0.7986043879093199,
+   "util_216": 0.7625302062864932
+  },
+  {
+   "label": "Evo-1 448/N32/2cam（v2 终点）",
+   "gmacs": 1096144027648.0,
+   "w_gb": 4.263256064,
+   "sec_108_64b": 3.6509557783375315,
+   "sec_216_128b": 2.0441179546599497,
+   "sec_216_256b": 2.0441179546599497,
+   "util_216": 0.7816771631344641
+  },
+  {
+   "label": "Evo-1 224/N10/2cam（C1 负载）",
+   "gmacs": 443345760256.0,
+   "w_gb": 1.903468544,
+   "sec_108_64b": 1.4896720906801006,
+   "sec_216_128b": 0.8180982065491184,
+   "sec_216_256b": 0.8180982065491184,
+   "util_216": 0.7899559492000952
+  }
+ ],
+ "not_modeled": [
+  {
+   "name": "MSDeformableAttention 采样+加权和",
+   "ops": "6.96 MMAC/层/视角(加权和) + 双线性插值~4x(每点4邻居 gather+MAC)；x6层x2视角 ≈ 84 MMAC + 335 M 元素操作/chunk",
+   "where": "向量核/CPU（gather+MAC 混合算子，非脉动阵列负载）；投影 4 条(value/output/sampling/weights)已进 gemm_items"
+  },
+  {
+   "name": "PSE get_pts 4x4 反投影",
+   "ops": "217,600 次 4x4 linalg.solve/视角 ≈ 14 MMAC 等价",
+   "where": "CPU 预求逆+批量 matvec；相机固定时 projection_mat 为常量，pts 与 pts_fc(83.6 MMAC) 可整体离线缓存"
+  },
+  {
+   "name": "PSE depth 概率加权聚合",
+   "ops": "1700 个 [1x128]·[128x128] = 27.9 MMAC/视角",
+   "where": "向量核（M=1 病态，16 行阵列利用率 1/16）；softmax(128bin) 另有 21.8 万 exp/视角"
+  },
+  {
+   "name": "temp_joint 6D einsum（QK^T 等价）",
+   "ops": "N_j=8: 4.46 MMAC/层/步（N_j=14: 13.6M），8x64 个 [16x32]@[32x17] 微 GEMM/层",
+   "where": "向量核或按层重排 bmm；K/N 远小于 108 列，脉动阵列利用率极差"
+  },
+  {
+   "name": "temp_joint tril 因果 mask",
+   "ops": "16x17 时间注意力有效项 56%，稠密 AV 已全额计入（浪费 44% 可稀疏化省）",
+   "where": "mask 本身是标量比较，软逻辑"
+  },
+  {
+   "name": "UpsampleHead 双线性插值",
+   "ops": "~0.17M lerp/步 x10",
+   "where": "软逻辑/向量核"
+  },
+  {
+   "name": "FK recompute + DPMSolver++ step + 采样噪声",
+   "ops": "[1,64,N_j] 矩阵链 x10 步，串行依赖",
+   "where": "CPU/软逻辑（每步一次，不可并入阵列）"
+  },
+  {
+   "name": "RoPE/RMSNorm/LayerNorm/SiLU/AdaRMS 调制/gate",
+   "ops": "elem 粗账 1.24 G-ops/chunk（softmax 部分由 SM 引擎另行计入）",
+   "where": "向量核；memory-bound，小算子链"
+  },
+  {
+   "name": "Swin 窗口切分/roll/rel-pos-bias/PatchMerging unfold",
+   "ops": "每层 ~T x C 元素 gather-scatter（2D+3D 共 24 块 x 视角）",
+   "where": "DMA/软逻辑"
+  },
+  {
+   "name": "BERT tokenizer + word embedding 查表",
+   "ops": "L 次 23.4M 参数表 gather（L=16）",
+   "where": "embedding 表驻 DDR 仅 gather；指令跨 chunk 不变可整条缓存（BERT 1.37 GMAC 一并省掉）"
+  },
+  {
+   "name": "depth 输入预处理",
+   "ops": "uint16mm PNG 解码 /1000 + cv2.resize 双线性（2x 320x256x16bit 输入）",
+   "where": "CPU；输入带宽已按 81.9KB/视角 int8 计入 boundary DMA"
+  }
+ ],
+ "realtime_lines": {
+  "libero_30hz_64act": 2.1333333333333333,
+  "libero_50hz_64act": 1.28,
+  "swiftvla_ref_30hz": 1.6666666666666667,
+  "evo1_libero_line": 0.7
+ }
+}

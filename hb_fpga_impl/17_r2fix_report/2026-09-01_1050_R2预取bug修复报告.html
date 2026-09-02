@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>R2 预取 bug 修复报告 2026-09-01</title>
+<style>
+  body{font-family:"Microsoft YaHei",SimSun,serif;max-width:980px;margin:24px auto;padding:0 16px;color:#111;background:#fff;line-height:1.7}
+  h1{font-size:22px;border-bottom:2px solid #000;padding-bottom:6px}
+  h2{font-size:18px;border-left:5px solid #000;padding-left:8px;margin-top:28px}
+  h3{font-size:15px;margin-top:20px}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14px}
+  th,td{border:1px solid #444;padding:5px 8px;text-align:left}
+  th{background:#eee}
+  .num{text-align:right;font-variant-numeric:tabular-nums}
+  .ok{font-weight:bold}
+  .mono{font-family:Consolas,monospace;font-size:13px;background:#f4f4f4;padding:1px 4px}
+  .meta{color:#555;font-size:13px}
+  .box{border:1px dashed #888;padding:10px 14px;margin:12px 0;background:#fafafa}
+</style>
+</head>
+<body>
+
+<h1>R2 预取写冲突 bug 修复报告</h1>
+<p class="meta">生成时刻：2026-09-01 10:50:00　|　修复完成时刻：2026-09-01 10:4x　|　改动范围：rtl/ae_dma.sv、rtl/ae_core.sv（14_rtl_r1r2）</p>
+
+<h2>一、问题是什么</h2>
+<p>2026-09-01 凌晨的 Verilator 门发现：seg_0602（k=257 的长 GEMM 段）在预取开启（PF=1）时，
+STORE 输出区有 83 个字节出错，误差 ±1 LSB；同一段关掉预取（PF=0）则逐位一致。
+也就是说这不是数值计算错误，而是预取与长写回窗口抢总线时的数据通路 bug。短段（k=9/64）不触发。</p>
+
+<h2>二、根因（iverilog 探针实证，不是推测）</h2>
+<p>最初怀疑的 gemm_wb_active 让拍逻辑其实是个"死门"——它挡不住任何冲突。真正的问题出在两处：</p>
+<ol>
+<li><b>CTX B 口的仲裁只分优先级、不回压。</b>后台预取往 CTX 写数据时，如果 GEMM / softmax / ACTV / 前台 LOAD
+正在用 B 口，预取的写会被多路选择器直接丢掉，没有任何人知道。</li>
+<li><b>DMA 读引擎不知道写被丢了。</b>它的 rready 恒为真，地址照常往前推，读完成信号照常发出。
+调度器收到"预取完成"就认为数据已经到位，后续 LOAD 直接命中预取、跳过装载——
+实际 CTX 里是残缺或旧数据，错误最终在 STORE 区暴露。</li>
+</ol>
+<p>探针证据：测试平台加了丢写计数器，修复前 pf_ctx_drop_cnt=7（写确实在丢），修复后 =0。</p>
+<p>为什么只有 seg_0602 触发：k=257 的长 GEMM 喂入要 257 拍、写回窗口更长，把预取发射窗口撑得很大，
+2048 字节的预取突发撞上引擎占口的概率随之上升；短段窗口小，撞上了也多半不落在 STORE 的源数据区。</p>
+
+<h2>三、修法（最小改动，两个文件）</h2>
+<ul>
+<li><b>rtl/ae_dma.sv</b>：新增输入 <span class="mono">pf_ctx_stall</span>、输出 <span class="mono">rd_tag_o</span>（当前锁存的 tag）。
+读引擎在 R_R 状态的全部动作挂在 <span class="mono">rvalid &amp;&amp; rready</span> 下，而
+<span class="mono">rready = (rd_st==R_R) &amp;&amp; !pf_ctx_stall</span>——stall 拉高时字节数、剩余长度、CTX 写使能全部冻结，
+状态机零改动，AXI 读通道自然背压。</li>
+<li><b>rtl/ae_core.sv</b>：计算 <span class="mono">pf_ctx_stall = bg_wran &amp;&amp; (rd_tag_o==CTX) &amp;&amp; (B 口本拍被引擎占用)</span>，
+即"后台 CTX 预取在飞、且本拍 B 口选了别的引擎"时拉高，让 DMA 停下来等 B 口让出。
+引擎是串行 one-hot 的，B 口必然会让出——写一个不丢。</li>
+</ul>
+
+<h2>四、验证门（全部通过）</h2>
+<table>
+<tr><th>验证门</th><th>结果</th></tr>
+<tr><td>iverilog 微观 21 用例</td><td class="ok">221,184 / 221,184 字节位精确 PASS（含 NORM / ELTWISE）</td></tr>
+<tr><td>iverilog 全芯片回归</td><td class="ok">12 / 12 ALL PASS</td></tr>
+<tr><td>Verilator seg_0602 PF=1（bug 判据段）</td><td class="ok">输出区 256/256 字节 PASS，全 DDR diff = 0/524,288（修复前 83 字节错 → 0）</td></tr>
+<tr><td>Verilator seg_0600 / seg_0529 PF=1</td><td class="ok">256/256、32/32 PASS，diff = 0（无回退）</td></tr>
+<tr><td>Verilator 三段 PF=0 复验</td><td class="ok">全部位精确（正确性锚点未被破坏）</td></tr>
+<tr><td>综合（250MHz OOC）</td><td class="ok">LUT 135,111（+349，+0.26%）；WNS −1.038 与基线持平；DSP 1,728 / URAM 64 不变</td></tr>
+</table>
+<p>多出的 349 个 LUT 主要落在 u_dma——rready 让拍门控扇进了写数据/写使能路径。远低于 R1 的 +2,200 预算，
+时序零恶化。</p>
+
+<h2>五、修复后的收益确认</h2>
+<p>seg_0602 开预取现在既正确又省拍：<b>51,094 拍 vs 关预取的 53,350 拍，净省 2,256 拍（−4.2%）</b>。
+至此 R1+R2（427.2M / 2.15ms / GEMM 78.9%）的 RTL 落地验证闭环完成：模型预测、综合、位精确仿真三者对上。</p>
+
+<div class="box">
+<b>状态汇总（截至本报告）：</b>架构线 GEMM 主线达成且硬件实证闭环——R1 独立写通道三段位精确 + 重叠可见（45.5%），
+R2 预取修复后全段位精确。累计优化 1216.5M → 427.2M（−64.9%），GEMM 时间占比 28.5% → 78.9%。
+下一轮可选：R3 行组流水（427 → ~297M，GEMM ~88%）。
+</div>
+
+<h2>六、复现</h2>
+<pre>
+# 服务器 Verilator 门（/tmp/ae_vgate/，Verilator 5.050，DDR=512KB 档，COLS=108）
+python3 run_vgate.py --segs 0600,0529,0602 --pf 1        # 三段位精确判据
+# 本机 iverilog 回归（14_rtl_r1r2/sim/）
+# 全芯片综合（/e/ae_syn/r1r2_fullchip/，250MHz OOC）
+</pre>
+<p class="meta">完整根因推导链与改动细节见 14_rtl_r1r2/NOTES_r2fix.txt。</p>
+
+</body>
+</html>

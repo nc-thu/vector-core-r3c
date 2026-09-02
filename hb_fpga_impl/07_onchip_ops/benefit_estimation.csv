@@ -1,0 +1,9 @@
+﻿op,plan,host_steps,boundaries,roundtrip_cycles,tensor_elements,engine_cycles,net_save_cycles,net_save_ms,lut_est,bram36_est,net_cycles_per_klut
+actv,AE_ACTV eltwise 模式（256×8 直查 ROM ×16 lane）,331,321,15414208,19644992,1298905,14115303,71.1,1500,0,9410202
+softmax,SM16 复用 + 独立 softmax 描述符 + swin/bimha bias 预加遍,220,220,22721760,28798304,7201336,15520424,78.2,1800,1,8622458
+norm,AE_ACTV LN/RMS 模式（整数累加 + rsqrt LUT + 两级缩放）,423,404,73376375,116021772,15525540,57850835,291.4,9000,3,6427871
+rotary,AE_ACTV rotary 模式（cos/sin 表 + 成对双乘，复用乘法器）,180,180,7648680,15016960,1055880,6592800,33.2,1000,3,6592800
+bias,AE_ACTV bias 模式（rq_v2 同款 + 加法）——其他算子融合的前置,0,0,0,0,0,0,0.0,500,1,0
+swin,散射引擎（16×16 字节交叉 + 窗地址 ALU）：partition/reverse/split/prep,88,88,17778585,61597440,3918831,13859754,69.8,2500,0,5543902
+im2col,不做硬件（0.94M 拍太小）；保留编译期布局,30,29,935762,2003383,140460,795302,4.0,0,0,0
+deform,不做（4-tap gather + solve 性价比低，留 host）,6,6,4585470,10444800,673200,3912270,19.7,0,0,0

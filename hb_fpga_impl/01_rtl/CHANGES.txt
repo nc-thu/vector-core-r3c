@@ -1,0 +1,106 @@
+01_rtl 改动记录（基于 hw_zcu104 快照；回退点 = rtl_bak_pf0/）
+=====================================================
+
+改动一：双发射（权重预取，lookahead=1）
+-----------------------------------------------------
+思路：GEMM 在跑的时候 DMA 引擎闲着。把下一条权重 LOAD 提前发到另一个
+WRAM 半区，GEMM 一结束权重就位，LOAD 描述符到 T_EXEC 时直接命中，不再
+串行等 DMA。只预取 TAG_W 的 OP_LOAD，发射窗口 = T_RUN_G 与 T_RUN_SM。
+
+RTL 改动：
+- rtl/ae_sched.sv
+  * 新增 pf 子状态机（PF_IDLE/PF_RD/PF_LAT/PF_ISSUE），借用 SEQ 读口
+    一拍取下一条描述符（seq_raddr = PF_RD 拍切 pc_next），锁存影子命令组。
+  * pf_issue_ok 硬件守卫：目标是 OP_LOAD+TAG_W、目标半区 != 在跑 GEMM
+    半区（地址 bit[W_AW-1] 对分，W_AW 新增参数）、在跑 GEMM k <= 半区深度。
+    违纪自动不发射，退化为串行——软件不用保证任何事。
+  * T_EXEC 命中路径：pf_v=1 且 pf_pc_r==pc 时不发 dma_start，置 pf_hit_r
+    进 T_RUN_DMA 等 pf_done；未命中且 dma_busy=1 时原地等（保险路径）。
+  * T_RUN_DMA 消费时清 pf_v/pf_done/pf_hit_r。T_IDLE(start) 与 T_FIN 各清一次。
+  * 端口新增 pf_en 入 + pf_bg_start/pf_dmaaddr/pf_dmalen/pf_dmatag/pf_dmabase 出。
+- rtl/ae_core.sv
+  * DMA 命令源 2:1 mux：pf_bg_start 拍喂影子命令组（与前台 dma_start 永不
+    同拍，u_dma D_IDLE 无歧义）。读侧写侧地址通路零改动。
+  * bg_wran FF 授权后台 DMA 用 WRAM B 口；仲裁优先级 eng_cp > (eng_dma|bg_wran)。
+  * u_dma.start = dma_start | pf_bg_start。
+- rtl/ae_top.sv：CTRL 0x00 bit2 = pf_en（复位 0，写一行 + 读回拼一位）。
+
+与设计文档的偏差（1 条）：
+- 文档列了 output [SEQ_AW-1:0] pf_raddr 端口，实际未加——SEQ 读口复用在
+  ae_sched 内部的 seq_raddr mux 完成，core 层无人消费该信号，加出来是死端口。
+
+验证：
+- 门 1 零漂移：regression.sh 8 项全绿；默认用例 REF 8405/5973/844、
+  PRIM 8149/5720/843 与 MEASURED 逐数相等；默认用例 pf1 三遍 dump 与 pf0
+  逐位一致（该用例所有 b_base=0，pf 从不发射 = 结构性零漂移证明）。
+- 门 2 预取正确+省拍（新用例 gen_vectors --case pf，35 条描述符，WRAM 半区
+  32 词，k=32 边界组 + COPY/ATTN_S 夹层 + 循环内死 LOAD）：
+  * PRIM-pf1 cycles 8009 < PRIM-pf0 8413，省 404 拍；
+  * dump_ctx/ddr prim2 vs prim 逐位一致，且与 golden 位精确（REF/PRIM 同过）；
+  * 后台发射 11 次（step0 8 次 + step1 3 次，含 ATTN_S 后 SM 窗口路径 1 次），
+    全命中，无一次 T_EXEC 串行兜底，TB 不变量断言（PF_CHK）全程无违例；
+  * 预测公式 T_pf 口径：模型省拍 418 vs 实测 404，差 +3.47%（门限 10%）。
+- 门 4：gem_cycles.py run_account 加 pf= 形参 + PF_CMD_OVH=1 + dma_busy 双
+  口径 + MEASURED 加 PF0/PF1 条目；smoke --pf 对账 PASS（GEMM -2.1%/-2.2%、
+  DMA busy 口径 -0.3%/-0.9%、n_pf=11 精确、省拍差 3.47%）。smoke（默认用例）
+  输出不变。
+
+已知良性现象（不是 bug）：
+- pf 用例里 PRIM-pf1 的 gemm_cycles 比 pf0 多 3 拍：ae_gemm 的 S_DALIGN 等
+  rq_ms 自由轮转 slot 相位对齐（0..3 拍），pf1 改变了各 GEMM 的到达相位，
+  属引擎内部等待，与预取逻辑无关。dma +7 拍 = 各 DMA 命令落到不同 LFSR
+  停顿相位。
+
+改动二：ae_gemm 的 rq_ms 实例 T_MAX=0 -> 39
+-----------------------------------------------------
+背景：真实 HB 模型 requant 需要 s∈[21,27]、m∈[16424,32754]（见
+02_quant/hw_calib_results.json）。原来 T_MAX=0 只有 s=8 固定移位路径，
+172 层的 m 会被取整成 0。
+
+RTL 改动：
+- rtl/ae_gemm.sv 仅一行：rq_ms #(.T_MAX(0)) -> #(.T_MAX(39))（generate 里
+  唯一实例化点）。rq_v2.sv / rq_ms.sv 本身零改动——g_barrel 分支早已存在，
+  流水仍 2 拍，drain 时序不变（tb_rq 相位 B 本来就有 T_MAX=39 对 v1 神谕
+  s∈[8,47] 的单元级对拍）。
+
+验证：
+- 回归 8 项仍全绿；默认用例（s=8，t=0 移位为空操作）三遍拍数逐数不变：
+  REF 8405/5973/844、PRIM 8149/5720/843。
+- 新用例 gen_vectors --case rqs（复用 pf builder，换 requant 表：m∈
+  [9000,32754]、s∈[21,27]，k=32 层提供削顶+中值覆盖，k=8 层提供小值覆盖，
+  softmax 层同域）：tb 三遍 + compare.py 全部位精确，golden y=sat8((acc·m)>>>s)
+  与 RTL 逐位一致。
+
+门 3 综合（Vivado 2021.2 OOC，工作区 /e/ae_syn/pf_tmax，1 次过）：
+- 总量：LUT 110,465（基线 106,525，+3,940）/ FF 112,260（+186）/
+  BRAM 122.5 持平 / URAM 64 持平 / DSP 1,728 持平；
+- WNS = −1.038 ns 与基线完全相同，最差路径仍是 copy 引擎 16→108 lane
+  重排交叉（desc_r_reg → u_cp/wr_wdata_reg）——预取与 T_MAX 都没碰关键路径。
+- 增量拆分（层级 utilization，基线 DCP = /e/ae_syn/integ 同法对账）：
+  * 双发射：u_sched 1,038→1,021（−17，pf 逻辑被综合器折进原有结构），
+    u_core 胶层（DMA mux/bg_wran 仲裁）+约 670 → 双发射净增量 ≈ +650 LUT，
+    落在预估 300–700 内，≤3,000 门内；
+  * T_MAX=39：u_gemm 72,890→76,176 = +3,286 LUT（27 套 rq_ms 各带一个
+    35b 桶形移位，~122 LUT/套）。此项单列（如需省：T_MAX=19 覆盖 s≤27
+    可省约 1/6 移位级，代价是丢 s∈[28,47] 余量）。
+  合计 650 + 3,286 ≈ +3,940（跨模块优化的零头在 u_sm/u_cp/u_dma 侧）。
+
+RTL 文件清单（相对 01_rtl/）：
+  rtl/ae_sched.sv   预取子状态机 + 命中路径 + 端口
+  rtl/ae_core.sv    DMA mux + bg_wran + WRAM 仲裁 + 穿线
+  rtl/ae_top.sv     pf_en 寄存器
+  rtl/ae_gemm.sv    T_MAX=39（一行 + 注释）
+  sim/tb_ae.sv      三遍结构 + LFSR 相位对齐 + PF_CHK 断言 + 探针
+  sim/gen_vectors.py --case pf / --case rqs
+  sim/gem_cycles.py run_account(pf=) / PF_CMD_OVH / MEASURED / smoke --pf
+回退点：rtl_bak_pf0/（改动前完整 rtl 快照）
+
+---- 2026-08-31 功耗采样（06_power）----
+- sim/tb_ae.sv 加了三处功耗采样改动，全部 ifdef 保护、默认关闭，回归不受影响
+  （不加 -DDUMP_VCD 编译出来和原来逐位一致，三遍 cycles 8405/8149/8149 复核过）：
+  1) CLK_HALF 参数化半周期（默认 5=原 10ns 节奏；功耗运行 -DCLK_HALF=2 对齐 250MHz），
+  2) DUMP_VCD 限窗 dump（DUMP_RUN/DUMP_DELAY/DUMP_LEN/DUMP_FILE 四个可调参数，
+     第 DUMP_RUN 遍 start 后延迟开窗、限时关窗，避免全量 VCD 到 GB 级），
+  3) run_mode 里 tag==DUMP_RUN 时启动开窗计数。
+- 链路与命令见 06_power/POWER_SUMMARY.txt（iverilog 限窗 VCD -> vcd2saif.py ->
+  read_saif -> report_power，实测注记 1540 网）。

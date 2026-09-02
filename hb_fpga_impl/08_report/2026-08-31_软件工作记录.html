@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>软件工作记录 · 2026-08-30 至 2026-08-31</title>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:#f9f9f7;color:#0b0b0b;font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;line-height:1.75;font-size:15px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 22px 80px}
+header.page{border-bottom:1px solid #e1e0d9;padding-bottom:18px;margin-bottom:10px}
+h1{font-size:24px;margin:0 0 10px;line-height:1.4}
+.meta{font-size:13px;color:#52514e;display:flex;flex-wrap:wrap;gap:4px 20px}
+nav.pagenav{margin:12px 0 0;font-size:13.5px}
+nav.pagenav a{color:#2a78d6;text-decoration:none;margin-right:16px}
+h2{font-size:19px;margin:40px 0 4px}
+.hint{font-size:13px;color:#898781;margin:0 0 10px}
+.entry{background:#fcfcfb;border:1px solid rgba(11,11,11,.10);border-radius:10px;padding:16px 20px;margin:14px 0}
+.date{display:inline-block;font-size:12px;font-weight:600;color:#52514e;background:#f0efec;border-radius:5px;padding:1px 8px;margin-left:8px;vertical-align:2px;white-space:nowrap}
+.entry h3{margin:0 0 8px;font-size:16.5px;display:flex;align-items:baseline;flex-wrap:wrap}
+p{margin:8px 0}
+ul,ol{margin:8px 0;padding-left:22px}
+li{margin:4px 0}
+.tile-row{display:flex;flex-wrap:wrap;gap:12px;margin:16px 0}
+.tile{flex:1 1 170px;background:#fcfcfb;border:1px solid rgba(11,11,11,.10);border-radius:10px;padding:12px 16px}
+.tile .v{font-size:21px;font-weight:700}
+.tile .k{font-size:12.5px;color:#52514e;margin-top:2px;line-height:1.5}
+figure.chart{margin:18px 0;background:#fcfcfb;border:1px solid rgba(11,11,11,.10);border-radius:10px;padding:14px 18px 8px}
+figure.chart h4{margin:2px 0 2px;font-size:15px}
+figure.chart .how{font-size:13px;color:#52514e;margin:0 0 8px}
+table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0}
+th,td{border-bottom:1px solid #e1e0d9;text-align:left;padding:6px 8px;vertical-align:top}
+th{color:#52514e;font-weight:600;border-bottom:1px solid #c3c2b7}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.warn{border-left:3px solid #fab219;background:#fffdf3;padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0}
+.crit{border-left:3px solid #d03b3b;background:#fff8f8;padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0}
+.okbox{border-left:3px solid #0ca30c;background:#f6fef6;padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0}
+#tip{position:fixed;opacity:0;pointer-events:none;background:#0b0b0b;color:#fff;font-size:12.5px;line-height:1.5;padding:6px 10px;border-radius:6px;max-width:280px;z-index:9}
+[data-tip]{cursor:default}
+svg path[data-tip]:hover,svg [data-tip]:hover{filter:brightness(.92)}
+footer{margin-top:44px;padding-top:14px;border-top:1px solid #e1e0d9;font-size:12.5px;color:#898781}
+code{background:#f0efec;border-radius:4px;padding:1px 5px;font-size:12.5px}
+details{margin:6px 0 10px}
+summary{cursor:pointer;font-size:13px;color:#52514e}
+</style>
+</head>
+<body>
+<div id="tip"></div>
+<div class="wrap">
+
+<header class="page">
+<h1>软件方向工作记录：从模型到 runtime 二进制（trace、量化、编译器、数据集）</h1>
+<div class="meta">
+<span>生成日期：<b>2026-08-31</b></span>
+<span>覆盖时段：<b>2026-08-30 至 2026-08-31</b></span>
+<span>工程目录：hb_fpga_impl / 02_quant、03_compiler、04_dataset</span>
+</div>
+<nav class="pagenav">
+<a href="2026-08-31_硬件工作记录.html">→ 硬件方向记录</a>
+<a href="2026-08-31_架构工作记录.html">→ 架构方向记录</a>
+<a href="../WORKLOG.md">完整工作日志（WORKLOG.md）</a>
+</nav>
+</header>
+
+<p>这一页讲软件方向：把 HB-GD 模型（0.2B 参数的机器人策略网络）一步步变成 FPGA 加速器能执行的文件，外加数据准备和数值验证。一句话概括这两天的结果：<b>编译链已经全通</b>——模型追踪、INT8 量化校准、分段编译、真实数据集映射全部完成，机器位精确验证 10/10；端到端数值验证是唯一没跑完的一环（进程被中断，见第六条）。</p>
+
+<div class="tile-row">
+<div class="tile"><div class="v">0.0288 rad</div><div class="k">INT8 量化后的策略偏差，远小于 fp32 自身的重采样偏差（0.044-0.064）——量化判绿</div></div>
+<div class="tile"><div class="v">439 条</div><div class="k"> requant 常数表（v2），覆盖全部矩阵乘层，警告清零</div></div>
+<div class="tile"><div class="v">2782 段</div><div class="k">一次推理切成的程序段数，共 203,378 条描述符、196.46 MB 权重</div></div>
+<div class="tile"><div class="v">10/10</div><div class="k">编译器机器冒烟：随机段 RTL 仿真 vs 黄金模型逐字节一致</div></div>
+</div>
+
+<h2>时间线</h2>
+<p class="hint">按完成时间排列，每条标注日期。</p>
+
+<div class="entry">
+<h3>一、模型追踪（trace）：把"模型实际执行了什么"记下来 <span class="date">2026-08-30</span></h3>
+<p><b>做什么。</b>在服务器上给模型每个算子挂探针，跑一条真实样本，把算子的执行顺序、输入输出形状、权重全部记录成一份中间表示（ops_trace.json，3003 条记录）。</p>
+<p><b>为什么必须做。</b>编译器需要的不是"模型定义了什么"，而是"模型运行时真的执行了什么"。比如去噪循环要跑 10 步，同一段网络会执行 10 次——按定义编译会少算 90% 的工作量。</p>
+<p><b>踩过的坑。</b>同一个模块执行 10 次时，记录的归属要按"时间上紧接着的下一条"来对，不能按名字前缀匹配——曾把 qkv 融合层的行数错算到 225 万，量级直接错到荒谬。这类坑最终记了 12 条在编译器笔记里（见第四条）。</p>
+</div>
+
+<div class="entry">
+<h3>二、INT8 量化校准：硬件口径下全模型判绿 <span class="date">2026-08-30</span></h3>
+<p><b>做什么。</b>给每个矩阵乘层定 INT8 的缩放常数：权重一个缩放（per-tensor）、输入激活一个缩放。方法是在服务器上跑 10 条样本，统计每层激活的数值范围，然后算出"乘多少、移几位"能把 INT32 累加结果压回 INT8 而不溢出。这套常数最终就是 requant 常数表。</p>
+<div class="okbox">
+<p><b>✓ 判绿。</b>量化模型输出 vs fp32 原模型的动作策略偏差 <b>0.0288 rad</b>。这个数字小于 fp32 自己重采样一次的偏差（0.044-0.064 rad）——意思是<b>量化引入的误差比模型自身的不稳定性还小</b>，在这个任务上 INT8 可用。</p>
+</div>
+<p><b>bias（偏置）的处理分三路。</b>314 层走 K+1 增广：把 bias 作为常数行拼进权重矩阵一起乘，硬件不加任何加法器就白拿到 bias；88 层增广后会超宽度限制，bias 留在 host 侧用浮点加；28 层本来就没有 bias。另有 1 层（spatial_enhancer 的概率输出层）数值敏感，整层豁免保持浮点、在 host 算。</p>
+<p><b>重要教训：乘数方向差点写反。</b>任务书里给的公式 r=so/(sa·sw) 是反量化方向，照抄实现后全模型输出直接砸死在 ±127（int8 饱和）。执行代理没有盲信任务书，用 RTL 自带的测试向量（已知 m=64、s=8 时应该等于 0.25）证伪了公式，纠正为 r=(sa·sw)/so。教训写进流程：<b>关键公式要留一个独立的交叉验证锚点</b>。</p>
+<p>产出：<code>02_quant/hw_calib_table.json</code>（431 条）。</p>
+</div>
+
+<div class="entry">
+<h3>三、常数补丁：26 条警告追到 8 个缺口，全部补齐 <span class="date">2026-08-31</span></h3>
+<p>编译器拿 431 条常数表编译时报了 26 条"requant 常数缺失"警告。去重后发现其实是 8 个模块：2 个一维卷积（上轮校准只挂了 Linear 和二维卷积的探针，漏了 Conv1d）加 6 个多头注意力的融合投影权重（in_proj_weight 是融合矩阵，没有子 Linear 可以挂探针）。</p>
+<p>给这 8 个补了校准（全部走 K+1 增广），合并成 <code>hw_calib_table_v2.json</code> 共 <b>439 条</b>，用 v2 重编译后警告清零。</p>
+<p><b>插曲：服务器 /home 盘 100% 满</b>，1KB 都写不进。这次工作全部改在 /tmp 完成（根盘 111G 空闲）。后续服务器工作先查磁盘再动手。</p>
+</div>
+
+<div class="entry">
+<h3>四、数据集：RoboTwin 官方数据映射到模型输入 <span class="date">2026-08-30</span></h3>
+<p><b>做什么。</b>从 RoboTwin 官方（RoboTwin2.0，place_empty_cup 任务）下载了 3 条演示样本，映射成 HB-GD 期望的输入格式，并算好 fp32 参考动作。</p>
+<p><b>映射四件事：</b>①相机改名对齐（4 相机：正前方/左腕/右腕/头顶）；②外参换算——数据集存的是 OpenGL 约定的"相机到世界"矩阵，模型要 OpenCV 约定的"世界到相机"，换算公式在一条同时存两种矩阵的样本上验证过，误差 1.6e-7；③关节顺序直接对上（左臂 6 关节+夹爪、右臂 6 关节+夹爪，逐帧验证全等）；④图像是 BGR 编码的 jpeg，解码时处理好即可，无害。</p>
+<p><b>一个要知道的事：深度是合成的。</b>官方数据集根本没存深度（收集时就没开这个保存项），而模型硬性需要深度输入。现在的做法是用真实相机内外参加桌面平面假设射线求交合成出来——这是全链路里唯一非真实的输入，结论引用时要注意。真值动作（未来 64 步关节轨迹）直接取自数据集的关节序列，逐帧验证过等于动作序列。</p>
+<p><b>标尺已立好。</b>fp32 模型对这 3 条样本的参考动作已算出；同一样本重新采样一次的偏差在 0.044-0.064 rad。之后加速器端到端结果跟 fp32 比，只要差距明显小于这个数，就说明硬件复现了策略。</p>
+</div>
+
+<div class="entry">
+<h3>五、编译器 v0：模型 → 2782 个程序段，一次编译全通 <span class="date">2026-08-31</span></h3>
+<p><b>输入输出。</b>吃进三样东西——执行序追踪、requant 常数表、INT8 权重；吐出 runtime 二进制：2782 个程序段（每段 = 一条指令流 + 权重/激活的内存映射 + 输出清单）、总共 203,378 条描述符（硬件指令）、196.46 MB 权重大文件、host 执行计划 1424 步。段怎么切、为什么这么切，属于架构决策，见架构页。</p>
+<p><b>验证（三层）。</b>①机器冒烟 10/10：随机抽 10 段，RTL 仿真 vs numpy 黄金解释器整片内存逐字节一致；②独立后检：内存区间零重叠、20 万条指令寻址零越界、互斥断言零触发；③26 个真实段（1,647 到 236,504 拍）用黄金解释器完整执行无错。</p>
+<p><b>一次编译指令流的构成长这样：</b></p>
+<figure class="chart">
+<h4>一次推理的 203,378 条指令都在干什么</h4>
+<p class="how">这图怎么看：一根条一类指令，长度是条数占比。注意真正"算"的矩阵乘只占 34%——搬运类（转置、激活装载、结果写回、权重装载）加起来 65%。这是 v0 调度的已知债，架构页有拆解。</p>
+<svg viewBox="0 0 680 262" role="img" aria-label="一次推理 203,378 条描述符都在干什么" style="width:100%;height:auto;display:block"><line x1="175" y1="10" x2="175" y2="232" stroke="#e1e0d9" stroke-width="1"/><text x="175" y="248" text-anchor="middle" font-size="11" fill="#898781">0</text><line x1="285" y1="10" x2="285" y2="232" stroke="#e1e0d9" stroke-width="1"/><text x="285" y="248" text-anchor="middle" font-size="11" fill="#898781">25000</text><line x1="395" y1="10" x2="395" y2="232" stroke="#e1e0d9" stroke-width="1"/><text x="395" y="248" text-anchor="middle" font-size="11" fill="#898781">50000</text><line x1="505" y1="10" x2="505" y2="232" stroke="#e1e0d9" stroke-width="1"/><text x="505" y="248" text-anchor="middle" font-size="11" fill="#898781">75000</text><line x1="175" y1="10" x2="175" y2="232" stroke="#c3c2b7" stroke-width="1"/><path d="M175,14 L476.4216,14 A4,4 0 0 1 480.4216,18 L480.4216,28 A4,4 0 0 1 476.4216,32 L175,32 Z" fill="#2a78d6" data-tip="GEMM 计算描述符 69,414 条（34.1%）——真正&quot;算&quot;的部分"/><text x="165" y="27.5" text-anchor="end" font-size="12.5" fill="#52514e">GEMM（矩阵乘）</text><text x="488.4216" y="27.5" font-size="12.5" font-weight="600" fill="#0b0b0b">69,414 · 34.1%</text><path d="M175,50 L408.74080000000004,50 A4,4 0 0 1 412.74080000000004,54 L412.74080000000004,64 A4,4 0 0 1 408.74080000000004,68 L175,68 Z" fill="#2a78d6" data-tip="COPY 运行时转置 54,032 条（26.6%）：swin 窗口重排、im2col 布局调整"/><text x="165" y="63.5" text-anchor="end" font-size="12.5" fill="#52514e">COPY（转置搬运）</text><text x="420.74080000000004" y="63.5" font-size="12.5" font-weight="600" fill="#0b0b0b">54,032 · 26.6%</text><path d="M175,86 L356.88239999999996,86 A4,4 0 0 1 360.88239999999996,90 L360.88239999999996,100 A4,4 0 0 1 356.88239999999996,104 L175,104 Z" fill="#2a78d6" data-tip="激活从 DDR 装进片上 CTX：42,246 条（20.8%）。段独立 → 反复装"/><text x="165" y="99.5" text-anchor="end" font-size="12.5" fill="#52514e">LOAD_CTX（激活装载）</text><text x="368.88239999999996" y="99.5" font-size="12.5" font-weight="600" fill="#0b0b0b">42,246 · 20.8%</text><path d="M175,122 L256.404,122 A4,4 0 0 1 260.404,126 L260.404,136 A4,4 0 0 1 256.404,140 L175,140 Z" fill="#2a78d6" data-tip="结果写回 DDR：19,410 条（9.5%），共 660.9 MB/次推理"/><text x="165" y="135.5" text-anchor="end" font-size="12.5" fill="#52514e">STORE（结果写回）</text><text x="268.404" y="135.5" font-size="12.5" font-weight="600" fill="#0b0b0b">19,410 · 9.5%</text><path d="M175,158 L239.17360000000002,158 A4,4 0 0 1 243.17360000000002,162 L243.17360000000002,172 A4,4 0 0 1 239.17360000000002,176 L175,176 Z" fill="#2a78d6" data-tip="权重装载 15,494 条（7.6%）：双发射预取优化的对象"/><text x="165" y="171.5" text-anchor="end" font-size="12.5" fill="#52514e">LOAD_W（权重装载）</text><text x="251.17360000000002" y="171.5" font-size="12.5" font-weight="600" fill="#0b0b0b">15,494 · 7.6%</text><path d="M175,194 L183.2408,194 A4,4 0 0 1 187.2408,198 L187.2408,208 A4,4 0 0 1 183.2408,212 L175,212 Z" fill="#2a78d6" data-tip="每段一条收尾描述符，2782 段共 2,782 条"/><text x="165" y="207.5" text-anchor="end" font-size="12.5" fill="#52514e">段收尾（DONE 等）</text><text x="195.2408" y="207.5" font-size="12.5" font-weight="600" fill="#0b0b0b">2,782 · 1.4%</text></svg>
+<details><summary>数据表</summary>
+<table><thead><tr><th>指令类型</th><th class="num">条数</th><th class="num">占比</th><th>干什么</th></tr></thead><tbody>
+<tr><td>GEMM</td><td class="num">69,414</td><td class="num">34.1%</td><td>矩阵乘计算</td></tr>
+<tr><td>COPY</td><td class="num">54,032</td><td class="num">26.6%</td><td>运行时转置（swin 窗口重排、im2col 布局）</td></tr>
+<tr><td>LOAD_CTX</td><td class="num">42,246</td><td class="num">20.8%</td><td>激活从 DDR 装进片上缓存</td></tr>
+<tr><td>STORE</td><td class="num">19,410</td><td class="num">9.5%</td><td>结果写回 DDR（共 660.9 MB）</td></tr>
+<tr><td>LOAD_W</td><td class="num">15,494</td><td class="num">7.6%</td><td>权重装载（预取优化的对象）</td></tr>
+<tr><td>收尾等</td><td class="num">2,782</td><td class="num">1.4%</td><td>每段一条</td></tr>
+</tbody></table></details>
+</figure>
+<p><b>12 个坑全记在案</b>（03_compiler/NOTES.txt）。最险的一个：黄金解释器读内存字节时按无符号处理，INT8 负数变成 128-255，黄金全错而 RTL 是对的——差点把排查带偏到硬件方向。另外 swin 注意力的权重必须在段内复用（64 个窗口每窗现装会把段撑爆）、大激活要按行分块独立成段，这些都在编译器里处理了。</p>
+</div>
+
+<div class="entry">
+<h3>六、搬运长度编码溢出：测拍时挖出的编译器大 bug，已修 <span class="date">2026-08-31</span></h3>
+<div class="crit">
+<p><b>⚠ 这条是本轮发现的影响面最大的软件缺陷。</b>描述符里"搬运长度"字段只有 18 位，最大装 262,128 字节。编译器把超长的装载/写回指令硬塞进这个字段，高位溢出到旁边的循环标志和步数字段。后果分两档，都很坏：</p>
+<ul>
+<li>溢出后长度恰好变成零 → DMA 无限循环搬 0 字节，看门狗超时杀掉——至少能发现；</li>
+<li>溢出后长度非零 → <b>静默少搬数据</b>，结果错但不报任何错——这种最危险。</li>
+</ul>
+</div>
+<p><b>影响面。</b>1276/2782 段（46%）、2932 条指令受影响，其中必挂死的 2 条。修复后把全部写回字节加起来对账：660,897,024 字节，与清单精确相等，0 段不一致。</p>
+<p><b>为什么之前一直没发现。</b>RTL 和黄金解释器用同一套（错误的）编码读写这个字段——两边一致，位精确对拍就抓不到。只有真的跑超长段才暴露。这次是全模型测拍跑起来才炸出来的。</p>
+<p><b>修复方式与遗留。</b>本轮用 fix_streams.py 在已生成的指令流上外科手术拆分（按最大长度切分、地址顺延），没有重编译。<b>compiler.py 的正式修法（生成时直接拆分）还没回填</b>，是恢复工作清单第一项——现在"流修复版"和"v2 校准版"是两个分支的产物，要合并重编译。</p>
+</div>
+
+<div class="entry">
+<h3>七、拍数估算模型揪出双重除法：313M → 1081M 的对账 <span class="date">2026-08-31</span></h3>
+<p>全模型实测拍数出来后（架构页），和编译时估的 313M 对不上，差 3.4 倍。逐类排查发现估算模型抄自老项目时带进一个 bug：GEMM 的行组数被多除了一次 16，全部段的计算量被低估。<b>同一个 bug 还坑了编译器的 MAC 统计字段</b>（报 8.03G，实际硬件计了 223.76G）。</p>
+<figure class="chart">
+<h4>拍数估算 vs 实测：修一个 bug 上一级台阶</h4>
+<p class="how">这图怎么看：四根条是同一件事（一次推理的总拍数）在四个口径下的数字。前两根是修 bug 过程，最后一根是 441 类全实测。剩下的 21% 差距是估算模型本来就没算的访存停顿，属于模型精度问题，不是 bug。</p>
+<svg viewBox="0 0 680 190" role="img" aria-label="拍数估算 vs 实测（单位：百万拍）" style="width:100%;height:auto;display:block"><line x1="175" y1="10" x2="175" y2="160" stroke="#e1e0d9" stroke-width="1"/><text x="175" y="176" text-anchor="middle" font-size="11" fill="#898781">0</text><line x1="257.5" y1="10" x2="257.5" y2="160" stroke="#e1e0d9" stroke-width="1"/><text x="257.5" y="176" text-anchor="middle" font-size="11" fill="#898781">300</text><line x1="340" y1="10" x2="340" y2="160" stroke="#e1e0d9" stroke-width="1"/><text x="340" y="176" text-anchor="middle" font-size="11" fill="#898781">600</text><line x1="422.5" y1="10" x2="422.5" y2="160" stroke="#e1e0d9" stroke-width="1"/><text x="422.5" y="176" text-anchor="middle" font-size="11" fill="#898781">900</text><line x1="505" y1="10" x2="505" y2="160" stroke="#e1e0d9" stroke-width="1"/><text x="505" y="176" text-anchor="middle" font-size="11" fill="#898781">1200</text><line x1="175" y1="10" x2="175" y2="160" stroke="#c3c2b7" stroke-width="1"/><path d="M175,14 L257.075,14 A4,4 0 0 1 261.075,18 L261.075,28 A4,4 0 0 1 257.075,32 L175,32 Z" fill="#2a78d6" data-tip="compiler manifest 的估算：313.0M 拍 ≈ 1.58s @198.5MHz"/><text x="165" y="27.5" text-anchor="end" font-size="12.5" fill="#52514e">v0 估算（原口径）</text><text x="269.075" y="27.5" font-size="12.5" font-weight="600" fill="#0b0b0b">313.0 M</text><path d="M175,50 L320.73749999999995,50 A4,4 0 0 1 324.73749999999995,54 L324.73749999999995,64 A4,4 0 0 1 320.73749999999995,68 L175,68 Z" fill="#2a78d6" data-tip="同一模型在修复 dma_len 后的流上重估：544.5M（+74%）"/><text x="165" y="63.5" text-anchor="end" font-size="12.5" fill="#52514e">修长度读法后</text><text x="332.73749999999995" y="63.5" font-size="12.5" font-weight="600" fill="#0b0b0b">544.5 M · +74%</text><path d="M175,86 L406.06999999999994,86 A4,4 0 0 1 410.06999999999994,90 L410.06999999999994,100 A4,4 0 0 1 406.06999999999994,104 L175,104 Z" fill="#2a78d6" data-tip="修掉 gemm 组数被除小 16 倍的 bug 后：854.8M（+57%）"/><text x="165" y="99.5" text-anchor="end" font-size="12.5" fill="#52514e">再修乘法器除法后</text><text x="418.06999999999994" y="99.5" font-size="12.5" font-weight="600" fill="#0b0b0b">854.8 M · +57%</text><path d="M175,122 L468.21999999999997,122 A4,4 0 0 1 472.21999999999997,126 L472.21999999999997,136 A4,4 0 0 1 468.21999999999997,140 L175,140 Z" fill="#2a78d6" data-tip="441 类型全实测：1080.8M 拍（部署口径 pf1）。剩余 21% 差 = LFSR 读停顿/仲裁等模型未含的开销"/><text x="165" y="135.5" text-anchor="end" font-size="12.5" fill="#52514e">Verilator 实测</text><text x="480.21999999999997" y="135.5" font-size="12.5" font-weight="600" fill="#0b0b0b">1080.8 M · +26%</text></svg>
+<details><summary>数据表</summary>
+<table><thead><tr><th>口径</th><th class="num">拍数（百万）</th><th>与上一级差</th></tr></thead><tbody>
+<tr><td>v0 估算（原口径，含两个 bug）</td><td class="num">313.0</td><td>—</td></tr>
+<tr><td>修复 dma_len 长度读法后</td><td class="num">544.5</td><td>+74%（溢出段长度被低估的部分补回）</td></tr>
+<tr><td>再修 GEMM 组数双重除法后</td><td class="num">854.8</td><td>+57%（计算量估回正确值）</td></tr>
+<tr><td>Verilator 全类实测（部署口径）</td><td class="num">1080.8</td><td>+26%（访存停顿/仲裁，模型未覆盖）</td></tr>
+</tbody></table></details>
+</figure>
+</div>
+
+<div class="entry">
+<h3>八、host 驱动：端到端数值验证，进行中被中断 <span class="date">2026-08-31</span></h3>
+<div class="warn">
+<p><b>⚠ 状态：脚本就绪，结果未出。</b>host_driver.py（52KB）已经写好，工作方式是：装一段 → 跑仿真 → 把结果从内存导出反量化成浮点 → 跑 CPU 算子（归一化、gelu 这些）→ 按下一层的校准常数量化 → 写进下一段。样本 000/001 的执行计划已备好，全部 2782 段也用 v2 常数表重编译过。</p>
+<p>进程退出时，端到端的 <code>result_*.npz</code> 还没跑出来。<b>这是软件方向唯一没闭环的环节。</b>判据已经定好：加速器输出动作 vs fp32 参考的偏差 ≤ 0.045 rad（与 fp32 自身重采样偏差同量级）。</p>
+<p>恢复时要先做一件事：把"指令流修复版"（第六条的 dma_len 拆分）和"v2 校准版"两个分支合并——在 compiler.py 里正式修掉编码溢出，然后用 v2 常数表重编译一份干净的产物再跑。</p>
+</div>
+</div>
+
+<h2>软件方向小结</h2>
+<p>到 2026-08-31 为止：模型追踪 ✓、INT8 校准判绿 ✓、常数表 439 条全量 ✓、官方数据集映射 + fp32 标尺 ✓、编译器 v0 全通（含机器位精确）✓、两个大 bug（乘数方向、dma_len 溢出）发现并修复 ✓。<b>未闭环：端到端数值验证（脚本就绪、被中断）。</b></p>
+
+<footer>
+<p>口径说明：量化偏差为关节动作平均绝对误差（rad）；"位精确/逐字节"指整片 DDR 仿真导出比对；拍数为 TB 计数器口径。数字来源：02_quant/hw_calib_results.json、03_compiler/model_summary.json、03_compiler/NOTES.txt、05_sim/TOTAL.json、05_sim/MEASURE_NOTES.txt、04_dataset/schema_check.json。</p>
+<p>软件 · 生成于 2026-08-31 · 覆盖 2026-08-30 至 2026-08-31</p>
+</footer>
+
+</div>
+<script>
+(function(){
+  var tip = document.getElementById('tip');
+  document.querySelectorAll('[data-tip]').forEach(function(el){
+    el.addEventListener('mousemove', function(e){
+      tip.textContent = el.getAttribute('data-tip');
+      tip.style.opacity = 1;
+      var x = Math.min(e.clientX + 14, window.innerWidth - 300);
+      tip.style.left = x + 'px';
+      tip.style.top = (e.clientY + 18) + 'px';
+    });
+    el.addEventListener('mouseleave', function(){ tip.style.opacity = 0; });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,7703 @@
+{
+ "total": {
+  "segments": 2782,
+  "host_steps": 1424,
+  "boundaries": 1151,
+  "cycles_pf1": 1080821046,
+  "desc_counts": {
+   "load_ctx": 45198,
+   "load_w": 15494,
+   "store": 21037,
+   "copy": 54032,
+   "gemm": 69414
+  },
+  "bytes": {
+   "load_ctx": 1306469136,
+   "load_w": 597536000,
+   "store": 660897024
+  },
+  "ideal_cycles": {
+   "gemm": 599114656,
+   "load_ctx": 164875328,
+   "load_w": 75368724,
+   "store": 206635505,
+   "copy": 15164416,
+   "softmax": 85536
+  }
+ },
+ "by_kind": {
+  "norm": {
+   "steps": 423,
+   "boundaries": 404,
+   "store_cyc": 36266782.500000015,
+   "loadctx_cyc": 37109592.52380952,
+   "roundtrip_cyc": 73376375.02380954,
+   "copy_assoc_cyc": 110464.0,
+   "store_bytes": 116021772.1904762,
+   "loadctx_bytes": 294404781.3333333
+  },
+  "actv": {
+   "steps": 331,
+   "boundaries": 321,
+   "store_cyc": 6140723.333333335,
+   "loadctx_cyc": 9273484.166666664,
+   "roundtrip_cyc": 15414207.5,
+   "copy_assoc_cyc": 0.0,
+   "store_bytes": 19644992.0,
+   "loadctx_bytes": 72894541.33333331
+  },
+  "softmax": {
+   "steps": 220,
+   "boundaries": 220,
+   "store_cyc": 13187970.0,
+   "loadctx_cyc": 9533790.0,
+   "roundtrip_cyc": 22721760.0,
+   "copy_assoc_cyc": 10612976.0,
+   "store_bytes": 42180608.0,
+   "loadctx_bytes": 75618688.0
+  },
+  "softmax_prep": {
+   "steps": 16,
+   "boundaries": 16,
+   "store_cyc": 5940.0,
+   "loadctx_cyc": 2954864.0,
+   "roundtrip_cyc": 2960804.0,
+   "copy_assoc_cyc": 116912.0,
+   "store_bytes": 18176.0,
+   "loadctx_bytes": 23434560.0
+  },
+  "rotary": {
+   "steps": 180,
+   "boundaries": 180,
+   "store_cyc": 7056900.0,
+   "loadctx_cyc": 591780.0,
+   "roundtrip_cyc": 7648680.0,
+   "copy_assoc_cyc": 1298880.0,
+   "store_bytes": 22525440.0,
+   "loadctx_bytes": 4292160.0
+  },
+  "swin_partition": {
+   "steps": 24,
+   "boundaries": 24,
+   "store_cyc": 5031257.5,
+   "loadctx_cyc": 342148.0,
+   "roundtrip_cyc": 5373405.5,
+   "copy_assoc_cyc": 0.0,
+   "store_bytes": 16098880.0,
+   "loadctx_bytes": 2714434.6666666665
+  },
+  "swin_split": {
+   "steps": 24,
+   "boundaries": 24,
+   "store_cyc": 1245040.0,
+   "loadctx_cyc": 464200.0,
+   "roundtrip_cyc": 1709240.0,
+   "copy_assoc_cyc": 2298688.0,
+   "store_bytes": 3963904.0,
+   "loadctx_bytes": 3680768.0
+  },
+  "swin_reverse": {
+   "steps": 24,
+   "boundaries": 24,
+   "store_cyc": 5734790.0,
+   "loadctx_cyc": 2009945.0,
+   "roundtrip_cyc": 7744735.0,
+   "copy_assoc_cyc": 70752.0,
+   "store_bytes": 18350080.0,
+   "loadctx_bytes": 15952000.0
+  },
+  "im2col": {
+   "steps": 30,
+   "boundaries": 29,
+   "store_cyc": 626128.3333333333,
+   "loadctx_cyc": 309633.1904761905,
+   "roundtrip_cyc": 935761.5238095238,
+   "copy_assoc_cyc": 0.0,
+   "store_bytes": 2003382.857142857,
+   "loadctx_bytes": 2457056.0
+  },
+  "deform_host": {
+   "steps": 6,
+   "boundaries": 6,
+   "store_cyc": 3264240.0,
+   "loadctx_cyc": 1321230.0,
+   "roundtrip_cyc": 4585470.0,
+   "copy_assoc_cyc": 0.0,
+   "store_bytes": 10444800.0,
+   "loadctx_bytes": 10485600.0
+  },
+  "host_gemm": {
+   "steps": 1,
+   "boundaries": 1,
+   "store_cyc": 14630.0,
+   "loadctx_cyc": 7197.428571428571,
+   "roundtrip_cyc": 21827.428571428572,
+   "copy_assoc_cyc": 0.0,
+   "store_bytes": 46811.428571428565,
+   "loadctx_bytes": 57120.0
+  },
+  "exempt": {
+   "steps": 1,
+   "boundaries": 1,
+   "store_cyc": 918057.5,
+   "loadctx_cyc": 13717.0,
+   "roundtrip_cyc": 931774.5,
+   "copy_assoc_cyc": 0.0,
+   "store_bytes": 2937600.0,
+   "loadctx_bytes": 108800.0
+  },
+  "other": {
+   "steps": 144,
+   "boundaries": 129,
+   "store_cyc": 4445180.833333335,
+   "loadctx_cyc": 930714.6904761903,
+   "roundtrip_cyc": 5375895.523809525,
+   "copy_assoc_cyc": 655744.0,
+   "store_bytes": 14169121.523809522,
+   "loadctx_bytes": 6987794.666666666
+  }
+ },
+ "by_class": {
+  "other:BaseDataPreprocessor": {
+   "steps": 1,
+   "boundaries": 1,
+   "store_cyc": 204813.3333333333,
+   "loadctx_cyc": 95823.33333333333,
+   "roundtrip_cyc": 300636.6666666666,
+   "copy_assoc_cyc": 0.0
+  },
+  "other:AdaptivePadding": {
+   "steps": 8,
+   "boundaries": 8,
+   "store_cyc": 428528.33333333326,
+   "loadctx_cyc": 223412.09523809524,
+   "roundtrip_cyc": 651940.4285714285,
+   "copy_assoc_cyc": 0.0
+  },
+  "im2col:Conv2d": {
+   "steps": 10,
+   "boundaries": 9,
+   "store_cyc": 536503.3333333333,
+   "loadctx_cyc": 182605.69047619047,
+   "roundtrip_cyc": 719109.0238095238,
+   "copy_assoc_cyc": 0.0
+  },
+  "norm:LayerNorm": {
+   "steps": 146,
+   "boundaries": 129,
+   "store_cyc": 24167739.16666669,
+   "loadctx_cyc": 4487656.333333332,
+   "roundtrip_cyc": 28655395.500000022,
+   "copy_assoc_cyc": 109880.0
+  },
+  "other:PatchEmbed": {
+   "steps": 2,
+   "boundaries": 2,
+   "store_cyc": 485131.25,
+   "loadctx_cyc": 73517.0,
+   "roundtrip_cyc": 558648.25,
+   "copy_assoc_cyc": 0.0
+  },
+  "swin_partition:WindowMSA": {
+   "steps": 24,
+   "boundaries": 24,
+   "store_cyc": 5031257.5,
+   "loadctx_cyc": 342148.0,
+   "roundtrip_cyc": 5373405.5,
+   "copy_assoc_cyc": 0.0
+  },
+  "swin_split:WindowMSA": {
+   "steps": 24,
+   "boundaries": 24,
+   "store_cyc": 1245040.0,
+   "loadctx_cyc": 464200.0,
+   "roundtrip_cyc": 1709240.0,
+   "copy_assoc_cyc": 2298688.0
+  },
+  "softmax:WindowMSA": {
+   "steps": 24,
+   "boundaries": 24,
+   "store_cyc": 3374000.0,
+   "loadctx_cyc": 774256.0,
+   "roundtrip_cyc": 4148256.0,
+   "copy_assoc_cyc": 1343488.0
+  },
+  "swin_reverse:ShiftWindowMSA": {
+   "steps": 24,
+   "boundaries": 24,
+   "store_cyc": 5734790.0,
+   "loadctx_cyc": 2009945.0,
+   "roundtrip_cyc": 7744735.0,
+   "copy_assoc_cyc": 70752.0
+  },
+  "actv:GELU": {
+   "steps": 24,
+   "boundaries": 24,
+   "store_cyc": 2253030.0,
+   "loadctx_cyc": 1354344.0,
+   "roundtrip_cyc": 3607374.0,
+   "copy_assoc_cyc": 0.0
+  },
+  "other:Unfold": {
+   "steps": 6,
+   "boundaries": 6,
+   "store_cyc": 209085.0,
+   "loadctx_cyc": 120391.33333333333,
+   "roundtrip_cyc": 329476.3333333333,
+   "copy_assoc_cyc": 0.0
+  },
+  "other:PatchMerging": {
+   "steps": 6,
+   "boundaries": 6,
+   "store_cyc": 763336.25,
+   "loadctx_cyc": 27646.0,
+   "roundtrip_cyc": 790982.25,
+   "copy_assoc_cyc": 0.0
+  },
+  "other:SwinTransformer": {
+   "steps": 2,
+   "boundaries": 2,
+   "store_cyc": 204814.99999999997,
+   "loadctx_cyc": 24193.0,
+   "roundtrip_cyc": 229007.99999999997,
+   "copy_assoc_cyc": 0.0
+  },
+  "norm:GroupNorm": {
+   "steps": 8,
+   "boundaries": 7,
+   "store_cyc": 127515.83333333333,
+   "loadctx_cyc": 63881.69047619048,
+   "roundtrip_cyc": 191397.52380952382,
+   "copy_assoc_cyc": 584.0
+  },
+  "host_gemm:Conv2d": {
+   "steps": 1,
+   "boundaries": 1,
+   "store_cyc": 14630.0,
+   "loadctx_cyc": 7197.428571428571,
+   "roundtrip_cyc": 21827.428571428572,
+   "copy_assoc_cyc": 0.0
+  },
+  "other:ChannelMapper": {
+   "steps": 2,
+   "boundaries": 2,
+   "store_cyc": 15270.833333333334,
+   "loadctx_cyc": 8489.761904761905,
+   "roundtrip_cyc": 23760.595238095237,
+   "copy_assoc_cyc": 584.0
+  },
+  "other:Embedding": {
+   "steps": 3,
+   "boundaries": 1,
+   "store_cyc": 1922.4999999999998,
+   "loadctx_cyc": 3877.0,
+   "roundtrip_cyc": 5799.5,
+   "copy_assoc_cyc": 1752.0
+  },
+  "actv:GELUActivation": {
+   "steps": 12,
+   "boundaries": 12,
+   "store_cyc": 46140.0,
+   "loadctx_cyc": 53514.0,
+   "roundtrip_cyc": 99654.0,
+   "copy_assoc_cyc": 0.0
+  },
+  "other:BertModel": {
+   "steps": 1,
+   "boundaries": 1,
+   "store_cyc": 642.5,
+   "loadctx_cyc": 5191.0,
+   "roundtrip_cyc": 5833.5,
+   "copy_assoc_cyc": 0.0
+  },
+  "other:SinePositionalEncoding": {
+   "steps": 4,
+   "boundaries": 1,
+   "store_cyc": 40973.33333333333,
+   "loadctx_cyc": 16676.666666666664,
+   "roundtrip_cyc": 57649.99999999999,
+   "copy_assoc_cyc": 0.0
+  },
+  "softmax_prep:BiMultiHeadAttention": {
+   "steps": 6,
+   "boundaries": 6,
+   "store_cyc": 3660.0,
+   "loadctx_cyc": 2944776.0,
+   "roundtrip_cyc": 2948436.0,
+   "copy_assoc_cyc": 110688.0
+  },
+  "softmax:BiMultiHeadAttention": {
+   "steps": 6,
+   "boundaries": 6,
+   "store_cyc": 6574620.0,
+   "loadctx_cyc": 1321158.0,
+   "roundtrip_cyc": 7895778.0,
+   "copy_assoc_cyc": 8064.0
+  },
+  "deform_host:MultiScaleDeformableAttention": {
+   "steps": 6,
+   "boundaries": 6,
+   "store_cyc": 3264240.0,
+   "loadctx_cyc": 1321230.0,
+   "roundtrip_cyc": 4585470.0,
+   "copy_assoc_cyc": 0.0
+  },
+  "actv:ReLU": {
+   "steps": 13,
+   "boundaries": 13,
+   "store_cyc": 324745.0,
+   "loadctx_cyc": 2039700.0,
+   "roundtrip_cyc": 2364445.0,
+   "copy_assoc_cyc": 0.0
+  },
+  "softmax_prep:MultiheadAttention": {
+   "steps": 6,
+   "boundaries": 6,
+   "store_cyc": 1080.0,
+   "loadctx_cyc": 7242.0,
+   "roundtrip_cyc": 8322.0,
+   "copy_assoc_cyc": 4656.0
+  },
+  "softmax:MultiheadAttention": {
+   "steps": 6,
+   "boundaries": 6,
+   "store_cyc": 7710.0,
+   "loadctx_cyc": 15564.0,
+   "roundtrip_cyc": 23274.0,
+   "copy_assoc_cyc": 2352.0
+  },
+  "other:TextImageDeformable2DEnhancer": {
+   "steps": 1,
+   "boundaries": 1,
+   "store_cyc": 408030.0,
+   "loadctx_cyc": 13717.0,
+   "roundtrip_cyc": 421747.0,
+   "copy_assoc_cyc": 0.0
+  },
+  "exempt:Linear": {
+   "steps": 1,
+   "boundaries": 1,
+   "store_cyc": 918057.5,
+   "loadctx_cyc": 13717.0,
+   "roundtrip_cyc": 931774.5,
+   "copy_assoc_cyc": 0.0
+  },
+  "other:MLP": {
+   "steps": 1,
+   "boundaries": 1,
+   "store_cyc": 918057.5,
+   "loadctx_cyc": 13717.0,
+   "roundtrip_cyc": 931774.5,
+   "copy_assoc_cyc": 0.0
+  },
+  "other:DepthFusionSpatialEnhancer": {
+   "steps": 1,
+   "boundaries": 1,
+   "store_cyc": 642.5,
+   "loadctx_cyc": 523.0,
+   "roundtrip_cyc": 1165.5,
+   "copy_assoc_cyc": 0.0
+  },
+  "actv:SiLU": {
+   "steps": 282,
+   "boundaries": 272,
+   "store_cyc": 3516808.3333333326,
+   "loadctx_cyc": 5825926.166666666,
+   "roundtrip_cyc": 9342734.499999998,
+   "copy_assoc_cyc": 0.0
+  },
+  "norm:RMSNorm": {
+   "steps": 209,
+   "boundaries": 209,
+   "store_cyc": 10893927.5,
+   "loadctx_cyc": 28791014.5,
+   "roundtrip_cyc": 39684942.0,
+   "copy_assoc_cyc": 0.0
+  },
+  "other:ScalarEmbedder": {
+   "steps": 74,
+   "boundaries": 74,
+   "store_cyc": 662100.0,
+   "loadctx_cyc": 166576.0,
+   "roundtrip_cyc": 828676.0,
+   "copy_assoc_cyc": 653408.0
+  },
+  "softmax_prep:JointGraphAttention": {
+   "steps": 4,
+   "boundaries": 4,
+   "store_cyc": 1200.0,
+   "loadctx_cyc": 2846.0,
+   "roundtrip_cyc": 4046.0,
+   "copy_assoc_cyc": 1568.0
+  },
+  "softmax:JointGraphAttention": {
+   "steps": 4,
+   "boundaries": 4,
+   "store_cyc": 5140.0,
+   "loadctx_cyc": 18632.0,
+   "roundtrip_cyc": 23772.0,
+   "copy_assoc_cyc": 2752.0
+  },
+  "other:HoloBrainRobotStateEncoder": {
+   "steps": 1,
+   "boundaries": 1,
+   "store_cyc": 642.5,
+   "loadctx_cyc": 523.0,
+   "roundtrip_cyc": 1165.5,
+   "copy_assoc_cyc": 0.0
+  },
+  "norm:AdaRMSNorm": {
+   "steps": 60,
+   "boundaries": 60,
+   "store_cyc": 1077600.0,
+   "loadctx_cyc": 3767040.0,
+   "roundtrip_cyc": 4844640.0,
+   "copy_assoc_cyc": 0.0
+  },
+  "rotary:TemporalJointGraphAttention": {
+   "steps": 60,
+   "boundaries": 60,
+   "store_cyc": 302400.0,
+   "loadctx_cyc": 91140.0,
+   "roundtrip_cyc": 393540.0,
+   "copy_assoc_cyc": 651840.0
+  },
+  "softmax:TemporalJointGraphAttention": {
+   "steps": 60,
+   "boundaries": 60,
+   "store_cyc": 1075500.0,
+   "loadctx_cyc": 3484320.0,
+   "roundtrip_cyc": 4559820.0,
+   "copy_assoc_cyc": 94080.0
+  },
+  "rotary:RotaryAttention": {
+   "steps": 120,
+   "boundaries": 120,
+   "store_cyc": 6754500.0,
+   "loadctx_cyc": 500640.0,
+   "roundtrip_cyc": 7255140.0,
+   "copy_assoc_cyc": 647040.0
+  },
+  "softmax:RotaryAttention": {
+   "steps": 120,
+   "boundaries": 120,
+   "store_cyc": 2151000.0,
+   "loadctx_cyc": 3919860.0,
+   "roundtrip_cyc": 6070860.0,
+   "copy_assoc_cyc": 9162240.0
+  },
+  "other:Upsample": {
+   "steps": 20,
+   "boundaries": 20,
+   "store_cyc": 89625.0,
+   "loadctx_cyc": 127027.5,
+   "roundtrip_cyc": 216652.5,
+   "copy_assoc_cyc": 0.0
+  },
+  "im2col:Conv1d": {
+   "steps": 20,
+   "boundaries": 20,
+   "store_cyc": 89625.0,
+   "loadctx_cyc": 127027.5,
+   "roundtrip_cyc": 216652.5,
+   "copy_assoc_cyc": 0.0
+  },
+  "other:UpsampleHead": {
+   "steps": 10,
+   "boundaries": 10,
+   "store_cyc": 11565.0,
+   "loadctx_cyc": 9414.0,
+   "roundtrip_cyc": 20979.0,
+   "copy_assoc_cyc": 0.0
+  },
+  "other:HoloBrainActionDecoder": {
+   "steps": 1,
+   "boundaries": 1,
+   "store_cyc": 0,
+   "loadctx_cyc": 0,
+   "roundtrip_cyc": 0,
+   "copy_assoc_cyc": 0
+  }
+ },
+ "per_host_op_detail": [
+  {
+   "after_seg": 0,
+   "kinds": [
+    "other:BaseDataPreprocessor",
+    "other:AdaptivePadding",
+    "im2col:Conv2d"
+   ]
+  },
+  {
+   "after_seg": 1,
+   "kinds": [
+    "norm:LayerNorm",
+    "other:PatchEmbed",
+    "norm:LayerNorm",
+    "swin_partition:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 3,
+   "kinds": [
+    "swin_split:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 8,
+   "kinds": [
+    "softmax:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 16,
+   "kinds": [
+    "swin_reverse:ShiftWindowMSA",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 18,
+   "kinds": [
+    "actv:GELU"
+   ]
+  },
+  {
+   "after_seg": 34,
+   "kinds": [
+    "norm:LayerNorm",
+    "swin_partition:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 36,
+   "kinds": [
+    "swin_split:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 41,
+   "kinds": [
+    "softmax:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 49,
+   "kinds": [
+    "swin_reverse:ShiftWindowMSA",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 51,
+   "kinds": [
+    "actv:GELU"
+   ]
+  },
+  {
+   "after_seg": 67,
+   "kinds": [
+    "other:AdaptivePadding",
+    "other:Unfold",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 68,
+   "kinds": [
+    "other:PatchMerging",
+    "norm:LayerNorm",
+    "swin_partition:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 69,
+   "kinds": [
+    "swin_split:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 71,
+   "kinds": [
+    "softmax:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 73,
+   "kinds": [
+    "swin_reverse:ShiftWindowMSA",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 74,
+   "kinds": [
+    "actv:GELU"
+   ]
+  },
+  {
+   "after_seg": 75,
+   "kinds": [
+    "norm:LayerNorm",
+    "swin_partition:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 76,
+   "kinds": [
+    "swin_split:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 78,
+   "kinds": [
+    "softmax:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 80,
+   "kinds": [
+    "swin_reverse:ShiftWindowMSA",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 81,
+   "kinds": [
+    "actv:GELU"
+   ]
+  },
+  {
+   "after_seg": 82,
+   "kinds": [
+    "other:AdaptivePadding",
+    "other:Unfold",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 83,
+   "kinds": [
+    "other:PatchMerging",
+    "norm:LayerNorm",
+    "norm:LayerNorm",
+    "swin_partition:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 84,
+   "kinds": [
+    "swin_split:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 85,
+   "kinds": [
+    "softmax:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 86,
+   "kinds": [
+    "swin_reverse:ShiftWindowMSA",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 87,
+   "kinds": [
+    "actv:GELU"
+   ]
+  },
+  {
+   "after_seg": 88,
+   "kinds": [
+    "norm:LayerNorm",
+    "swin_partition:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 89,
+   "kinds": [
+    "swin_split:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 90,
+   "kinds": [
+    "softmax:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 91,
+   "kinds": [
+    "swin_reverse:ShiftWindowMSA",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 92,
+   "kinds": [
+    "actv:GELU"
+   ]
+  },
+  {
+   "after_seg": 93,
+   "kinds": [
+    "norm:LayerNorm",
+    "swin_partition:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 94,
+   "kinds": [
+    "swin_split:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 95,
+   "kinds": [
+    "softmax:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 96,
+   "kinds": [
+    "swin_reverse:ShiftWindowMSA",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 97,
+   "kinds": [
+    "actv:GELU"
+   ]
+  },
+  {
+   "after_seg": 98,
+   "kinds": [
+    "norm:LayerNorm",
+    "swin_partition:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 99,
+   "kinds": [
+    "swin_split:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 100,
+   "kinds": [
+    "softmax:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 101,
+   "kinds": [
+    "swin_reverse:ShiftWindowMSA",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 102,
+   "kinds": [
+    "actv:GELU"
+   ]
+  },
+  {
+   "after_seg": 103,
+   "kinds": [
+    "norm:LayerNorm",
+    "swin_partition:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 104,
+   "kinds": [
+    "swin_split:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 105,
+   "kinds": [
+    "softmax:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 106,
+   "kinds": [
+    "swin_reverse:ShiftWindowMSA",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 107,
+   "kinds": [
+    "actv:GELU"
+   ]
+  },
+  {
+   "after_seg": 108,
+   "kinds": [
+    "norm:LayerNorm",
+    "swin_partition:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 109,
+   "kinds": [
+    "swin_split:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 110,
+   "kinds": [
+    "softmax:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 111,
+   "kinds": [
+    "swin_reverse:ShiftWindowMSA",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 112,
+   "kinds": [
+    "actv:GELU"
+   ]
+  },
+  {
+   "after_seg": 113,
+   "kinds": [
+    "other:AdaptivePadding",
+    "other:Unfold",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 114,
+   "kinds": [
+    "other:PatchMerging",
+    "norm:LayerNorm",
+    "norm:LayerNorm",
+    "swin_partition:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 115,
+   "kinds": [
+    "swin_split:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 116,
+   "kinds": [
+    "softmax:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 117,
+   "kinds": [
+    "swin_reverse:ShiftWindowMSA",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 118,
+   "kinds": [
+    "actv:GELU"
+   ]
+  },
+  {
+   "after_seg": 119,
+   "kinds": [
+    "norm:LayerNorm",
+    "swin_partition:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 120,
+   "kinds": [
+    "swin_split:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 121,
+   "kinds": [
+    "softmax:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 122,
+   "kinds": [
+    "swin_reverse:ShiftWindowMSA",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 123,
+   "kinds": [
+    "actv:GELU"
+   ]
+  },
+  {
+   "after_seg": 124,
+   "kinds": [
+    "norm:LayerNorm",
+    "other:SwinTransformer",
+    "im2col:Conv2d"
+   ]
+  },
+  {
+   "after_seg": 125,
+   "kinds": [
+    "norm:GroupNorm",
+    "im2col:Conv2d"
+   ]
+  },
+  {
+   "after_seg": 126,
+   "kinds": [
+    "norm:GroupNorm",
+    "im2col:Conv2d"
+   ]
+  },
+  {
+   "after_seg": 127,
+   "kinds": [
+    "norm:GroupNorm",
+    "im2col:Conv2d",
+    "host_gemm:Conv2d",
+    "norm:GroupNorm",
+    "other:ChannelMapper",
+    "other:AdaptivePadding",
+    "im2col:Conv2d"
+   ]
+  },
+  {
+   "after_seg": 128,
+   "kinds": [
+    "norm:LayerNorm",
+    "other:PatchEmbed",
+    "norm:LayerNorm",
+    "swin_partition:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 129,
+   "kinds": [
+    "swin_split:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 134,
+   "kinds": [
+    "softmax:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 142,
+   "kinds": [
+    "swin_reverse:ShiftWindowMSA",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 143,
+   "kinds": [
+    "actv:GELU"
+   ]
+  },
+  {
+   "after_seg": 144,
+   "kinds": [
+    "norm:LayerNorm",
+    "swin_partition:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 145,
+   "kinds": [
+    "swin_split:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 150,
+   "kinds": [
+    "softmax:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 158,
+   "kinds": [
+    "swin_reverse:ShiftWindowMSA",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 159,
+   "kinds": [
+    "actv:GELU"
+   ]
+  },
+  {
+   "after_seg": 160,
+   "kinds": [
+    "other:AdaptivePadding",
+    "other:Unfold",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 161,
+   "kinds": [
+    "other:PatchMerging",
+    "norm:LayerNorm",
+    "swin_partition:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 162,
+   "kinds": [
+    "swin_split:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 164,
+   "kinds": [
+    "softmax:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 166,
+   "kinds": [
+    "swin_reverse:ShiftWindowMSA",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 167,
+   "kinds": [
+    "actv:GELU"
+   ]
+  },
+  {
+   "after_seg": 168,
+   "kinds": [
+    "norm:LayerNorm",
+    "swin_partition:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 169,
+   "kinds": [
+    "swin_split:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 171,
+   "kinds": [
+    "softmax:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 173,
+   "kinds": [
+    "swin_reverse:ShiftWindowMSA",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 174,
+   "kinds": [
+    "actv:GELU"
+   ]
+  },
+  {
+   "after_seg": 175,
+   "kinds": [
+    "other:AdaptivePadding",
+    "other:Unfold",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 176,
+   "kinds": [
+    "other:PatchMerging",
+    "norm:LayerNorm",
+    "norm:LayerNorm",
+    "swin_partition:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 177,
+   "kinds": [
+    "swin_split:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 178,
+   "kinds": [
+    "softmax:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 179,
+   "kinds": [
+    "swin_reverse:ShiftWindowMSA",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 180,
+   "kinds": [
+    "actv:GELU"
+   ]
+  },
+  {
+   "after_seg": 181,
+   "kinds": [
+    "norm:LayerNorm",
+    "swin_partition:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 182,
+   "kinds": [
+    "swin_split:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 183,
+   "kinds": [
+    "softmax:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 184,
+   "kinds": [
+    "swin_reverse:ShiftWindowMSA",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 185,
+   "kinds": [
+    "actv:GELU"
+   ]
+  },
+  {
+   "after_seg": 186,
+   "kinds": [
+    "norm:LayerNorm",
+    "swin_partition:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 187,
+   "kinds": [
+    "swin_split:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 188,
+   "kinds": [
+    "softmax:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 189,
+   "kinds": [
+    "swin_reverse:ShiftWindowMSA",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 190,
+   "kinds": [
+    "actv:GELU"
+   ]
+  },
+  {
+   "after_seg": 191,
+   "kinds": [
+    "norm:LayerNorm",
+    "swin_partition:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 192,
+   "kinds": [
+    "swin_split:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 193,
+   "kinds": [
+    "softmax:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 194,
+   "kinds": [
+    "swin_reverse:ShiftWindowMSA",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 195,
+   "kinds": [
+    "actv:GELU"
+   ]
+  },
+  {
+   "after_seg": 196,
+   "kinds": [
+    "norm:LayerNorm",
+    "swin_partition:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 197,
+   "kinds": [
+    "swin_split:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 198,
+   "kinds": [
+    "softmax:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 199,
+   "kinds": [
+    "swin_reverse:ShiftWindowMSA",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 200,
+   "kinds": [
+    "actv:GELU"
+   ]
+  },
+  {
+   "after_seg": 201,
+   "kinds": [
+    "norm:LayerNorm",
+    "swin_partition:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 202,
+   "kinds": [
+    "swin_split:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 203,
+   "kinds": [
+    "softmax:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 204,
+   "kinds": [
+    "swin_reverse:ShiftWindowMSA",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 205,
+   "kinds": [
+    "actv:GELU"
+   ]
+  },
+  {
+   "after_seg": 206,
+   "kinds": [
+    "other:AdaptivePadding",
+    "other:Unfold",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 207,
+   "kinds": [
+    "other:PatchMerging",
+    "norm:LayerNorm",
+    "norm:LayerNorm",
+    "swin_partition:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 208,
+   "kinds": [
+    "swin_split:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 209,
+   "kinds": [
+    "softmax:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 210,
+   "kinds": [
+    "swin_reverse:ShiftWindowMSA",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 211,
+   "kinds": [
+    "actv:GELU"
+   ]
+  },
+  {
+   "after_seg": 212,
+   "kinds": [
+    "norm:LayerNorm",
+    "swin_partition:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 213,
+   "kinds": [
+    "swin_split:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 214,
+   "kinds": [
+    "softmax:WindowMSA"
+   ]
+  },
+  {
+   "after_seg": 215,
+   "kinds": [
+    "swin_reverse:ShiftWindowMSA",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 216,
+   "kinds": [
+    "actv:GELU"
+   ]
+  },
+  {
+   "after_seg": 217,
+   "kinds": [
+    "norm:LayerNorm",
+    "other:SwinTransformer",
+    "im2col:Conv2d"
+   ]
+  },
+  {
+   "after_seg": 218,
+   "kinds": [
+    "norm:GroupNorm",
+    "im2col:Conv2d"
+   ]
+  },
+  {
+   "after_seg": 219,
+   "kinds": [
+    "norm:GroupNorm",
+    "im2col:Conv2d"
+   ]
+  },
+  {
+   "after_seg": 220,
+   "kinds": [
+    "norm:GroupNorm",
+    "im2col:Conv2d"
+   ]
+  },
+  {
+   "after_seg": 221,
+   "kinds": [
+    "norm:GroupNorm",
+    "other:ChannelMapper",
+    "other:Embedding",
+    "other:Embedding",
+    "other:Embedding",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 222,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 223,
+   "kinds": [
+    "actv:GELUActivation"
+   ]
+  },
+  {
+   "after_seg": 224,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 225,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 226,
+   "kinds": [
+    "actv:GELUActivation"
+   ]
+  },
+  {
+   "after_seg": 227,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 228,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 229,
+   "kinds": [
+    "actv:GELUActivation"
+   ]
+  },
+  {
+   "after_seg": 230,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 231,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 232,
+   "kinds": [
+    "actv:GELUActivation"
+   ]
+  },
+  {
+   "after_seg": 233,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 234,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 235,
+   "kinds": [
+    "actv:GELUActivation"
+   ]
+  },
+  {
+   "after_seg": 236,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 237,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 238,
+   "kinds": [
+    "actv:GELUActivation"
+   ]
+  },
+  {
+   "after_seg": 239,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 240,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 241,
+   "kinds": [
+    "actv:GELUActivation"
+   ]
+  },
+  {
+   "after_seg": 242,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 243,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 244,
+   "kinds": [
+    "actv:GELUActivation"
+   ]
+  },
+  {
+   "after_seg": 245,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 246,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 247,
+   "kinds": [
+    "actv:GELUActivation"
+   ]
+  },
+  {
+   "after_seg": 248,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 249,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 250,
+   "kinds": [
+    "actv:GELUActivation"
+   ]
+  },
+  {
+   "after_seg": 251,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 252,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 253,
+   "kinds": [
+    "actv:GELUActivation"
+   ]
+  },
+  {
+   "after_seg": 254,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 255,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 256,
+   "kinds": [
+    "actv:GELUActivation"
+   ]
+  },
+  {
+   "after_seg": 257,
+   "kinds": [
+    "norm:LayerNorm",
+    "other:BertModel"
+   ]
+  },
+  {
+   "after_seg": 258,
+   "kinds": [
+    "other:SinePositionalEncoding",
+    "other:SinePositionalEncoding",
+    "other:SinePositionalEncoding",
+    "other:SinePositionalEncoding",
+    "norm:LayerNorm",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 259,
+   "kinds": [
+    "softmax_prep:BiMultiHeadAttention"
+   ]
+  },
+  {
+   "after_seg": 260,
+   "kinds": [
+    "softmax:BiMultiHeadAttention"
+   ]
+  },
+  {
+   "after_seg": 262,
+   "kinds": [
+    "deform_host:MultiScaleDeformableAttention"
+   ]
+  },
+  {
+   "after_seg": 263,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 266,
+   "kinds": [
+    "actv:ReLU"
+   ]
+  },
+  {
+   "after_seg": 314,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 315,
+   "kinds": [
+    "softmax_prep:MultiheadAttention"
+   ]
+  },
+  {
+   "after_seg": 316,
+   "kinds": [
+    "softmax:MultiheadAttention"
+   ]
+  },
+  {
+   "after_seg": 317,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 318,
+   "kinds": [
+    "actv:ReLU"
+   ]
+  },
+  {
+   "after_seg": 319,
+   "kinds": [
+    "norm:LayerNorm",
+    "norm:LayerNorm",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 320,
+   "kinds": [
+    "softmax_prep:BiMultiHeadAttention"
+   ]
+  },
+  {
+   "after_seg": 321,
+   "kinds": [
+    "softmax:BiMultiHeadAttention"
+   ]
+  },
+  {
+   "after_seg": 323,
+   "kinds": [
+    "deform_host:MultiScaleDeformableAttention"
+   ]
+  },
+  {
+   "after_seg": 324,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 327,
+   "kinds": [
+    "actv:ReLU"
+   ]
+  },
+  {
+   "after_seg": 375,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 376,
+   "kinds": [
+    "softmax_prep:MultiheadAttention"
+   ]
+  },
+  {
+   "after_seg": 377,
+   "kinds": [
+    "softmax:MultiheadAttention"
+   ]
+  },
+  {
+   "after_seg": 378,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 379,
+   "kinds": [
+    "actv:ReLU"
+   ]
+  },
+  {
+   "after_seg": 380,
+   "kinds": [
+    "norm:LayerNorm",
+    "norm:LayerNorm",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 381,
+   "kinds": [
+    "softmax_prep:BiMultiHeadAttention"
+   ]
+  },
+  {
+   "after_seg": 382,
+   "kinds": [
+    "softmax:BiMultiHeadAttention"
+   ]
+  },
+  {
+   "after_seg": 384,
+   "kinds": [
+    "deform_host:MultiScaleDeformableAttention"
+   ]
+  },
+  {
+   "after_seg": 385,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 388,
+   "kinds": [
+    "actv:ReLU"
+   ]
+  },
+  {
+   "after_seg": 436,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 437,
+   "kinds": [
+    "softmax_prep:MultiheadAttention"
+   ]
+  },
+  {
+   "after_seg": 438,
+   "kinds": [
+    "softmax:MultiheadAttention"
+   ]
+  },
+  {
+   "after_seg": 439,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 440,
+   "kinds": [
+    "actv:ReLU"
+   ]
+  },
+  {
+   "after_seg": 441,
+   "kinds": [
+    "norm:LayerNorm",
+    "norm:LayerNorm",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 442,
+   "kinds": [
+    "softmax_prep:BiMultiHeadAttention"
+   ]
+  },
+  {
+   "after_seg": 443,
+   "kinds": [
+    "softmax:BiMultiHeadAttention"
+   ]
+  },
+  {
+   "after_seg": 445,
+   "kinds": [
+    "deform_host:MultiScaleDeformableAttention"
+   ]
+  },
+  {
+   "after_seg": 446,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 449,
+   "kinds": [
+    "actv:ReLU"
+   ]
+  },
+  {
+   "after_seg": 497,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 498,
+   "kinds": [
+    "softmax_prep:MultiheadAttention"
+   ]
+  },
+  {
+   "after_seg": 499,
+   "kinds": [
+    "softmax:MultiheadAttention"
+   ]
+  },
+  {
+   "after_seg": 500,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 501,
+   "kinds": [
+    "actv:ReLU"
+   ]
+  },
+  {
+   "after_seg": 502,
+   "kinds": [
+    "norm:LayerNorm",
+    "norm:LayerNorm",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 503,
+   "kinds": [
+    "softmax_prep:BiMultiHeadAttention"
+   ]
+  },
+  {
+   "after_seg": 504,
+   "kinds": [
+    "softmax:BiMultiHeadAttention"
+   ]
+  },
+  {
+   "after_seg": 506,
+   "kinds": [
+    "deform_host:MultiScaleDeformableAttention"
+   ]
+  },
+  {
+   "after_seg": 507,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 510,
+   "kinds": [
+    "actv:ReLU"
+   ]
+  },
+  {
+   "after_seg": 558,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 559,
+   "kinds": [
+    "softmax_prep:MultiheadAttention"
+   ]
+  },
+  {
+   "after_seg": 560,
+   "kinds": [
+    "softmax:MultiheadAttention"
+   ]
+  },
+  {
+   "after_seg": 561,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 562,
+   "kinds": [
+    "actv:ReLU"
+   ]
+  },
+  {
+   "after_seg": 563,
+   "kinds": [
+    "norm:LayerNorm",
+    "norm:LayerNorm",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 564,
+   "kinds": [
+    "softmax_prep:BiMultiHeadAttention"
+   ]
+  },
+  {
+   "after_seg": 565,
+   "kinds": [
+    "softmax:BiMultiHeadAttention"
+   ]
+  },
+  {
+   "after_seg": 567,
+   "kinds": [
+    "deform_host:MultiScaleDeformableAttention"
+   ]
+  },
+  {
+   "after_seg": 568,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 571,
+   "kinds": [
+    "actv:ReLU"
+   ]
+  },
+  {
+   "after_seg": 619,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 620,
+   "kinds": [
+    "softmax_prep:MultiheadAttention"
+   ]
+  },
+  {
+   "after_seg": 621,
+   "kinds": [
+    "softmax:MultiheadAttention"
+   ]
+  },
+  {
+   "after_seg": 622,
+   "kinds": [
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 623,
+   "kinds": [
+    "actv:ReLU"
+   ]
+  },
+  {
+   "after_seg": 624,
+   "kinds": [
+    "norm:LayerNorm",
+    "other:TextImageDeformable2DEnhancer"
+   ]
+  },
+  {
+   "after_seg": 625,
+   "kinds": [
+    "exempt:Linear",
+    "other:MLP"
+   ]
+  },
+  {
+   "after_seg": 659,
+   "kinds": [
+    "actv:ReLU"
+   ]
+  },
+  {
+   "after_seg": 665,
+   "kinds": [
+    "norm:LayerNorm",
+    "other:DepthFusionSpatialEnhancer"
+   ]
+  },
+  {
+   "after_seg": 666,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 667,
+   "kinds": [
+    "actv:SiLU",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 668,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 669,
+   "kinds": [
+    "actv:SiLU",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 670,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 673,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 674,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "softmax_prep:JointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 675,
+   "kinds": [
+    "softmax:JointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 676,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 677,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 678,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 681,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 682,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "softmax_prep:JointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 683,
+   "kinds": [
+    "softmax:JointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 684,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 685,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 686,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 689,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 690,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "softmax_prep:JointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 691,
+   "kinds": [
+    "softmax:JointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 692,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 693,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 694,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 697,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 698,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "softmax_prep:JointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 699,
+   "kinds": [
+    "softmax:JointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 700,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 701,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 702,
+   "kinds": [
+    "norm:RMSNorm",
+    "other:HoloBrainRobotStateEncoder"
+   ]
+  },
+  {
+   "after_seg": 703,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 704,
+   "kinds": [
+    "other:ScalarEmbedder"
+   ]
+  },
+  {
+   "after_seg": 705,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 706,
+   "kinds": [
+    "actv:SiLU",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 707,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 708,
+   "kinds": [
+    "actv:SiLU",
+    "norm:LayerNorm",
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 709,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 712,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 713,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 714,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 715,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 718,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 726,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 727,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 730,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 738,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 739,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 740,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 741,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 742,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 745,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 746,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 747,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 748,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 751,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 759,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 760,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 763,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 771,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 772,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 773,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 774,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 775,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 778,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 779,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 780,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 781,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 784,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 792,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 793,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 796,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 804,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 805,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 806,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 807,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 808,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 811,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 812,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 813,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 814,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 817,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 825,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 826,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 829,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 837,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 838,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 839,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 840,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 841,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 844,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 845,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 846,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 847,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 850,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 858,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 859,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 862,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 870,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 871,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 872,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 873,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 874,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 877,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 878,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 879,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 880,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 883,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 891,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 892,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 895,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 903,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 904,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 905,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 906,
+   "kinds": [
+    "actv:SiLU",
+    "norm:RMSNorm",
+    "other:Upsample",
+    "im2col:Conv1d"
+   ]
+  },
+  {
+   "after_seg": 907,
+   "kinds": [
+    "actv:SiLU",
+    "norm:RMSNorm",
+    "other:Upsample",
+    "im2col:Conv1d"
+   ]
+  },
+  {
+   "after_seg": 908,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 909,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 910,
+   "kinds": [
+    "other:UpsampleHead"
+   ]
+  },
+  {
+   "after_seg": 911,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 912,
+   "kinds": [
+    "other:ScalarEmbedder"
+   ]
+  },
+  {
+   "after_seg": 913,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 914,
+   "kinds": [
+    "actv:SiLU",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 915,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 916,
+   "kinds": [
+    "actv:SiLU",
+    "norm:LayerNorm",
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 917,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 920,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 921,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 922,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 923,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 926,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 934,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 935,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 938,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 946,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 947,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 948,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 949,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 950,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 953,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 954,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 955,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 956,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 959,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 967,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 968,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 971,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 979,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 980,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 981,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 982,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 983,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 986,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 987,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 988,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 989,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 992,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1000,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1001,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1004,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1012,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1013,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1014,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1015,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1016,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1019,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1020,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1021,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1022,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1025,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1033,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1034,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1037,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1045,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1046,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1047,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1048,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1049,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1052,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1053,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1054,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1055,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1058,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1066,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1067,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1070,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1078,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1079,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1080,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1081,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1082,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1085,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1086,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1087,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1088,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1091,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1099,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1100,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1103,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1111,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1112,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1113,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1114,
+   "kinds": [
+    "actv:SiLU",
+    "norm:RMSNorm",
+    "other:Upsample",
+    "im2col:Conv1d"
+   ]
+  },
+  {
+   "after_seg": 1115,
+   "kinds": [
+    "actv:SiLU",
+    "norm:RMSNorm",
+    "other:Upsample",
+    "im2col:Conv1d"
+   ]
+  },
+  {
+   "after_seg": 1116,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1117,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1118,
+   "kinds": [
+    "other:UpsampleHead"
+   ]
+  },
+  {
+   "after_seg": 1119,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1120,
+   "kinds": [
+    "other:ScalarEmbedder"
+   ]
+  },
+  {
+   "after_seg": 1121,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1122,
+   "kinds": [
+    "actv:SiLU",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 1123,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1124,
+   "kinds": [
+    "actv:SiLU",
+    "norm:LayerNorm",
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1125,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1128,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1129,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1130,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1131,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1134,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1142,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1143,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1146,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1154,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1155,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1156,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1157,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1158,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1161,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1162,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1163,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1164,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1167,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1175,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1176,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1179,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1187,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1188,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1189,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1190,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1191,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1194,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1195,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1196,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1197,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1200,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1208,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1209,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1212,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1220,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1221,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1222,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1223,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1224,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1227,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1228,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1229,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1230,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1233,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1241,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1242,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1245,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1253,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1254,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1255,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1256,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1257,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1260,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1261,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1262,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1263,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1266,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1274,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1275,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1278,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1286,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1287,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1288,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1289,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1290,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1293,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1294,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1295,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1296,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1299,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1307,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1308,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1311,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1319,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1320,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1321,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1322,
+   "kinds": [
+    "actv:SiLU",
+    "norm:RMSNorm",
+    "other:Upsample",
+    "im2col:Conv1d"
+   ]
+  },
+  {
+   "after_seg": 1323,
+   "kinds": [
+    "actv:SiLU",
+    "norm:RMSNorm",
+    "other:Upsample",
+    "im2col:Conv1d"
+   ]
+  },
+  {
+   "after_seg": 1324,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1325,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1326,
+   "kinds": [
+    "other:UpsampleHead"
+   ]
+  },
+  {
+   "after_seg": 1327,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1328,
+   "kinds": [
+    "other:ScalarEmbedder"
+   ]
+  },
+  {
+   "after_seg": 1329,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1330,
+   "kinds": [
+    "actv:SiLU",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 1331,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1332,
+   "kinds": [
+    "actv:SiLU",
+    "norm:LayerNorm",
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1333,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1336,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1337,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1338,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1339,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1342,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1350,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1351,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1354,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1362,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1363,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1364,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1365,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1366,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1369,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1370,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1371,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1372,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1375,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1383,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1384,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1387,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1395,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1396,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1397,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1398,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1399,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1402,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1403,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1404,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1405,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1408,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1416,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1417,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1420,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1428,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1429,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1430,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1431,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1432,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1435,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1436,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1437,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1438,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1441,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1449,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1450,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1453,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1461,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1462,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1463,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1464,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1465,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1468,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1469,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1470,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1471,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1474,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1482,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1483,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1486,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1494,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1495,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1496,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1497,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1498,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1501,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1502,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1503,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1504,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1507,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1515,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1516,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1519,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1527,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1528,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1529,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1530,
+   "kinds": [
+    "actv:SiLU",
+    "norm:RMSNorm",
+    "other:Upsample",
+    "im2col:Conv1d"
+   ]
+  },
+  {
+   "after_seg": 1531,
+   "kinds": [
+    "actv:SiLU",
+    "norm:RMSNorm",
+    "other:Upsample",
+    "im2col:Conv1d"
+   ]
+  },
+  {
+   "after_seg": 1532,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1533,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1534,
+   "kinds": [
+    "other:UpsampleHead"
+   ]
+  },
+  {
+   "after_seg": 1535,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1536,
+   "kinds": [
+    "other:ScalarEmbedder"
+   ]
+  },
+  {
+   "after_seg": 1537,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1538,
+   "kinds": [
+    "actv:SiLU",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 1539,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1540,
+   "kinds": [
+    "actv:SiLU",
+    "norm:LayerNorm",
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1541,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1544,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1545,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1546,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1547,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1550,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1558,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1559,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1562,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1570,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1571,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1572,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1573,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1574,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1577,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1578,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1579,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1580,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1583,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1591,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1592,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1595,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1603,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1604,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1605,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1606,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1607,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1610,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1611,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1612,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1613,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1616,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1624,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1625,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1628,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1636,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1637,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1638,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1639,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1640,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1643,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1644,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1645,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1646,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1649,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1657,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1658,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1661,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1669,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1670,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1671,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1672,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1673,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1676,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1677,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1678,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1679,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1682,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1690,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1691,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1694,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1702,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1703,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1704,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1705,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1706,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1709,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1710,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1711,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1712,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1715,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1723,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1724,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1727,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1735,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1736,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1737,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1738,
+   "kinds": [
+    "actv:SiLU",
+    "norm:RMSNorm",
+    "other:Upsample",
+    "im2col:Conv1d"
+   ]
+  },
+  {
+   "after_seg": 1739,
+   "kinds": [
+    "actv:SiLU",
+    "norm:RMSNorm",
+    "other:Upsample",
+    "im2col:Conv1d"
+   ]
+  },
+  {
+   "after_seg": 1740,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1741,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1742,
+   "kinds": [
+    "other:UpsampleHead"
+   ]
+  },
+  {
+   "after_seg": 1743,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1744,
+   "kinds": [
+    "other:ScalarEmbedder"
+   ]
+  },
+  {
+   "after_seg": 1745,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1746,
+   "kinds": [
+    "actv:SiLU",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 1747,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1748,
+   "kinds": [
+    "actv:SiLU",
+    "norm:LayerNorm",
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1749,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1752,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1753,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1754,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1755,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1758,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1766,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1767,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1770,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1778,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1779,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1780,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1781,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1782,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1785,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1786,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1787,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1788,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1791,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1799,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1800,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1803,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1811,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1812,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1813,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1814,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1815,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1818,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1819,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1820,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1821,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1824,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1832,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1833,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1836,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1844,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1845,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1846,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1847,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1848,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1851,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1852,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1853,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1854,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1857,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1865,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1866,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1869,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1877,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1878,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1879,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1880,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1881,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1884,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1885,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1886,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1887,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1890,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1898,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1899,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1902,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1910,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1911,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1912,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1913,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1914,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1917,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1918,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1919,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1920,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1923,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1931,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1932,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1935,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1943,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1944,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1945,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1946,
+   "kinds": [
+    "actv:SiLU",
+    "norm:RMSNorm",
+    "other:Upsample",
+    "im2col:Conv1d"
+   ]
+  },
+  {
+   "after_seg": 1947,
+   "kinds": [
+    "actv:SiLU",
+    "norm:RMSNorm",
+    "other:Upsample",
+    "im2col:Conv1d"
+   ]
+  },
+  {
+   "after_seg": 1948,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1949,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1950,
+   "kinds": [
+    "other:UpsampleHead"
+   ]
+  },
+  {
+   "after_seg": 1951,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1952,
+   "kinds": [
+    "other:ScalarEmbedder"
+   ]
+  },
+  {
+   "after_seg": 1953,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1954,
+   "kinds": [
+    "actv:SiLU",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 1955,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1956,
+   "kinds": [
+    "actv:SiLU",
+    "norm:LayerNorm",
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1957,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1960,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1961,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1962,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1963,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1966,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1974,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1975,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1978,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1986,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 1987,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1988,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1989,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1990,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1993,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 1994,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1995,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 1996,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 1999,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2007,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2008,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2011,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2019,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2020,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2021,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2022,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2023,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2026,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2027,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2028,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2029,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2032,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2040,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2041,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2044,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2052,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2053,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2054,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2055,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2056,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2059,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2060,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2061,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2062,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2065,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2073,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2074,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2077,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2085,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2086,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2087,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2088,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2089,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2092,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2093,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2094,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2095,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2098,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2106,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2107,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2110,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2118,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2119,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2120,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2121,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2122,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2125,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2126,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2127,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2128,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2131,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2139,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2140,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2143,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2151,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2152,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2153,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2154,
+   "kinds": [
+    "actv:SiLU",
+    "norm:RMSNorm",
+    "other:Upsample",
+    "im2col:Conv1d"
+   ]
+  },
+  {
+   "after_seg": 2155,
+   "kinds": [
+    "actv:SiLU",
+    "norm:RMSNorm",
+    "other:Upsample",
+    "im2col:Conv1d"
+   ]
+  },
+  {
+   "after_seg": 2156,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2157,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2158,
+   "kinds": [
+    "other:UpsampleHead"
+   ]
+  },
+  {
+   "after_seg": 2159,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2160,
+   "kinds": [
+    "other:ScalarEmbedder"
+   ]
+  },
+  {
+   "after_seg": 2161,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2162,
+   "kinds": [
+    "actv:SiLU",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 2163,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2164,
+   "kinds": [
+    "actv:SiLU",
+    "norm:LayerNorm",
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2165,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2168,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2169,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2170,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2171,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2174,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2182,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2183,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2186,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2194,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2195,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2196,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2197,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2198,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2201,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2202,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2203,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2204,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2207,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2215,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2216,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2219,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2227,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2228,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2229,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2230,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2231,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2234,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2235,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2236,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2237,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2240,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2248,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2249,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2252,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2260,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2261,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2262,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2263,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2264,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2267,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2268,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2269,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2270,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2273,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2281,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2282,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2285,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2293,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2294,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2295,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2296,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2297,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2300,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2301,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2302,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2303,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2306,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2314,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2315,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2318,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2326,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2327,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2328,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2329,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2330,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2333,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2334,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2335,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2336,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2339,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2347,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2348,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2351,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2359,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2360,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2361,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2362,
+   "kinds": [
+    "actv:SiLU",
+    "norm:RMSNorm",
+    "other:Upsample",
+    "im2col:Conv1d"
+   ]
+  },
+  {
+   "after_seg": 2363,
+   "kinds": [
+    "actv:SiLU",
+    "norm:RMSNorm",
+    "other:Upsample",
+    "im2col:Conv1d"
+   ]
+  },
+  {
+   "after_seg": 2364,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2365,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2366,
+   "kinds": [
+    "other:UpsampleHead"
+   ]
+  },
+  {
+   "after_seg": 2367,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2368,
+   "kinds": [
+    "other:ScalarEmbedder"
+   ]
+  },
+  {
+   "after_seg": 2369,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2370,
+   "kinds": [
+    "actv:SiLU",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 2371,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2372,
+   "kinds": [
+    "actv:SiLU",
+    "norm:LayerNorm",
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2373,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2376,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2377,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2378,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2379,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2382,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2390,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2391,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2394,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2402,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2403,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2404,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2405,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2406,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2409,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2410,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2411,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2412,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2415,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2423,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2424,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2427,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2435,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2436,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2437,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2438,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2439,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2442,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2443,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2444,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2445,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2448,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2456,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2457,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2460,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2468,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2469,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2470,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2471,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2472,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2475,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2476,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2477,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2478,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2481,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2489,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2490,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2493,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2501,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2502,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2503,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2504,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2505,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2508,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2509,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2510,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2511,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2514,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2522,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2523,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2526,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2534,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2535,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2536,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2537,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2538,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2541,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2542,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2543,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2544,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2547,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2555,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2556,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2559,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2567,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2568,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2569,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2570,
+   "kinds": [
+    "actv:SiLU",
+    "norm:RMSNorm",
+    "other:Upsample",
+    "im2col:Conv1d"
+   ]
+  },
+  {
+   "after_seg": 2571,
+   "kinds": [
+    "actv:SiLU",
+    "norm:RMSNorm",
+    "other:Upsample",
+    "im2col:Conv1d"
+   ]
+  },
+  {
+   "after_seg": 2572,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2573,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2574,
+   "kinds": [
+    "other:UpsampleHead"
+   ]
+  },
+  {
+   "after_seg": 2575,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2576,
+   "kinds": [
+    "other:ScalarEmbedder"
+   ]
+  },
+  {
+   "after_seg": 2577,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2578,
+   "kinds": [
+    "actv:SiLU",
+    "norm:LayerNorm"
+   ]
+  },
+  {
+   "after_seg": 2579,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2580,
+   "kinds": [
+    "actv:SiLU",
+    "norm:LayerNorm",
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2581,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2584,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2585,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2586,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2587,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2590,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2598,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2599,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2602,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2610,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2611,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2612,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2613,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2614,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2617,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2618,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2619,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2620,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2623,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2631,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2632,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2635,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2643,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2644,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2645,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2646,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2647,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2650,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2651,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2652,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2653,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2656,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2664,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2665,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2668,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2676,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2677,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2678,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2679,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2680,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2683,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2684,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2685,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2686,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2689,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2697,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2698,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2701,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2709,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2710,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2711,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2712,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2713,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2716,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2717,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2718,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2719,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2722,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2730,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2731,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2734,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2742,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2743,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2744,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2745,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2746,
+   "kinds": [
+    "norm:AdaRMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2749,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2750,
+   "kinds": [
+    "other:ScalarEmbedder",
+    "rotary:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2751,
+   "kinds": [
+    "softmax:TemporalJointGraphAttention"
+   ]
+  },
+  {
+   "after_seg": 2752,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2755,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2763,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2764,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2767,
+   "kinds": [
+    "rotary:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2775,
+   "kinds": [
+    "softmax:RotaryAttention"
+   ]
+  },
+  {
+   "after_seg": 2776,
+   "kinds": [
+    "norm:RMSNorm"
+   ]
+  },
+  {
+   "after_seg": 2777,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2778,
+   "kinds": [
+    "actv:SiLU",
+    "norm:RMSNorm",
+    "other:Upsample",
+    "im2col:Conv1d"
+   ]
+  },
+  {
+   "after_seg": 2779,
+   "kinds": [
+    "actv:SiLU",
+    "norm:RMSNorm",
+    "other:Upsample",
+    "im2col:Conv1d"
+   ]
+  },
+  {
+   "after_seg": 2780,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2781,
+   "kinds": [
+    "actv:SiLU"
+   ]
+  },
+  {
+   "after_seg": 2782,
+   "kinds": [
+    "other:UpsampleHead",
+    "other:HoloBrainActionDecoder"
+   ]
+  }
+ ]
+}

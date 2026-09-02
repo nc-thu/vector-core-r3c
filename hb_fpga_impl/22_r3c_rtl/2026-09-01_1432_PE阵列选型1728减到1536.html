@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>PE 阵列选型：为什么从 1728 减到 1536 2026-09-01</title>
+<style>
+  body{font-family:"Microsoft YaHei",SimSun,serif;max-width:1000px;margin:24px auto;padding:0 16px;color:#111;background:#fff;line-height:1.75}
+  h1{font-size:22px;border-bottom:2px solid #000;padding-bottom:6px}
+  h2{font-size:18px;border-left:5px solid #000;padding-left:8px;margin-top:32px}
+  h3{font-size:15px;margin-top:22px}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14px}
+  th,td{border:1px solid #444;padding:5px 8px;text-align:left}
+  th{background:#eee}
+  .num{text-align:right;font-variant-numeric:tabular-nums}
+  .mono{font-family:Consolas,monospace;font-size:13px;background:#f4f4f4;padding:1px 4px}
+  .meta{color:#555;font-size:13px}
+  .box{border:1px dashed #888;padding:10px 14px;margin:12px 0;background:#fafafa}
+  .hint{color:#555;font-size:13px;margin:4px 0}
+  svg text{font-family:"Microsoft YaHei",SimSun,serif}
+</style>
+</head>
+<body>
+
+<h1>PE 阵列选型：为什么从 16×108（1728 个）改成 16×96（1536 个）</h1>
+<p class="meta">生成时刻：2026-09-01 14:32:40　|　决策依据：19_r3c_arch/pe_sizing.py（逐描述符双口径模型，a3 真实流 2580 段 83767 条 GEMM 描述符）　|　结论：DSP 占用从 100% 降到 88.9%，GEMM 拍数几乎不变</p>
+
+<h2>零、要解决的问题</h2>
+<p>现在的脉动阵列是 16 行 × 108 列 = 1728 个 PE。每个 PE 一颗 DSP48E2，而 ZCU104 这颗 FPGA（XCZU7EV）总共恰好 1728 颗 DSP——<b>占满了，一个不剩</b>。这带来两个问题：</p>
+<p>一是没有余量：以后想加 INT4 打包、融合算子之类的功能，DSP 一颗都挤不出来。二是不可移植：换个 DSP 少一点的器件，设计直接装不下。</p>
+<p>所以要减 100~300 个 PE。行数 16 是动不了的（CTX 的 A 口一次吐 16 个字节的 lane 结构是固定的），只能减列数。候选就是 92 / 96 / 100 / 104（列数必须是 4 的倍数，因为量化器 4 列共享一套）。下面用模型的数据选。</p>
+
+<h2>一、先看模型到底需要多宽</h2>
+<p>把 a3 真实流的 83767 条 GEMM 描述符还原成 49 569 个逻辑 GEMM（编译器切过的列组合并回整宽，规则见 pe_sizing.py 的 logical_gems），共 411 206 个行组。逻辑宽度（一次 GEMM 要算多少输出列）的分布是：</p>
+<table>
+<tr><th>逻辑宽度 W</th><th class="num">行组数</th><th>在 96 列阵列上的组数</th><th>说明</th></tr>
+<tr><td class="num">32</td><td class="num">164 256</td><td>1</td><td>im2col 卷积降采样，自带独立 A，宽度天生窄</td></tr>
+<tr><td class="num">49</td><td class="num">62 720</td><td>1</td><td>同上（49 = 7×7 感受野）</td></tr>
+<tr><td class="num">108</td><td class="num">54 688</td><td><b>2</b>（96+12）</td><td>大 Linear 层的满宽组，96 列下唯一被显著切开的</td></tr>
+<tr><td class="num">256 / 238 / 1600 等（&gt;108）</td><td class="num">55 154</td><td>多数不变（256→3、238→3、128→2、384→4），仅 1600→17、2048→22 略增</td><td>宽 Linear，108 和 96 差别很小</td></tr>
+<tr><td class="num">其余（≤96）</td><td class="num">301 364（73.3%）</td><td>1</td><td>注意力、im2col、小算子，全部不受影响</td></tr>
+</table>
+<p class="hint">这张表怎么看：第三列是关键——降到 96 列以后，绝大多数层一个组都还是一组（1 拍喂数不变），只有 108 宽的满组会被切成两组（A 矩阵要重喂一遍）。窄层占了行组数的大头，它们完全不吃亏。</p>
+<p>全帧的乘加总量是 150.8 G 次（int8），这跟阵列宽度无关——宽度只影响"喂数次数"和"切组开销"。</p>
+
+<h2>二、算账：两种口径，差别巨大（这是本轮最重要的发现）</h2>
+<p>减列数的代价怎么算，一开始我们算错过一次，值得把两种口径都摆出来：</p>
+<h3>2.1 口径 A：不改编译器，硬件硬切（错误口径，偏悲观）</h3>
+<p>描述符流还是按 108 列编译的老流，硬件遇到 108 宽的组自己切成 96+12。这会把大 Linear 的"108×3+61"切成 7 个碎组，每组都要重喂一遍 A。算出来 GEMM 拍数 260M，比现状 +40%——数字吓人，但这个口径不成立：列数一改，编译器本来就要重跑（WRAM 的路由按列数排），没人会拿老流硬切。</p>
+<h3>2.2 口径 B：按新列数重新编译（正确口径）</h3>
+<p>把描述符流还原成 49 569 个逻辑 GEMM（同 A、同输出行、j0 连续的描述符合并回一个整宽 W），再按新列数均衡分组。这才是真实会发生的执行方式。结果：</p>
+<table>
+<tr><th>列数</th><th class="num">PE 数</th><th class="num">DSP 占用</th><th class="num">GEMM 拍数（校准后）</th><th class="num">比 108 重编译</th><th class="num">帧时间（TB）</th><th class="num">帧时间（HP64）</th><th class="num">阵列利用率</th></tr>
+<tr><td>108（现状流）</td><td class="num">1 728</td><td class="num">100%</td><td class="num">185.3M</td><td>—</td><td class="num">1.67 ms</td><td class="num">1.39 ms</td><td class="num">49.6%</td></tr>
+<tr><td>108（重编译）</td><td class="num">1 728</td><td class="num">100%</td><td class="num">176.1M</td><td class="num">基准</td><td class="num">1.67 ms</td><td class="num">1.34 ms</td><td class="num">49.6%</td></tr>
+<tr><td>104</td><td class="num">1 664</td><td class="num">96.3%</td><td class="num">181.8M</td><td class="num">+3.2%</td><td class="num">1.67 ms</td><td class="num">1.37 ms</td><td class="num">49.9%</td></tr>
+<tr><td>100</td><td class="num">1 600</td><td class="num">92.6%</td><td class="num">183.8M</td><td class="num">+4.4%</td><td class="num">1.67 ms</td><td class="num">1.38 ms</td><td class="num">51.3%</td></tr>
+<tr><td><b>96（定案）</b></td><td class="num"><b>1 536</b></td><td class="num"><b>88.9%</b></td><td class="num"><b>185.2M</b></td><td class="num"><b>+5.2%</b></td><td class="num"><b>1.67 ms</b></td><td class="num"><b>1.39 ms</b></td><td class="num"><b>53.0%</b></td></tr>
+<tr><td>92</td><td class="num">1 472</td><td class="num">85.2%</td><td class="num">192.4M</td><td class="num">+9.2%</td><td class="num">1.67 ms</td><td class="num">1.42 ms</td><td class="num">53.3%</td></tr>
+</table>
+<p class="hint">这张表怎么看：第一行是现状（老流），第二行起是重编译口径。96 列的 GEMM 拍数 185.2M，跟现状的 185.3M 几乎一模一样——也就是说，**把阵列缩小 11%，计算时间一拍都没多花**（跟现状比）。跟同样重编译的 108 比，也只多 5.2%。TB 帧时间 1.67 ms 一列全相同，因为读通道（292M 拍）仍是瓶颈，计算还没顶到天花板。</p>
+<div class="box"><p><b>为什么 96 列几乎免费：</b>开销的来源是"108 宽的满组要切成两组，A 矩阵重喂一遍"。这类满组占全帧逻辑行组的 13.3%（54 688 / 411 206），每组切开大约多付 40% 的行组周期（96+12 两组各走一遍读出链 68 拍）；13.3% × 40% ≈ 5%，正好对上模型算出的 +5.2%。剩下的 86.7% 行组——窄层根本不动、宽层只多一两组——摊不出更多代价。再被读瓶颈一吸收（TB 口径下读通道 292M 拍仍是天花板），端到端帧时间就是零变化。</p><p><b>为什么顺便变好了：</b>阵列利用率（乘加总量 ÷ 阵列总算力）从 49.6% 升到 53.0%——同一批活，小阵列干得更满。而且现在的 108 老流本身有 5% 的切组浪费（185.3 vs 176.1），说明就算不改列数，重跑一遍编译器也能白捡 5%。</p></div>
+
+<h2>三、92 / 96 / 100 / 104 里为什么选 96</h2>
+<p>性能上 96 和 100 几乎打平（185.2M vs 183.8M，差 0.8%），104 省得太少（只减 64 个 PE，不到要求的下限 100）。真正的区分在结构上：</p>
+<table>
+<tr><th>判据</th><th>96 列</th><th>100 列</th></tr>
+<tr><td>列组边界与 16 位 lane 组对齐（j0 永远落在 16 的倍数上，转置写回不跨组）</td><td>✓（96 = 6×16）</td><td>✗（100 = 6.25×16，必然跨）</td></tr>
+<tr><td>B 装载节拍对齐（每 k 行 = 96/8 = 12 个整拍，无残拍）</td><td>✓</td><td>✗（12.5 拍，字节流跨边界要拆拍）</td></tr>
+<tr><td>量化器组数 NGRP（4 列一套）</td><td>24</td><td>25</td></tr>
+<tr><td>DSP 余量</td><td>192 个（11.1%）</td><td>128 个（7.4%）</td></tr>
+<tr><td>减掉的 PE 数</td><td>192（在 100~300 区间中部）</td><td>128（贴近下限）</td></tr>
+</table>
+<p>96 在每个结构判据上都干净：转置写回的 lane 对齐是实打实的正确性/时序红利（现状 108 列就有 j0 跨组的 straddle 情况），B 装载无残拍让 DMA 的写通道更整齐。多花 0.8% 的拍数（还藏在读瓶颈底下）买这些，值。</p>
+
+<h2>四、定案与影响面</h2>
+<p><b>定案：16 行 × 96 列 = 1536 个 PE，DSP 占用 88.9%，留 192 颗余量。</b></p>
+<p>影响面：RTL 里 COLS 本来就是参数（ae_top/ae_core 的 default），改 96 + 检查量化器 NGRP 无硬编码即可；验证不受影响（回归本来就用 COLS=12 冒烟，与最终列数无关）；编译器要按 96 重跑一遍（WRAM 按"每 k 恰好 96 字节"路由）——这在本轮 RTL 验证里由 TB 自带的小编译覆盖，全量重编译是交接后的例行工作。</p>
+<p>对未来的意义：192 颗 DSP 的余量够放 INT4 打包的解包逻辑或小型融合算子；移植面上，1536（88.9%）也给了换器件的余地——不再是"全占满、一颗不能动"的死局。</p>
+
+<h2>五、复现命令</h2>
+<pre class="mono">cd hb_fpga_impl\19_r3c_arch
+python pe_sizing.py     :: 双口径对比表 + pe_sizing.json（本页所有数字）</pre>
+<p class="meta">数据：a3 真实流（2580 段、83767 条 GEMM 描述符、49 569 个逻辑 GEMM、150.8 G MAC/帧）；校准系数 1.0514 沿用 a3 账本；lane 口径与 r3c_model.py 一致（TB = max(计算, 读, 写) + 40M 依赖停顿；HP64 读服务 = (680.25+606.92) MB / 64B）。</p>
+
+</body>
+</html>

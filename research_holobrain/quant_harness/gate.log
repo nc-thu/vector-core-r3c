@@ -1,0 +1,50 @@
+/home/nc23/.conda/envs/holobrain/lib/python3.10/site-packages/datasets/utils/experimental.py:37: UserWarning: 'register_feature' is experimental and might be subject to breaking changes in the future.
+  warnings.warn(
+Use default teacher_forcing_mean_steps: 16
+[mha ] forced eager path on 6 nn.MultiheadAttention (text self-attn): out_proj now really quantized
+[load] model 183.7M params on cuda:0
+/home/nc23/.conda/envs/holobrain/lib/python3.10/site-packages/torch/functional.py:539: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at /pytorch/aten/src/ATen/native/TensorShape.cpp:3637.)
+  return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
+[det ] same-seed fp32 max_abs diff = 0.000e+00
+[flor] 1000 vs 2000: mae_all=0.01220 max=0.20725 jointpos_mae=0.01057
+[flor] 1100 vs 2100: mae_all=0.01272 max=0.42074 jointpos_mae=0.01176
+[flor] 1200 vs 2200: mae_all=0.00910 max=0.15473 jointpos_mae=0.00822
+[flor] mean over 3 pairs: mae_all=0.01134 max_all=0.26090
+[q   ] w8a16            lin 421/421 conv 10/10 | mae_all=0.00752 (x0.7 floor) max=0.0625 jpos_mae=0.00528 | 624 ms/fwd
+[q   ] w8a8             lin 421/421 conv 10/10 | mae_all=0.01097 (x1.0 floor) max=0.0760 jpos_mae=0.00826 | 771 ms/fwd
+[q   ] w4a16            lin 421/421 conv  0/10 | mae_all=0.12981 (x11.4 floor) max=1.0336 jpos_mae=0.06018 | 658 ms/fwd
+[q   ] w8a8@vision_2d   lin  51/421 conv  1/10 | mae_all=0.00197 (x0.2 floor) max=0.0117 jpos_mae=0.00172 | 407 ms/fwd
+[q   ] w8a8@vision_3d   lin  51/421 conv  5/10 | mae_all=0.00262 (x0.2 floor) max=0.0192 jpos_mae=0.00219 | 408 ms/fwd
+[q   ] w8a8@text_bert   lin  72/421 conv  0/10 | mae_all=0.00027 (x0.0 floor) max=0.0030 jpos_mae=0.00023 | 414 ms/fwd
+[q   ] w8a8@fusion      lin  98/421 conv  0/10 | mae_all=0.00103 (x0.1 floor) max=0.0093 jpos_mae=0.00060 | 432 ms/fwd
+[q   ] w8a8@action_head lin 149/421 conv  0/10 | mae_all=0.00804 (x0.7 floor) max=0.0827 jpos_mae=0.00609 | 695 ms/fwd
+[q   ] w8a8@neck_convs  lin   0/421 conv  4/10 | mae_all=0.00057 (x0.1 floor) max=0.0071 jpos_mae=0.00061 | 404 ms/fwd
+[def ] feature_enhancer.img_attn_blocks.0.self_attn: L0(32x40) mean 0.0772c/0.385px max 1.421c/2.42px | L1(16x20) mean 0.0815c/1.019px max 3.703c/20.27px | L2(8x10) mean 0.1121c/2.457px max 2.280c/17.62px | L3(4x5) mean 0.0358c/1.572px max 0.326c/5.98px
+[def ] feature_enhancer.img_attn_blocks.1.self_attn: L0(32x40) mean 0.1687c/1.255px max 3.278c/12.97px | L1(16x20) mean 0.1555c/2.299px max 3.345c/21.38px | L2(8x10) mean 0.1713c/6.112px max 3.930c/120.89px | L3(4x5) mean 0.0265c/1.751px max 0.243c/7.01px
+[def ] feature_enhancer.img_attn_blocks.2.self_attn: L0(32x40) mean 0.2376c/1.695px max 5.801c/20.14px | L1(16x20) mean 0.2096c/2.460px max 4.061c/24.27px | L2(8x10) mean 0.1907c/4.126px max 6.474c/19.09px | L3(4x5) mean 0.0275c/1.178px max 0.254c/4.92px
+[def ] feature_enhancer.img_attn_blocks.3.self_attn: L0(32x40) mean 0.2669c/1.981px max 5.926c/18.10px | L1(16x20) mean 0.1874c/2.901px max 3.609c/28.01px | L2(8x10) mean 0.1936c/5.546px max 5.439c/69.27px | L3(4x5) mean 0.0468c/3.202px max 0.737c/15.45px
+[def ] feature_enhancer.img_attn_blocks.4.self_attn: L0(32x40) mean 0.1402c/0.569px max 3.729c/7.01px | L1(16x20) mean 0.1061c/0.759px max 2.308c/4.87px | L2(8x10) mean 0.1111c/1.518px max 1.708c/6.75px | L3(4x5) mean 0.0365c/0.880px max 0.455c/2.86px
+[def ] feature_enhancer.img_attn_blocks.5.self_attn: L0(32x40) mean 0.1003c/0.674px max 6.116c/8.39px | L1(16x20) mean 0.0858c/1.142px max 4.197c/19.21px | L2(8x10) mean 0.0539c/1.162px max 1.383c/8.08px | L3(4x5) mean 0.0384c/1.823px max 0.437c/9.51px
+[sq  ] scanned 421/421 Linears; top-20 outlier ratios:
+      2245598976.0  feature_enhancer.text_attn_blocks.5.ffn.layers.1                       fusion      max=  22.456 med= 0.0000 x1
+      1055095296.0  feature_enhancer.text_attn_blocks.4.ffn.layers.1                       fusion      max=  10.551 med= 0.0000 x1
+      1025803072.0  feature_enhancer.text_attn_blocks.3.ffn.layers.1                       fusion      max=  10.258 med= 0.0000 x1
+      955215104.0  feature_enhancer.text_attn_blocks.0.ffn.layers.1                       fusion      max=   9.552 med= 0.0000 x1
+      828756352.0  feature_enhancer.text_attn_blocks.2.ffn.layers.1                       fusion      max=   8.288 med= 0.0000 x1
+      735515392.0  feature_enhancer.text_attn_blocks.1.ffn.layers.1                       fusion      max=   7.355 med= 0.0000 x1
+         302.8  backbone.stages.3.blocks.0.ffn.layers.1                                vision_2d   max=   9.519 med= 0.0314 x1
+         114.9  decoder.robot_encoder.layers.1.position_encoder.mlp.2                  action_head max=   2.850 med= 0.0248 x1
+          88.2  backbone.stages.3.blocks.1.ffn.layers.1                                vision_2d   max=  14.863 med= 0.1685 x1
+          88.0  decoder.t_embed.mlp.2                                                  action_head max=   4.022 med= 0.0457 x10
+          68.5  text_encoder.language_backbone.body.model.encoder.layer.11.output.dens text_bert   max=  11.591 med= 0.1691 x1
+          66.4  backbone.stages.2.blocks.5.ffn.layers.1                                vision_2d   max=  22.599 med= 0.3404 x1
+          57.9  text_encoder.language_backbone.body.model.encoder.layer.4.intermediate text_bert   max=  76.023 med= 1.3137 x1
+          56.9  text_encoder.language_backbone.body.model.encoder.layer.6.intermediate text_bert   max=  74.743 med= 1.3125 x1
+          53.5  backbone.stages.2.downsample.reduction                                 vision_2d   max=  30.858 med= 0.5772 x1
+          53.5  text_encoder.language_backbone.body.model.encoder.layer.7.intermediate text_bert   max=  69.966 med= 1.3089 x1
+          53.2  text_encoder.language_backbone.body.model.encoder.layer.5.intermediate text_bert   max=  73.264 med= 1.3772 x1
+          51.3  text_encoder.language_backbone.body.model.encoder.layer.8.intermediate text_bert   max=  68.595 med= 1.3365 x1
+          48.4  backbone.stages.2.blocks.4.ffn.layers.1                                vision_2d   max=  16.740 med= 0.3460 x1
+          38.4  text_encoder.language_backbone.body.model.encoder.layer.3.intermediate text_bert   max=  52.988 med= 1.3794 x1
+[save] /home/nc23/workspace/holobrain/gate_results.json (146 kB)
+[done] total 24s

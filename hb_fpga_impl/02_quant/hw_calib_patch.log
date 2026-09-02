@@ -1,0 +1,41 @@
+/home/nc23/.conda/envs/holobrain/lib/python3.10/site-packages/datasets/utils/experimental.py:37: UserWarning: 'register_feature' is experimental and might be subject to breaking changes in the future.
+  warnings.warn(
+Use default teacher_forcing_mean_steps: 16
+[load] model up; forced eager path on 6 MHA modules
+/home/nc23/.conda/envs/holobrain/lib/python3.10/site-packages/torch/functional.py:539: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at /pytorch/aten/src/ATen/native/TensorShape.cpp:3637.)
+  return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
+[cal ] sample 0 done 4.5s
+[cal ] sample 1 done 5.1s
+[cal ] sample 2 done 5.8s
+[cal ] sample 3 done 6.5s
+[cal ] sample 4 done 7.2s
+[cal ] sample 5 done 7.8s
+[cal ] sample 6 done 8.5s
+[cal ] sample 7 done 9.2s
+[ent ] decoder.head.convs.0: calls=80 k=768 n=128
+[ent ] decoder.head.convs.1: calls=80 k=384 n=64
+[ent ] feature_enhancer.text_attn_blocks.0.self_attn.attn.in_proj_weight: calls=8 k=256 n=768
+[ent ] feature_enhancer.text_attn_blocks.1.self_attn.attn.in_proj_weight: calls=8 k=256 n=768
+[ent ] feature_enhancer.text_attn_blocks.2.self_attn.attn.in_proj_weight: calls=8 k=256 n=768
+[ent ] feature_enhancer.text_attn_blocks.3.self_attn.attn.in_proj_weight: calls=8 k=256 n=768
+[ent ] feature_enhancer.text_attn_blocks.4.self_attn.attn.in_proj_weight: calls=8 k=256 n=768
+[ent ] feature_enhancer.text_attn_blocks.5.self_attn.attn.in_proj_weight: calls=8 k=256 n=768
+[out ] hw_calib_patch.json (8 entries) 9s
+[v2  ] 431 + 8 = 439 entries, no duplicate keys
+[v2  ] OK  decoder.head.convs.0
+        m=20628 s=23 r=2.4591e-03 (|m/2^s-r|=4.76e-08) acc_est=51645 (lim 67108864) bias=aug c=4
+[v2  ] OK  decoder.head.convs.1
+        m=25810 s=23 r=3.0768e-03 (|m/2^s-r|=9.15e-09) acc_est=41277 (lim 67108864) bias=aug c=4
+[v2  ] OK  feature_enhancer.text_attn_blocks.0.self_attn.attn.in_proj_weight
+        m=29790 s=24 r=1.7756e-03 (|m/2^s-r|=4.50e-10) acc_est=71524 (lim 67108864) bias=aug c=32
+[v2  ] OK  feature_enhancer.text_attn_blocks.1.self_attn.attn.in_proj_weight
+        m=32268 s=25 r=9.6165e-04 (|m/2^s-r|=1.17e-08) acc_est=132065 (lim 67108864) bias=aug c=16
+[v2  ] OK  feature_enhancer.text_attn_blocks.2.self_attn.attn.in_proj_weight
+        m=17704 s=23 r=2.1104e-03 (|m/2^s-r|=3.89e-08) acc_est=60177 (lim 67108864) bias=aug c=8
+[v2  ] OK  feature_enhancer.text_attn_blocks.3.self_attn.attn.in_proj_weight
+        m=30345 s=24 r=1.8087e-03 (|m/2^s-r|=4.17e-09) acc_est=70216 (lim 67108864) bias=aug c=8
+[v2  ] OK  feature_enhancer.text_attn_blocks.4.self_attn.attn.in_proj_weight
+        m=19042 s=23 r=2.2700e-03 (|m/2^s-r|=5.14e-09) acc_est=55948 (lim 67108864) bias=aug c=8
+[v2  ] OK  feature_enhancer.text_attn_blocks.5.self_attn.attn.in_proj_weight
+        m=31893 s=24 r=1.9010e-03 (|m/2^s-r|=1.70e-08) acc_est=66807 (lim 67108864) bias=aug c=8
+[v2  ] hw_calib_table_v2.json written, all 8 patch entries validated

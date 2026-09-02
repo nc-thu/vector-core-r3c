@@ -1,0 +1,104 @@
+== rs_vl_build
+   vlbuild: obj_dir/tb_ae_v 构建完成（系统 g++-10）
+== rs_default_gen
+   [golden] REF==PRIM 帧一 ctx:True ddr:True
+   [golden] 写出 seq.mem (34 条) / ddr_init.mem / expected_* (frames=2)
+== rs_default_iv_base
+   [tb] 三遍 dump 完成（compare.py 比 REF/PRIM；prim2 vs prim 逐位 diff）
+   tb_ae.sv:274: $finish called at 247326000 (1ps)
+== rs_default_golden
+   [cmp] DDR PRIM: PASS (65536 字节一致)
+   [cmp] ==> 全部位精确一致 ✔
+== rs_default_pf_data
+   pf 数据不变: prim==prim2 逐字节
+== rs_default_tbv_iv
+   [tb_v] PRIM-pf1: cycles=8141 gemm=5712 dma=843 mac_total=82944 skip_macs=2048 skip_stages=2
+   tb_ae_v.sv:215: $finish called at 81505000 (1ps)
+== rs_default_cmp_iv
+   DDR 三遍逐字节一致（iverilog tb_ae_v）
+== rs_default_tbv_vl
+   - Verilator: $finish at 82us; walltime 0.057 s; speed 1.428 ms/s
+   - Verilator: cpu 0.056 s on 1 threads; allocated 7 MB
+== rs_default_cmp_vl
+   DDR 三遍逐字节一致（Verilator）
+== rs_default_cycles
+   cycles: iverilog==Verilator 三遍一致（cycles=8405 cycles=8141 cycles=8141 ）+ 基线 REF 一致（cycles=8405）
+== rs_tail_gen
+   [golden] REF==PRIM 帧一 ctx:True ddr:True
+   [golden] 写出 seq.mem (36 条) / ddr_init.mem / expected_* (frames=2)
+== rs_tail_iv_base
+   [tb] 三遍 dump 完成（compare.py 比 REF/PRIM；prim2 vs prim 逐位 diff）
+   tb_ae.sv:274: $finish called at 249166000 (1ps)
+== rs_tail_golden
+   [cmp] DDR PRIM: PASS (65536 字节一致)
+   [cmp] ==> 全部位精确一致 ✔
+== rs_tail_pf_data
+   pf 数据不变: prim==prim2 逐字节
+== rs_tail_tbv_iv
+   [tb_v] PRIM-pf1: cycles=8213 gemm=5807 dma=876 mac_total=81408 skip_macs=1664 skip_stages=2
+   tb_ae_v.sv:215: $finish called at 82225000 (1ps)
+== rs_tail_cmp_iv
+   DDR 三遍逐字节一致（iverilog tb_ae_v）
+== rs_tail_tbv_vl
+   - Verilator: $finish at 82us; walltime 0.058 s; speed 1.425 ms/s
+   - Verilator: cpu 0.057 s on 1 threads; allocated 7 MB
+== rs_tail_cmp_vl
+   DDR 三遍逐字节一致（Verilator）
+== rs_tail_cycles
+   cycles: iverilog==Verilator 三遍一致（cycles=8469 cycles=8213 cycles=8213 ）+ 基线 REF 一致（cycles=8469）
+== rs_pf_gen
+   [golden] REF==PRIM 帧一 ctx:True ddr:True
+   [golden] 写出 seq.mem (35 条) / ddr_init.mem / expected_* (frames=1)
+== rs_pf_iv_base
+   [tb] 三遍 dump 完成（compare.py 比 REF/PRIM；prim2 vs prim 逐位 diff）
+   tb_ae.sv:274: $finish called at 251166000 (1ps)
+== rs_pf_golden
+   [cmp] DDR PRIM: PASS (65536 字节一致)
+   [cmp] ==> 全部位精确一致 ✔
+== rs_pf_pf_data
+   pf 数据不变: prim==prim2 逐字节
+== rs_pf_tbv_iv
+   [tb_v] PRIM-pf1: cycles=8001 gemm=5757 dma=1050 mac_total=87552 skip_macs=2048 skip_stages=2
+   tb_ae_v.sv:215: $finish called at 80105000 (1ps)
+== rs_pf_cmp_iv
+   DDR 三遍逐字节一致（iverilog tb_ae_v）
+== rs_pf_tbv_vl
+   - Verilator: $finish at 80us; walltime 0.058 s; speed 1.379 ms/s
+   - Verilator: cpu 0.057 s on 1 threads; allocated 7 MB
+== rs_pf_cmp_vl
+   DDR 三遍逐字节一致（Verilator）
+== rs_pf_cycles
+   cycles: iverilog==Verilator 三遍一致（cycles=8665 cycles=8409 cycles=8001 ）+ 基线 REF 一致（cycles=8665）
+== rs_rqs_gen
+   [golden] REF==PRIM 帧一 ctx:True ddr:True
+   [golden] 写出 seq.mem (35 条) / ddr_init.mem / expected_* (frames=1)
+== rs_rqs_iv_base
+   [tb] 三遍 dump 完成（compare.py 比 REF/PRIM；prim2 vs prim 逐位 diff）
+   tb_ae.sv:274: $finish called at 251166000 (1ps)
+== rs_rqs_golden
+   [cmp] DDR PRIM: PASS (65536 字节一致)
+   [cmp] ==> 全部位精确一致 ✔
+== rs_rqs_pf_data
+   pf 数据不变: prim==prim2 逐字节
+== rs_rqs_tbv_iv
+   [tb_v] PRIM-pf1: cycles=8001 gemm=5757 dma=1050 mac_total=87552 skip_macs=2048 skip_stages=2
+   tb_ae_v.sv:215: $finish called at 80105000 (1ps)
+== rs_rqs_cmp_iv
+   DDR 三遍逐字节一致（iverilog tb_ae_v）
+== rs_rqs_tbv_vl
+   - Verilator: $finish at 80us; walltime 0.059 s; speed 1.364 ms/s
+   - Verilator: cpu 0.058 s on 1 threads; allocated 7 MB
+== rs_rqs_cmp_vl
+   DDR 三遍逐字节一致（Verilator）
+== rs_rqs_cycles
+   cycles: iverilog==Verilator 三遍一致（cycles=8665 cycles=8409 cycles=8001 ）+ 基线 REF 一致（cycles=8665）
+== rs_big_gen
+   [big]   LOAD_CTX x8 ≈ 132152  LOAD_W ≈ 26698  GEMM ≈ 85188  STORE ≈ 34565
+   [big] 写出 seq.mem / ddr_init.mem / exp2_lut.mem
+== rs_big_vl
+   - Verilator: cpu 222.570 s on 1 threads; allocated 19 MB
+   wall_s=222.775330298
+
+================ 重同步复验汇总 ================
+  PASS=39 FAIL=0
+  全部通过

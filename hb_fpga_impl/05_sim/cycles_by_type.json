@@ -1,0 +1,7940 @@
+[
+ {
+  "type_id": 0,
+  "rep": 718,
+  "n_instances": 80,
+  "n_descs": 35,
+  "stage": "decoder",
+  "est_cycles": 47523,
+  "est_lenfix": 129448,
+  "est_fixed": 200358,
+  "macs_v0": 0,
+  "macs_padded": 11612160,
+  "macs_useful": 11468800,
+  "cycles": {
+   "ref": 233659,
+   "pf1": 233659
+  },
+  "mac_total": 11612160
+ },
+ {
+  "type_id": 1,
+  "rep": 730,
+  "n_instances": 80,
+  "n_descs": 6,
+  "stage": "decoder",
+  "est_cycles": 1647,
+  "est_lenfix": 1647,
+  "est_fixed": 4993,
+  "macs_v0": 0,
+  "macs_padded": 774144,
+  "macs_useful": 57344,
+  "cycles": {
+   "ref": 6317,
+   "pf1": 6317
+  },
+  "mac_total": 774144
+ },
+ {
+  "type_id": 2,
+  "rep": 751,
+  "n_instances": 80,
+  "n_descs": 35,
+  "stage": "decoder",
+  "est_cycles": 47523,
+  "est_lenfix": 129448,
+  "est_fixed": 200358,
+  "macs_v0": 0,
+  "macs_padded": 11612160,
+  "macs_useful": 11468800,
+  "cycles": {
+   "ref": 233659,
+   "pf1": 233659
+  },
+  "mac_total": 11612160
+ },
+ {
+  "type_id": 3,
+  "rep": 763,
+  "n_instances": 80,
+  "n_descs": 6,
+  "stage": "decoder",
+  "est_cycles": 1647,
+  "est_lenfix": 1647,
+  "est_fixed": 4993,
+  "macs_v0": 0,
+  "macs_padded": 774144,
+  "macs_useful": 57344,
+  "cycles": {
+   "ref": 6317,
+   "pf1": 6317
+  },
+  "mac_total": 774144
+ },
+ {
+  "type_id": 4,
+  "rep": 784,
+  "n_instances": 80,
+  "n_descs": 35,
+  "stage": "decoder",
+  "est_cycles": 47523,
+  "est_lenfix": 129448,
+  "est_fixed": 200358,
+  "macs_v0": 0,
+  "macs_padded": 11612160,
+  "macs_useful": 11468800,
+  "cycles": {
+   "ref": 233659,
+   "pf1": 233659
+  },
+  "mac_total": 11612160
+ },
+ {
+  "type_id": 5,
+  "rep": 796,
+  "n_instances": 80,
+  "n_descs": 6,
+  "stage": "decoder",
+  "est_cycles": 1647,
+  "est_lenfix": 1647,
+  "est_fixed": 4993,
+  "macs_v0": 0,
+  "macs_padded": 774144,
+  "macs_useful": 57344,
+  "cycles": {
+   "ref": 6317,
+   "pf1": 6317
+  },
+  "mac_total": 774144
+ },
+ {
+  "type_id": 6,
+  "rep": 817,
+  "n_instances": 80,
+  "n_descs": 35,
+  "stage": "decoder",
+  "est_cycles": 47523,
+  "est_lenfix": 129448,
+  "est_fixed": 200358,
+  "macs_v0": 0,
+  "macs_padded": 11612160,
+  "macs_useful": 11468800,
+  "cycles": {
+   "ref": 233659,
+   "pf1": 233659
+  },
+  "mac_total": 11612160
+ },
+ {
+  "type_id": 7,
+  "rep": 829,
+  "n_instances": 80,
+  "n_descs": 6,
+  "stage": "decoder",
+  "est_cycles": 1647,
+  "est_lenfix": 1647,
+  "est_fixed": 4993,
+  "macs_v0": 0,
+  "macs_padded": 774144,
+  "macs_useful": 57344,
+  "cycles": {
+   "ref": 6317,
+   "pf1": 6317
+  },
+  "mac_total": 774144
+ },
+ {
+  "type_id": 8,
+  "rep": 850,
+  "n_instances": 80,
+  "n_descs": 35,
+  "stage": "decoder",
+  "est_cycles": 47523,
+  "est_lenfix": 129448,
+  "est_fixed": 200358,
+  "macs_v0": 0,
+  "macs_padded": 11612160,
+  "macs_useful": 11468800,
+  "cycles": {
+   "ref": 233659,
+   "pf1": 233659
+  },
+  "mac_total": 11612160
+ },
+ {
+  "type_id": 9,
+  "rep": 862,
+  "n_instances": 80,
+  "n_descs": 6,
+  "stage": "decoder",
+  "est_cycles": 1647,
+  "est_lenfix": 1647,
+  "est_fixed": 4993,
+  "macs_v0": 0,
+  "macs_padded": 774144,
+  "macs_useful": 57344,
+  "cycles": {
+   "ref": 6317,
+   "pf1": 6317
+  },
+  "mac_total": 774144
+ },
+ {
+  "type_id": 10,
+  "rep": 883,
+  "n_instances": 80,
+  "n_descs": 35,
+  "stage": "decoder",
+  "est_cycles": 47523,
+  "est_lenfix": 129448,
+  "est_fixed": 200358,
+  "macs_v0": 0,
+  "macs_padded": 11612160,
+  "macs_useful": 11468800,
+  "cycles": {
+   "ref": 233659,
+   "pf1": 233659
+  },
+  "mac_total": 11612160
+ },
+ {
+  "type_id": 11,
+  "rep": 895,
+  "n_instances": 80,
+  "n_descs": 6,
+  "stage": "decoder",
+  "est_cycles": 1647,
+  "est_lenfix": 1647,
+  "est_fixed": 4993,
+  "macs_v0": 0,
+  "macs_padded": 774144,
+  "macs_useful": 57344,
+  "cycles": {
+   "ref": 6317,
+   "pf1": 6317
+  },
+  "mac_total": 774144
+ },
+ {
+  "type_id": 12,
+  "rep": 266,
+  "n_instances": 32,
+  "n_descs": 8,
+  "stage": "feature_enhancer",
+  "est_cycles": 83911,
+  "est_lenfix": 182998,
+  "est_fixed": 244254,
+  "macs_v0": 3540672,
+  "macs_padded": 95598144,
+  "macs_useful": 94049100,
+  "cycles": {
+   "ref": 386721,
+   "pf1": 386721
+  },
+  "mac_total": 95598144
+ },
+ {
+  "type_id": 13,
+  "rep": 327,
+  "n_instances": 32,
+  "n_descs": 8,
+  "stage": "feature_enhancer",
+  "est_cycles": 83911,
+  "est_lenfix": 182998,
+  "est_fixed": 244254,
+  "macs_v0": 3540672,
+  "macs_padded": 95598144,
+  "macs_useful": 94049100,
+  "cycles": {
+   "ref": 386721,
+   "pf1": 386721
+  },
+  "mac_total": 95598144
+ },
+ {
+  "type_id": 14,
+  "rep": 388,
+  "n_instances": 32,
+  "n_descs": 8,
+  "stage": "feature_enhancer",
+  "est_cycles": 83911,
+  "est_lenfix": 182998,
+  "est_fixed": 244254,
+  "macs_v0": 3540672,
+  "macs_padded": 95598144,
+  "macs_useful": 94049100,
+  "cycles": {
+   "ref": 386721,
+   "pf1": 386721
+  },
+  "mac_total": 95598144
+ },
+ {
+  "type_id": 15,
+  "rep": 449,
+  "n_instances": 32,
+  "n_descs": 8,
+  "stage": "feature_enhancer",
+  "est_cycles": 83911,
+  "est_lenfix": 182998,
+  "est_fixed": 244254,
+  "macs_v0": 3540672,
+  "macs_padded": 95598144,
+  "macs_useful": 94049100,
+  "cycles": {
+   "ref": 386721,
+   "pf1": 386721
+  },
+  "mac_total": 95598144
+ },
+ {
+  "type_id": 16,
+  "rep": 510,
+  "n_instances": 32,
+  "n_descs": 8,
+  "stage": "feature_enhancer",
+  "est_cycles": 83911,
+  "est_lenfix": 182998,
+  "est_fixed": 244254,
+  "macs_v0": 3540672,
+  "macs_padded": 95598144,
+  "macs_useful": 94049100,
+  "cycles": {
+   "ref": 386721,
+   "pf1": 386721
+  },
+  "mac_total": 95598144
+ },
+ {
+  "type_id": 17,
+  "rep": 571,
+  "n_instances": 32,
+  "n_descs": 8,
+  "stage": "feature_enhancer",
+  "est_cycles": 83911,
+  "est_lenfix": 182998,
+  "est_fixed": 244254,
+  "macs_v0": 3540672,
+  "macs_padded": 95598144,
+  "macs_useful": 94049100,
+  "cycles": {
+   "ref": 386721,
+   "pf1": 386721
+  },
+  "mac_total": 95598144
+ },
+ {
+  "type_id": 18,
+  "rep": 18,
+  "n_instances": 16,
+  "n_descs": 6,
+  "stage": "backbone",
+  "est_cycles": 81121,
+  "est_lenfix": 114150,
+  "est_fixed": 165150,
+  "macs_v0": 3326400,
+  "macs_padded": 53222400,
+  "macs_useful": 47308800,
+  "cycles": {
+   "ref": 248383,
+   "pf1": 248383
+  },
+  "mac_total": 53222400
+ },
+ {
+  "type_id": 19,
+  "rep": 51,
+  "n_instances": 16,
+  "n_descs": 6,
+  "stage": "backbone",
+  "est_cycles": 81121,
+  "est_lenfix": 114150,
+  "est_fixed": 165150,
+  "macs_v0": 3326400,
+  "macs_padded": 53222400,
+  "macs_useful": 47308800,
+  "cycles": {
+   "ref": 248383,
+   "pf1": 248383
+  },
+  "mac_total": 53222400
+ },
+ {
+  "type_id": 20,
+  "rep": 298,
+  "n_instances": 16,
+  "n_descs": 8,
+  "stage": "feature_enhancer",
+  "est_cycles": 74663,
+  "est_lenfix": 173750,
+  "est_fixed": 233238,
+  "macs_v0": 3540672,
+  "macs_padded": 95598144,
+  "macs_useful": 34833000,
+  "cycles": {
+   "ref": 373841,
+   "pf1": 373841
+  },
+  "mac_total": 95598144
+ },
+ {
+  "type_id": 21,
+  "rep": 359,
+  "n_instances": 16,
+  "n_descs": 8,
+  "stage": "feature_enhancer",
+  "est_cycles": 74663,
+  "est_lenfix": 173750,
+  "est_fixed": 233238,
+  "macs_v0": 3540672,
+  "macs_padded": 95598144,
+  "macs_useful": 34833000,
+  "cycles": {
+   "ref": 373841,
+   "pf1": 373841
+  },
+  "mac_total": 95598144
+ },
+ {
+  "type_id": 22,
+  "rep": 420,
+  "n_instances": 16,
+  "n_descs": 8,
+  "stage": "feature_enhancer",
+  "est_cycles": 74663,
+  "est_lenfix": 173750,
+  "est_fixed": 233238,
+  "macs_v0": 3540672,
+  "macs_padded": 95598144,
+  "macs_useful": 34833000,
+  "cycles": {
+   "ref": 373841,
+   "pf1": 373841
+  },
+  "mac_total": 95598144
+ },
+ {
+  "type_id": 23,
+  "rep": 481,
+  "n_instances": 16,
+  "n_descs": 8,
+  "stage": "feature_enhancer",
+  "est_cycles": 74663,
+  "est_lenfix": 173750,
+  "est_fixed": 233238,
+  "macs_v0": 3540672,
+  "macs_padded": 95598144,
+  "macs_useful": 34833000,
+  "cycles": {
+   "ref": 373841,
+   "pf1": 373841
+  },
+  "mac_total": 95598144
+ },
+ {
+  "type_id": 24,
+  "rep": 542,
+  "n_instances": 16,
+  "n_descs": 8,
+  "stage": "feature_enhancer",
+  "est_cycles": 74663,
+  "est_lenfix": 173750,
+  "est_fixed": 233238,
+  "macs_v0": 3540672,
+  "macs_padded": 95598144,
+  "macs_useful": 34833000,
+  "cycles": {
+   "ref": 373841,
+   "pf1": 373841
+  },
+  "mac_total": 95598144
+ },
+ {
+  "type_id": 25,
+  "rep": 603,
+  "n_instances": 16,
+  "n_descs": 8,
+  "stage": "feature_enhancer",
+  "est_cycles": 74663,
+  "est_lenfix": 173750,
+  "est_fixed": 233238,
+  "macs_v0": 3540672,
+  "macs_padded": 95598144,
+  "macs_useful": 34833000,
+  "cycles": {
+   "ref": 373841,
+   "pf1": 373841
+  },
+  "mac_total": 95598144
+ },
+ {
+  "type_id": 26,
+  "rep": 625,
+  "n_instances": 16,
+  "n_descs": 36,
+  "stage": "spatial_enhancer",
+  "est_cycles": 372752,
+  "est_lenfix": 1929327,
+  "est_fixed": 2921417,
+  "macs_v0": 1451520,
+  "macs_padded": 23500800,
+  "macs_useful": 23500800,
+  "cycles": {
+   "ref": 3344007,
+   "pf1": 3344007
+  },
+  "mac_total": 23500800
+ },
+ {
+  "type_id": 27,
+  "rep": 641,
+  "n_instances": 16,
+  "n_descs": 9,
+  "stage": "spatial_enhancer",
+  "est_cycles": 87137,
+  "est_lenfix": 414837,
+  "est_fixed": 1125761,
+  "macs_v0": 1465344,
+  "macs_padded": 23500800,
+  "macs_useful": 4352000,
+  "cycles": {
+   "ref": 1244511,
+   "pf1": 1244511
+  },
+  "mac_total": 23500800
+ },
+ {
+  "type_id": 28,
+  "rep": 702,
+  "n_instances": 10,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 22872,
+  "est_lenfix": 22872,
+  "est_fixed": 24496,
+  "macs_v0": 0,
+  "macs_padded": 1332288,
+  "macs_useful": 65792,
+  "cycles": {
+   "ref": 28595,
+   "pf1": 27451
+  },
+  "mac_total": 1332288
+ },
+ {
+  "type_id": 29,
+  "rep": 703,
+  "n_instances": 10,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 22872,
+  "est_lenfix": 22872,
+  "est_fixed": 24496,
+  "macs_v0": 0,
+  "macs_padded": 1332288,
+  "macs_useful": 65792,
+  "cycles": {
+   "ref": 28595,
+   "pf1": 27451
+  },
+  "mac_total": 1332288
+ },
+ {
+  "type_id": 30,
+  "rep": 704,
+  "n_instances": 10,
+  "n_descs": 17,
+  "stage": "decoder",
+  "est_cycles": 67248,
+  "est_lenfix": 67248,
+  "est_fixed": 103312,
+  "macs_v0": 0,
+  "macs_padded": 21047040,
+  "macs_useful": 16629760,
+  "cycles": {
+   "ref": 123439,
+   "pf1": 106123
+  },
+  "mac_total": 21047040
+ },
+ {
+  "type_id": 31,
+  "rep": 705,
+  "n_instances": 10,
+  "n_descs": 9,
+  "stage": "decoder",
+  "est_cycles": 45725,
+  "est_lenfix": 45725,
+  "est_fixed": 68461,
+  "macs_v0": 0,
+  "macs_padded": 18652032,
+  "macs_useful": 14737408,
+  "cycles": {
+   "ref": 83351,
+   "pf1": 68087
+  },
+  "mac_total": 18652032
+ },
+ {
+  "type_id": 32,
+  "rep": 706,
+  "n_instances": 10,
+  "n_descs": 9,
+  "stage": "decoder",
+  "est_cycles": 45725,
+  "est_lenfix": 45725,
+  "est_fixed": 68461,
+  "macs_v0": 0,
+  "macs_padded": 18652032,
+  "macs_useful": 14737408,
+  "cycles": {
+   "ref": 83351,
+   "pf1": 68087
+  },
+  "mac_total": 18652032
+ },
+ {
+  "type_id": 33,
+  "rep": 707,
+  "n_instances": 10,
+  "n_descs": 9,
+  "stage": "decoder",
+  "est_cycles": 45725,
+  "est_lenfix": 45725,
+  "est_fixed": 68461,
+  "macs_v0": 0,
+  "macs_padded": 18652032,
+  "macs_useful": 14737408,
+  "cycles": {
+   "ref": 83351,
+   "pf1": 68087
+  },
+  "mac_total": 18652032
+ },
+ {
+  "type_id": 34,
+  "rep": 708,
+  "n_instances": 10,
+  "n_descs": 34,
+  "stage": "decoder",
+  "est_cycles": 114016,
+  "est_lenfix": 114016,
+  "est_fixed": 122392,
+  "macs_v0": 0,
+  "macs_padded": 6661440,
+  "macs_useful": 394752,
+  "cycles": {
+   "ref": 140759,
+   "pf1": 132807
+  },
+  "mac_total": 6661440
+ },
+ {
+  "type_id": 35,
+  "rep": 709,
+  "n_instances": 10,
+  "n_descs": 33,
+  "stage": "decoder",
+  "est_cycles": 130808,
+  "est_lenfix": 130808,
+  "est_fixed": 185464,
+  "macs_v0": 0,
+  "macs_padded": 49738752,
+  "macs_useful": 14737408,
+  "cycles": {
+   "ref": 265239,
+   "pf1": 265239
+  },
+  "mac_total": 49738752
+ },
+ {
+  "type_id": 36,
+  "rep": 710,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 136800,
+  "est_lenfix": 136800,
+  "est_fixed": 195360,
+  "macs_v0": 0,
+  "macs_padded": 53291520,
+  "macs_useful": 15658496,
+  "cycles": {
+   "ref": 281075,
+   "pf1": 281075
+  },
+  "mac_total": 53291520
+ },
+ {
+  "type_id": 37,
+  "rep": 711,
+  "n_instances": 10,
+  "n_descs": 50,
+  "stage": "decoder",
+  "est_cycles": 163216,
+  "est_lenfix": 163216,
+  "est_fixed": 242888,
+  "macs_v0": 0,
+  "macs_padded": 70611264,
+  "macs_useful": 28553728,
+  "cycles": {
+   "ref": 339407,
+   "pf1": 324727
+  },
+  "mac_total": 70611264
+ },
+ {
+  "type_id": 38,
+  "rep": 712,
+  "n_instances": 10,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 44448,
+  "est_lenfix": 44448,
+  "est_fixed": 65560,
+  "macs_v0": 0,
+  "macs_padded": 17319744,
+  "macs_useful": 12895232,
+  "cycles": {
+   "ref": 80175,
+   "pf1": 65543
+  },
+  "mac_total": 17319744
+ },
+ {
+  "type_id": 39,
+  "rep": 713,
+  "n_instances": 10,
+  "n_descs": 561,
+  "stage": "decoder",
+  "est_cycles": 55328,
+  "est_lenfix": 55328,
+  "est_fixed": 83104,
+  "macs_v0": 0,
+  "macs_padded": 6193152,
+  "macs_useful": 974848,
+  "cycles": {
+   "ref": 113320,
+   "pf1": 113320
+  },
+  "mac_total": 6193152
+ },
+ {
+  "type_id": 40,
+  "rep": 714,
+  "n_instances": 10,
+  "n_descs": 470,
+  "stage": "decoder",
+  "est_cycles": 43520,
+  "est_lenfix": 43520,
+  "est_fixed": 92352,
+  "macs_v0": 0,
+  "macs_padded": 19039104,
+  "macs_useful": 14852096,
+  "cycles": {
+   "ref": 102175,
+   "pf1": 86859
+  },
+  "mac_total": 19039104
+ },
+ {
+  "type_id": 41,
+  "rep": 715,
+  "n_instances": 10,
+  "n_descs": 33,
+  "stage": "decoder",
+  "est_cycles": 130808,
+  "est_lenfix": 130808,
+  "est_fixed": 185464,
+  "macs_v0": 0,
+  "macs_padded": 49738752,
+  "macs_useful": 14737408,
+  "cycles": {
+   "ref": 265239,
+   "pf1": 265239
+  },
+  "mac_total": 49738752
+ },
+ {
+  "type_id": 42,
+  "rep": 716,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 356504,
+  "est_lenfix": 620736,
+  "est_fixed": 987712,
+  "macs_v0": 21316608,
+  "macs_padded": 355276800,
+  "macs_useful": 105267200,
+  "cycles": {
+   "ref": 1516729,
+   "pf1": 1516729
+  },
+  "mac_total": 355276800
+ },
+ {
+  "type_id": 43,
+  "rep": 717,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 236504,
+  "est_lenfix": 500736,
+  "est_fixed": 867712,
+  "macs_v0": 21316608,
+  "macs_padded": 355276800,
+  "macs_useful": 105267200,
+  "cycles": {
+   "ref": 1372463,
+   "pf1": 1372463
+  },
+  "mac_total": 355276800
+ },
+ {
+  "type_id": 44,
+  "rep": 726,
+  "n_instances": 10,
+  "n_descs": 62,
+  "stage": "decoder",
+  "est_cycles": 215760,
+  "est_lenfix": 480008,
+  "est_fixed": 707816,
+  "macs_v0": 0,
+  "macs_padded": 328309632,
+  "macs_useful": 106487808,
+  "cycles": {
+   "ref": 1148879,
+   "pf1": 1133631
+  },
+  "mac_total": 328309632
+ },
+ {
+  "type_id": 45,
+  "rep": 727,
+  "n_instances": 10,
+  "n_descs": 33,
+  "stage": "decoder",
+  "est_cycles": 130808,
+  "est_lenfix": 130808,
+  "est_fixed": 185464,
+  "macs_v0": 0,
+  "macs_padded": 49738752,
+  "macs_useful": 14737408,
+  "cycles": {
+   "ref": 265239,
+   "pf1": 265239
+  },
+  "mac_total": 49738752
+ },
+ {
+  "type_id": 46,
+  "rep": 728,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 60864,
+  "est_lenfix": 60864,
+  "est_fixed": 64768,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 526336,
+  "cycles": {
+   "ref": 77309,
+   "pf1": 77309
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 47,
+  "rep": 729,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 59184,
+  "est_lenfix": 59184,
+  "est_fixed": 63088,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 526336,
+  "cycles": {
+   "ref": 74789,
+   "pf1": 74789
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 48,
+  "rep": 738,
+  "n_instances": 10,
+  "n_descs": 54,
+  "stage": "decoder",
+  "est_cycles": 40960,
+  "est_lenfix": 40960,
+  "est_fixed": 90464,
+  "macs_v0": 0,
+  "macs_padded": 20200320,
+  "macs_useful": 15196160,
+  "cycles": {
+   "ref": 99523,
+   "pf1": 84251
+  },
+  "mac_total": 20200320
+ },
+ {
+  "type_id": 49,
+  "rep": 739,
+  "n_instances": 10,
+  "n_descs": 42,
+  "stage": "decoder",
+  "est_cycles": 198797,
+  "est_lenfix": 280722,
+  "est_fixed": 430690,
+  "macs_v0": 0,
+  "macs_padded": 118129536,
+  "macs_useful": 117899264,
+  "cycles": {
+   "ref": 485197,
+   "pf1": 347337
+  },
+  "mac_total": 118129536
+ },
+ {
+  "type_id": 50,
+  "rep": 740,
+  "n_instances": 10,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 206303,
+  "est_lenfix": 239332,
+  "est_fixed": 337332,
+  "macs_v0": 0,
+  "macs_padded": 148708224,
+  "macs_useful": 117497856,
+  "cycles": {
+   "ref": 429663,
+   "pf1": 429663
+  },
+  "mac_total": 148708224
+ },
+ {
+  "type_id": 51,
+  "rep": 741,
+  "n_instances": 10,
+  "n_descs": 34,
+  "stage": "decoder",
+  "est_cycles": 114016,
+  "est_lenfix": 114016,
+  "est_fixed": 122392,
+  "macs_v0": 0,
+  "macs_padded": 6661440,
+  "macs_useful": 394752,
+  "cycles": {
+   "ref": 140759,
+   "pf1": 132807
+  },
+  "mac_total": 6661440
+ },
+ {
+  "type_id": 52,
+  "rep": 742,
+  "n_instances": 10,
+  "n_descs": 33,
+  "stage": "decoder",
+  "est_cycles": 130808,
+  "est_lenfix": 130808,
+  "est_fixed": 185464,
+  "macs_v0": 0,
+  "macs_padded": 49738752,
+  "macs_useful": 14737408,
+  "cycles": {
+   "ref": 265239,
+   "pf1": 265239
+  },
+  "mac_total": 49738752
+ },
+ {
+  "type_id": 53,
+  "rep": 743,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 136800,
+  "est_lenfix": 136800,
+  "est_fixed": 195360,
+  "macs_v0": 0,
+  "macs_padded": 53291520,
+  "macs_useful": 15658496,
+  "cycles": {
+   "ref": 281075,
+   "pf1": 281075
+  },
+  "mac_total": 53291520
+ },
+ {
+  "type_id": 54,
+  "rep": 744,
+  "n_instances": 10,
+  "n_descs": 50,
+  "stage": "decoder",
+  "est_cycles": 163216,
+  "est_lenfix": 163216,
+  "est_fixed": 242888,
+  "macs_v0": 0,
+  "macs_padded": 70611264,
+  "macs_useful": 28553728,
+  "cycles": {
+   "ref": 339407,
+   "pf1": 324727
+  },
+  "mac_total": 70611264
+ },
+ {
+  "type_id": 55,
+  "rep": 745,
+  "n_instances": 10,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 44448,
+  "est_lenfix": 44448,
+  "est_fixed": 65560,
+  "macs_v0": 0,
+  "macs_padded": 17319744,
+  "macs_useful": 12895232,
+  "cycles": {
+   "ref": 80175,
+   "pf1": 65543
+  },
+  "mac_total": 17319744
+ },
+ {
+  "type_id": 56,
+  "rep": 746,
+  "n_instances": 10,
+  "n_descs": 561,
+  "stage": "decoder",
+  "est_cycles": 55328,
+  "est_lenfix": 55328,
+  "est_fixed": 83104,
+  "macs_v0": 0,
+  "macs_padded": 6193152,
+  "macs_useful": 974848,
+  "cycles": {
+   "ref": 113320,
+   "pf1": 113320
+  },
+  "mac_total": 6193152
+ },
+ {
+  "type_id": 57,
+  "rep": 747,
+  "n_instances": 10,
+  "n_descs": 470,
+  "stage": "decoder",
+  "est_cycles": 43520,
+  "est_lenfix": 43520,
+  "est_fixed": 92352,
+  "macs_v0": 0,
+  "macs_padded": 19039104,
+  "macs_useful": 14852096,
+  "cycles": {
+   "ref": 102175,
+   "pf1": 86859
+  },
+  "mac_total": 19039104
+ },
+ {
+  "type_id": 58,
+  "rep": 748,
+  "n_instances": 10,
+  "n_descs": 33,
+  "stage": "decoder",
+  "est_cycles": 130808,
+  "est_lenfix": 130808,
+  "est_fixed": 185464,
+  "macs_v0": 0,
+  "macs_padded": 49738752,
+  "macs_useful": 14737408,
+  "cycles": {
+   "ref": 265239,
+   "pf1": 265239
+  },
+  "mac_total": 49738752
+ },
+ {
+  "type_id": 59,
+  "rep": 749,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 356504,
+  "est_lenfix": 620736,
+  "est_fixed": 987712,
+  "macs_v0": 21316608,
+  "macs_padded": 355276800,
+  "macs_useful": 105267200,
+  "cycles": {
+   "ref": 1516729,
+   "pf1": 1516729
+  },
+  "mac_total": 355276800
+ },
+ {
+  "type_id": 60,
+  "rep": 750,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 236504,
+  "est_lenfix": 500736,
+  "est_fixed": 867712,
+  "macs_v0": 21316608,
+  "macs_padded": 355276800,
+  "macs_useful": 105267200,
+  "cycles": {
+   "ref": 1372463,
+   "pf1": 1372463
+  },
+  "mac_total": 355276800
+ },
+ {
+  "type_id": 61,
+  "rep": 759,
+  "n_instances": 10,
+  "n_descs": 62,
+  "stage": "decoder",
+  "est_cycles": 215760,
+  "est_lenfix": 480008,
+  "est_fixed": 707816,
+  "macs_v0": 0,
+  "macs_padded": 328309632,
+  "macs_useful": 106487808,
+  "cycles": {
+   "ref": 1148879,
+   "pf1": 1133631
+  },
+  "mac_total": 328309632
+ },
+ {
+  "type_id": 62,
+  "rep": 760,
+  "n_instances": 10,
+  "n_descs": 33,
+  "stage": "decoder",
+  "est_cycles": 130808,
+  "est_lenfix": 130808,
+  "est_fixed": 185464,
+  "macs_v0": 0,
+  "macs_padded": 49738752,
+  "macs_useful": 14737408,
+  "cycles": {
+   "ref": 265239,
+   "pf1": 265239
+  },
+  "mac_total": 49738752
+ },
+ {
+  "type_id": 63,
+  "rep": 761,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 60864,
+  "est_lenfix": 60864,
+  "est_fixed": 64768,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 526336,
+  "cycles": {
+   "ref": 77309,
+   "pf1": 77309
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 64,
+  "rep": 762,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 59184,
+  "est_lenfix": 59184,
+  "est_fixed": 63088,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 526336,
+  "cycles": {
+   "ref": 74789,
+   "pf1": 74789
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 65,
+  "rep": 771,
+  "n_instances": 10,
+  "n_descs": 54,
+  "stage": "decoder",
+  "est_cycles": 40960,
+  "est_lenfix": 40960,
+  "est_fixed": 90464,
+  "macs_v0": 0,
+  "macs_padded": 20200320,
+  "macs_useful": 15196160,
+  "cycles": {
+   "ref": 99523,
+   "pf1": 84251
+  },
+  "mac_total": 20200320
+ },
+ {
+  "type_id": 66,
+  "rep": 772,
+  "n_instances": 10,
+  "n_descs": 42,
+  "stage": "decoder",
+  "est_cycles": 198797,
+  "est_lenfix": 280722,
+  "est_fixed": 430690,
+  "macs_v0": 0,
+  "macs_padded": 118129536,
+  "macs_useful": 117899264,
+  "cycles": {
+   "ref": 485197,
+   "pf1": 347337
+  },
+  "mac_total": 118129536
+ },
+ {
+  "type_id": 67,
+  "rep": 773,
+  "n_instances": 10,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 206303,
+  "est_lenfix": 239332,
+  "est_fixed": 337332,
+  "macs_v0": 0,
+  "macs_padded": 148708224,
+  "macs_useful": 117497856,
+  "cycles": {
+   "ref": 429663,
+   "pf1": 429663
+  },
+  "mac_total": 148708224
+ },
+ {
+  "type_id": 68,
+  "rep": 774,
+  "n_instances": 10,
+  "n_descs": 34,
+  "stage": "decoder",
+  "est_cycles": 114016,
+  "est_lenfix": 114016,
+  "est_fixed": 122392,
+  "macs_v0": 0,
+  "macs_padded": 6661440,
+  "macs_useful": 394752,
+  "cycles": {
+   "ref": 140759,
+   "pf1": 132807
+  },
+  "mac_total": 6661440
+ },
+ {
+  "type_id": 69,
+  "rep": 775,
+  "n_instances": 10,
+  "n_descs": 33,
+  "stage": "decoder",
+  "est_cycles": 130808,
+  "est_lenfix": 130808,
+  "est_fixed": 185464,
+  "macs_v0": 0,
+  "macs_padded": 49738752,
+  "macs_useful": 14737408,
+  "cycles": {
+   "ref": 265239,
+   "pf1": 265239
+  },
+  "mac_total": 49738752
+ },
+ {
+  "type_id": 70,
+  "rep": 776,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 136800,
+  "est_lenfix": 136800,
+  "est_fixed": 195360,
+  "macs_v0": 0,
+  "macs_padded": 53291520,
+  "macs_useful": 15658496,
+  "cycles": {
+   "ref": 281075,
+   "pf1": 281075
+  },
+  "mac_total": 53291520
+ },
+ {
+  "type_id": 71,
+  "rep": 777,
+  "n_instances": 10,
+  "n_descs": 50,
+  "stage": "decoder",
+  "est_cycles": 163216,
+  "est_lenfix": 163216,
+  "est_fixed": 242888,
+  "macs_v0": 0,
+  "macs_padded": 70611264,
+  "macs_useful": 28553728,
+  "cycles": {
+   "ref": 339407,
+   "pf1": 324727
+  },
+  "mac_total": 70611264
+ },
+ {
+  "type_id": 72,
+  "rep": 778,
+  "n_instances": 10,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 44448,
+  "est_lenfix": 44448,
+  "est_fixed": 65560,
+  "macs_v0": 0,
+  "macs_padded": 17319744,
+  "macs_useful": 12895232,
+  "cycles": {
+   "ref": 80175,
+   "pf1": 65543
+  },
+  "mac_total": 17319744
+ },
+ {
+  "type_id": 73,
+  "rep": 779,
+  "n_instances": 10,
+  "n_descs": 561,
+  "stage": "decoder",
+  "est_cycles": 55328,
+  "est_lenfix": 55328,
+  "est_fixed": 83104,
+  "macs_v0": 0,
+  "macs_padded": 6193152,
+  "macs_useful": 974848,
+  "cycles": {
+   "ref": 113320,
+   "pf1": 113320
+  },
+  "mac_total": 6193152
+ },
+ {
+  "type_id": 74,
+  "rep": 780,
+  "n_instances": 10,
+  "n_descs": 470,
+  "stage": "decoder",
+  "est_cycles": 43520,
+  "est_lenfix": 43520,
+  "est_fixed": 92352,
+  "macs_v0": 0,
+  "macs_padded": 19039104,
+  "macs_useful": 14852096,
+  "cycles": {
+   "ref": 102175,
+   "pf1": 86859
+  },
+  "mac_total": 19039104
+ },
+ {
+  "type_id": 75,
+  "rep": 781,
+  "n_instances": 10,
+  "n_descs": 33,
+  "stage": "decoder",
+  "est_cycles": 130808,
+  "est_lenfix": 130808,
+  "est_fixed": 185464,
+  "macs_v0": 0,
+  "macs_padded": 49738752,
+  "macs_useful": 14737408,
+  "cycles": {
+   "ref": 265239,
+   "pf1": 265239
+  },
+  "mac_total": 49738752
+ },
+ {
+  "type_id": 76,
+  "rep": 782,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 356504,
+  "est_lenfix": 620736,
+  "est_fixed": 987712,
+  "macs_v0": 21316608,
+  "macs_padded": 355276800,
+  "macs_useful": 105267200,
+  "cycles": {
+   "ref": 1516729,
+   "pf1": 1516729
+  },
+  "mac_total": 355276800
+ },
+ {
+  "type_id": 77,
+  "rep": 783,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 236504,
+  "est_lenfix": 500736,
+  "est_fixed": 867712,
+  "macs_v0": 21316608,
+  "macs_padded": 355276800,
+  "macs_useful": 105267200,
+  "cycles": {
+   "ref": 1372463,
+   "pf1": 1372463
+  },
+  "mac_total": 355276800
+ },
+ {
+  "type_id": 78,
+  "rep": 792,
+  "n_instances": 10,
+  "n_descs": 62,
+  "stage": "decoder",
+  "est_cycles": 215760,
+  "est_lenfix": 480008,
+  "est_fixed": 707816,
+  "macs_v0": 0,
+  "macs_padded": 328309632,
+  "macs_useful": 106487808,
+  "cycles": {
+   "ref": 1148879,
+   "pf1": 1133631
+  },
+  "mac_total": 328309632
+ },
+ {
+  "type_id": 79,
+  "rep": 793,
+  "n_instances": 10,
+  "n_descs": 33,
+  "stage": "decoder",
+  "est_cycles": 130808,
+  "est_lenfix": 130808,
+  "est_fixed": 185464,
+  "macs_v0": 0,
+  "macs_padded": 49738752,
+  "macs_useful": 14737408,
+  "cycles": {
+   "ref": 265239,
+   "pf1": 265239
+  },
+  "mac_total": 49738752
+ },
+ {
+  "type_id": 80,
+  "rep": 794,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 60864,
+  "est_lenfix": 60864,
+  "est_fixed": 64768,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 526336,
+  "cycles": {
+   "ref": 77309,
+   "pf1": 77309
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 81,
+  "rep": 795,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 59184,
+  "est_lenfix": 59184,
+  "est_fixed": 63088,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 526336,
+  "cycles": {
+   "ref": 74789,
+   "pf1": 74789
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 82,
+  "rep": 804,
+  "n_instances": 10,
+  "n_descs": 54,
+  "stage": "decoder",
+  "est_cycles": 40960,
+  "est_lenfix": 40960,
+  "est_fixed": 90464,
+  "macs_v0": 0,
+  "macs_padded": 20200320,
+  "macs_useful": 15196160,
+  "cycles": {
+   "ref": 99523,
+   "pf1": 84251
+  },
+  "mac_total": 20200320
+ },
+ {
+  "type_id": 83,
+  "rep": 805,
+  "n_instances": 10,
+  "n_descs": 42,
+  "stage": "decoder",
+  "est_cycles": 198797,
+  "est_lenfix": 280722,
+  "est_fixed": 430690,
+  "macs_v0": 0,
+  "macs_padded": 118129536,
+  "macs_useful": 117899264,
+  "cycles": {
+   "ref": 485197,
+   "pf1": 347337
+  },
+  "mac_total": 118129536
+ },
+ {
+  "type_id": 84,
+  "rep": 806,
+  "n_instances": 10,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 206303,
+  "est_lenfix": 239332,
+  "est_fixed": 337332,
+  "macs_v0": 0,
+  "macs_padded": 148708224,
+  "macs_useful": 117497856,
+  "cycles": {
+   "ref": 429663,
+   "pf1": 429663
+  },
+  "mac_total": 148708224
+ },
+ {
+  "type_id": 85,
+  "rep": 807,
+  "n_instances": 10,
+  "n_descs": 34,
+  "stage": "decoder",
+  "est_cycles": 114016,
+  "est_lenfix": 114016,
+  "est_fixed": 122392,
+  "macs_v0": 0,
+  "macs_padded": 6661440,
+  "macs_useful": 394752,
+  "cycles": {
+   "ref": 140759,
+   "pf1": 132807
+  },
+  "mac_total": 6661440
+ },
+ {
+  "type_id": 86,
+  "rep": 808,
+  "n_instances": 10,
+  "n_descs": 33,
+  "stage": "decoder",
+  "est_cycles": 130808,
+  "est_lenfix": 130808,
+  "est_fixed": 185464,
+  "macs_v0": 0,
+  "macs_padded": 49738752,
+  "macs_useful": 14737408,
+  "cycles": {
+   "ref": 265239,
+   "pf1": 265239
+  },
+  "mac_total": 49738752
+ },
+ {
+  "type_id": 87,
+  "rep": 809,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 136800,
+  "est_lenfix": 136800,
+  "est_fixed": 195360,
+  "macs_v0": 0,
+  "macs_padded": 53291520,
+  "macs_useful": 15658496,
+  "cycles": {
+   "ref": 281075,
+   "pf1": 281075
+  },
+  "mac_total": 53291520
+ },
+ {
+  "type_id": 88,
+  "rep": 810,
+  "n_instances": 10,
+  "n_descs": 50,
+  "stage": "decoder",
+  "est_cycles": 163216,
+  "est_lenfix": 163216,
+  "est_fixed": 242888,
+  "macs_v0": 0,
+  "macs_padded": 70611264,
+  "macs_useful": 28553728,
+  "cycles": {
+   "ref": 339407,
+   "pf1": 324727
+  },
+  "mac_total": 70611264
+ },
+ {
+  "type_id": 89,
+  "rep": 811,
+  "n_instances": 10,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 44448,
+  "est_lenfix": 44448,
+  "est_fixed": 65560,
+  "macs_v0": 0,
+  "macs_padded": 17319744,
+  "macs_useful": 12895232,
+  "cycles": {
+   "ref": 80175,
+   "pf1": 65543
+  },
+  "mac_total": 17319744
+ },
+ {
+  "type_id": 90,
+  "rep": 812,
+  "n_instances": 10,
+  "n_descs": 561,
+  "stage": "decoder",
+  "est_cycles": 55328,
+  "est_lenfix": 55328,
+  "est_fixed": 83104,
+  "macs_v0": 0,
+  "macs_padded": 6193152,
+  "macs_useful": 974848,
+  "cycles": {
+   "ref": 113320,
+   "pf1": 113320
+  },
+  "mac_total": 6193152
+ },
+ {
+  "type_id": 91,
+  "rep": 813,
+  "n_instances": 10,
+  "n_descs": 470,
+  "stage": "decoder",
+  "est_cycles": 43520,
+  "est_lenfix": 43520,
+  "est_fixed": 92352,
+  "macs_v0": 0,
+  "macs_padded": 19039104,
+  "macs_useful": 14852096,
+  "cycles": {
+   "ref": 102175,
+   "pf1": 86859
+  },
+  "mac_total": 19039104
+ },
+ {
+  "type_id": 92,
+  "rep": 814,
+  "n_instances": 10,
+  "n_descs": 33,
+  "stage": "decoder",
+  "est_cycles": 130808,
+  "est_lenfix": 130808,
+  "est_fixed": 185464,
+  "macs_v0": 0,
+  "macs_padded": 49738752,
+  "macs_useful": 14737408,
+  "cycles": {
+   "ref": 265239,
+   "pf1": 265239
+  },
+  "mac_total": 49738752
+ },
+ {
+  "type_id": 93,
+  "rep": 815,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 356504,
+  "est_lenfix": 620736,
+  "est_fixed": 987712,
+  "macs_v0": 21316608,
+  "macs_padded": 355276800,
+  "macs_useful": 105267200,
+  "cycles": {
+   "ref": 1516729,
+   "pf1": 1516729
+  },
+  "mac_total": 355276800
+ },
+ {
+  "type_id": 94,
+  "rep": 816,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 236504,
+  "est_lenfix": 500736,
+  "est_fixed": 867712,
+  "macs_v0": 21316608,
+  "macs_padded": 355276800,
+  "macs_useful": 105267200,
+  "cycles": {
+   "ref": 1372463,
+   "pf1": 1372463
+  },
+  "mac_total": 355276800
+ },
+ {
+  "type_id": 95,
+  "rep": 825,
+  "n_instances": 10,
+  "n_descs": 62,
+  "stage": "decoder",
+  "est_cycles": 215760,
+  "est_lenfix": 480008,
+  "est_fixed": 707816,
+  "macs_v0": 0,
+  "macs_padded": 328309632,
+  "macs_useful": 106487808,
+  "cycles": {
+   "ref": 1148879,
+   "pf1": 1133631
+  },
+  "mac_total": 328309632
+ },
+ {
+  "type_id": 96,
+  "rep": 826,
+  "n_instances": 10,
+  "n_descs": 33,
+  "stage": "decoder",
+  "est_cycles": 130808,
+  "est_lenfix": 130808,
+  "est_fixed": 185464,
+  "macs_v0": 0,
+  "macs_padded": 49738752,
+  "macs_useful": 14737408,
+  "cycles": {
+   "ref": 265239,
+   "pf1": 265239
+  },
+  "mac_total": 49738752
+ },
+ {
+  "type_id": 97,
+  "rep": 827,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 60864,
+  "est_lenfix": 60864,
+  "est_fixed": 64768,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 526336,
+  "cycles": {
+   "ref": 77309,
+   "pf1": 77309
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 98,
+  "rep": 828,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 59184,
+  "est_lenfix": 59184,
+  "est_fixed": 63088,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 526336,
+  "cycles": {
+   "ref": 74789,
+   "pf1": 74789
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 99,
+  "rep": 837,
+  "n_instances": 10,
+  "n_descs": 54,
+  "stage": "decoder",
+  "est_cycles": 40960,
+  "est_lenfix": 40960,
+  "est_fixed": 90464,
+  "macs_v0": 0,
+  "macs_padded": 20200320,
+  "macs_useful": 15196160,
+  "cycles": {
+   "ref": 99523,
+   "pf1": 84251
+  },
+  "mac_total": 20200320
+ },
+ {
+  "type_id": 100,
+  "rep": 838,
+  "n_instances": 10,
+  "n_descs": 42,
+  "stage": "decoder",
+  "est_cycles": 198797,
+  "est_lenfix": 280722,
+  "est_fixed": 430690,
+  "macs_v0": 0,
+  "macs_padded": 118129536,
+  "macs_useful": 117899264,
+  "cycles": {
+   "ref": 485197,
+   "pf1": 347337
+  },
+  "mac_total": 118129536
+ },
+ {
+  "type_id": 101,
+  "rep": 839,
+  "n_instances": 10,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 206303,
+  "est_lenfix": 239332,
+  "est_fixed": 337332,
+  "macs_v0": 0,
+  "macs_padded": 148708224,
+  "macs_useful": 117497856,
+  "cycles": {
+   "ref": 429663,
+   "pf1": 429663
+  },
+  "mac_total": 148708224
+ },
+ {
+  "type_id": 102,
+  "rep": 840,
+  "n_instances": 10,
+  "n_descs": 34,
+  "stage": "decoder",
+  "est_cycles": 114016,
+  "est_lenfix": 114016,
+  "est_fixed": 122392,
+  "macs_v0": 0,
+  "macs_padded": 6661440,
+  "macs_useful": 394752,
+  "cycles": {
+   "ref": 140759,
+   "pf1": 132807
+  },
+  "mac_total": 6661440
+ },
+ {
+  "type_id": 103,
+  "rep": 841,
+  "n_instances": 10,
+  "n_descs": 33,
+  "stage": "decoder",
+  "est_cycles": 130808,
+  "est_lenfix": 130808,
+  "est_fixed": 185464,
+  "macs_v0": 0,
+  "macs_padded": 49738752,
+  "macs_useful": 14737408,
+  "cycles": {
+   "ref": 265239,
+   "pf1": 265239
+  },
+  "mac_total": 49738752
+ },
+ {
+  "type_id": 104,
+  "rep": 842,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 136800,
+  "est_lenfix": 136800,
+  "est_fixed": 195360,
+  "macs_v0": 0,
+  "macs_padded": 53291520,
+  "macs_useful": 15658496,
+  "cycles": {
+   "ref": 281075,
+   "pf1": 281075
+  },
+  "mac_total": 53291520
+ },
+ {
+  "type_id": 105,
+  "rep": 843,
+  "n_instances": 10,
+  "n_descs": 50,
+  "stage": "decoder",
+  "est_cycles": 163216,
+  "est_lenfix": 163216,
+  "est_fixed": 242888,
+  "macs_v0": 0,
+  "macs_padded": 70611264,
+  "macs_useful": 28553728,
+  "cycles": {
+   "ref": 339407,
+   "pf1": 324727
+  },
+  "mac_total": 70611264
+ },
+ {
+  "type_id": 106,
+  "rep": 844,
+  "n_instances": 10,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 44448,
+  "est_lenfix": 44448,
+  "est_fixed": 65560,
+  "macs_v0": 0,
+  "macs_padded": 17319744,
+  "macs_useful": 12895232,
+  "cycles": {
+   "ref": 80175,
+   "pf1": 65543
+  },
+  "mac_total": 17319744
+ },
+ {
+  "type_id": 107,
+  "rep": 845,
+  "n_instances": 10,
+  "n_descs": 561,
+  "stage": "decoder",
+  "est_cycles": 55328,
+  "est_lenfix": 55328,
+  "est_fixed": 83104,
+  "macs_v0": 0,
+  "macs_padded": 6193152,
+  "macs_useful": 974848,
+  "cycles": {
+   "ref": 113320,
+   "pf1": 113320
+  },
+  "mac_total": 6193152
+ },
+ {
+  "type_id": 108,
+  "rep": 846,
+  "n_instances": 10,
+  "n_descs": 470,
+  "stage": "decoder",
+  "est_cycles": 43520,
+  "est_lenfix": 43520,
+  "est_fixed": 92352,
+  "macs_v0": 0,
+  "macs_padded": 19039104,
+  "macs_useful": 14852096,
+  "cycles": {
+   "ref": 102175,
+   "pf1": 86859
+  },
+  "mac_total": 19039104
+ },
+ {
+  "type_id": 109,
+  "rep": 847,
+  "n_instances": 10,
+  "n_descs": 33,
+  "stage": "decoder",
+  "est_cycles": 130808,
+  "est_lenfix": 130808,
+  "est_fixed": 185464,
+  "macs_v0": 0,
+  "macs_padded": 49738752,
+  "macs_useful": 14737408,
+  "cycles": {
+   "ref": 265239,
+   "pf1": 265239
+  },
+  "mac_total": 49738752
+ },
+ {
+  "type_id": 110,
+  "rep": 848,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 356504,
+  "est_lenfix": 620736,
+  "est_fixed": 987712,
+  "macs_v0": 21316608,
+  "macs_padded": 355276800,
+  "macs_useful": 105267200,
+  "cycles": {
+   "ref": 1516729,
+   "pf1": 1516729
+  },
+  "mac_total": 355276800
+ },
+ {
+  "type_id": 111,
+  "rep": 849,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 236504,
+  "est_lenfix": 500736,
+  "est_fixed": 867712,
+  "macs_v0": 21316608,
+  "macs_padded": 355276800,
+  "macs_useful": 105267200,
+  "cycles": {
+   "ref": 1372463,
+   "pf1": 1372463
+  },
+  "mac_total": 355276800
+ },
+ {
+  "type_id": 112,
+  "rep": 858,
+  "n_instances": 10,
+  "n_descs": 62,
+  "stage": "decoder",
+  "est_cycles": 215760,
+  "est_lenfix": 480008,
+  "est_fixed": 707816,
+  "macs_v0": 0,
+  "macs_padded": 328309632,
+  "macs_useful": 106487808,
+  "cycles": {
+   "ref": 1148879,
+   "pf1": 1133631
+  },
+  "mac_total": 328309632
+ },
+ {
+  "type_id": 113,
+  "rep": 859,
+  "n_instances": 10,
+  "n_descs": 33,
+  "stage": "decoder",
+  "est_cycles": 130808,
+  "est_lenfix": 130808,
+  "est_fixed": 185464,
+  "macs_v0": 0,
+  "macs_padded": 49738752,
+  "macs_useful": 14737408,
+  "cycles": {
+   "ref": 265239,
+   "pf1": 265239
+  },
+  "mac_total": 49738752
+ },
+ {
+  "type_id": 114,
+  "rep": 860,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 60864,
+  "est_lenfix": 60864,
+  "est_fixed": 64768,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 526336,
+  "cycles": {
+   "ref": 77309,
+   "pf1": 77309
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 115,
+  "rep": 861,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 59184,
+  "est_lenfix": 59184,
+  "est_fixed": 63088,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 526336,
+  "cycles": {
+   "ref": 74789,
+   "pf1": 74789
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 116,
+  "rep": 870,
+  "n_instances": 10,
+  "n_descs": 54,
+  "stage": "decoder",
+  "est_cycles": 40960,
+  "est_lenfix": 40960,
+  "est_fixed": 90464,
+  "macs_v0": 0,
+  "macs_padded": 20200320,
+  "macs_useful": 15196160,
+  "cycles": {
+   "ref": 99523,
+   "pf1": 84251
+  },
+  "mac_total": 20200320
+ },
+ {
+  "type_id": 117,
+  "rep": 871,
+  "n_instances": 10,
+  "n_descs": 42,
+  "stage": "decoder",
+  "est_cycles": 198797,
+  "est_lenfix": 280722,
+  "est_fixed": 430690,
+  "macs_v0": 0,
+  "macs_padded": 118129536,
+  "macs_useful": 117899264,
+  "cycles": {
+   "ref": 485197,
+   "pf1": 347337
+  },
+  "mac_total": 118129536
+ },
+ {
+  "type_id": 118,
+  "rep": 872,
+  "n_instances": 10,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 206303,
+  "est_lenfix": 239332,
+  "est_fixed": 337332,
+  "macs_v0": 0,
+  "macs_padded": 148708224,
+  "macs_useful": 117497856,
+  "cycles": {
+   "ref": 429663,
+   "pf1": 429663
+  },
+  "mac_total": 148708224
+ },
+ {
+  "type_id": 119,
+  "rep": 873,
+  "n_instances": 10,
+  "n_descs": 34,
+  "stage": "decoder",
+  "est_cycles": 114016,
+  "est_lenfix": 114016,
+  "est_fixed": 122392,
+  "macs_v0": 0,
+  "macs_padded": 6661440,
+  "macs_useful": 394752,
+  "cycles": {
+   "ref": 140759,
+   "pf1": 132807
+  },
+  "mac_total": 6661440
+ },
+ {
+  "type_id": 120,
+  "rep": 874,
+  "n_instances": 10,
+  "n_descs": 33,
+  "stage": "decoder",
+  "est_cycles": 130808,
+  "est_lenfix": 130808,
+  "est_fixed": 185464,
+  "macs_v0": 0,
+  "macs_padded": 49738752,
+  "macs_useful": 14737408,
+  "cycles": {
+   "ref": 265239,
+   "pf1": 265239
+  },
+  "mac_total": 49738752
+ },
+ {
+  "type_id": 121,
+  "rep": 875,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 136800,
+  "est_lenfix": 136800,
+  "est_fixed": 195360,
+  "macs_v0": 0,
+  "macs_padded": 53291520,
+  "macs_useful": 15658496,
+  "cycles": {
+   "ref": 281075,
+   "pf1": 281075
+  },
+  "mac_total": 53291520
+ },
+ {
+  "type_id": 122,
+  "rep": 876,
+  "n_instances": 10,
+  "n_descs": 50,
+  "stage": "decoder",
+  "est_cycles": 163216,
+  "est_lenfix": 163216,
+  "est_fixed": 242888,
+  "macs_v0": 0,
+  "macs_padded": 70611264,
+  "macs_useful": 28553728,
+  "cycles": {
+   "ref": 339407,
+   "pf1": 324727
+  },
+  "mac_total": 70611264
+ },
+ {
+  "type_id": 123,
+  "rep": 877,
+  "n_instances": 10,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 44448,
+  "est_lenfix": 44448,
+  "est_fixed": 65560,
+  "macs_v0": 0,
+  "macs_padded": 17319744,
+  "macs_useful": 12895232,
+  "cycles": {
+   "ref": 80175,
+   "pf1": 65543
+  },
+  "mac_total": 17319744
+ },
+ {
+  "type_id": 124,
+  "rep": 878,
+  "n_instances": 10,
+  "n_descs": 561,
+  "stage": "decoder",
+  "est_cycles": 55328,
+  "est_lenfix": 55328,
+  "est_fixed": 83104,
+  "macs_v0": 0,
+  "macs_padded": 6193152,
+  "macs_useful": 974848,
+  "cycles": {
+   "ref": 113320,
+   "pf1": 113320
+  },
+  "mac_total": 6193152
+ },
+ {
+  "type_id": 125,
+  "rep": 879,
+  "n_instances": 10,
+  "n_descs": 470,
+  "stage": "decoder",
+  "est_cycles": 43520,
+  "est_lenfix": 43520,
+  "est_fixed": 92352,
+  "macs_v0": 0,
+  "macs_padded": 19039104,
+  "macs_useful": 14852096,
+  "cycles": {
+   "ref": 102175,
+   "pf1": 86859
+  },
+  "mac_total": 19039104
+ },
+ {
+  "type_id": 126,
+  "rep": 880,
+  "n_instances": 10,
+  "n_descs": 33,
+  "stage": "decoder",
+  "est_cycles": 130808,
+  "est_lenfix": 130808,
+  "est_fixed": 185464,
+  "macs_v0": 0,
+  "macs_padded": 49738752,
+  "macs_useful": 14737408,
+  "cycles": {
+   "ref": 265239,
+   "pf1": 265239
+  },
+  "mac_total": 49738752
+ },
+ {
+  "type_id": 127,
+  "rep": 881,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 356504,
+  "est_lenfix": 620736,
+  "est_fixed": 987712,
+  "macs_v0": 21316608,
+  "macs_padded": 355276800,
+  "macs_useful": 105267200,
+  "cycles": {
+   "ref": 1516729,
+   "pf1": 1516729
+  },
+  "mac_total": 355276800
+ },
+ {
+  "type_id": 128,
+  "rep": 882,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 236504,
+  "est_lenfix": 500736,
+  "est_fixed": 867712,
+  "macs_v0": 21316608,
+  "macs_padded": 355276800,
+  "macs_useful": 105267200,
+  "cycles": {
+   "ref": 1372463,
+   "pf1": 1372463
+  },
+  "mac_total": 355276800
+ },
+ {
+  "type_id": 129,
+  "rep": 891,
+  "n_instances": 10,
+  "n_descs": 62,
+  "stage": "decoder",
+  "est_cycles": 215760,
+  "est_lenfix": 480008,
+  "est_fixed": 707816,
+  "macs_v0": 0,
+  "macs_padded": 328309632,
+  "macs_useful": 106487808,
+  "cycles": {
+   "ref": 1148879,
+   "pf1": 1133631
+  },
+  "mac_total": 328309632
+ },
+ {
+  "type_id": 130,
+  "rep": 892,
+  "n_instances": 10,
+  "n_descs": 33,
+  "stage": "decoder",
+  "est_cycles": 130808,
+  "est_lenfix": 130808,
+  "est_fixed": 185464,
+  "macs_v0": 0,
+  "macs_padded": 49738752,
+  "macs_useful": 14737408,
+  "cycles": {
+   "ref": 265239,
+   "pf1": 265239
+  },
+  "mac_total": 49738752
+ },
+ {
+  "type_id": 131,
+  "rep": 893,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 60864,
+  "est_lenfix": 60864,
+  "est_fixed": 64768,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 526336,
+  "cycles": {
+   "ref": 77309,
+   "pf1": 77309
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 132,
+  "rep": 894,
+  "n_instances": 10,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 59184,
+  "est_lenfix": 59184,
+  "est_fixed": 63088,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 526336,
+  "cycles": {
+   "ref": 74789,
+   "pf1": 74789
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 133,
+  "rep": 903,
+  "n_instances": 10,
+  "n_descs": 54,
+  "stage": "decoder",
+  "est_cycles": 40960,
+  "est_lenfix": 40960,
+  "est_fixed": 90464,
+  "macs_v0": 0,
+  "macs_padded": 20200320,
+  "macs_useful": 15196160,
+  "cycles": {
+   "ref": 99523,
+   "pf1": 84251
+  },
+  "mac_total": 20200320
+ },
+ {
+  "type_id": 134,
+  "rep": 904,
+  "n_instances": 10,
+  "n_descs": 42,
+  "stage": "decoder",
+  "est_cycles": 198797,
+  "est_lenfix": 280722,
+  "est_fixed": 430690,
+  "macs_v0": 0,
+  "macs_padded": 118129536,
+  "macs_useful": 117899264,
+  "cycles": {
+   "ref": 485197,
+   "pf1": 347337
+  },
+  "mac_total": 118129536
+ },
+ {
+  "type_id": 135,
+  "rep": 905,
+  "n_instances": 10,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 206303,
+  "est_lenfix": 239332,
+  "est_fixed": 337332,
+  "macs_v0": 0,
+  "macs_padded": 148708224,
+  "macs_useful": 117497856,
+  "cycles": {
+   "ref": 429663,
+   "pf1": 429663
+  },
+  "mac_total": 148708224
+ },
+ {
+  "type_id": 136,
+  "rep": 906,
+  "n_instances": 10,
+  "n_descs": 8,
+  "stage": "decoder",
+  "est_cycles": 71310,
+  "est_lenfix": 104339,
+  "est_fixed": 160067,
+  "macs_v0": 2657664,
+  "macs_padded": 74414592,
+  "macs_useful": 44097536,
+  "cycles": {
+   "ref": 220711,
+   "pf1": 197659
+  },
+  "mac_total": 74414592
+ },
+ {
+  "type_id": 137,
+  "rep": 907,
+  "n_instances": 10,
+  "n_descs": 6,
+  "stage": "decoder",
+  "est_cycles": 40561,
+  "est_lenfix": 73590,
+  "est_fixed": 107934,
+  "macs_v0": 1995840,
+  "macs_padded": 37255680,
+  "macs_useful": 22077440,
+  "cycles": {
+   "ref": 164867,
+   "pf1": 164867
+  },
+  "mac_total": 37255680
+ },
+ {
+  "type_id": 138,
+  "rep": 908,
+  "n_instances": 10,
+  "n_descs": 5,
+  "stage": "decoder",
+  "est_cycles": 27991,
+  "est_lenfix": 27991,
+  "est_fixed": 45375,
+  "macs_v0": 336960,
+  "macs_padded": 6289920,
+  "macs_useful": 3727360,
+  "cycles": {
+   "ref": 58155,
+   "pf1": 58155
+  },
+  "mac_total": 6289920
+ },
+ {
+  "type_id": 139,
+  "rep": 909,
+  "n_instances": 10,
+  "n_descs": 9,
+  "stage": "decoder",
+  "est_cycles": 40134,
+  "est_lenfix": 40134,
+  "est_fixed": 71934,
+  "macs_v0": 673920,
+  "macs_padded": 12579840,
+  "macs_useful": 4193280,
+  "cycles": {
+   "ref": 94283,
+   "pf1": 94283
+  },
+  "mac_total": 12579840
+ },
+ {
+  "type_id": 140,
+  "rep": 8,
+  "n_instances": 7,
+  "n_descs": 581,
+  "stage": "backbone",
+  "est_cycles": 337578,
+  "est_lenfix": 337578,
+  "est_fixed": 618410,
+  "macs_v0": 0,
+  "macs_padded": 48218112,
+  "macs_useful": 30406656,
+  "cycles": {
+   "ref": 720985,
+   "pf1": 690489
+  },
+  "mac_total": 48218112
+ },
+ {
+  "type_id": 141,
+  "rep": 41,
+  "n_instances": 7,
+  "n_descs": 581,
+  "stage": "backbone",
+  "est_cycles": 337578,
+  "est_lenfix": 337578,
+  "est_fixed": 618410,
+  "macs_v0": 0,
+  "macs_padded": 48218112,
+  "macs_useful": 30406656,
+  "cycles": {
+   "ref": 720985,
+   "pf1": 690489
+  },
+  "mac_total": 48218112
+ },
+ {
+  "type_id": 142,
+  "rep": 134,
+  "n_instances": 7,
+  "n_descs": 709,
+  "stage": "backbone_3d",
+  "est_cycles": 82452,
+  "est_lenfix": 82452,
+  "est_fixed": 353812,
+  "macs_v0": 0,
+  "macs_padded": 14598144,
+  "macs_useful": 1053696,
+  "cycles": {
+   "ref": 402913,
+   "pf1": 386457
+  },
+  "mac_total": 14598144
+ },
+ {
+  "type_id": 143,
+  "rep": 150,
+  "n_instances": 7,
+  "n_descs": 709,
+  "stage": "backbone_3d",
+  "est_cycles": 82452,
+  "est_lenfix": 82452,
+  "est_fixed": 353812,
+  "macs_v0": 0,
+  "macs_padded": 14598144,
+  "macs_useful": 1053696,
+  "cycles": {
+   "ref": 402913,
+   "pf1": 386457
+  },
+  "mac_total": 14598144
+ },
+ {
+  "type_id": 144,
+  "rep": 3,
+  "n_instances": 5,
+  "n_descs": 676,
+  "stage": "backbone",
+  "est_cycles": 256827,
+  "est_lenfix": 256827,
+  "est_fixed": 579387,
+  "macs_v0": 0,
+  "macs_padded": 63700992,
+  "macs_useful": 22127616,
+  "cycles": {
+   "ref": 665904,
+   "pf1": 665904
+  },
+  "mac_total": 63700992
+ },
+ {
+  "type_id": 145,
+  "rep": 36,
+  "n_instances": 5,
+  "n_descs": 676,
+  "stage": "backbone",
+  "est_cycles": 256827,
+  "est_lenfix": 256827,
+  "est_fixed": 579387,
+  "macs_v0": 0,
+  "macs_padded": 63700992,
+  "macs_useful": 22127616,
+  "cycles": {
+   "ref": 665904,
+   "pf1": 665904
+  },
+  "mac_total": 63700992
+ },
+ {
+  "type_id": 146,
+  "rep": 129,
+  "n_instances": 5,
+  "n_descs": 868,
+  "stage": "backbone_3d",
+  "est_cycles": 121899,
+  "est_lenfix": 121899,
+  "est_fixed": 508971,
+  "macs_v0": 0,
+  "macs_padded": 10616832,
+  "macs_useful": 3687936,
+  "cycles": {
+   "ref": 546252,
+   "pf1": 546252
+  },
+  "mac_total": 10616832
+ },
+ {
+  "type_id": 147,
+  "rep": 145,
+  "n_instances": 5,
+  "n_descs": 868,
+  "stage": "backbone_3d",
+  "est_cycles": 121899,
+  "est_lenfix": 121899,
+  "est_fixed": 508971,
+  "macs_v0": 0,
+  "macs_padded": 10616832,
+  "macs_useful": 3687936,
+  "cycles": {
+   "ref": 546252,
+   "pf1": 546252
+  },
+  "mac_total": 10616832
+ },
+ {
+  "type_id": 148,
+  "rep": 659,
+  "n_instances": 4,
+  "n_descs": 45,
+  "stage": "spatial_enhancer",
+  "est_cycles": 483407,
+  "est_lenfix": 1276103,
+  "est_fixed": 1810235,
+  "macs_v0": 42508800,
+  "macs_padded": 752760000,
+  "macs_useful": 752760000,
+  "cycles": {
+   "ref": 2919843,
+   "pf1": 2919843
+  },
+  "mac_total": 752760000
+ },
+ {
+  "type_id": 149,
+  "rep": 263,
+  "n_instances": 2,
+  "n_descs": 115,
+  "stage": "feature_enhancer",
+  "est_cycles": 667882,
+  "est_lenfix": 2438498,
+  "est_fixed": 4247810,
+  "macs_v0": 85266432,
+  "macs_padded": 1509926400,
+  "macs_useful": 1509926400,
+  "cycles": {
+   "ref": 4929583,
+   "pf1": 4695187
+  },
+  "mac_total": 1509926400
+ },
+ {
+  "type_id": 150,
+  "rep": 324,
+  "n_instances": 2,
+  "n_descs": 115,
+  "stage": "feature_enhancer",
+  "est_cycles": 667882,
+  "est_lenfix": 2438498,
+  "est_fixed": 4247810,
+  "macs_v0": 85266432,
+  "macs_padded": 1509926400,
+  "macs_useful": 1509926400,
+  "cycles": {
+   "ref": 4929583,
+   "pf1": 4695187
+  },
+  "mac_total": 1509926400
+ },
+ {
+  "type_id": 151,
+  "rep": 385,
+  "n_instances": 2,
+  "n_descs": 115,
+  "stage": "feature_enhancer",
+  "est_cycles": 667882,
+  "est_lenfix": 2438498,
+  "est_fixed": 4247810,
+  "macs_v0": 85266432,
+  "macs_padded": 1509926400,
+  "macs_useful": 1509926400,
+  "cycles": {
+   "ref": 4929583,
+   "pf1": 4695187
+  },
+  "mac_total": 1509926400
+ },
+ {
+  "type_id": 152,
+  "rep": 446,
+  "n_instances": 2,
+  "n_descs": 115,
+  "stage": "feature_enhancer",
+  "est_cycles": 667882,
+  "est_lenfix": 2438498,
+  "est_fixed": 4247810,
+  "macs_v0": 85266432,
+  "macs_padded": 1509926400,
+  "macs_useful": 1509926400,
+  "cycles": {
+   "ref": 4929583,
+   "pf1": 4695187
+  },
+  "mac_total": 1509926400
+ },
+ {
+  "type_id": 153,
+  "rep": 507,
+  "n_instances": 2,
+  "n_descs": 115,
+  "stage": "feature_enhancer",
+  "est_cycles": 667882,
+  "est_lenfix": 2438498,
+  "est_fixed": 4247810,
+  "macs_v0": 85266432,
+  "macs_padded": 1509926400,
+  "macs_useful": 1509926400,
+  "cycles": {
+   "ref": 4929583,
+   "pf1": 4695187
+  },
+  "mac_total": 1509926400
+ },
+ {
+  "type_id": 154,
+  "rep": 568,
+  "n_instances": 2,
+  "n_descs": 115,
+  "stage": "feature_enhancer",
+  "est_cycles": 667882,
+  "est_lenfix": 2438498,
+  "est_fixed": 4247810,
+  "macs_v0": 85266432,
+  "macs_padded": 1509926400,
+  "macs_useful": 1509926400,
+  "cycles": {
+   "ref": 4929583,
+   "pf1": 4695187
+  },
+  "mac_total": 1509926400
+ },
+ {
+  "type_id": 155,
+  "rep": 0,
+  "n_instances": 1,
+  "n_descs": 18,
+  "stage": "backbone",
+  "est_cycles": 180052,
+  "est_lenfix": 770689,
+  "est_fixed": 1183833,
+  "macs_v0": 6689088,
+  "macs_padded": 108380160,
+  "macs_useful": 96337920,
+  "cycles": {
+   "ref": 1464781,
+   "pf1": 1464781
+  },
+  "mac_total": 108380160
+ },
+ {
+  "type_id": 156,
+  "rep": 1,
+  "n_instances": 1,
+  "n_descs": 49,
+  "stage": "backbone",
+  "est_cycles": 393586,
+  "est_lenfix": 1968618,
+  "est_fixed": 3083658,
+  "macs_v0": 30170880,
+  "macs_padded": 492791040,
+  "macs_useful": 492791040,
+  "cycles": {
+   "ref": 3762667,
+   "pf1": 3750967
+  },
+  "mac_total": 492791040
+ },
+ {
+  "type_id": 157,
+  "rep": 2,
+  "n_instances": 1,
+  "n_descs": 27,
+  "stage": "backbone",
+  "est_cycles": 101821,
+  "est_lenfix": 857603,
+  "est_fixed": 1365443,
+  "macs_v0": 15085440,
+  "macs_padded": 246395520,
+  "macs_useful": 164263680,
+  "cycles": {
+   "ref": 1822011,
+   "pf1": 1822011
+  },
+  "mac_total": 246395520
+ },
+ {
+  "type_id": 158,
+  "rep": 15,
+  "n_instances": 1,
+  "n_descs": 293,
+  "stage": "backbone",
+  "est_cycles": 169288,
+  "est_lenfix": 169288,
+  "est_fixed": 309704,
+  "macs_v0": 0,
+  "macs_padded": 24109056,
+  "macs_useful": 15203328,
+  "cycles": {
+   "ref": 361697,
+   "pf1": 346277
+  },
+  "mac_total": 24109056
+ },
+ {
+  "type_id": 159,
+  "rep": 16,
+  "n_instances": 1,
+  "n_descs": 45,
+  "stage": "backbone",
+  "est_cycles": 371430,
+  "est_lenfix": 1716554,
+  "est_fixed": 2687770,
+  "macs_v0": 26148096,
+  "macs_padded": 429096960,
+  "macs_useful": 429096960,
+  "cycles": {
+   "ref": 3279301,
+   "pf1": 3267693
+  },
+  "mac_total": 429096960
+ },
+ {
+  "type_id": 160,
+  "rep": 17,
+  "n_instances": 1,
+  "n_descs": 36,
+  "stage": "backbone",
+  "est_cycles": 301056,
+  "est_lenfix": 1400405,
+  "est_fixed": 2313925,
+  "macs_v0": 26148096,
+  "macs_padded": 429096960,
+  "macs_useful": 333742080,
+  "cycles": {
+   "ref": 2842455,
+   "pf1": 2833795
+  },
+  "mac_total": 429096960
+ },
+ {
+  "type_id": 161,
+  "rep": 34,
+  "n_instances": 1,
+  "n_descs": 49,
+  "stage": "backbone",
+  "est_cycles": 393586,
+  "est_lenfix": 1968618,
+  "est_fixed": 3083658,
+  "macs_v0": 30170880,
+  "macs_padded": 492791040,
+  "macs_useful": 492791040,
+  "cycles": {
+   "ref": 3762667,
+   "pf1": 3750967
+  },
+  "mac_total": 492791040
+ },
+ {
+  "type_id": 162,
+  "rep": 35,
+  "n_instances": 1,
+  "n_descs": 27,
+  "stage": "backbone",
+  "est_cycles": 101821,
+  "est_lenfix": 857603,
+  "est_fixed": 1365443,
+  "macs_v0": 15085440,
+  "macs_padded": 246395520,
+  "macs_useful": 164263680,
+  "cycles": {
+   "ref": 1822011,
+   "pf1": 1822011
+  },
+  "mac_total": 246395520
+ },
+ {
+  "type_id": 163,
+  "rep": 48,
+  "n_instances": 1,
+  "n_descs": 293,
+  "stage": "backbone",
+  "est_cycles": 169288,
+  "est_lenfix": 169288,
+  "est_fixed": 309704,
+  "macs_v0": 0,
+  "macs_padded": 24109056,
+  "macs_useful": 15203328,
+  "cycles": {
+   "ref": 361697,
+   "pf1": 346277
+  },
+  "mac_total": 24109056
+ },
+ {
+  "type_id": 164,
+  "rep": 49,
+  "n_instances": 1,
+  "n_descs": 45,
+  "stage": "backbone",
+  "est_cycles": 371430,
+  "est_lenfix": 1716554,
+  "est_fixed": 2687770,
+  "macs_v0": 26148096,
+  "macs_padded": 429096960,
+  "macs_useful": 429096960,
+  "cycles": {
+   "ref": 3279301,
+   "pf1": 3267693
+  },
+  "mac_total": 429096960
+ },
+ {
+  "type_id": 165,
+  "rep": 50,
+  "n_instances": 1,
+  "n_descs": 36,
+  "stage": "backbone",
+  "est_cycles": 301056,
+  "est_lenfix": 1400405,
+  "est_fixed": 2313925,
+  "macs_v0": 26148096,
+  "macs_padded": 429096960,
+  "macs_useful": 333742080,
+  "cycles": {
+   "ref": 2842455,
+   "pf1": 2833795
+  },
+  "mac_total": 429096960
+ },
+ {
+  "type_id": 166,
+  "rep": 67,
+  "n_instances": 1,
+  "n_descs": 22,
+  "stage": "backbone",
+  "est_cycles": 178494,
+  "est_lenfix": 622443,
+  "est_fixed": 1031803,
+  "macs_v0": 25280640,
+  "macs_padded": 425779200,
+  "macs_useful": 378470400,
+  "cycles": {
+   "ref": 1397345,
+   "pf1": 1374553
+  },
+  "mac_total": 425779200
+ },
+ {
+  "type_id": 167,
+  "rep": 68,
+  "n_instances": 1,
+  "n_descs": 58,
+  "stage": "backbone",
+  "est_cycles": 309207,
+  "est_lenfix": 1358365,
+  "est_fixed": 2374381,
+  "macs_v0": 42021504,
+  "macs_padded": 736376832,
+  "macs_useful": 653667840,
+  "cycles": {
+   "ref": 2781623,
+   "pf1": 2695167
+  },
+  "mac_total": 736376832
+ },
+ {
+  "type_id": 168,
+  "rep": 69,
+  "n_instances": 1,
+  "n_descs": 1252,
+  "stage": "backbone",
+  "est_cycles": 369147,
+  "est_lenfix": 369147,
+  "est_fixed": 1014267,
+  "macs_v0": 0,
+  "macs_padded": 127401984,
+  "macs_useful": 44255232,
+  "cycles": {
+   "ref": 1108272,
+   "pf1": 1108272
+  },
+  "mac_total": 127401984
+ },
+ {
+  "type_id": 169,
+  "rep": 70,
+  "n_instances": 1,
+  "n_descs": 316,
+  "stage": "backbone",
+  "est_cycles": 92595,
+  "est_lenfix": 92595,
+  "est_fixed": 253875,
+  "macs_v0": 0,
+  "macs_padded": 31850496,
+  "macs_useful": 11063808,
+  "cycles": {
+   "ref": 277780,
+   "pf1": 277780
+  },
+  "mac_total": 31850496
+ },
+ {
+  "type_id": 170,
+  "rep": 71,
+  "n_instances": 1,
+  "n_descs": 1093,
+  "stage": "backbone",
+  "est_cycles": 959922,
+  "est_lenfix": 959922,
+  "est_fixed": 1570738,
+  "macs_v0": 0,
+  "macs_padded": 181370880,
+  "macs_useful": 118616064,
+  "cycles": {
+   "ref": 1765087,
+   "pf1": 1574363
+  },
+  "mac_total": 181370880
+ },
+ {
+  "type_id": 171,
+  "rep": 72,
+  "n_instances": 1,
+  "n_descs": 957,
+  "stage": "backbone",
+  "est_cycles": 840178,
+  "est_lenfix": 840178,
+  "est_fixed": 1374642,
+  "macs_v0": 0,
+  "macs_padded": 158699520,
+  "macs_useful": 103789056,
+  "cycles": {
+   "ref": 1544743,
+   "pf1": 1377999
+  },
+  "mac_total": 158699520
+ },
+ {
+  "type_id": 172,
+  "rep": 73,
+  "n_instances": 1,
+  "n_descs": 70,
+  "stage": "backbone",
+  "est_cycles": 416060,
+  "est_lenfix": 1547143,
+  "est_fixed": 2726151,
+  "macs_v0": 48024576,
+  "macs_padded": 853770240,
+  "macs_useful": 758906880,
+  "cycles": {
+   "ref": 3149057,
+   "pf1": 3028253
+  },
+  "mac_total": 853770240
+ },
+ {
+  "type_id": 173,
+  "rep": 74,
+  "n_instances": 1,
+  "n_descs": 34,
+  "stage": "backbone",
+  "est_cycles": 371202,
+  "est_lenfix": 964429,
+  "est_fixed": 1607085,
+  "macs_v0": 47837952,
+  "macs_padded": 850452480,
+  "macs_useful": 755957760,
+  "cycles": {
+   "ref": 2277195,
+   "pf1": 2208499
+  },
+  "mac_total": 850452480
+ },
+ {
+  "type_id": 174,
+  "rep": 75,
+  "n_instances": 1,
+  "n_descs": 58,
+  "stage": "backbone",
+  "est_cycles": 309207,
+  "est_lenfix": 1358365,
+  "est_fixed": 2374381,
+  "macs_v0": 42021504,
+  "macs_padded": 736376832,
+  "macs_useful": 653667840,
+  "cycles": {
+   "ref": 2781623,
+   "pf1": 2695167
+  },
+  "mac_total": 736376832
+ },
+ {
+  "type_id": 175,
+  "rep": 76,
+  "n_instances": 1,
+  "n_descs": 1252,
+  "stage": "backbone",
+  "est_cycles": 369147,
+  "est_lenfix": 369147,
+  "est_fixed": 1014267,
+  "macs_v0": 0,
+  "macs_padded": 127401984,
+  "macs_useful": 44255232,
+  "cycles": {
+   "ref": 1108272,
+   "pf1": 1108272
+  },
+  "mac_total": 127401984
+ },
+ {
+  "type_id": 176,
+  "rep": 77,
+  "n_instances": 1,
+  "n_descs": 316,
+  "stage": "backbone",
+  "est_cycles": 92595,
+  "est_lenfix": 92595,
+  "est_fixed": 253875,
+  "macs_v0": 0,
+  "macs_padded": 31850496,
+  "macs_useful": 11063808,
+  "cycles": {
+   "ref": 277780,
+   "pf1": 277780
+  },
+  "mac_total": 31850496
+ },
+ {
+  "type_id": 177,
+  "rep": 78,
+  "n_instances": 1,
+  "n_descs": 1093,
+  "stage": "backbone",
+  "est_cycles": 959922,
+  "est_lenfix": 959922,
+  "est_fixed": 1570738,
+  "macs_v0": 0,
+  "macs_padded": 181370880,
+  "macs_useful": 118616064,
+  "cycles": {
+   "ref": 1765087,
+   "pf1": 1574363
+  },
+  "mac_total": 181370880
+ },
+ {
+  "type_id": 178,
+  "rep": 79,
+  "n_instances": 1,
+  "n_descs": 957,
+  "stage": "backbone",
+  "est_cycles": 840178,
+  "est_lenfix": 840178,
+  "est_fixed": 1374642,
+  "macs_v0": 0,
+  "macs_padded": 158699520,
+  "macs_useful": 103789056,
+  "cycles": {
+   "ref": 1544743,
+   "pf1": 1377999
+  },
+  "mac_total": 158699520
+ },
+ {
+  "type_id": 179,
+  "rep": 80,
+  "n_instances": 1,
+  "n_descs": 70,
+  "stage": "backbone",
+  "est_cycles": 416060,
+  "est_lenfix": 1547143,
+  "est_fixed": 2726151,
+  "macs_v0": 48024576,
+  "macs_padded": 853770240,
+  "macs_useful": 758906880,
+  "cycles": {
+   "ref": 3149057,
+   "pf1": 3028253
+  },
+  "mac_total": 853770240
+ },
+ {
+  "type_id": 180,
+  "rep": 81,
+  "n_instances": 1,
+  "n_descs": 34,
+  "stage": "backbone",
+  "est_cycles": 371202,
+  "est_lenfix": 964429,
+  "est_fixed": 1607085,
+  "macs_v0": 47837952,
+  "macs_padded": 850452480,
+  "macs_useful": 755957760,
+  "cycles": {
+   "ref": 2277195,
+   "pf1": 2208499
+  },
+  "mac_total": 850452480
+ },
+ {
+  "type_id": 181,
+  "rep": 82,
+  "n_instances": 1,
+  "n_descs": 15,
+  "stage": "backbone",
+  "est_cycles": 199776,
+  "est_lenfix": 380788,
+  "est_fixed": 699988,
+  "macs_v0": 26576640,
+  "macs_padded": 425226240,
+  "macs_useful": 377978880,
+  "cycles": {
+   "ref": 890061,
+   "pf1": 821297
+  },
+  "mac_total": 425226240
+ },
+ {
+  "type_id": 182,
+  "rep": 83,
+  "n_instances": 1,
+  "n_descs": 58,
+  "stage": "backbone",
+  "est_cycles": 392405,
+  "est_lenfix": 998909,
+  "est_fixed": 1794389,
+  "macs_v0": 43908480,
+  "macs_padded": 812306880,
+  "macs_useful": 782369280,
+  "cycles": {
+   "ref": 2061219,
+   "pf1": 1832115
+  },
+  "mac_total": 812306880
+ },
+ {
+  "type_id": 183,
+  "rep": 84,
+  "n_instances": 1,
+  "n_descs": 904,
+  "stage": "backbone",
+  "est_cycles": 222927,
+  "est_lenfix": 222927,
+  "est_fixed": 706767,
+  "macs_v0": 0,
+  "macs_padded": 95551488,
+  "macs_useful": 33191424,
+  "cycles": {
+   "ref": 747996,
+   "pf1": 747996
+  },
+  "mac_total": 95551488
+ },
+ {
+  "type_id": 184,
+  "rep": 85,
+  "n_instances": 1,
+  "n_descs": 1193,
+  "stage": "backbone",
+  "est_cycles": 1793464,
+  "est_lenfix": 1793464,
+  "est_fixed": 2591224,
+  "macs_v0": 0,
+  "macs_padded": 395145216,
+  "macs_useful": 263499264,
+  "cycles": {
+   "ref": 2871679,
+   "pf1": 2535875
+  },
+  "mac_total": 395145216
+ },
+ {
+  "type_id": 185,
+  "rep": 86,
+  "n_instances": 1,
+  "n_descs": 72,
+  "stage": "backbone",
+  "est_cycles": 500734,
+  "est_lenfix": 1025313,
+  "est_fixed": 1807809,
+  "macs_v0": 39916800,
+  "macs_padded": 798336000,
+  "macs_useful": 756940800,
+  "cycles": {
+   "ref": 2048661,
+   "pf1": 1727233
+  },
+  "mac_total": 798336000
+ },
+ {
+  "type_id": 186,
+  "rep": 87,
+  "n_instances": 1,
+  "n_descs": 28,
+  "stage": "backbone",
+  "est_cycles": 477936,
+  "est_lenfix": 758035,
+  "est_fixed": 1314963,
+  "macs_v0": 42494976,
+  "macs_padded": 849899520,
+  "macs_useful": 755466240,
+  "cycles": {
+   "ref": 1681689,
+   "pf1": 1439025
+  },
+  "mac_total": 849899520
+ },
+ {
+  "type_id": 187,
+  "rep": 88,
+  "n_instances": 1,
+  "n_descs": 58,
+  "stage": "backbone",
+  "est_cycles": 392405,
+  "est_lenfix": 998909,
+  "est_fixed": 1794389,
+  "macs_v0": 43908480,
+  "macs_padded": 812306880,
+  "macs_useful": 782369280,
+  "cycles": {
+   "ref": 2061219,
+   "pf1": 1832115
+  },
+  "mac_total": 812306880
+ },
+ {
+  "type_id": 188,
+  "rep": 89,
+  "n_instances": 1,
+  "n_descs": 904,
+  "stage": "backbone",
+  "est_cycles": 222927,
+  "est_lenfix": 222927,
+  "est_fixed": 706767,
+  "macs_v0": 0,
+  "macs_padded": 95551488,
+  "macs_useful": 33191424,
+  "cycles": {
+   "ref": 747996,
+   "pf1": 747996
+  },
+  "mac_total": 95551488
+ },
+ {
+  "type_id": 189,
+  "rep": 90,
+  "n_instances": 1,
+  "n_descs": 1193,
+  "stage": "backbone",
+  "est_cycles": 1793464,
+  "est_lenfix": 1793464,
+  "est_fixed": 2591224,
+  "macs_v0": 0,
+  "macs_padded": 395145216,
+  "macs_useful": 263499264,
+  "cycles": {
+   "ref": 2871679,
+   "pf1": 2535875
+  },
+  "mac_total": 395145216
+ },
+ {
+  "type_id": 190,
+  "rep": 91,
+  "n_instances": 1,
+  "n_descs": 72,
+  "stage": "backbone",
+  "est_cycles": 500734,
+  "est_lenfix": 1025313,
+  "est_fixed": 1807809,
+  "macs_v0": 39916800,
+  "macs_padded": 798336000,
+  "macs_useful": 756940800,
+  "cycles": {
+   "ref": 2048661,
+   "pf1": 1727233
+  },
+  "mac_total": 798336000
+ },
+ {
+  "type_id": 191,
+  "rep": 92,
+  "n_instances": 1,
+  "n_descs": 28,
+  "stage": "backbone",
+  "est_cycles": 477936,
+  "est_lenfix": 758035,
+  "est_fixed": 1314963,
+  "macs_v0": 42494976,
+  "macs_padded": 849899520,
+  "macs_useful": 755466240,
+  "cycles": {
+   "ref": 1681689,
+   "pf1": 1439025
+  },
+  "mac_total": 849899520
+ },
+ {
+  "type_id": 192,
+  "rep": 93,
+  "n_instances": 1,
+  "n_descs": 58,
+  "stage": "backbone",
+  "est_cycles": 392405,
+  "est_lenfix": 998909,
+  "est_fixed": 1794389,
+  "macs_v0": 43908480,
+  "macs_padded": 812306880,
+  "macs_useful": 782369280,
+  "cycles": {
+   "ref": 2061219,
+   "pf1": 1832115
+  },
+  "mac_total": 812306880
+ },
+ {
+  "type_id": 193,
+  "rep": 94,
+  "n_instances": 1,
+  "n_descs": 904,
+  "stage": "backbone",
+  "est_cycles": 222927,
+  "est_lenfix": 222927,
+  "est_fixed": 706767,
+  "macs_v0": 0,
+  "macs_padded": 95551488,
+  "macs_useful": 33191424,
+  "cycles": {
+   "ref": 747996,
+   "pf1": 747996
+  },
+  "mac_total": 95551488
+ },
+ {
+  "type_id": 194,
+  "rep": 95,
+  "n_instances": 1,
+  "n_descs": 1193,
+  "stage": "backbone",
+  "est_cycles": 1793464,
+  "est_lenfix": 1793464,
+  "est_fixed": 2591224,
+  "macs_v0": 0,
+  "macs_padded": 395145216,
+  "macs_useful": 263499264,
+  "cycles": {
+   "ref": 2871679,
+   "pf1": 2535875
+  },
+  "mac_total": 395145216
+ },
+ {
+  "type_id": 195,
+  "rep": 96,
+  "n_instances": 1,
+  "n_descs": 72,
+  "stage": "backbone",
+  "est_cycles": 500734,
+  "est_lenfix": 1025313,
+  "est_fixed": 1807809,
+  "macs_v0": 39916800,
+  "macs_padded": 798336000,
+  "macs_useful": 756940800,
+  "cycles": {
+   "ref": 2048661,
+   "pf1": 1727233
+  },
+  "mac_total": 798336000
+ },
+ {
+  "type_id": 196,
+  "rep": 97,
+  "n_instances": 1,
+  "n_descs": 28,
+  "stage": "backbone",
+  "est_cycles": 477936,
+  "est_lenfix": 758035,
+  "est_fixed": 1314963,
+  "macs_v0": 42494976,
+  "macs_padded": 849899520,
+  "macs_useful": 755466240,
+  "cycles": {
+   "ref": 1681689,
+   "pf1": 1439025
+  },
+  "mac_total": 849899520
+ },
+ {
+  "type_id": 197,
+  "rep": 98,
+  "n_instances": 1,
+  "n_descs": 58,
+  "stage": "backbone",
+  "est_cycles": 392405,
+  "est_lenfix": 998909,
+  "est_fixed": 1794389,
+  "macs_v0": 43908480,
+  "macs_padded": 812306880,
+  "macs_useful": 782369280,
+  "cycles": {
+   "ref": 2061219,
+   "pf1": 1832115
+  },
+  "mac_total": 812306880
+ },
+ {
+  "type_id": 198,
+  "rep": 99,
+  "n_instances": 1,
+  "n_descs": 904,
+  "stage": "backbone",
+  "est_cycles": 222927,
+  "est_lenfix": 222927,
+  "est_fixed": 706767,
+  "macs_v0": 0,
+  "macs_padded": 95551488,
+  "macs_useful": 33191424,
+  "cycles": {
+   "ref": 747996,
+   "pf1": 747996
+  },
+  "mac_total": 95551488
+ },
+ {
+  "type_id": 199,
+  "rep": 100,
+  "n_instances": 1,
+  "n_descs": 1193,
+  "stage": "backbone",
+  "est_cycles": 1793464,
+  "est_lenfix": 1793464,
+  "est_fixed": 2591224,
+  "macs_v0": 0,
+  "macs_padded": 395145216,
+  "macs_useful": 263499264,
+  "cycles": {
+   "ref": 2871679,
+   "pf1": 2535875
+  },
+  "mac_total": 395145216
+ },
+ {
+  "type_id": 200,
+  "rep": 101,
+  "n_instances": 1,
+  "n_descs": 72,
+  "stage": "backbone",
+  "est_cycles": 500734,
+  "est_lenfix": 1025313,
+  "est_fixed": 1807809,
+  "macs_v0": 39916800,
+  "macs_padded": 798336000,
+  "macs_useful": 756940800,
+  "cycles": {
+   "ref": 2048661,
+   "pf1": 1727233
+  },
+  "mac_total": 798336000
+ },
+ {
+  "type_id": 201,
+  "rep": 102,
+  "n_instances": 1,
+  "n_descs": 28,
+  "stage": "backbone",
+  "est_cycles": 477936,
+  "est_lenfix": 758035,
+  "est_fixed": 1314963,
+  "macs_v0": 42494976,
+  "macs_padded": 849899520,
+  "macs_useful": 755466240,
+  "cycles": {
+   "ref": 1681689,
+   "pf1": 1439025
+  },
+  "mac_total": 849899520
+ },
+ {
+  "type_id": 202,
+  "rep": 103,
+  "n_instances": 1,
+  "n_descs": 58,
+  "stage": "backbone",
+  "est_cycles": 392405,
+  "est_lenfix": 998909,
+  "est_fixed": 1794389,
+  "macs_v0": 43908480,
+  "macs_padded": 812306880,
+  "macs_useful": 782369280,
+  "cycles": {
+   "ref": 2061219,
+   "pf1": 1832115
+  },
+  "mac_total": 812306880
+ },
+ {
+  "type_id": 203,
+  "rep": 104,
+  "n_instances": 1,
+  "n_descs": 904,
+  "stage": "backbone",
+  "est_cycles": 222927,
+  "est_lenfix": 222927,
+  "est_fixed": 706767,
+  "macs_v0": 0,
+  "macs_padded": 95551488,
+  "macs_useful": 33191424,
+  "cycles": {
+   "ref": 747996,
+   "pf1": 747996
+  },
+  "mac_total": 95551488
+ },
+ {
+  "type_id": 204,
+  "rep": 105,
+  "n_instances": 1,
+  "n_descs": 1193,
+  "stage": "backbone",
+  "est_cycles": 1793464,
+  "est_lenfix": 1793464,
+  "est_fixed": 2591224,
+  "macs_v0": 0,
+  "macs_padded": 395145216,
+  "macs_useful": 263499264,
+  "cycles": {
+   "ref": 2871679,
+   "pf1": 2535875
+  },
+  "mac_total": 395145216
+ },
+ {
+  "type_id": 205,
+  "rep": 106,
+  "n_instances": 1,
+  "n_descs": 72,
+  "stage": "backbone",
+  "est_cycles": 500734,
+  "est_lenfix": 1025313,
+  "est_fixed": 1807809,
+  "macs_v0": 39916800,
+  "macs_padded": 798336000,
+  "macs_useful": 756940800,
+  "cycles": {
+   "ref": 2048661,
+   "pf1": 1727233
+  },
+  "mac_total": 798336000
+ },
+ {
+  "type_id": 206,
+  "rep": 107,
+  "n_instances": 1,
+  "n_descs": 28,
+  "stage": "backbone",
+  "est_cycles": 477936,
+  "est_lenfix": 758035,
+  "est_fixed": 1314963,
+  "macs_v0": 42494976,
+  "macs_padded": 849899520,
+  "macs_useful": 755466240,
+  "cycles": {
+   "ref": 1681689,
+   "pf1": 1439025
+  },
+  "mac_total": 849899520
+ },
+ {
+  "type_id": 207,
+  "rep": 108,
+  "n_instances": 1,
+  "n_descs": 58,
+  "stage": "backbone",
+  "est_cycles": 392405,
+  "est_lenfix": 998909,
+  "est_fixed": 1794389,
+  "macs_v0": 43908480,
+  "macs_padded": 812306880,
+  "macs_useful": 782369280,
+  "cycles": {
+   "ref": 2061219,
+   "pf1": 1832115
+  },
+  "mac_total": 812306880
+ },
+ {
+  "type_id": 208,
+  "rep": 109,
+  "n_instances": 1,
+  "n_descs": 904,
+  "stage": "backbone",
+  "est_cycles": 222927,
+  "est_lenfix": 222927,
+  "est_fixed": 706767,
+  "macs_v0": 0,
+  "macs_padded": 95551488,
+  "macs_useful": 33191424,
+  "cycles": {
+   "ref": 747996,
+   "pf1": 747996
+  },
+  "mac_total": 95551488
+ },
+ {
+  "type_id": 209,
+  "rep": 110,
+  "n_instances": 1,
+  "n_descs": 1193,
+  "stage": "backbone",
+  "est_cycles": 1793464,
+  "est_lenfix": 1793464,
+  "est_fixed": 2591224,
+  "macs_v0": 0,
+  "macs_padded": 395145216,
+  "macs_useful": 263499264,
+  "cycles": {
+   "ref": 2871679,
+   "pf1": 2535875
+  },
+  "mac_total": 395145216
+ },
+ {
+  "type_id": 210,
+  "rep": 111,
+  "n_instances": 1,
+  "n_descs": 72,
+  "stage": "backbone",
+  "est_cycles": 500734,
+  "est_lenfix": 1025313,
+  "est_fixed": 1807809,
+  "macs_v0": 39916800,
+  "macs_padded": 798336000,
+  "macs_useful": 756940800,
+  "cycles": {
+   "ref": 2048661,
+   "pf1": 1727233
+  },
+  "mac_total": 798336000
+ },
+ {
+  "type_id": 211,
+  "rep": 112,
+  "n_instances": 1,
+  "n_descs": 28,
+  "stage": "backbone",
+  "est_cycles": 477936,
+  "est_lenfix": 758035,
+  "est_fixed": 1314963,
+  "macs_v0": 42494976,
+  "macs_padded": 849899520,
+  "macs_useful": 755466240,
+  "cycles": {
+   "ref": 1681689,
+   "pf1": 1439025
+  },
+  "mac_total": 849899520
+ },
+ {
+  "type_id": 212,
+  "rep": 113,
+  "n_instances": 1,
+  "n_descs": 20,
+  "stage": "backbone",
+  "est_cycles": 447628,
+  "est_lenfix": 480657,
+  "est_fixed": 759121,
+  "macs_v0": 21247488,
+  "macs_padded": 424949760,
+  "macs_useful": 377733120,
+  "cycles": {
+   "ref": 888367,
+   "pf1": 629831
+  },
+  "mac_total": 424949760
+ },
+ {
+  "type_id": 213,
+  "rep": 114,
+  "n_instances": 1,
+  "n_descs": 100,
+  "stage": "backbone",
+  "est_cycles": 1063746,
+  "est_lenfix": 1588325,
+  "est_fixed": 2697525,
+  "macs_v0": 58468608,
+  "macs_padded": 1432480896,
+  "macs_useful": 1389072384,
+  "cycles": {
+   "ref": 3013945,
+   "pf1": 2284581
+  },
+  "mac_total": 1432480896
+ },
+ {
+  "type_id": 214,
+  "rep": 115,
+  "n_instances": 1,
+  "n_descs": 788,
+  "stage": "backbone",
+  "est_cycles": 174187,
+  "est_lenfix": 174187,
+  "est_fixed": 604267,
+  "macs_v0": 0,
+  "macs_padded": 84934656,
+  "macs_useful": 29503488,
+  "cycles": {
+   "ref": 627768,
+   "pf1": 627768
+  },
+  "mac_total": 84934656
+ },
+ {
+  "type_id": 215,
+  "rep": 116,
+  "n_instances": 1,
+  "n_descs": 1045,
+  "stage": "backbone",
+  "est_cycles": 2895612,
+  "est_lenfix": 2895612,
+  "est_fixed": 3801340,
+  "macs_v0": 0,
+  "macs_padded": 690978816,
+  "macs_useful": 465432576,
+  "cycles": {
+   "ref": 4199279,
+   "pf1": 3700755
+  },
+  "mac_total": 690978816
+ },
+ {
+  "type_id": 216,
+  "rep": 117,
+  "n_instances": 1,
+  "n_descs": 64,
+  "stage": "backbone",
+  "est_cycles": 717197,
+  "est_lenfix": 962972,
+  "est_fixed": 1554708,
+  "macs_v0": 38536128,
+  "macs_padded": 770722560,
+  "macs_useful": 755957760,
+  "cycles": {
+   "ref": 1727921,
+   "pf1": 1122925
+  },
+  "mac_total": 770722560
+ },
+ {
+  "type_id": 217,
+  "rep": 118,
+  "n_instances": 1,
+  "n_descs": 30,
+  "stage": "backbone",
+  "est_cycles": 782756,
+  "est_lenfix": 881843,
+  "est_fixed": 1393779,
+  "macs_v0": 42481152,
+  "macs_padded": 849623040,
+  "macs_useful": 755220480,
+  "cycles": {
+   "ref": 1636227,
+   "pf1": 1636227
+  },
+  "mac_total": 849623040
+ },
+ {
+  "type_id": 218,
+  "rep": 119,
+  "n_instances": 1,
+  "n_descs": 100,
+  "stage": "backbone",
+  "est_cycles": 1063746,
+  "est_lenfix": 1588325,
+  "est_fixed": 2697525,
+  "macs_v0": 58468608,
+  "macs_padded": 1432480896,
+  "macs_useful": 1389072384,
+  "cycles": {
+   "ref": 3013945,
+   "pf1": 2284581
+  },
+  "mac_total": 1432480896
+ },
+ {
+  "type_id": 219,
+  "rep": 120,
+  "n_instances": 1,
+  "n_descs": 788,
+  "stage": "backbone",
+  "est_cycles": 174187,
+  "est_lenfix": 174187,
+  "est_fixed": 604267,
+  "macs_v0": 0,
+  "macs_padded": 84934656,
+  "macs_useful": 29503488,
+  "cycles": {
+   "ref": 627768,
+   "pf1": 627768
+  },
+  "mac_total": 84934656
+ },
+ {
+  "type_id": 220,
+  "rep": 121,
+  "n_instances": 1,
+  "n_descs": 1045,
+  "stage": "backbone",
+  "est_cycles": 2895612,
+  "est_lenfix": 2895612,
+  "est_fixed": 3801340,
+  "macs_v0": 0,
+  "macs_padded": 690978816,
+  "macs_useful": 465432576,
+  "cycles": {
+   "ref": 4199279,
+   "pf1": 3700755
+  },
+  "mac_total": 690978816
+ },
+ {
+  "type_id": 221,
+  "rep": 122,
+  "n_instances": 1,
+  "n_descs": 64,
+  "stage": "backbone",
+  "est_cycles": 717197,
+  "est_lenfix": 962972,
+  "est_fixed": 1554708,
+  "macs_v0": 38536128,
+  "macs_padded": 770722560,
+  "macs_useful": 755957760,
+  "cycles": {
+   "ref": 1727921,
+   "pf1": 1122925
+  },
+  "mac_total": 770722560
+ },
+ {
+  "type_id": 222,
+  "rep": 123,
+  "n_instances": 1,
+  "n_descs": 30,
+  "stage": "backbone",
+  "est_cycles": 782756,
+  "est_lenfix": 881843,
+  "est_fixed": 1393779,
+  "macs_v0": 42481152,
+  "macs_padded": 849623040,
+  "macs_useful": 755220480,
+  "cycles": {
+   "ref": 1636227,
+   "pf1": 1636227
+  },
+  "mac_total": 849623040
+ },
+ {
+  "type_id": 223,
+  "rep": 124,
+  "n_instances": 1,
+  "n_descs": 24,
+  "stage": "neck",
+  "est_cycles": 165434,
+  "est_lenfix": 592221,
+  "est_fixed": 1023253,
+  "macs_v0": 19009728,
+  "macs_padded": 320163840,
+  "macs_useful": 252968960,
+  "cycles": {
+   "ref": 1262363,
+   "pf1": 1239223
+  },
+  "mac_total": 320163840
+ },
+ {
+  "type_id": 224,
+  "rep": 125,
+  "n_instances": 1,
+  "n_descs": 11,
+  "stage": "neck",
+  "est_cycles": 90347,
+  "est_lenfix": 205301,
+  "est_fixed": 355901,
+  "macs_v0": 9979200,
+  "macs_padded": 159667200,
+  "macs_useful": 126156800,
+  "cycles": {
+   "ref": 455229,
+   "pf1": 432297
+  },
+  "mac_total": 159667200
+ },
+ {
+  "type_id": 225,
+  "rep": 126,
+  "n_instances": 1,
+  "n_descs": 9,
+  "stage": "neck",
+  "est_cycles": 121179,
+  "est_lenfix": 121179,
+  "est_fixed": 181219,
+  "macs_v0": 3986496,
+  "macs_padded": 79729920,
+  "macs_useful": 62996480,
+  "cycles": {
+   "ref": 230939,
+   "pf1": 187735
+  },
+  "mac_total": 79729920
+ },
+ {
+  "type_id": 226,
+  "rep": 127,
+  "n_instances": 1,
+  "n_descs": 7,
+  "stage": "backbone_3d",
+  "est_cycles": 50347,
+  "est_lenfix": 165303,
+  "est_fixed": 443703,
+  "macs_v0": 2350080,
+  "macs_padded": 37601280,
+  "macs_useful": 5570560,
+  "cycles": {
+   "ref": 522025,
+   "pf1": 522025
+  },
+  "mac_total": 37601280
+ },
+ {
+  "type_id": 227,
+  "rep": 128,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "backbone_3d",
+  "est_cycles": 66963,
+  "est_lenfix": 427692,
+  "est_fixed": 791748,
+  "macs_v0": 2673216,
+  "macs_padded": 43182720,
+  "macs_useful": 19192320,
+  "cycles": {
+   "ref": 929447,
+   "pf1": 929447
+  },
+  "mac_total": 43182720
+ },
+ {
+  "type_id": 228,
+  "rep": 141,
+  "n_instances": 1,
+  "n_descs": 357,
+  "stage": "backbone_3d",
+  "est_cycles": 41322,
+  "est_lenfix": 41322,
+  "est_fixed": 177002,
+  "macs_v0": 0,
+  "macs_padded": 7299072,
+  "macs_useful": 526848,
+  "cycles": {
+   "ref": 201645,
+   "pf1": 193493
+  },
+  "mac_total": 7299072
+ },
+ {
+  "type_id": 229,
+  "rep": 142,
+  "n_instances": 1,
+  "n_descs": 11,
+  "stage": "backbone_3d",
+  "est_cycles": 33707,
+  "est_lenfix": 476363,
+  "est_fixed": 812363,
+  "macs_v0": 2350080,
+  "macs_padded": 37601280,
+  "macs_useful": 22282240,
+  "cycles": {
+   "ref": 953097,
+   "pf1": 953097
+  },
+  "mac_total": 37601280
+ },
+ {
+  "type_id": 230,
+  "rep": 143,
+  "n_instances": 1,
+  "n_descs": 11,
+  "stage": "backbone_3d",
+  "est_cycles": 47209,
+  "est_lenfix": 294281,
+  "est_fixed": 630281,
+  "macs_v0": 8985600,
+  "macs_padded": 143769600,
+  "macs_useful": 21299200,
+  "cycles": {
+   "ref": 856133,
+   "pf1": 856133
+  },
+  "mac_total": 143769600
+ },
+ {
+  "type_id": 231,
+  "rep": 144,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "backbone_3d",
+  "est_cycles": 66963,
+  "est_lenfix": 427692,
+  "est_fixed": 791748,
+  "macs_v0": 2673216,
+  "macs_padded": 43182720,
+  "macs_useful": 19192320,
+  "cycles": {
+   "ref": 929447,
+   "pf1": 929447
+  },
+  "mac_total": 43182720
+ },
+ {
+  "type_id": 232,
+  "rep": 157,
+  "n_instances": 1,
+  "n_descs": 357,
+  "stage": "backbone_3d",
+  "est_cycles": 41322,
+  "est_lenfix": 41322,
+  "est_fixed": 177002,
+  "macs_v0": 0,
+  "macs_padded": 7299072,
+  "macs_useful": 526848,
+  "cycles": {
+   "ref": 201645,
+   "pf1": 193493
+  },
+  "mac_total": 7299072
+ },
+ {
+  "type_id": 233,
+  "rep": 158,
+  "n_instances": 1,
+  "n_descs": 11,
+  "stage": "backbone_3d",
+  "est_cycles": 33707,
+  "est_lenfix": 476363,
+  "est_fixed": 812363,
+  "macs_v0": 2350080,
+  "macs_padded": 37601280,
+  "macs_useful": 22282240,
+  "cycles": {
+   "ref": 953097,
+   "pf1": 953097
+  },
+  "mac_total": 37601280
+ },
+ {
+  "type_id": 234,
+  "rep": 159,
+  "n_instances": 1,
+  "n_descs": 11,
+  "stage": "backbone_3d",
+  "est_cycles": 47209,
+  "est_lenfix": 294281,
+  "est_fixed": 630281,
+  "macs_v0": 8985600,
+  "macs_padded": 143769600,
+  "macs_useful": 21299200,
+  "cycles": {
+   "ref": 856133,
+   "pf1": 856133
+  },
+  "mac_total": 143769600
+ },
+ {
+  "type_id": 235,
+  "rep": 160,
+  "n_instances": 1,
+  "n_descs": 6,
+  "stage": "backbone_3d",
+  "est_cycles": 67771,
+  "est_lenfix": 100800,
+  "est_fixed": 189600,
+  "macs_v0": 2246400,
+  "macs_padded": 35942400,
+  "macs_useful": 10649600,
+  "cycles": {
+   "ref": 251483,
+   "pf1": 251483
+  },
+  "mac_total": 35942400
+ },
+ {
+  "type_id": 236,
+  "rep": 161,
+  "n_instances": 1,
+  "n_descs": 8,
+  "stage": "backbone_3d",
+  "est_cycles": 45918,
+  "est_lenfix": 209768,
+  "est_fixed": 322928,
+  "macs_v0": 1311552,
+  "macs_padded": 20984832,
+  "macs_useful": 18627840,
+  "cycles": {
+   "ref": 389821,
+   "pf1": 389821
+  },
+  "mac_total": 20984832
+ },
+ {
+  "type_id": 237,
+  "rep": 162,
+  "n_instances": 1,
+  "n_descs": 1636,
+  "stage": "backbone_3d",
+  "est_cycles": 142635,
+  "est_lenfix": 142635,
+  "est_fixed": 916779,
+  "macs_v0": 0,
+  "macs_padded": 21233664,
+  "macs_useful": 7375872,
+  "cycles": {
+   "ref": 964044,
+   "pf1": 964044
+  },
+  "mac_total": 21233664
+ },
+ {
+  "type_id": 238,
+  "rep": 163,
+  "n_instances": 1,
+  "n_descs": 412,
+  "stage": "backbone_3d",
+  "est_cycles": 35967,
+  "est_lenfix": 35967,
+  "est_fixed": 229503,
+  "macs_v0": 0,
+  "macs_padded": 5308416,
+  "macs_useful": 1843968,
+  "cycles": {
+   "ref": 241676,
+   "pf1": 241676
+  },
+  "mac_total": 5308416
+ },
+ {
+  "type_id": 239,
+  "rep": 164,
+  "n_instances": 1,
+  "n_descs": 1221,
+  "stage": "backbone_3d",
+  "est_cycles": 134966,
+  "est_lenfix": 134966,
+  "est_fixed": 626486,
+  "macs_v0": 0,
+  "macs_padded": 28753920,
+  "macs_useful": 3713024,
+  "cycles": {
+   "ref": 689769,
+   "pf1": 662573
+  },
+  "mac_total": 28753920
+ },
+ {
+  "type_id": 240,
+  "rep": 165,
+  "n_instances": 1,
+  "n_descs": 1069,
+  "stage": "backbone_3d",
+  "est_cycles": 118140,
+  "est_lenfix": 118140,
+  "est_fixed": 548220,
+  "macs_v0": 0,
+  "macs_padded": 25159680,
+  "macs_useful": 3248896,
+  "cycles": {
+   "ref": 603573,
+   "pf1": 579833
+  },
+  "mac_total": 25159680
+ },
+ {
+  "type_id": 241,
+  "rep": 166,
+  "n_instances": 1,
+  "n_descs": 9,
+  "stage": "backbone_3d",
+  "est_cycles": 75870,
+  "est_lenfix": 239720,
+  "est_fixed": 417320,
+  "macs_v0": 2280960,
+  "macs_padded": 36495360,
+  "macs_useful": 21626880,
+  "cycles": {
+   "ref": 487085,
+   "pf1": 486137
+  },
+  "mac_total": 36495360
+ },
+ {
+  "type_id": 242,
+  "rep": 167,
+  "n_instances": 1,
+  "n_descs": 7,
+  "stage": "backbone_3d",
+  "est_cycles": 79009,
+  "est_lenfix": 145067,
+  "est_fixed": 253067,
+  "macs_v0": 4458240,
+  "macs_padded": 71331840,
+  "macs_useful": 21135360,
+  "cycles": {
+   "ref": 364267,
+   "pf1": 364267
+  },
+  "mac_total": 71331840
+ },
+ {
+  "type_id": 243,
+  "rep": 168,
+  "n_instances": 1,
+  "n_descs": 8,
+  "stage": "backbone_3d",
+  "est_cycles": 45918,
+  "est_lenfix": 209768,
+  "est_fixed": 322928,
+  "macs_v0": 1311552,
+  "macs_padded": 20984832,
+  "macs_useful": 18627840,
+  "cycles": {
+   "ref": 389821,
+   "pf1": 389821
+  },
+  "mac_total": 20984832
+ },
+ {
+  "type_id": 244,
+  "rep": 169,
+  "n_instances": 1,
+  "n_descs": 1636,
+  "stage": "backbone_3d",
+  "est_cycles": 142635,
+  "est_lenfix": 142635,
+  "est_fixed": 916779,
+  "macs_v0": 0,
+  "macs_padded": 21233664,
+  "macs_useful": 7375872,
+  "cycles": {
+   "ref": 964044,
+   "pf1": 964044
+  },
+  "mac_total": 21233664
+ },
+ {
+  "type_id": 245,
+  "rep": 170,
+  "n_instances": 1,
+  "n_descs": 412,
+  "stage": "backbone_3d",
+  "est_cycles": 35967,
+  "est_lenfix": 35967,
+  "est_fixed": 229503,
+  "macs_v0": 0,
+  "macs_padded": 5308416,
+  "macs_useful": 1843968,
+  "cycles": {
+   "ref": 241676,
+   "pf1": 241676
+  },
+  "mac_total": 5308416
+ },
+ {
+  "type_id": 246,
+  "rep": 171,
+  "n_instances": 1,
+  "n_descs": 1221,
+  "stage": "backbone_3d",
+  "est_cycles": 134966,
+  "est_lenfix": 134966,
+  "est_fixed": 626486,
+  "macs_v0": 0,
+  "macs_padded": 28753920,
+  "macs_useful": 3713024,
+  "cycles": {
+   "ref": 689769,
+   "pf1": 662573
+  },
+  "mac_total": 28753920
+ },
+ {
+  "type_id": 247,
+  "rep": 172,
+  "n_instances": 1,
+  "n_descs": 1069,
+  "stage": "backbone_3d",
+  "est_cycles": 118140,
+  "est_lenfix": 118140,
+  "est_fixed": 548220,
+  "macs_v0": 0,
+  "macs_padded": 25159680,
+  "macs_useful": 3248896,
+  "cycles": {
+   "ref": 603573,
+   "pf1": 579833
+  },
+  "mac_total": 25159680
+ },
+ {
+  "type_id": 248,
+  "rep": 173,
+  "n_instances": 1,
+  "n_descs": 9,
+  "stage": "backbone_3d",
+  "est_cycles": 75870,
+  "est_lenfix": 239720,
+  "est_fixed": 417320,
+  "macs_v0": 2280960,
+  "macs_padded": 36495360,
+  "macs_useful": 21626880,
+  "cycles": {
+   "ref": 487085,
+   "pf1": 486137
+  },
+  "mac_total": 36495360
+ },
+ {
+  "type_id": 249,
+  "rep": 174,
+  "n_instances": 1,
+  "n_descs": 7,
+  "stage": "backbone_3d",
+  "est_cycles": 79009,
+  "est_lenfix": 145067,
+  "est_fixed": 253067,
+  "macs_v0": 4458240,
+  "macs_padded": 71331840,
+  "macs_useful": 21135360,
+  "cycles": {
+   "ref": 364267,
+   "pf1": 364267
+  },
+  "mac_total": 71331840
+ },
+ {
+  "type_id": 250,
+  "rep": 175,
+  "n_instances": 1,
+  "n_descs": 5,
+  "stage": "backbone_3d",
+  "est_cycles": 51813,
+  "est_lenfix": 51813,
+  "est_fixed": 81213,
+  "macs_v0": 1114560,
+  "macs_padded": 17832960,
+  "macs_useful": 10567680,
+  "cycles": {
+   "ref": 111991,
+   "pf1": 111991
+  },
+  "mac_total": 17832960
+ },
+ {
+  "type_id": 251,
+  "rep": 176,
+  "n_instances": 1,
+  "n_descs": 9,
+  "stage": "backbone_3d",
+  "est_cycles": 47385,
+  "est_lenfix": 129310,
+  "est_fixed": 204910,
+  "macs_v0": 1347840,
+  "macs_padded": 24935040,
+  "macs_useful": 22014720,
+  "cycles": {
+   "ref": 245749,
+   "pf1": 243825
+  },
+  "mac_total": 24935040
+ },
+ {
+  "type_id": 252,
+  "rep": 177,
+  "n_instances": 1,
+  "n_descs": 616,
+  "stage": "backbone_3d",
+  "est_cycles": 69891,
+  "est_lenfix": 69891,
+  "est_fixed": 364803,
+  "macs_v0": 0,
+  "macs_padded": 15925248,
+  "macs_useful": 5531904,
+  "cycles": {
+   "ref": 385592,
+   "pf1": 385592
+  },
+  "mac_total": 15925248
+ },
+ {
+  "type_id": 253,
+  "rep": 178,
+  "n_instances": 1,
+  "n_descs": 689,
+  "stage": "backbone_3d",
+  "est_cycles": 131270,
+  "est_lenfix": 131270,
+  "est_fixed": 421574,
+  "macs_v0": 0,
+  "macs_padded": 24136704,
+  "macs_useful": 7789824,
+  "cycles": {
+   "ref": 467311,
+   "pf1": 452055
+  },
+  "mac_total": 24136704
+ },
+ {
+  "type_id": 254,
+  "rep": 179,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "backbone_3d",
+  "est_cycles": 41429,
+  "est_lenfix": 123354,
+  "est_fixed": 201954,
+  "macs_v0": 1684800,
+  "macs_padded": 26956800,
+  "macs_useful": 21299200,
+  "cycles": {
+   "ref": 236921,
+   "pf1": 233029
+  },
+  "mac_total": 26956800
+ },
+ {
+  "type_id": 255,
+  "rep": 180,
+  "n_instances": 1,
+  "n_descs": 6,
+  "stage": "backbone_3d",
+  "est_cycles": 43475,
+  "est_lenfix": 76504,
+  "est_fixed": 115504,
+  "macs_v0": 2220480,
+  "macs_padded": 35527680,
+  "macs_useful": 21053440,
+  "cycles": {
+   "ref": 171311,
+   "pf1": 171311
+  },
+  "mac_total": 35527680
+ },
+ {
+  "type_id": 256,
+  "rep": 181,
+  "n_instances": 1,
+  "n_descs": 9,
+  "stage": "backbone_3d",
+  "est_cycles": 47385,
+  "est_lenfix": 129310,
+  "est_fixed": 204910,
+  "macs_v0": 1347840,
+  "macs_padded": 24935040,
+  "macs_useful": 22014720,
+  "cycles": {
+   "ref": 245749,
+   "pf1": 243825
+  },
+  "mac_total": 24935040
+ },
+ {
+  "type_id": 257,
+  "rep": 182,
+  "n_instances": 1,
+  "n_descs": 616,
+  "stage": "backbone_3d",
+  "est_cycles": 69891,
+  "est_lenfix": 69891,
+  "est_fixed": 364803,
+  "macs_v0": 0,
+  "macs_padded": 15925248,
+  "macs_useful": 5531904,
+  "cycles": {
+   "ref": 385592,
+   "pf1": 385592
+  },
+  "mac_total": 15925248
+ },
+ {
+  "type_id": 258,
+  "rep": 183,
+  "n_instances": 1,
+  "n_descs": 689,
+  "stage": "backbone_3d",
+  "est_cycles": 131270,
+  "est_lenfix": 131270,
+  "est_fixed": 421574,
+  "macs_v0": 0,
+  "macs_padded": 24136704,
+  "macs_useful": 7789824,
+  "cycles": {
+   "ref": 467311,
+   "pf1": 452055
+  },
+  "mac_total": 24136704
+ },
+ {
+  "type_id": 259,
+  "rep": 184,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "backbone_3d",
+  "est_cycles": 41429,
+  "est_lenfix": 123354,
+  "est_fixed": 201954,
+  "macs_v0": 1684800,
+  "macs_padded": 26956800,
+  "macs_useful": 21299200,
+  "cycles": {
+   "ref": 236921,
+   "pf1": 233029
+  },
+  "mac_total": 26956800
+ },
+ {
+  "type_id": 260,
+  "rep": 185,
+  "n_instances": 1,
+  "n_descs": 6,
+  "stage": "backbone_3d",
+  "est_cycles": 43475,
+  "est_lenfix": 76504,
+  "est_fixed": 115504,
+  "macs_v0": 2220480,
+  "macs_padded": 35527680,
+  "macs_useful": 21053440,
+  "cycles": {
+   "ref": 171311,
+   "pf1": 171311
+  },
+  "mac_total": 35527680
+ },
+ {
+  "type_id": 261,
+  "rep": 186,
+  "n_instances": 1,
+  "n_descs": 9,
+  "stage": "backbone_3d",
+  "est_cycles": 47385,
+  "est_lenfix": 129310,
+  "est_fixed": 204910,
+  "macs_v0": 1347840,
+  "macs_padded": 24935040,
+  "macs_useful": 22014720,
+  "cycles": {
+   "ref": 245749,
+   "pf1": 243825
+  },
+  "mac_total": 24935040
+ },
+ {
+  "type_id": 262,
+  "rep": 187,
+  "n_instances": 1,
+  "n_descs": 616,
+  "stage": "backbone_3d",
+  "est_cycles": 69891,
+  "est_lenfix": 69891,
+  "est_fixed": 364803,
+  "macs_v0": 0,
+  "macs_padded": 15925248,
+  "macs_useful": 5531904,
+  "cycles": {
+   "ref": 385592,
+   "pf1": 385592
+  },
+  "mac_total": 15925248
+ },
+ {
+  "type_id": 263,
+  "rep": 188,
+  "n_instances": 1,
+  "n_descs": 689,
+  "stage": "backbone_3d",
+  "est_cycles": 131270,
+  "est_lenfix": 131270,
+  "est_fixed": 421574,
+  "macs_v0": 0,
+  "macs_padded": 24136704,
+  "macs_useful": 7789824,
+  "cycles": {
+   "ref": 467311,
+   "pf1": 452055
+  },
+  "mac_total": 24136704
+ },
+ {
+  "type_id": 264,
+  "rep": 189,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "backbone_3d",
+  "est_cycles": 41429,
+  "est_lenfix": 123354,
+  "est_fixed": 201954,
+  "macs_v0": 1684800,
+  "macs_padded": 26956800,
+  "macs_useful": 21299200,
+  "cycles": {
+   "ref": 236921,
+   "pf1": 233029
+  },
+  "mac_total": 26956800
+ },
+ {
+  "type_id": 265,
+  "rep": 190,
+  "n_instances": 1,
+  "n_descs": 6,
+  "stage": "backbone_3d",
+  "est_cycles": 43475,
+  "est_lenfix": 76504,
+  "est_fixed": 115504,
+  "macs_v0": 2220480,
+  "macs_padded": 35527680,
+  "macs_useful": 21053440,
+  "cycles": {
+   "ref": 171311,
+   "pf1": 171311
+  },
+  "mac_total": 35527680
+ },
+ {
+  "type_id": 266,
+  "rep": 191,
+  "n_instances": 1,
+  "n_descs": 9,
+  "stage": "backbone_3d",
+  "est_cycles": 47385,
+  "est_lenfix": 129310,
+  "est_fixed": 204910,
+  "macs_v0": 1347840,
+  "macs_padded": 24935040,
+  "macs_useful": 22014720,
+  "cycles": {
+   "ref": 245749,
+   "pf1": 243825
+  },
+  "mac_total": 24935040
+ },
+ {
+  "type_id": 267,
+  "rep": 192,
+  "n_instances": 1,
+  "n_descs": 616,
+  "stage": "backbone_3d",
+  "est_cycles": 69891,
+  "est_lenfix": 69891,
+  "est_fixed": 364803,
+  "macs_v0": 0,
+  "macs_padded": 15925248,
+  "macs_useful": 5531904,
+  "cycles": {
+   "ref": 385592,
+   "pf1": 385592
+  },
+  "mac_total": 15925248
+ },
+ {
+  "type_id": 268,
+  "rep": 193,
+  "n_instances": 1,
+  "n_descs": 689,
+  "stage": "backbone_3d",
+  "est_cycles": 131270,
+  "est_lenfix": 131270,
+  "est_fixed": 421574,
+  "macs_v0": 0,
+  "macs_padded": 24136704,
+  "macs_useful": 7789824,
+  "cycles": {
+   "ref": 467311,
+   "pf1": 452055
+  },
+  "mac_total": 24136704
+ },
+ {
+  "type_id": 269,
+  "rep": 194,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "backbone_3d",
+  "est_cycles": 41429,
+  "est_lenfix": 123354,
+  "est_fixed": 201954,
+  "macs_v0": 1684800,
+  "macs_padded": 26956800,
+  "macs_useful": 21299200,
+  "cycles": {
+   "ref": 236921,
+   "pf1": 233029
+  },
+  "mac_total": 26956800
+ },
+ {
+  "type_id": 270,
+  "rep": 195,
+  "n_instances": 1,
+  "n_descs": 6,
+  "stage": "backbone_3d",
+  "est_cycles": 43475,
+  "est_lenfix": 76504,
+  "est_fixed": 115504,
+  "macs_v0": 2220480,
+  "macs_padded": 35527680,
+  "macs_useful": 21053440,
+  "cycles": {
+   "ref": 171311,
+   "pf1": 171311
+  },
+  "mac_total": 35527680
+ },
+ {
+  "type_id": 271,
+  "rep": 196,
+  "n_instances": 1,
+  "n_descs": 9,
+  "stage": "backbone_3d",
+  "est_cycles": 47385,
+  "est_lenfix": 129310,
+  "est_fixed": 204910,
+  "macs_v0": 1347840,
+  "macs_padded": 24935040,
+  "macs_useful": 22014720,
+  "cycles": {
+   "ref": 245749,
+   "pf1": 243825
+  },
+  "mac_total": 24935040
+ },
+ {
+  "type_id": 272,
+  "rep": 197,
+  "n_instances": 1,
+  "n_descs": 616,
+  "stage": "backbone_3d",
+  "est_cycles": 69891,
+  "est_lenfix": 69891,
+  "est_fixed": 364803,
+  "macs_v0": 0,
+  "macs_padded": 15925248,
+  "macs_useful": 5531904,
+  "cycles": {
+   "ref": 385592,
+   "pf1": 385592
+  },
+  "mac_total": 15925248
+ },
+ {
+  "type_id": 273,
+  "rep": 198,
+  "n_instances": 1,
+  "n_descs": 689,
+  "stage": "backbone_3d",
+  "est_cycles": 131270,
+  "est_lenfix": 131270,
+  "est_fixed": 421574,
+  "macs_v0": 0,
+  "macs_padded": 24136704,
+  "macs_useful": 7789824,
+  "cycles": {
+   "ref": 467311,
+   "pf1": 452055
+  },
+  "mac_total": 24136704
+ },
+ {
+  "type_id": 274,
+  "rep": 199,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "backbone_3d",
+  "est_cycles": 41429,
+  "est_lenfix": 123354,
+  "est_fixed": 201954,
+  "macs_v0": 1684800,
+  "macs_padded": 26956800,
+  "macs_useful": 21299200,
+  "cycles": {
+   "ref": 236921,
+   "pf1": 233029
+  },
+  "mac_total": 26956800
+ },
+ {
+  "type_id": 275,
+  "rep": 200,
+  "n_instances": 1,
+  "n_descs": 6,
+  "stage": "backbone_3d",
+  "est_cycles": 43475,
+  "est_lenfix": 76504,
+  "est_fixed": 115504,
+  "macs_v0": 2220480,
+  "macs_padded": 35527680,
+  "macs_useful": 21053440,
+  "cycles": {
+   "ref": 171311,
+   "pf1": 171311
+  },
+  "mac_total": 35527680
+ },
+ {
+  "type_id": 276,
+  "rep": 201,
+  "n_instances": 1,
+  "n_descs": 9,
+  "stage": "backbone_3d",
+  "est_cycles": 47385,
+  "est_lenfix": 129310,
+  "est_fixed": 204910,
+  "macs_v0": 1347840,
+  "macs_padded": 24935040,
+  "macs_useful": 22014720,
+  "cycles": {
+   "ref": 245749,
+   "pf1": 243825
+  },
+  "mac_total": 24935040
+ },
+ {
+  "type_id": 277,
+  "rep": 202,
+  "n_instances": 1,
+  "n_descs": 616,
+  "stage": "backbone_3d",
+  "est_cycles": 69891,
+  "est_lenfix": 69891,
+  "est_fixed": 364803,
+  "macs_v0": 0,
+  "macs_padded": 15925248,
+  "macs_useful": 5531904,
+  "cycles": {
+   "ref": 385592,
+   "pf1": 385592
+  },
+  "mac_total": 15925248
+ },
+ {
+  "type_id": 278,
+  "rep": 203,
+  "n_instances": 1,
+  "n_descs": 689,
+  "stage": "backbone_3d",
+  "est_cycles": 131270,
+  "est_lenfix": 131270,
+  "est_fixed": 421574,
+  "macs_v0": 0,
+  "macs_padded": 24136704,
+  "macs_useful": 7789824,
+  "cycles": {
+   "ref": 467311,
+   "pf1": 452055
+  },
+  "mac_total": 24136704
+ },
+ {
+  "type_id": 279,
+  "rep": 204,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "backbone_3d",
+  "est_cycles": 41429,
+  "est_lenfix": 123354,
+  "est_fixed": 201954,
+  "macs_v0": 1684800,
+  "macs_padded": 26956800,
+  "macs_useful": 21299200,
+  "cycles": {
+   "ref": 236921,
+   "pf1": 233029
+  },
+  "mac_total": 26956800
+ },
+ {
+  "type_id": 280,
+  "rep": 205,
+  "n_instances": 1,
+  "n_descs": 6,
+  "stage": "backbone_3d",
+  "est_cycles": 43475,
+  "est_lenfix": 76504,
+  "est_fixed": 115504,
+  "macs_v0": 2220480,
+  "macs_padded": 35527680,
+  "macs_useful": 21053440,
+  "cycles": {
+   "ref": 171311,
+   "pf1": 171311
+  },
+  "mac_total": 35527680
+ },
+ {
+  "type_id": 281,
+  "rep": 206,
+  "n_instances": 1,
+  "n_descs": 7,
+  "stage": "backbone_3d",
+  "est_cycles": 37906,
+  "est_lenfix": 37906,
+  "est_fixed": 57666,
+  "macs_v0": 888192,
+  "macs_padded": 17763840,
+  "macs_useful": 10526720,
+  "cycles": {
+   "ref": 74507,
+   "pf1": 66883
+  },
+  "mac_total": 17763840
+ },
+ {
+  "type_id": 282,
+  "rep": 207,
+  "n_instances": 1,
+  "n_descs": 12,
+  "stage": "backbone_3d",
+  "est_cycles": 43764,
+  "est_lenfix": 125689,
+  "est_fixed": 203705,
+  "macs_v0": 2674944,
+  "macs_padded": 43690752,
+  "macs_useful": 38836224,
+  "cycles": {
+   "ref": 240519,
+   "pf1": 229015
+  },
+  "mac_total": 43690752
+ },
+ {
+  "type_id": 283,
+  "rep": 208,
+  "n_instances": 1,
+  "n_descs": 532,
+  "stage": "backbone_3d",
+  "est_cycles": 44347,
+  "est_lenfix": 44347,
+  "est_fixed": 306491,
+  "macs_v0": 0,
+  "macs_padded": 14155776,
+  "macs_useful": 4917248,
+  "cycles": {
+   "ref": 319304,
+   "pf1": 319304
+  },
+  "mac_total": 14155776
+ },
+ {
+  "type_id": 284,
+  "rep": 209,
+  "n_instances": 1,
+  "n_descs": 597,
+  "stage": "backbone_3d",
+  "est_cycles": 164434,
+  "est_lenfix": 164434,
+  "est_fixed": 430674,
+  "macs_v0": 0,
+  "macs_padded": 35610624,
+  "macs_useful": 13346816,
+  "cycles": {
+   "ref": 469831,
+   "pf1": 427995
+  },
+  "mac_total": 35610624
+ },
+ {
+  "type_id": 285,
+  "rep": 210,
+  "n_instances": 1,
+  "n_descs": 13,
+  "stage": "backbone_3d",
+  "est_cycles": 75769,
+  "est_lenfix": 75769,
+  "est_fixed": 116657,
+  "macs_v0": 1114560,
+  "macs_padded": 22291200,
+  "macs_useful": 21135360,
+  "cycles": {
+   "ref": 135687,
+   "pf1": 120319
+  },
+  "mac_total": 22291200
+ },
+ {
+  "type_id": 286,
+  "rep": 211,
+  "n_instances": 1,
+  "n_descs": 7,
+  "stage": "backbone_3d",
+  "est_cycles": 62362,
+  "est_lenfix": 62362,
+  "est_fixed": 91850,
+  "macs_v0": 1772928,
+  "macs_padded": 35458560,
+  "macs_useful": 21012480,
+  "cycles": {
+   "ref": 122655,
+   "pf1": 107259
+  },
+  "mac_total": 35458560
+ },
+ {
+  "type_id": 287,
+  "rep": 212,
+  "n_instances": 1,
+  "n_descs": 12,
+  "stage": "backbone_3d",
+  "est_cycles": 43764,
+  "est_lenfix": 125689,
+  "est_fixed": 203705,
+  "macs_v0": 2674944,
+  "macs_padded": 43690752,
+  "macs_useful": 38836224,
+  "cycles": {
+   "ref": 240519,
+   "pf1": 229015
+  },
+  "mac_total": 43690752
+ },
+ {
+  "type_id": 288,
+  "rep": 213,
+  "n_instances": 1,
+  "n_descs": 532,
+  "stage": "backbone_3d",
+  "est_cycles": 44347,
+  "est_lenfix": 44347,
+  "est_fixed": 306491,
+  "macs_v0": 0,
+  "macs_padded": 14155776,
+  "macs_useful": 4917248,
+  "cycles": {
+   "ref": 319304,
+   "pf1": 319304
+  },
+  "mac_total": 14155776
+ },
+ {
+  "type_id": 289,
+  "rep": 214,
+  "n_instances": 1,
+  "n_descs": 597,
+  "stage": "backbone_3d",
+  "est_cycles": 164434,
+  "est_lenfix": 164434,
+  "est_fixed": 430674,
+  "macs_v0": 0,
+  "macs_padded": 35610624,
+  "macs_useful": 13346816,
+  "cycles": {
+   "ref": 469831,
+   "pf1": 427995
+  },
+  "mac_total": 35610624
+ },
+ {
+  "type_id": 290,
+  "rep": 215,
+  "n_instances": 1,
+  "n_descs": 13,
+  "stage": "backbone_3d",
+  "est_cycles": 75769,
+  "est_lenfix": 75769,
+  "est_fixed": 116657,
+  "macs_v0": 1114560,
+  "macs_padded": 22291200,
+  "macs_useful": 21135360,
+  "cycles": {
+   "ref": 135687,
+   "pf1": 120319
+  },
+  "mac_total": 22291200
+ },
+ {
+  "type_id": 291,
+  "rep": 216,
+  "n_instances": 1,
+  "n_descs": 7,
+  "stage": "backbone_3d",
+  "est_cycles": 62362,
+  "est_lenfix": 62362,
+  "est_fixed": 91850,
+  "macs_v0": 1772928,
+  "macs_padded": 35458560,
+  "macs_useful": 21012480,
+  "cycles": {
+   "ref": 122655,
+   "pf1": 107259
+  },
+  "mac_total": 35458560
+ },
+ {
+  "type_id": 292,
+  "rep": 217,
+  "n_instances": 1,
+  "n_descs": 9,
+  "stage": "neck_3d",
+  "est_cycles": 75870,
+  "est_lenfix": 239720,
+  "est_fixed": 417320,
+  "macs_v0": 2280960,
+  "macs_padded": 36495360,
+  "macs_useful": 21626880,
+  "cycles": {
+   "ref": 487085,
+   "pf1": 486137
+  },
+  "mac_total": 36495360
+ },
+ {
+  "type_id": 293,
+  "rep": 218,
+  "n_instances": 1,
+  "n_descs": 7,
+  "stage": "neck_3d",
+  "est_cycles": 68450,
+  "est_lenfix": 68450,
+  "est_fixed": 117650,
+  "macs_v0": 1123200,
+  "macs_padded": 17971200,
+  "macs_useful": 10649600,
+  "cycles": {
+   "ref": 141675,
+   "pf1": 139727
+  },
+  "mac_total": 17971200
+ },
+ {
+  "type_id": 294,
+  "rep": 219,
+  "n_instances": 1,
+  "n_descs": 7,
+  "stage": "neck_3d",
+  "est_cycles": 25678,
+  "est_lenfix": 25678,
+  "est_fixed": 40574,
+  "macs_v0": 445824,
+  "macs_padded": 8916480,
+  "macs_useful": 5283840,
+  "cycles": {
+   "ref": 50371,
+   "pf1": 46483
+  },
+  "mac_total": 8916480
+ },
+ {
+  "type_id": 295,
+  "rep": 220,
+  "n_instances": 1,
+  "n_descs": 7,
+  "stage": "neck_3d",
+  "est_cycles": 76202,
+  "est_lenfix": 76202,
+  "est_fixed": 90362,
+  "macs_v0": 0,
+  "macs_padded": 19923840,
+  "macs_useful": 11806720,
+  "cycles": {
+   "ref": 112429,
+   "pf1": 105033
+  },
+  "mac_total": 19923840
+ },
+ {
+  "type_id": 296,
+  "rep": 221,
+  "n_instances": 1,
+  "n_descs": 142,
+  "stage": "text_encoder",
+  "est_cycles": 913657,
+  "est_lenfix": 913657,
+  "est_fixed": 965825,
+  "macs_v0": 0,
+  "macs_padded": 59961600,
+  "macs_useful": 18997248,
+  "cycles": {
+   "ref": 1081251,
+   "pf1": 1046899
+  },
+  "mac_total": 59961600
+ },
+ {
+  "type_id": 297,
+  "rep": 222,
+  "n_instances": 1,
+  "n_descs": 62,
+  "stage": "text_encoder",
+  "est_cycles": 616720,
+  "est_lenfix": 616720,
+  "est_fixed": 647864,
+  "macs_v0": 0,
+  "macs_padded": 38536128,
+  "macs_useful": 18898944,
+  "cycles": {
+   "ref": 731799,
+   "pf1": 701599
+  },
+  "mac_total": 38536128
+ },
+ {
+  "type_id": 298,
+  "rep": 223,
+  "n_instances": 1,
+  "n_descs": 28,
+  "stage": "text_encoder",
+  "est_cycles": 665791,
+  "est_lenfix": 665791,
+  "est_fixed": 692735,
+  "macs_v0": 0,
+  "macs_padded": 42481152,
+  "macs_useful": 18880512,
+  "cycles": {
+   "ref": 781399,
+   "pf1": 781399
+  },
+  "mac_total": 42481152
+ },
+ {
+  "type_id": 299,
+  "rep": 224,
+  "n_instances": 1,
+  "n_descs": 142,
+  "stage": "text_encoder",
+  "est_cycles": 913657,
+  "est_lenfix": 913657,
+  "est_fixed": 965825,
+  "macs_v0": 0,
+  "macs_padded": 59961600,
+  "macs_useful": 18997248,
+  "cycles": {
+   "ref": 1081251,
+   "pf1": 1046899
+  },
+  "mac_total": 59961600
+ },
+ {
+  "type_id": 300,
+  "rep": 225,
+  "n_instances": 1,
+  "n_descs": 62,
+  "stage": "text_encoder",
+  "est_cycles": 616720,
+  "est_lenfix": 616720,
+  "est_fixed": 647864,
+  "macs_v0": 0,
+  "macs_padded": 38536128,
+  "macs_useful": 18898944,
+  "cycles": {
+   "ref": 731799,
+   "pf1": 701599
+  },
+  "mac_total": 38536128
+ },
+ {
+  "type_id": 301,
+  "rep": 226,
+  "n_instances": 1,
+  "n_descs": 28,
+  "stage": "text_encoder",
+  "est_cycles": 665791,
+  "est_lenfix": 665791,
+  "est_fixed": 692735,
+  "macs_v0": 0,
+  "macs_padded": 42481152,
+  "macs_useful": 18880512,
+  "cycles": {
+   "ref": 781399,
+   "pf1": 781399
+  },
+  "mac_total": 42481152
+ },
+ {
+  "type_id": 302,
+  "rep": 227,
+  "n_instances": 1,
+  "n_descs": 142,
+  "stage": "text_encoder",
+  "est_cycles": 913657,
+  "est_lenfix": 913657,
+  "est_fixed": 965825,
+  "macs_v0": 0,
+  "macs_padded": 59961600,
+  "macs_useful": 18997248,
+  "cycles": {
+   "ref": 1081251,
+   "pf1": 1046899
+  },
+  "mac_total": 59961600
+ },
+ {
+  "type_id": 303,
+  "rep": 228,
+  "n_instances": 1,
+  "n_descs": 62,
+  "stage": "text_encoder",
+  "est_cycles": 616720,
+  "est_lenfix": 616720,
+  "est_fixed": 647864,
+  "macs_v0": 0,
+  "macs_padded": 38536128,
+  "macs_useful": 18898944,
+  "cycles": {
+   "ref": 731799,
+   "pf1": 701599
+  },
+  "mac_total": 38536128
+ },
+ {
+  "type_id": 304,
+  "rep": 229,
+  "n_instances": 1,
+  "n_descs": 28,
+  "stage": "text_encoder",
+  "est_cycles": 665791,
+  "est_lenfix": 665791,
+  "est_fixed": 692735,
+  "macs_v0": 0,
+  "macs_padded": 42481152,
+  "macs_useful": 18880512,
+  "cycles": {
+   "ref": 781399,
+   "pf1": 781399
+  },
+  "mac_total": 42481152
+ },
+ {
+  "type_id": 305,
+  "rep": 230,
+  "n_instances": 1,
+  "n_descs": 142,
+  "stage": "text_encoder",
+  "est_cycles": 913657,
+  "est_lenfix": 913657,
+  "est_fixed": 965825,
+  "macs_v0": 0,
+  "macs_padded": 59961600,
+  "macs_useful": 18997248,
+  "cycles": {
+   "ref": 1081251,
+   "pf1": 1046899
+  },
+  "mac_total": 59961600
+ },
+ {
+  "type_id": 306,
+  "rep": 231,
+  "n_instances": 1,
+  "n_descs": 62,
+  "stage": "text_encoder",
+  "est_cycles": 616720,
+  "est_lenfix": 616720,
+  "est_fixed": 647864,
+  "macs_v0": 0,
+  "macs_padded": 38536128,
+  "macs_useful": 18898944,
+  "cycles": {
+   "ref": 731799,
+   "pf1": 701599
+  },
+  "mac_total": 38536128
+ },
+ {
+  "type_id": 307,
+  "rep": 232,
+  "n_instances": 1,
+  "n_descs": 28,
+  "stage": "text_encoder",
+  "est_cycles": 665791,
+  "est_lenfix": 665791,
+  "est_fixed": 692735,
+  "macs_v0": 0,
+  "macs_padded": 42481152,
+  "macs_useful": 18880512,
+  "cycles": {
+   "ref": 781399,
+   "pf1": 781399
+  },
+  "mac_total": 42481152
+ },
+ {
+  "type_id": 308,
+  "rep": 233,
+  "n_instances": 1,
+  "n_descs": 142,
+  "stage": "text_encoder",
+  "est_cycles": 913657,
+  "est_lenfix": 913657,
+  "est_fixed": 965825,
+  "macs_v0": 0,
+  "macs_padded": 59961600,
+  "macs_useful": 18997248,
+  "cycles": {
+   "ref": 1081251,
+   "pf1": 1046899
+  },
+  "mac_total": 59961600
+ },
+ {
+  "type_id": 309,
+  "rep": 234,
+  "n_instances": 1,
+  "n_descs": 62,
+  "stage": "text_encoder",
+  "est_cycles": 616720,
+  "est_lenfix": 616720,
+  "est_fixed": 647864,
+  "macs_v0": 0,
+  "macs_padded": 38536128,
+  "macs_useful": 18898944,
+  "cycles": {
+   "ref": 731799,
+   "pf1": 701599
+  },
+  "mac_total": 38536128
+ },
+ {
+  "type_id": 310,
+  "rep": 235,
+  "n_instances": 1,
+  "n_descs": 28,
+  "stage": "text_encoder",
+  "est_cycles": 665791,
+  "est_lenfix": 665791,
+  "est_fixed": 692735,
+  "macs_v0": 0,
+  "macs_padded": 42481152,
+  "macs_useful": 18880512,
+  "cycles": {
+   "ref": 781399,
+   "pf1": 781399
+  },
+  "mac_total": 42481152
+ },
+ {
+  "type_id": 311,
+  "rep": 236,
+  "n_instances": 1,
+  "n_descs": 142,
+  "stage": "text_encoder",
+  "est_cycles": 913657,
+  "est_lenfix": 913657,
+  "est_fixed": 965825,
+  "macs_v0": 0,
+  "macs_padded": 59961600,
+  "macs_useful": 18997248,
+  "cycles": {
+   "ref": 1081251,
+   "pf1": 1046899
+  },
+  "mac_total": 59961600
+ },
+ {
+  "type_id": 312,
+  "rep": 237,
+  "n_instances": 1,
+  "n_descs": 62,
+  "stage": "text_encoder",
+  "est_cycles": 616720,
+  "est_lenfix": 616720,
+  "est_fixed": 647864,
+  "macs_v0": 0,
+  "macs_padded": 38536128,
+  "macs_useful": 18898944,
+  "cycles": {
+   "ref": 731799,
+   "pf1": 701599
+  },
+  "mac_total": 38536128
+ },
+ {
+  "type_id": 313,
+  "rep": 238,
+  "n_instances": 1,
+  "n_descs": 28,
+  "stage": "text_encoder",
+  "est_cycles": 665791,
+  "est_lenfix": 665791,
+  "est_fixed": 692735,
+  "macs_v0": 0,
+  "macs_padded": 42481152,
+  "macs_useful": 18880512,
+  "cycles": {
+   "ref": 781399,
+   "pf1": 781399
+  },
+  "mac_total": 42481152
+ },
+ {
+  "type_id": 314,
+  "rep": 239,
+  "n_instances": 1,
+  "n_descs": 142,
+  "stage": "text_encoder",
+  "est_cycles": 913657,
+  "est_lenfix": 913657,
+  "est_fixed": 965825,
+  "macs_v0": 0,
+  "macs_padded": 59961600,
+  "macs_useful": 18997248,
+  "cycles": {
+   "ref": 1081251,
+   "pf1": 1046899
+  },
+  "mac_total": 59961600
+ },
+ {
+  "type_id": 315,
+  "rep": 240,
+  "n_instances": 1,
+  "n_descs": 62,
+  "stage": "text_encoder",
+  "est_cycles": 616720,
+  "est_lenfix": 616720,
+  "est_fixed": 647864,
+  "macs_v0": 0,
+  "macs_padded": 38536128,
+  "macs_useful": 18898944,
+  "cycles": {
+   "ref": 731799,
+   "pf1": 701599
+  },
+  "mac_total": 38536128
+ },
+ {
+  "type_id": 316,
+  "rep": 241,
+  "n_instances": 1,
+  "n_descs": 28,
+  "stage": "text_encoder",
+  "est_cycles": 665791,
+  "est_lenfix": 665791,
+  "est_fixed": 692735,
+  "macs_v0": 0,
+  "macs_padded": 42481152,
+  "macs_useful": 18880512,
+  "cycles": {
+   "ref": 781399,
+   "pf1": 781399
+  },
+  "mac_total": 42481152
+ },
+ {
+  "type_id": 317,
+  "rep": 242,
+  "n_instances": 1,
+  "n_descs": 142,
+  "stage": "text_encoder",
+  "est_cycles": 913657,
+  "est_lenfix": 913657,
+  "est_fixed": 965825,
+  "macs_v0": 0,
+  "macs_padded": 59961600,
+  "macs_useful": 18997248,
+  "cycles": {
+   "ref": 1081251,
+   "pf1": 1046899
+  },
+  "mac_total": 59961600
+ },
+ {
+  "type_id": 318,
+  "rep": 243,
+  "n_instances": 1,
+  "n_descs": 62,
+  "stage": "text_encoder",
+  "est_cycles": 616720,
+  "est_lenfix": 616720,
+  "est_fixed": 647864,
+  "macs_v0": 0,
+  "macs_padded": 38536128,
+  "macs_useful": 18898944,
+  "cycles": {
+   "ref": 731799,
+   "pf1": 701599
+  },
+  "mac_total": 38536128
+ },
+ {
+  "type_id": 319,
+  "rep": 244,
+  "n_instances": 1,
+  "n_descs": 28,
+  "stage": "text_encoder",
+  "est_cycles": 665791,
+  "est_lenfix": 665791,
+  "est_fixed": 692735,
+  "macs_v0": 0,
+  "macs_padded": 42481152,
+  "macs_useful": 18880512,
+  "cycles": {
+   "ref": 781399,
+   "pf1": 781399
+  },
+  "mac_total": 42481152
+ },
+ {
+  "type_id": 320,
+  "rep": 245,
+  "n_instances": 1,
+  "n_descs": 142,
+  "stage": "text_encoder",
+  "est_cycles": 913657,
+  "est_lenfix": 913657,
+  "est_fixed": 965825,
+  "macs_v0": 0,
+  "macs_padded": 59961600,
+  "macs_useful": 18997248,
+  "cycles": {
+   "ref": 1081251,
+   "pf1": 1046899
+  },
+  "mac_total": 59961600
+ },
+ {
+  "type_id": 321,
+  "rep": 246,
+  "n_instances": 1,
+  "n_descs": 62,
+  "stage": "text_encoder",
+  "est_cycles": 616720,
+  "est_lenfix": 616720,
+  "est_fixed": 647864,
+  "macs_v0": 0,
+  "macs_padded": 38536128,
+  "macs_useful": 18898944,
+  "cycles": {
+   "ref": 731799,
+   "pf1": 701599
+  },
+  "mac_total": 38536128
+ },
+ {
+  "type_id": 322,
+  "rep": 247,
+  "n_instances": 1,
+  "n_descs": 28,
+  "stage": "text_encoder",
+  "est_cycles": 665791,
+  "est_lenfix": 665791,
+  "est_fixed": 692735,
+  "macs_v0": 0,
+  "macs_padded": 42481152,
+  "macs_useful": 18880512,
+  "cycles": {
+   "ref": 781399,
+   "pf1": 781399
+  },
+  "mac_total": 42481152
+ },
+ {
+  "type_id": 323,
+  "rep": 248,
+  "n_instances": 1,
+  "n_descs": 142,
+  "stage": "text_encoder",
+  "est_cycles": 913657,
+  "est_lenfix": 913657,
+  "est_fixed": 965825,
+  "macs_v0": 0,
+  "macs_padded": 59961600,
+  "macs_useful": 18997248,
+  "cycles": {
+   "ref": 1081251,
+   "pf1": 1046899
+  },
+  "mac_total": 59961600
+ },
+ {
+  "type_id": 324,
+  "rep": 249,
+  "n_instances": 1,
+  "n_descs": 62,
+  "stage": "text_encoder",
+  "est_cycles": 616720,
+  "est_lenfix": 616720,
+  "est_fixed": 647864,
+  "macs_v0": 0,
+  "macs_padded": 38536128,
+  "macs_useful": 18898944,
+  "cycles": {
+   "ref": 731799,
+   "pf1": 701599
+  },
+  "mac_total": 38536128
+ },
+ {
+  "type_id": 325,
+  "rep": 250,
+  "n_instances": 1,
+  "n_descs": 28,
+  "stage": "text_encoder",
+  "est_cycles": 665791,
+  "est_lenfix": 665791,
+  "est_fixed": 692735,
+  "macs_v0": 0,
+  "macs_padded": 42481152,
+  "macs_useful": 18880512,
+  "cycles": {
+   "ref": 781399,
+   "pf1": 781399
+  },
+  "mac_total": 42481152
+ },
+ {
+  "type_id": 326,
+  "rep": 251,
+  "n_instances": 1,
+  "n_descs": 142,
+  "stage": "text_encoder",
+  "est_cycles": 913657,
+  "est_lenfix": 913657,
+  "est_fixed": 965825,
+  "macs_v0": 0,
+  "macs_padded": 59961600,
+  "macs_useful": 18997248,
+  "cycles": {
+   "ref": 1081251,
+   "pf1": 1046899
+  },
+  "mac_total": 59961600
+ },
+ {
+  "type_id": 327,
+  "rep": 252,
+  "n_instances": 1,
+  "n_descs": 62,
+  "stage": "text_encoder",
+  "est_cycles": 616720,
+  "est_lenfix": 616720,
+  "est_fixed": 647864,
+  "macs_v0": 0,
+  "macs_padded": 38536128,
+  "macs_useful": 18898944,
+  "cycles": {
+   "ref": 731799,
+   "pf1": 701599
+  },
+  "mac_total": 38536128
+ },
+ {
+  "type_id": 328,
+  "rep": 253,
+  "n_instances": 1,
+  "n_descs": 28,
+  "stage": "text_encoder",
+  "est_cycles": 665791,
+  "est_lenfix": 665791,
+  "est_fixed": 692735,
+  "macs_v0": 0,
+  "macs_padded": 42481152,
+  "macs_useful": 18880512,
+  "cycles": {
+   "ref": 781399,
+   "pf1": 781399
+  },
+  "mac_total": 42481152
+ },
+ {
+  "type_id": 329,
+  "rep": 254,
+  "n_instances": 1,
+  "n_descs": 142,
+  "stage": "text_encoder",
+  "est_cycles": 913657,
+  "est_lenfix": 913657,
+  "est_fixed": 965825,
+  "macs_v0": 0,
+  "macs_padded": 59961600,
+  "macs_useful": 18997248,
+  "cycles": {
+   "ref": 1081251,
+   "pf1": 1046899
+  },
+  "mac_total": 59961600
+ },
+ {
+  "type_id": 330,
+  "rep": 255,
+  "n_instances": 1,
+  "n_descs": 62,
+  "stage": "text_encoder",
+  "est_cycles": 616720,
+  "est_lenfix": 616720,
+  "est_fixed": 647864,
+  "macs_v0": 0,
+  "macs_padded": 38536128,
+  "macs_useful": 18898944,
+  "cycles": {
+   "ref": 731799,
+   "pf1": 701599
+  },
+  "mac_total": 38536128
+ },
+ {
+  "type_id": 331,
+  "rep": 256,
+  "n_instances": 1,
+  "n_descs": 28,
+  "stage": "text_encoder",
+  "est_cycles": 665791,
+  "est_lenfix": 665791,
+  "est_fixed": 692735,
+  "macs_v0": 0,
+  "macs_padded": 42481152,
+  "macs_useful": 18880512,
+  "cycles": {
+   "ref": 781399,
+   "pf1": 781399
+  },
+  "mac_total": 42481152
+ },
+ {
+  "type_id": 332,
+  "rep": 257,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "text_feat_map",
+  "est_cycles": 64770,
+  "est_lenfix": 64770,
+  "est_fixed": 67930,
+  "macs_v0": 0,
+  "macs_padded": 3986496,
+  "macs_useful": 1574912,
+  "cycles": {
+   "ref": 78023,
+   "pf1": 75899
+  },
+  "mac_total": 3986496
+ },
+ {
+  "type_id": 333,
+  "rep": 258,
+  "n_instances": 1,
+  "n_descs": 91,
+  "stage": "feature_enhancer",
+  "est_cycles": 345722,
+  "est_lenfix": 345722,
+  "est_fixed": 412730,
+  "macs_v0": 0,
+  "macs_padded": 53291520,
+  "macs_useful": 46317568,
+  "cycles": {
+   "ref": 471171,
+   "pf1": 409663
+  },
+  "mac_total": 53291520
+ },
+ {
+  "type_id": 334,
+  "rep": 259,
+  "n_instances": 1,
+  "n_descs": 36,
+  "stage": "feature_enhancer",
+  "est_cycles": 44105,
+  "est_lenfix": 44105,
+  "est_fixed": 55505,
+  "macs_v0": 0,
+  "macs_padded": 10616832,
+  "macs_useful": 1310720,
+  "cycles": {
+   "ref": 85539,
+   "pf1": 85539
+  },
+  "mac_total": 10616832
+ },
+ {
+  "type_id": 335,
+  "rep": 260,
+  "n_instances": 1,
+  "n_descs": 179,
+  "stage": "feature_enhancer",
+  "est_cycles": 942021,
+  "est_lenfix": 1976607,
+  "est_fixed": 3319967,
+  "macs_v0": 66614400,
+  "macs_padded": 1164533760,
+  "macs_useful": 917985280,
+  "cycles": {
+   "ref": 4174175,
+   "pf1": 4050763
+  },
+  "mac_total": 1164533760
+ },
+ {
+  "type_id": 336,
+  "rep": 261,
+  "n_instances": 1,
+  "n_descs": 20,
+  "stage": "feature_enhancer",
+  "est_cycles": 217646,
+  "est_lenfix": 546641,
+  "est_fixed": 961601,
+  "macs_v0": 23092992,
+  "macs_padded": 377481600,
+  "macs_useful": 223692800,
+  "cycles": {
+   "ref": 1285757,
+   "pf1": 1270329
+  },
+  "mac_total": 377481600
+ },
+ {
+  "type_id": 337,
+  "rep": 262,
+  "n_instances": 1,
+  "n_descs": 29,
+  "stage": "feature_enhancer",
+  "est_cycles": 157820,
+  "est_lenfix": 847544,
+  "est_fixed": 1495520,
+  "macs_v0": 34639488,
+  "macs_padded": 566222400,
+  "macs_useful": 447385600,
+  "cycles": {
+   "ref": 1878081,
+   "pf1": 1847613
+  },
+  "mac_total": 566222400
+ },
+ {
+  "type_id": 338,
+  "rep": 265,
+  "n_instances": 1,
+  "n_descs": 37,
+  "stage": "feature_enhancer",
+  "est_cycles": 314349,
+  "est_lenfix": 1004073,
+  "est_fixed": 1679273,
+  "macs_v0": 33307200,
+  "macs_padded": 566222400,
+  "macs_useful": 559232000,
+  "cycles": {
+   "ref": 2092253,
+   "pf1": 2046105
+  },
+  "mac_total": 566222400
+ },
+ {
+  "type_id": 339,
+  "rep": 314,
+  "n_instances": 1,
+  "n_descs": 20,
+  "stage": "feature_enhancer",
+  "est_cycles": 60699,
+  "est_lenfix": 60699,
+  "est_fixed": 65115,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 1579008,
+  "cycles": {
+   "ref": 75031,
+   "pf1": 71015
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 340,
+  "rep": 315,
+  "n_instances": 1,
+  "n_descs": 22,
+  "stage": "feature_enhancer",
+  "est_cycles": 2075,
+  "est_lenfix": 2075,
+  "est_fixed": 3159,
+  "macs_v0": 0,
+  "macs_padded": 442368,
+  "macs_useful": 16384,
+  "cycles": {
+   "ref": 4549,
+   "pf1": 4549
+  },
+  "mac_total": 442368
+ },
+ {
+  "type_id": 341,
+  "rep": 316,
+  "n_instances": 1,
+  "n_descs": 27,
+  "stage": "feature_enhancer",
+  "est_cycles": 23441,
+  "est_lenfix": 23441,
+  "est_fixed": 26149,
+  "macs_v0": 0,
+  "macs_padded": 1387584,
+  "macs_useful": 542720,
+  "cycles": {
+   "ref": 30427,
+   "pf1": 29279
+  },
+  "mac_total": 1387584
+ },
+ {
+  "type_id": 342,
+  "rep": 317,
+  "n_instances": 1,
+  "n_descs": 24,
+  "stage": "feature_enhancer",
+  "est_cycles": 76189,
+  "est_lenfix": 76189,
+  "est_fixed": 81773,
+  "macs_v0": 0,
+  "macs_padded": 4440960,
+  "macs_useful": 2105344,
+  "cycles": {
+   "ref": 94303,
+   "pf1": 89051
+  },
+  "mac_total": 4440960
+ },
+ {
+  "type_id": 343,
+  "rep": 318,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "feature_enhancer",
+  "est_cycles": 85722,
+  "est_lenfix": 85722,
+  "est_fixed": 89650,
+  "macs_v0": 0,
+  "macs_padded": 5313600,
+  "macs_useful": 2099200,
+  "cycles": {
+   "ref": 102967,
+   "pf1": 100287
+  },
+  "mac_total": 5313600
+ },
+ {
+  "type_id": 344,
+  "rep": 319,
+  "n_instances": 1,
+  "n_descs": 91,
+  "stage": "feature_enhancer",
+  "est_cycles": 345722,
+  "est_lenfix": 345722,
+  "est_fixed": 412730,
+  "macs_v0": 0,
+  "macs_padded": 53291520,
+  "macs_useful": 46317568,
+  "cycles": {
+   "ref": 471171,
+   "pf1": 409663
+  },
+  "mac_total": 53291520
+ },
+ {
+  "type_id": 345,
+  "rep": 320,
+  "n_instances": 1,
+  "n_descs": 36,
+  "stage": "feature_enhancer",
+  "est_cycles": 44105,
+  "est_lenfix": 44105,
+  "est_fixed": 55505,
+  "macs_v0": 0,
+  "macs_padded": 10616832,
+  "macs_useful": 1310720,
+  "cycles": {
+   "ref": 85539,
+   "pf1": 85539
+  },
+  "mac_total": 10616832
+ },
+ {
+  "type_id": 346,
+  "rep": 321,
+  "n_instances": 1,
+  "n_descs": 179,
+  "stage": "feature_enhancer",
+  "est_cycles": 942021,
+  "est_lenfix": 1976607,
+  "est_fixed": 3319967,
+  "macs_v0": 66614400,
+  "macs_padded": 1164533760,
+  "macs_useful": 917985280,
+  "cycles": {
+   "ref": 4174175,
+   "pf1": 4050763
+  },
+  "mac_total": 1164533760
+ },
+ {
+  "type_id": 347,
+  "rep": 322,
+  "n_instances": 1,
+  "n_descs": 20,
+  "stage": "feature_enhancer",
+  "est_cycles": 217646,
+  "est_lenfix": 546641,
+  "est_fixed": 961601,
+  "macs_v0": 23092992,
+  "macs_padded": 377481600,
+  "macs_useful": 223692800,
+  "cycles": {
+   "ref": 1285757,
+   "pf1": 1270329
+  },
+  "mac_total": 377481600
+ },
+ {
+  "type_id": 348,
+  "rep": 323,
+  "n_instances": 1,
+  "n_descs": 29,
+  "stage": "feature_enhancer",
+  "est_cycles": 157820,
+  "est_lenfix": 847544,
+  "est_fixed": 1495520,
+  "macs_v0": 34639488,
+  "macs_padded": 566222400,
+  "macs_useful": 447385600,
+  "cycles": {
+   "ref": 1878081,
+   "pf1": 1847613
+  },
+  "mac_total": 566222400
+ },
+ {
+  "type_id": 349,
+  "rep": 326,
+  "n_instances": 1,
+  "n_descs": 37,
+  "stage": "feature_enhancer",
+  "est_cycles": 314349,
+  "est_lenfix": 1004073,
+  "est_fixed": 1679273,
+  "macs_v0": 33307200,
+  "macs_padded": 566222400,
+  "macs_useful": 559232000,
+  "cycles": {
+   "ref": 2092253,
+   "pf1": 2046105
+  },
+  "mac_total": 566222400
+ },
+ {
+  "type_id": 350,
+  "rep": 375,
+  "n_instances": 1,
+  "n_descs": 20,
+  "stage": "feature_enhancer",
+  "est_cycles": 60699,
+  "est_lenfix": 60699,
+  "est_fixed": 65115,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 1579008,
+  "cycles": {
+   "ref": 75031,
+   "pf1": 71015
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 351,
+  "rep": 376,
+  "n_instances": 1,
+  "n_descs": 22,
+  "stage": "feature_enhancer",
+  "est_cycles": 2075,
+  "est_lenfix": 2075,
+  "est_fixed": 3159,
+  "macs_v0": 0,
+  "macs_padded": 442368,
+  "macs_useful": 16384,
+  "cycles": {
+   "ref": 4549,
+   "pf1": 4549
+  },
+  "mac_total": 442368
+ },
+ {
+  "type_id": 352,
+  "rep": 377,
+  "n_instances": 1,
+  "n_descs": 27,
+  "stage": "feature_enhancer",
+  "est_cycles": 23441,
+  "est_lenfix": 23441,
+  "est_fixed": 26149,
+  "macs_v0": 0,
+  "macs_padded": 1387584,
+  "macs_useful": 542720,
+  "cycles": {
+   "ref": 30427,
+   "pf1": 29279
+  },
+  "mac_total": 1387584
+ },
+ {
+  "type_id": 353,
+  "rep": 378,
+  "n_instances": 1,
+  "n_descs": 24,
+  "stage": "feature_enhancer",
+  "est_cycles": 76189,
+  "est_lenfix": 76189,
+  "est_fixed": 81773,
+  "macs_v0": 0,
+  "macs_padded": 4440960,
+  "macs_useful": 2105344,
+  "cycles": {
+   "ref": 94303,
+   "pf1": 89051
+  },
+  "mac_total": 4440960
+ },
+ {
+  "type_id": 354,
+  "rep": 379,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "feature_enhancer",
+  "est_cycles": 85722,
+  "est_lenfix": 85722,
+  "est_fixed": 89650,
+  "macs_v0": 0,
+  "macs_padded": 5313600,
+  "macs_useful": 2099200,
+  "cycles": {
+   "ref": 102967,
+   "pf1": 100287
+  },
+  "mac_total": 5313600
+ },
+ {
+  "type_id": 355,
+  "rep": 380,
+  "n_instances": 1,
+  "n_descs": 91,
+  "stage": "feature_enhancer",
+  "est_cycles": 345722,
+  "est_lenfix": 345722,
+  "est_fixed": 412730,
+  "macs_v0": 0,
+  "macs_padded": 53291520,
+  "macs_useful": 46317568,
+  "cycles": {
+   "ref": 471171,
+   "pf1": 409663
+  },
+  "mac_total": 53291520
+ },
+ {
+  "type_id": 356,
+  "rep": 381,
+  "n_instances": 1,
+  "n_descs": 36,
+  "stage": "feature_enhancer",
+  "est_cycles": 44105,
+  "est_lenfix": 44105,
+  "est_fixed": 55505,
+  "macs_v0": 0,
+  "macs_padded": 10616832,
+  "macs_useful": 1310720,
+  "cycles": {
+   "ref": 85539,
+   "pf1": 85539
+  },
+  "mac_total": 10616832
+ },
+ {
+  "type_id": 357,
+  "rep": 382,
+  "n_instances": 1,
+  "n_descs": 179,
+  "stage": "feature_enhancer",
+  "est_cycles": 942021,
+  "est_lenfix": 1976607,
+  "est_fixed": 3319967,
+  "macs_v0": 66614400,
+  "macs_padded": 1164533760,
+  "macs_useful": 917985280,
+  "cycles": {
+   "ref": 4174175,
+   "pf1": 4050763
+  },
+  "mac_total": 1164533760
+ },
+ {
+  "type_id": 358,
+  "rep": 383,
+  "n_instances": 1,
+  "n_descs": 20,
+  "stage": "feature_enhancer",
+  "est_cycles": 217646,
+  "est_lenfix": 546641,
+  "est_fixed": 961601,
+  "macs_v0": 23092992,
+  "macs_padded": 377481600,
+  "macs_useful": 223692800,
+  "cycles": {
+   "ref": 1285757,
+   "pf1": 1270329
+  },
+  "mac_total": 377481600
+ },
+ {
+  "type_id": 359,
+  "rep": 384,
+  "n_instances": 1,
+  "n_descs": 29,
+  "stage": "feature_enhancer",
+  "est_cycles": 157820,
+  "est_lenfix": 847544,
+  "est_fixed": 1495520,
+  "macs_v0": 34639488,
+  "macs_padded": 566222400,
+  "macs_useful": 447385600,
+  "cycles": {
+   "ref": 1878081,
+   "pf1": 1847613
+  },
+  "mac_total": 566222400
+ },
+ {
+  "type_id": 360,
+  "rep": 387,
+  "n_instances": 1,
+  "n_descs": 37,
+  "stage": "feature_enhancer",
+  "est_cycles": 314349,
+  "est_lenfix": 1004073,
+  "est_fixed": 1679273,
+  "macs_v0": 33307200,
+  "macs_padded": 566222400,
+  "macs_useful": 559232000,
+  "cycles": {
+   "ref": 2092253,
+   "pf1": 2046105
+  },
+  "mac_total": 566222400
+ },
+ {
+  "type_id": 361,
+  "rep": 436,
+  "n_instances": 1,
+  "n_descs": 20,
+  "stage": "feature_enhancer",
+  "est_cycles": 60699,
+  "est_lenfix": 60699,
+  "est_fixed": 65115,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 1579008,
+  "cycles": {
+   "ref": 75031,
+   "pf1": 71015
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 362,
+  "rep": 437,
+  "n_instances": 1,
+  "n_descs": 22,
+  "stage": "feature_enhancer",
+  "est_cycles": 2075,
+  "est_lenfix": 2075,
+  "est_fixed": 3159,
+  "macs_v0": 0,
+  "macs_padded": 442368,
+  "macs_useful": 16384,
+  "cycles": {
+   "ref": 4549,
+   "pf1": 4549
+  },
+  "mac_total": 442368
+ },
+ {
+  "type_id": 363,
+  "rep": 438,
+  "n_instances": 1,
+  "n_descs": 27,
+  "stage": "feature_enhancer",
+  "est_cycles": 23441,
+  "est_lenfix": 23441,
+  "est_fixed": 26149,
+  "macs_v0": 0,
+  "macs_padded": 1387584,
+  "macs_useful": 542720,
+  "cycles": {
+   "ref": 30427,
+   "pf1": 29279
+  },
+  "mac_total": 1387584
+ },
+ {
+  "type_id": 364,
+  "rep": 439,
+  "n_instances": 1,
+  "n_descs": 24,
+  "stage": "feature_enhancer",
+  "est_cycles": 76189,
+  "est_lenfix": 76189,
+  "est_fixed": 81773,
+  "macs_v0": 0,
+  "macs_padded": 4440960,
+  "macs_useful": 2105344,
+  "cycles": {
+   "ref": 94303,
+   "pf1": 89051
+  },
+  "mac_total": 4440960
+ },
+ {
+  "type_id": 365,
+  "rep": 440,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "feature_enhancer",
+  "est_cycles": 85722,
+  "est_lenfix": 85722,
+  "est_fixed": 89650,
+  "macs_v0": 0,
+  "macs_padded": 5313600,
+  "macs_useful": 2099200,
+  "cycles": {
+   "ref": 102967,
+   "pf1": 100287
+  },
+  "mac_total": 5313600
+ },
+ {
+  "type_id": 366,
+  "rep": 441,
+  "n_instances": 1,
+  "n_descs": 91,
+  "stage": "feature_enhancer",
+  "est_cycles": 345722,
+  "est_lenfix": 345722,
+  "est_fixed": 412730,
+  "macs_v0": 0,
+  "macs_padded": 53291520,
+  "macs_useful": 46317568,
+  "cycles": {
+   "ref": 471171,
+   "pf1": 409663
+  },
+  "mac_total": 53291520
+ },
+ {
+  "type_id": 367,
+  "rep": 442,
+  "n_instances": 1,
+  "n_descs": 36,
+  "stage": "feature_enhancer",
+  "est_cycles": 44105,
+  "est_lenfix": 44105,
+  "est_fixed": 55505,
+  "macs_v0": 0,
+  "macs_padded": 10616832,
+  "macs_useful": 1310720,
+  "cycles": {
+   "ref": 85539,
+   "pf1": 85539
+  },
+  "mac_total": 10616832
+ },
+ {
+  "type_id": 368,
+  "rep": 443,
+  "n_instances": 1,
+  "n_descs": 179,
+  "stage": "feature_enhancer",
+  "est_cycles": 942021,
+  "est_lenfix": 1976607,
+  "est_fixed": 3319967,
+  "macs_v0": 66614400,
+  "macs_padded": 1164533760,
+  "macs_useful": 917985280,
+  "cycles": {
+   "ref": 4174175,
+   "pf1": 4050763
+  },
+  "mac_total": 1164533760
+ },
+ {
+  "type_id": 369,
+  "rep": 444,
+  "n_instances": 1,
+  "n_descs": 20,
+  "stage": "feature_enhancer",
+  "est_cycles": 217646,
+  "est_lenfix": 546641,
+  "est_fixed": 961601,
+  "macs_v0": 23092992,
+  "macs_padded": 377481600,
+  "macs_useful": 223692800,
+  "cycles": {
+   "ref": 1285757,
+   "pf1": 1270329
+  },
+  "mac_total": 377481600
+ },
+ {
+  "type_id": 370,
+  "rep": 445,
+  "n_instances": 1,
+  "n_descs": 29,
+  "stage": "feature_enhancer",
+  "est_cycles": 157820,
+  "est_lenfix": 847544,
+  "est_fixed": 1495520,
+  "macs_v0": 34639488,
+  "macs_padded": 566222400,
+  "macs_useful": 447385600,
+  "cycles": {
+   "ref": 1878081,
+   "pf1": 1847613
+  },
+  "mac_total": 566222400
+ },
+ {
+  "type_id": 371,
+  "rep": 448,
+  "n_instances": 1,
+  "n_descs": 37,
+  "stage": "feature_enhancer",
+  "est_cycles": 314349,
+  "est_lenfix": 1004073,
+  "est_fixed": 1679273,
+  "macs_v0": 33307200,
+  "macs_padded": 566222400,
+  "macs_useful": 559232000,
+  "cycles": {
+   "ref": 2092253,
+   "pf1": 2046105
+  },
+  "mac_total": 566222400
+ },
+ {
+  "type_id": 372,
+  "rep": 497,
+  "n_instances": 1,
+  "n_descs": 20,
+  "stage": "feature_enhancer",
+  "est_cycles": 60699,
+  "est_lenfix": 60699,
+  "est_fixed": 65115,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 1579008,
+  "cycles": {
+   "ref": 75031,
+   "pf1": 71015
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 373,
+  "rep": 498,
+  "n_instances": 1,
+  "n_descs": 22,
+  "stage": "feature_enhancer",
+  "est_cycles": 2075,
+  "est_lenfix": 2075,
+  "est_fixed": 3159,
+  "macs_v0": 0,
+  "macs_padded": 442368,
+  "macs_useful": 16384,
+  "cycles": {
+   "ref": 4549,
+   "pf1": 4549
+  },
+  "mac_total": 442368
+ },
+ {
+  "type_id": 374,
+  "rep": 499,
+  "n_instances": 1,
+  "n_descs": 27,
+  "stage": "feature_enhancer",
+  "est_cycles": 23441,
+  "est_lenfix": 23441,
+  "est_fixed": 26149,
+  "macs_v0": 0,
+  "macs_padded": 1387584,
+  "macs_useful": 542720,
+  "cycles": {
+   "ref": 30427,
+   "pf1": 29279
+  },
+  "mac_total": 1387584
+ },
+ {
+  "type_id": 375,
+  "rep": 500,
+  "n_instances": 1,
+  "n_descs": 24,
+  "stage": "feature_enhancer",
+  "est_cycles": 76189,
+  "est_lenfix": 76189,
+  "est_fixed": 81773,
+  "macs_v0": 0,
+  "macs_padded": 4440960,
+  "macs_useful": 2105344,
+  "cycles": {
+   "ref": 94303,
+   "pf1": 89051
+  },
+  "mac_total": 4440960
+ },
+ {
+  "type_id": 376,
+  "rep": 501,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "feature_enhancer",
+  "est_cycles": 85722,
+  "est_lenfix": 85722,
+  "est_fixed": 89650,
+  "macs_v0": 0,
+  "macs_padded": 5313600,
+  "macs_useful": 2099200,
+  "cycles": {
+   "ref": 102967,
+   "pf1": 100287
+  },
+  "mac_total": 5313600
+ },
+ {
+  "type_id": 377,
+  "rep": 502,
+  "n_instances": 1,
+  "n_descs": 91,
+  "stage": "feature_enhancer",
+  "est_cycles": 345722,
+  "est_lenfix": 345722,
+  "est_fixed": 412730,
+  "macs_v0": 0,
+  "macs_padded": 53291520,
+  "macs_useful": 46317568,
+  "cycles": {
+   "ref": 471171,
+   "pf1": 409663
+  },
+  "mac_total": 53291520
+ },
+ {
+  "type_id": 378,
+  "rep": 503,
+  "n_instances": 1,
+  "n_descs": 36,
+  "stage": "feature_enhancer",
+  "est_cycles": 44105,
+  "est_lenfix": 44105,
+  "est_fixed": 55505,
+  "macs_v0": 0,
+  "macs_padded": 10616832,
+  "macs_useful": 1310720,
+  "cycles": {
+   "ref": 85539,
+   "pf1": 85539
+  },
+  "mac_total": 10616832
+ },
+ {
+  "type_id": 379,
+  "rep": 504,
+  "n_instances": 1,
+  "n_descs": 179,
+  "stage": "feature_enhancer",
+  "est_cycles": 942021,
+  "est_lenfix": 1976607,
+  "est_fixed": 3319967,
+  "macs_v0": 66614400,
+  "macs_padded": 1164533760,
+  "macs_useful": 917985280,
+  "cycles": {
+   "ref": 4174175,
+   "pf1": 4050763
+  },
+  "mac_total": 1164533760
+ },
+ {
+  "type_id": 380,
+  "rep": 505,
+  "n_instances": 1,
+  "n_descs": 20,
+  "stage": "feature_enhancer",
+  "est_cycles": 217646,
+  "est_lenfix": 546641,
+  "est_fixed": 961601,
+  "macs_v0": 23092992,
+  "macs_padded": 377481600,
+  "macs_useful": 223692800,
+  "cycles": {
+   "ref": 1285757,
+   "pf1": 1270329
+  },
+  "mac_total": 377481600
+ },
+ {
+  "type_id": 381,
+  "rep": 506,
+  "n_instances": 1,
+  "n_descs": 29,
+  "stage": "feature_enhancer",
+  "est_cycles": 157820,
+  "est_lenfix": 847544,
+  "est_fixed": 1495520,
+  "macs_v0": 34639488,
+  "macs_padded": 566222400,
+  "macs_useful": 447385600,
+  "cycles": {
+   "ref": 1878081,
+   "pf1": 1847613
+  },
+  "mac_total": 566222400
+ },
+ {
+  "type_id": 382,
+  "rep": 509,
+  "n_instances": 1,
+  "n_descs": 37,
+  "stage": "feature_enhancer",
+  "est_cycles": 314349,
+  "est_lenfix": 1004073,
+  "est_fixed": 1679273,
+  "macs_v0": 33307200,
+  "macs_padded": 566222400,
+  "macs_useful": 559232000,
+  "cycles": {
+   "ref": 2092253,
+   "pf1": 2046105
+  },
+  "mac_total": 566222400
+ },
+ {
+  "type_id": 383,
+  "rep": 558,
+  "n_instances": 1,
+  "n_descs": 20,
+  "stage": "feature_enhancer",
+  "est_cycles": 60699,
+  "est_lenfix": 60699,
+  "est_fixed": 65115,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 1579008,
+  "cycles": {
+   "ref": 75031,
+   "pf1": 71015
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 384,
+  "rep": 559,
+  "n_instances": 1,
+  "n_descs": 22,
+  "stage": "feature_enhancer",
+  "est_cycles": 2075,
+  "est_lenfix": 2075,
+  "est_fixed": 3159,
+  "macs_v0": 0,
+  "macs_padded": 442368,
+  "macs_useful": 16384,
+  "cycles": {
+   "ref": 4549,
+   "pf1": 4549
+  },
+  "mac_total": 442368
+ },
+ {
+  "type_id": 385,
+  "rep": 560,
+  "n_instances": 1,
+  "n_descs": 27,
+  "stage": "feature_enhancer",
+  "est_cycles": 23441,
+  "est_lenfix": 23441,
+  "est_fixed": 26149,
+  "macs_v0": 0,
+  "macs_padded": 1387584,
+  "macs_useful": 542720,
+  "cycles": {
+   "ref": 30427,
+   "pf1": 29279
+  },
+  "mac_total": 1387584
+ },
+ {
+  "type_id": 386,
+  "rep": 561,
+  "n_instances": 1,
+  "n_descs": 24,
+  "stage": "feature_enhancer",
+  "est_cycles": 76189,
+  "est_lenfix": 76189,
+  "est_fixed": 81773,
+  "macs_v0": 0,
+  "macs_padded": 4440960,
+  "macs_useful": 2105344,
+  "cycles": {
+   "ref": 94303,
+   "pf1": 89051
+  },
+  "mac_total": 4440960
+ },
+ {
+  "type_id": 387,
+  "rep": 562,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "feature_enhancer",
+  "est_cycles": 85722,
+  "est_lenfix": 85722,
+  "est_fixed": 89650,
+  "macs_v0": 0,
+  "macs_padded": 5313600,
+  "macs_useful": 2099200,
+  "cycles": {
+   "ref": 102967,
+   "pf1": 100287
+  },
+  "mac_total": 5313600
+ },
+ {
+  "type_id": 388,
+  "rep": 563,
+  "n_instances": 1,
+  "n_descs": 91,
+  "stage": "feature_enhancer",
+  "est_cycles": 345722,
+  "est_lenfix": 345722,
+  "est_fixed": 412730,
+  "macs_v0": 0,
+  "macs_padded": 53291520,
+  "macs_useful": 46317568,
+  "cycles": {
+   "ref": 471171,
+   "pf1": 409663
+  },
+  "mac_total": 53291520
+ },
+ {
+  "type_id": 389,
+  "rep": 564,
+  "n_instances": 1,
+  "n_descs": 36,
+  "stage": "feature_enhancer",
+  "est_cycles": 44105,
+  "est_lenfix": 44105,
+  "est_fixed": 55505,
+  "macs_v0": 0,
+  "macs_padded": 10616832,
+  "macs_useful": 1310720,
+  "cycles": {
+   "ref": 85539,
+   "pf1": 85539
+  },
+  "mac_total": 10616832
+ },
+ {
+  "type_id": 390,
+  "rep": 565,
+  "n_instances": 1,
+  "n_descs": 179,
+  "stage": "feature_enhancer",
+  "est_cycles": 942021,
+  "est_lenfix": 1976607,
+  "est_fixed": 3319967,
+  "macs_v0": 66614400,
+  "macs_padded": 1164533760,
+  "macs_useful": 917985280,
+  "cycles": {
+   "ref": 4174175,
+   "pf1": 4050763
+  },
+  "mac_total": 1164533760
+ },
+ {
+  "type_id": 391,
+  "rep": 566,
+  "n_instances": 1,
+  "n_descs": 20,
+  "stage": "feature_enhancer",
+  "est_cycles": 217646,
+  "est_lenfix": 546641,
+  "est_fixed": 961601,
+  "macs_v0": 23092992,
+  "macs_padded": 377481600,
+  "macs_useful": 223692800,
+  "cycles": {
+   "ref": 1285757,
+   "pf1": 1270329
+  },
+  "mac_total": 377481600
+ },
+ {
+  "type_id": 392,
+  "rep": 567,
+  "n_instances": 1,
+  "n_descs": 29,
+  "stage": "feature_enhancer",
+  "est_cycles": 157820,
+  "est_lenfix": 847544,
+  "est_fixed": 1495520,
+  "macs_v0": 34639488,
+  "macs_padded": 566222400,
+  "macs_useful": 447385600,
+  "cycles": {
+   "ref": 1878081,
+   "pf1": 1847613
+  },
+  "mac_total": 566222400
+ },
+ {
+  "type_id": 393,
+  "rep": 570,
+  "n_instances": 1,
+  "n_descs": 37,
+  "stage": "feature_enhancer",
+  "est_cycles": 314349,
+  "est_lenfix": 1004073,
+  "est_fixed": 1679273,
+  "macs_v0": 33307200,
+  "macs_padded": 566222400,
+  "macs_useful": 559232000,
+  "cycles": {
+   "ref": 2092253,
+   "pf1": 2046105
+  },
+  "mac_total": 566222400
+ },
+ {
+  "type_id": 394,
+  "rep": 619,
+  "n_instances": 1,
+  "n_descs": 20,
+  "stage": "feature_enhancer",
+  "est_cycles": 60699,
+  "est_lenfix": 60699,
+  "est_fixed": 65115,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 1579008,
+  "cycles": {
+   "ref": 75031,
+   "pf1": 71015
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 395,
+  "rep": 620,
+  "n_instances": 1,
+  "n_descs": 22,
+  "stage": "feature_enhancer",
+  "est_cycles": 2075,
+  "est_lenfix": 2075,
+  "est_fixed": 3159,
+  "macs_v0": 0,
+  "macs_padded": 442368,
+  "macs_useful": 16384,
+  "cycles": {
+   "ref": 4549,
+   "pf1": 4549
+  },
+  "mac_total": 442368
+ },
+ {
+  "type_id": 396,
+  "rep": 621,
+  "n_instances": 1,
+  "n_descs": 27,
+  "stage": "feature_enhancer",
+  "est_cycles": 23441,
+  "est_lenfix": 23441,
+  "est_fixed": 26149,
+  "macs_v0": 0,
+  "macs_padded": 1387584,
+  "macs_useful": 542720,
+  "cycles": {
+   "ref": 30427,
+   "pf1": 29279
+  },
+  "mac_total": 1387584
+ },
+ {
+  "type_id": 397,
+  "rep": 622,
+  "n_instances": 1,
+  "n_descs": 24,
+  "stage": "feature_enhancer",
+  "est_cycles": 76189,
+  "est_lenfix": 76189,
+  "est_fixed": 81773,
+  "macs_v0": 0,
+  "macs_padded": 4440960,
+  "macs_useful": 2105344,
+  "cycles": {
+   "ref": 94303,
+   "pf1": 89051
+  },
+  "mac_total": 4440960
+ },
+ {
+  "type_id": 398,
+  "rep": 623,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "feature_enhancer",
+  "est_cycles": 85722,
+  "est_lenfix": 85722,
+  "est_fixed": 89650,
+  "macs_v0": 0,
+  "macs_padded": 5313600,
+  "macs_useful": 2099200,
+  "cycles": {
+   "ref": 102967,
+   "pf1": 100287
+  },
+  "mac_total": 5313600
+ },
+ {
+  "type_id": 399,
+  "rep": 624,
+  "n_instances": 1,
+  "n_descs": 66,
+  "stage": "spatial_enhancer",
+  "est_cycles": 781953,
+  "est_lenfix": 1455810,
+  "est_fixed": 2518746,
+  "macs_v0": 57732480,
+  "macs_padded": 943704000,
+  "macs_useful": 671078400,
+  "cycles": {
+   "ref": 3232651,
+   "pf1": 3140851
+  },
+  "mac_total": 943704000
+ },
+ {
+  "type_id": 400,
+  "rep": 657,
+  "n_instances": 1,
+  "n_descs": 95,
+  "stage": "spatial_enhancer",
+  "est_cycles": 969952,
+  "est_lenfix": 2349400,
+  "est_fixed": 4317400,
+  "macs_v0": 132969600,
+  "macs_padded": 2260483200,
+  "macs_useful": 2260483200,
+  "cycles": {
+   "ref": 5179361,
+   "pf1": 4797485
+  },
+  "mac_total": 2260483200
+ },
+ {
+  "type_id": 401,
+  "rep": 658,
+  "n_instances": 1,
+  "n_descs": 62,
+  "stage": "spatial_enhancer",
+  "est_cycles": 404080,
+  "est_lenfix": 1537753,
+  "est_fixed": 2827353,
+  "macs_v0": 88646400,
+  "macs_padded": 1506988800,
+  "macs_useful": 1311638400,
+  "cycles": {
+   "ref": 3545759,
+   "pf1": 3362459
+  },
+  "mac_total": 1506988800
+ },
+ {
+  "type_id": 402,
+  "rep": 663,
+  "n_instances": 1,
+  "n_descs": 45,
+  "stage": "spatial_enhancer",
+  "est_cycles": 423235,
+  "est_lenfix": 1215931,
+  "est_fixed": 1738835,
+  "macs_v0": 42508800,
+  "macs_padded": 752760000,
+  "macs_useful": 557600000,
+  "cycles": {
+   "ref": 2836505,
+   "pf1": 2836505
+  },
+  "mac_total": 752760000
+ },
+ {
+  "type_id": 403,
+  "rep": 664,
+  "n_instances": 1,
+  "n_descs": 41,
+  "stage": "spatial_enhancer",
+  "est_cycles": 393357,
+  "est_lenfix": 1166301,
+  "est_fixed": 2123101,
+  "macs_v0": 66484800,
+  "macs_padded": 1130241600,
+  "macs_useful": 893030400,
+  "cycles": {
+   "ref": 2776813,
+   "pf1": 2684777
+  },
+  "mac_total": 1130241600
+ },
+ {
+  "type_id": 404,
+  "rep": 665,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 2578,
+  "est_lenfix": 2578,
+  "est_fixed": 3458,
+  "macs_v0": 0,
+  "macs_padded": 46656,
+  "macs_useful": 32256,
+  "cycles": {
+   "ref": 4463,
+   "pf1": 3919
+  },
+  "mac_total": 46656
+ },
+ {
+  "type_id": 405,
+  "rep": 666,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 22872,
+  "est_lenfix": 22872,
+  "est_fixed": 24496,
+  "macs_v0": 0,
+  "macs_padded": 1332288,
+  "macs_useful": 921088,
+  "cycles": {
+   "ref": 28595,
+   "pf1": 27451
+  },
+  "mac_total": 1332288
+ },
+ {
+  "type_id": 406,
+  "rep": 667,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 22872,
+  "est_lenfix": 22872,
+  "est_fixed": 24496,
+  "macs_v0": 0,
+  "macs_padded": 1332288,
+  "macs_useful": 921088,
+  "cycles": {
+   "ref": 28595,
+   "pf1": 27451
+  },
+  "mac_total": 1332288
+ },
+ {
+  "type_id": 407,
+  "rep": 668,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 22872,
+  "est_lenfix": 22872,
+  "est_fixed": 24496,
+  "macs_v0": 0,
+  "macs_padded": 1332288,
+  "macs_useful": 921088,
+  "cycles": {
+   "ref": 28595,
+   "pf1": 27451
+  },
+  "mac_total": 1332288
+ },
+ {
+  "type_id": 408,
+  "rep": 669,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 22872,
+  "est_lenfix": 22872,
+  "est_fixed": 24496,
+  "macs_v0": 0,
+  "macs_padded": 1332288,
+  "macs_useful": 921088,
+  "cycles": {
+   "ref": 28595,
+   "pf1": 27451
+  },
+  "mac_total": 1332288
+ },
+ {
+  "type_id": 409,
+  "rep": 670,
+  "n_instances": 1,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 60864,
+  "est_lenfix": 60864,
+  "est_fixed": 64768,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 921088,
+  "cycles": {
+   "ref": 77309,
+   "pf1": 77309
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 410,
+  "rep": 671,
+  "n_instances": 1,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 60864,
+  "est_lenfix": 60864,
+  "est_fixed": 64768,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 921088,
+  "cycles": {
+   "ref": 77309,
+   "pf1": 77309
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 411,
+  "rep": 672,
+  "n_instances": 1,
+  "n_descs": 50,
+  "stage": "decoder",
+  "est_cycles": 103632,
+  "est_lenfix": 103632,
+  "est_fixed": 128648,
+  "macs_v0": 0,
+  "macs_padded": 20872512,
+  "macs_useful": 13816320,
+  "cycles": {
+   "ref": 155099,
+   "pf1": 140335
+  },
+  "mac_total": 20872512
+ },
+ {
+  "type_id": 412,
+  "rep": 673,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 44448,
+  "est_lenfix": 44448,
+  "est_fixed": 65560,
+  "macs_v0": 0,
+  "macs_padded": 17319744,
+  "macs_useful": 12895232,
+  "cycles": {
+   "ref": 80175,
+   "pf1": 65543
+  },
+  "mac_total": 17319744
+ },
+ {
+  "type_id": 413,
+  "rep": 674,
+  "n_instances": 1,
+  "n_descs": 42,
+  "stage": "decoder",
+  "est_cycles": 2587,
+  "est_lenfix": 2587,
+  "est_fixed": 4547,
+  "macs_v0": 0,
+  "macs_padded": 442368,
+  "macs_useful": 50176,
+  "cycles": {
+   "ref": 6095,
+   "pf1": 6095
+  },
+  "mac_total": 442368
+ },
+ {
+  "type_id": 414,
+  "rep": 675,
+  "n_instances": 1,
+  "n_descs": 43,
+  "stage": "decoder",
+  "est_cycles": 23969,
+  "est_lenfix": 23969,
+  "est_fixed": 27553,
+  "macs_v0": 0,
+  "macs_padded": 1525824,
+  "macs_useful": 971264,
+  "cycles": {
+   "ref": 32119,
+   "pf1": 30935
+  },
+  "mac_total": 1525824
+ },
+ {
+  "type_id": 415,
+  "rep": 676,
+  "n_instances": 1,
+  "n_descs": 42,
+  "stage": "decoder",
+  "est_cycles": 144996,
+  "est_lenfix": 144996,
+  "est_fixed": 155708,
+  "macs_v0": 0,
+  "macs_padded": 8437824,
+  "macs_useful": 7368704,
+  "cycles": {
+   "ref": 179299,
+   "pf1": 168959
+  },
+  "mac_total": 8437824
+ },
+ {
+  "type_id": 416,
+  "rep": 677,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 169518,
+  "est_lenfix": 169518,
+  "est_fixed": 176518,
+  "macs_v0": 0,
+  "macs_padded": 10622016,
+  "macs_useful": 7343616,
+  "cycles": {
+   "ref": 201967,
+   "pf1": 201967
+  },
+  "mac_total": 10622016
+ },
+ {
+  "type_id": 417,
+  "rep": 678,
+  "n_instances": 1,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 60864,
+  "est_lenfix": 60864,
+  "est_fixed": 64768,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 921088,
+  "cycles": {
+   "ref": 77309,
+   "pf1": 77309
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 418,
+  "rep": 679,
+  "n_instances": 1,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 60864,
+  "est_lenfix": 60864,
+  "est_fixed": 64768,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 921088,
+  "cycles": {
+   "ref": 77309,
+   "pf1": 77309
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 419,
+  "rep": 680,
+  "n_instances": 1,
+  "n_descs": 50,
+  "stage": "decoder",
+  "est_cycles": 103632,
+  "est_lenfix": 103632,
+  "est_fixed": 128648,
+  "macs_v0": 0,
+  "macs_padded": 20872512,
+  "macs_useful": 13816320,
+  "cycles": {
+   "ref": 155099,
+   "pf1": 140335
+  },
+  "mac_total": 20872512
+ },
+ {
+  "type_id": 420,
+  "rep": 681,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 44448,
+  "est_lenfix": 44448,
+  "est_fixed": 65560,
+  "macs_v0": 0,
+  "macs_padded": 17319744,
+  "macs_useful": 12895232,
+  "cycles": {
+   "ref": 80175,
+   "pf1": 65543
+  },
+  "mac_total": 17319744
+ },
+ {
+  "type_id": 421,
+  "rep": 682,
+  "n_instances": 1,
+  "n_descs": 42,
+  "stage": "decoder",
+  "est_cycles": 2587,
+  "est_lenfix": 2587,
+  "est_fixed": 4547,
+  "macs_v0": 0,
+  "macs_padded": 442368,
+  "macs_useful": 50176,
+  "cycles": {
+   "ref": 6095,
+   "pf1": 6095
+  },
+  "mac_total": 442368
+ },
+ {
+  "type_id": 422,
+  "rep": 683,
+  "n_instances": 1,
+  "n_descs": 43,
+  "stage": "decoder",
+  "est_cycles": 23969,
+  "est_lenfix": 23969,
+  "est_fixed": 27553,
+  "macs_v0": 0,
+  "macs_padded": 1525824,
+  "macs_useful": 971264,
+  "cycles": {
+   "ref": 32119,
+   "pf1": 30935
+  },
+  "mac_total": 1525824
+ },
+ {
+  "type_id": 423,
+  "rep": 684,
+  "n_instances": 1,
+  "n_descs": 42,
+  "stage": "decoder",
+  "est_cycles": 144996,
+  "est_lenfix": 144996,
+  "est_fixed": 155708,
+  "macs_v0": 0,
+  "macs_padded": 8437824,
+  "macs_useful": 7368704,
+  "cycles": {
+   "ref": 179299,
+   "pf1": 168959
+  },
+  "mac_total": 8437824
+ },
+ {
+  "type_id": 424,
+  "rep": 685,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 169518,
+  "est_lenfix": 169518,
+  "est_fixed": 176518,
+  "macs_v0": 0,
+  "macs_padded": 10622016,
+  "macs_useful": 7343616,
+  "cycles": {
+   "ref": 201967,
+   "pf1": 201967
+  },
+  "mac_total": 10622016
+ },
+ {
+  "type_id": 425,
+  "rep": 686,
+  "n_instances": 1,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 60864,
+  "est_lenfix": 60864,
+  "est_fixed": 64768,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 921088,
+  "cycles": {
+   "ref": 77309,
+   "pf1": 77309
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 426,
+  "rep": 687,
+  "n_instances": 1,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 60864,
+  "est_lenfix": 60864,
+  "est_fixed": 64768,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 921088,
+  "cycles": {
+   "ref": 77309,
+   "pf1": 77309
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 427,
+  "rep": 688,
+  "n_instances": 1,
+  "n_descs": 50,
+  "stage": "decoder",
+  "est_cycles": 103632,
+  "est_lenfix": 103632,
+  "est_fixed": 128648,
+  "macs_v0": 0,
+  "macs_padded": 20872512,
+  "macs_useful": 13816320,
+  "cycles": {
+   "ref": 155099,
+   "pf1": 140335
+  },
+  "mac_total": 20872512
+ },
+ {
+  "type_id": 428,
+  "rep": 689,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 44448,
+  "est_lenfix": 44448,
+  "est_fixed": 65560,
+  "macs_v0": 0,
+  "macs_padded": 17319744,
+  "macs_useful": 12895232,
+  "cycles": {
+   "ref": 80175,
+   "pf1": 65543
+  },
+  "mac_total": 17319744
+ },
+ {
+  "type_id": 429,
+  "rep": 690,
+  "n_instances": 1,
+  "n_descs": 42,
+  "stage": "decoder",
+  "est_cycles": 2587,
+  "est_lenfix": 2587,
+  "est_fixed": 4547,
+  "macs_v0": 0,
+  "macs_padded": 442368,
+  "macs_useful": 50176,
+  "cycles": {
+   "ref": 6095,
+   "pf1": 6095
+  },
+  "mac_total": 442368
+ },
+ {
+  "type_id": 430,
+  "rep": 691,
+  "n_instances": 1,
+  "n_descs": 43,
+  "stage": "decoder",
+  "est_cycles": 23969,
+  "est_lenfix": 23969,
+  "est_fixed": 27553,
+  "macs_v0": 0,
+  "macs_padded": 1525824,
+  "macs_useful": 971264,
+  "cycles": {
+   "ref": 32119,
+   "pf1": 30935
+  },
+  "mac_total": 1525824
+ },
+ {
+  "type_id": 431,
+  "rep": 692,
+  "n_instances": 1,
+  "n_descs": 42,
+  "stage": "decoder",
+  "est_cycles": 144996,
+  "est_lenfix": 144996,
+  "est_fixed": 155708,
+  "macs_v0": 0,
+  "macs_padded": 8437824,
+  "macs_useful": 7368704,
+  "cycles": {
+   "ref": 179299,
+   "pf1": 168959
+  },
+  "mac_total": 8437824
+ },
+ {
+  "type_id": 432,
+  "rep": 693,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 169518,
+  "est_lenfix": 169518,
+  "est_fixed": 176518,
+  "macs_v0": 0,
+  "macs_padded": 10622016,
+  "macs_useful": 7343616,
+  "cycles": {
+   "ref": 201967,
+   "pf1": 201967
+  },
+  "mac_total": 10622016
+ },
+ {
+  "type_id": 433,
+  "rep": 694,
+  "n_instances": 1,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 60864,
+  "est_lenfix": 60864,
+  "est_fixed": 64768,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 921088,
+  "cycles": {
+   "ref": 77309,
+   "pf1": 77309
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 434,
+  "rep": 695,
+  "n_instances": 1,
+  "n_descs": 41,
+  "stage": "decoder",
+  "est_cycles": 60864,
+  "est_lenfix": 60864,
+  "est_fixed": 64768,
+  "macs_v0": 0,
+  "macs_padded": 3552768,
+  "macs_useful": 921088,
+  "cycles": {
+   "ref": 77309,
+   "pf1": 77309
+  },
+  "mac_total": 3552768
+ },
+ {
+  "type_id": 435,
+  "rep": 696,
+  "n_instances": 1,
+  "n_descs": 50,
+  "stage": "decoder",
+  "est_cycles": 103632,
+  "est_lenfix": 103632,
+  "est_fixed": 128648,
+  "macs_v0": 0,
+  "macs_padded": 20872512,
+  "macs_useful": 13816320,
+  "cycles": {
+   "ref": 155099,
+   "pf1": 140335
+  },
+  "mac_total": 20872512
+ },
+ {
+  "type_id": 436,
+  "rep": 697,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 44448,
+  "est_lenfix": 44448,
+  "est_fixed": 65560,
+  "macs_v0": 0,
+  "macs_padded": 17319744,
+  "macs_useful": 12895232,
+  "cycles": {
+   "ref": 80175,
+   "pf1": 65543
+  },
+  "mac_total": 17319744
+ },
+ {
+  "type_id": 437,
+  "rep": 698,
+  "n_instances": 1,
+  "n_descs": 42,
+  "stage": "decoder",
+  "est_cycles": 2587,
+  "est_lenfix": 2587,
+  "est_fixed": 4547,
+  "macs_v0": 0,
+  "macs_padded": 442368,
+  "macs_useful": 50176,
+  "cycles": {
+   "ref": 6095,
+   "pf1": 6095
+  },
+  "mac_total": 442368
+ },
+ {
+  "type_id": 438,
+  "rep": 699,
+  "n_instances": 1,
+  "n_descs": 43,
+  "stage": "decoder",
+  "est_cycles": 23969,
+  "est_lenfix": 23969,
+  "est_fixed": 27553,
+  "macs_v0": 0,
+  "macs_padded": 1525824,
+  "macs_useful": 971264,
+  "cycles": {
+   "ref": 32119,
+   "pf1": 30935
+  },
+  "mac_total": 1525824
+ },
+ {
+  "type_id": 439,
+  "rep": 700,
+  "n_instances": 1,
+  "n_descs": 42,
+  "stage": "decoder",
+  "est_cycles": 144996,
+  "est_lenfix": 144996,
+  "est_fixed": 155708,
+  "macs_v0": 0,
+  "macs_padded": 8437824,
+  "macs_useful": 7368704,
+  "cycles": {
+   "ref": 179299,
+   "pf1": 168959
+  },
+  "mac_total": 8437824
+ },
+ {
+  "type_id": 440,
+  "rep": 701,
+  "n_instances": 1,
+  "n_descs": 10,
+  "stage": "decoder",
+  "est_cycles": 169518,
+  "est_lenfix": 169518,
+  "est_fixed": 176518,
+  "macs_v0": 0,
+  "macs_padded": 10622016,
+  "macs_useful": 7343616,
+  "cycles": {
+   "ref": 201967,
+   "pf1": 201967
+  },
+  "mac_total": 10622016
+ }
+]

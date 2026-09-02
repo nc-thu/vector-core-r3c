@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>架构工作记录 · 2026-08-30 至 2026-08-31</title>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:#f9f9f7;color:#0b0b0b;font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;line-height:1.75;font-size:15px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 22px 80px}
+header.page{border-bottom:1px solid #e1e0d9;padding-bottom:18px;margin-bottom:10px}
+h1{font-size:24px;margin:0 0 10px;line-height:1.4}
+.meta{font-size:13px;color:#52514e;display:flex;flex-wrap:wrap;gap:4px 20px}
+nav.pagenav{margin:12px 0 0;font-size:13.5px}
+nav.pagenav a{color:#2a78d6;text-decoration:none;margin-right:16px}
+h2{font-size:19px;margin:40px 0 4px}
+.hint{font-size:13px;color:#898781;margin:0 0 10px}
+.entry{background:#fcfcfb;border:1px solid rgba(11,11,11,.10);border-radius:10px;padding:16px 20px;margin:14px 0}
+.date{display:inline-block;font-size:12px;font-weight:600;color:#52514e;background:#f0efec;border-radius:5px;padding:1px 8px;margin-left:8px;vertical-align:2px;white-space:nowrap}
+.entry h3{margin:0 0 8px;font-size:16.5px;display:flex;align-items:baseline;flex-wrap:wrap}
+p{margin:8px 0}
+ul,ol{margin:8px 0;padding-left:22px}
+li{margin:4px 0}
+.tile-row{display:flex;flex-wrap:wrap;gap:12px;margin:16px 0}
+.tile{flex:1 1 170px;background:#fcfcfb;border:1px solid rgba(11,11,11,.10);border-radius:10px;padding:12px 16px}
+.tile .v{font-size:21px;font-weight:700}
+.tile .k{font-size:12.5px;color:#52514e;margin-top:2px;line-height:1.5}
+figure.chart{margin:18px 0;background:#fcfcfb;border:1px solid rgba(11,11,11,.10);border-radius:10px;padding:14px 18px 8px}
+figure.chart h4{margin:2px 0 2px;font-size:15px}
+figure.chart .how{font-size:13px;color:#52514e;margin:0 0 8px}
+table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0}
+th,td{border-bottom:1px solid #e1e0d9;text-align:left;padding:6px 8px;vertical-align:top}
+th{color:#52514e;font-weight:600;border-bottom:1px solid #c3c2b7}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.warn{border-left:3px solid #fab219;background:#fffdf3;padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0}
+.crit{border-left:3px solid #d03b3b;background:#fff8f8;padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0}
+#tip{position:fixed;opacity:0;pointer-events:none;background:#0b0b0b;color:#fff;font-size:12.5px;line-height:1.5;padding:6px 10px;border-radius:6px;max-width:280px;z-index:9}
+[data-tip]{cursor:default}
+svg path[data-tip]:hover,svg [data-tip]:hover{filter:brightness(.92)}
+footer{margin-top:44px;padding-top:14px;border-top:1px solid #e1e0d9;font-size:12.5px;color:#898781}
+code{background:#f0efec;border-radius:4px;padding:1px 5px;font-size:12.5px}
+details{margin:6px 0 10px}
+summary{cursor:pointer;font-size:13px;color:#52514e}
+.pyramid{list-style:none;padding-left:0;margin:12px 0}
+.pyramid li{position:relative;padding:8px 12px 8px 40px;margin:6px 0;background:#fcfcfb;border:1px solid rgba(11,11,11,.10);border-radius:8px}
+.pyramid .lv{position:absolute;left:10px;top:9px;font-size:12px;font-weight:700;color:#2a78d6}
+.pyramid li.pass b{color:#0b0b0b}
+.pyramid li.open{border-left:3px solid #fab219}
+</style>
+</head>
+<body>
+<div id="tip"></div>
+<div class="wrap">
+
+<header class="page">
+<h1>架构方向工作记录：分段执行体系、验证金字塔与全模型拍数实测</h1>
+<div class="meta">
+<span>生成日期：<b>2026-08-31</b></span>
+<span>覆盖时段：<b>2026-08-30 至 2026-08-31</b></span>
+<span>工程目录：hb_fpga_impl /（跨目录的架构决策与测量）</span>
+</div>
+<nav class="pagenav">
+<a href="2026-08-31_硬件工作记录.html">→ 硬件方向记录</a>
+<a href="2026-08-31_软件工作记录.html">→ 软件方向记录</a>
+<a href="../WORKLOG.md">完整工作日志（WORKLOG.md）</a>
+</nav>
+</header>
+
+<p>这一页讲架构：软硬件怎么分工、数值口径怎么定、验证体系怎么搭、以及最重要的——<b>全模型拍数第一次实测出来了</b>。硬件改了什么电路看硬件页，编译器怎么实现看软件页，这里只讲"为什么这么设计"和"结果说明什么"。</p>
+
+<div class="tile-row">
+<div class="tile"><div class="v">10.81 亿拍</div><div class="k">一次推理总拍数（部署口径，预取开）——折算 5.44 秒 @198.5 MHz</div></div>
+<div class="tile"><div class="v">7.8%</div><div class="k">有效 MAC 利用率（145.8 G 有效乘加 / 1.87 T 峰值槽位）——搬运债的直接度量</div></div>
+<div class="tile"><div class="v">441 类</div><div class="k">2782 段按指令流去重后的类型数——测拍从 44 小时缩到 2 天的关键</div></div>
+<div class="tile"><div class="v">10 / 11</div><div class="k">全参数代表段位精确对拍——唯一失配是 BERT 注意力 softmax（开问题）</div></div>
+</div>
+
+<h2>一、总体形态：分段指令流 + host 编排 <span class="date">2026-08-30 定稿</span></h2>
+<div class="entry">
+<p><b>一次推理 = 2782 个段。</b>每个段是一小段在 FPGA 上连续执行的指令流（矩阵乘、硬件注意力、搬运），段与段之间由 host（现在是我的 Python 驱动，上板后是 ARM 核）跑那些"种类多、单个又小"的算子：归一化、gelu、deformable 采样、去噪外循环这些。</p>
+<p><b>为什么这么切。</b>这些 CPU 算子每个硬件化收益都很低，但它们加起来不到 1% 的计算量；而矩阵乘占了 99% 以上。让 FPGA 只干最重、最规整的活，是整个方案性价比的来源。</p>
+<p><b>段边界同时是量化边界。</b>host 算完浮点，就按下一层的校准常数把张量压回 INT8 再交给下一段——每段进出都是"INT8 数据 + 一个缩放数"，硬件永远只碰整数。</p>
+<p><b>一个刻意的架构决定：仿真和上板是同一套二进制。</b>指令流的装载通道（模拟 PS 灌指令）、内存初值格式、结果导出方式，在两个仿真器上都验证过与基线一致。所以现在垒起来的整面验证墙，上板时不用重垒。</p>
+<p><b>代价也量出来了（诚实账）。</b>段独立的直接后果是：激活要反复从内存装（4.2 万条装载指令）、权重每段重装（1.5 万条）、转置搬运 5.4 万条——v0 的拍数里搬运占大头（见第四条的图）。这是"先跑对、再跑快"路线的已知代价，优化清单在第四条末尾。</p>
+</div>
+
+<h2>二、数值契约：硬件只碰整数 <span class="date">2026-08-30 定稿</span></h2>
+<div class="entry">
+<p>三句话讲完：①每个进 FPGA 的张量 = INT8 数值 + 一个针对整个张量的缩放常数；②矩阵乘的 INT32 累加结果用"乘常数 m、再右移 s 位"压回 INT8（m 和 s 每层一组，来自校准）；③bias 不用加法器——把常数行拼进权重矩阵一起乘（K+1 增广），硬件白拿。</p>
+<p><b>语义只有一份权威：</b>黄金解释器（纯 numpy 按语义直接算）。RTL、Verilator、iverilog 三方都跟它对拍到位字节级。移位是纯 floor（向负无穷取整），带半个最低位的系统偏置——量过，在容差内。</p>
+</div>
+
+<h2>三、验证金字塔 <span class="date">2026-08-30 至 08-31 垒完五层</span></h2>
+<div class="entry">
+<p>设计原则：每层只信下一层验证过的东西。从下往上：</p>
+<ol class="pyramid">
+<li class="pass"><span class="lv">L1</span><b>零漂移回归 8/8</b> —— 预取开关关掉时，新旧电路拍数逐个相等、输出逐位一致。<span class="date">2026-08-30</span></li>
+<li class="pass"><span class="lv">L2</span><b>机器冒烟 10/10</b> —— 编译器随机段，RTL vs numpy 黄金，整片内存逐字节一致。<span class="date">2026-08-31</span></li>
+<li class="pass"><span class="lv">L3</span><b>跨工具 39/39</b> —— iverilog vs Verilator，四类用例 × 预取开关 × 三遍，全部逐字节一致；预取开/关数据全等。<span class="date">2026-08-31</span></li>
+<li class="pass"><span class="lv">L4</span><b>全参数代表段 10/11</b> —— 11 个真实段（覆盖 9 个模型阶段、最长指令流、执行 80 次的高频段）与黄金位精确。唯一失配 = BERT 注意力段 seg_0221（硬件页开问题）。<span class="date">2026-08-31</span></li>
+<li class="pass"><span class="lv">L5</span><b>拍数数据无关性 + 确定性</b> —— 5 个类型的段用全零激活和随机激活各跑一遍、两种模式拍数全等（证明拍数只由指令流决定，与数据无关）；3 个类型各跑两遍拍数全等。<span class="date">2026-08-31</span></li>
+<li class="open"><span class="lv">L6</span><b>端到端数值（未完成）</b> —— host 驱动全链跑样本 000/001 vs fp32 参考。脚本就绪、进程被中断（软件页第八条）。<span class="date">进行中</span></li>
+</ol>
+</div>
+
+<h2>四、全模型拍数实测：10.81 亿拍，都花在哪了 <span class="date">2026-08-31</span></h2>
+<div class="entry">
+<p><b>先讲怎么测的（方法本身是个杠杆）。</b>Verilator 每秒 6845 拍，10.8 亿拍串行一遍要 44 小时，两个模式要 88 小时。但第五层验证证明了<b>拍数只由指令流决定、与数据无关</b>——那 2782 段里指令流字节完全相同的段，拍数必然相同。按指令流去重后只有 <b>441 类</b>：每类测一个代表段，总数 = 每类拍数 × 出现次数。这样全模型拍数两天内测完，还顺带做了 MAC 对账（RTL 计数器加总 223.76 G，与修正口径的编译器统计逐类相等——测量自洽的证据）。</p>
+<p><b>总量。</b>10.81 亿拍（预取开）。按 198.5 MHz 折算 <b>5.44 秒</b>一次推理；如果时序修到 250 MHz 是 4.32 秒。预取在这个调度下省 3.0%（3370 万拍）——权重装载在 v0 里本来就只占 7.6% 的指令数，预取的全部潜力要等权重驻留优化后才释放。</p>
+<figure class="chart">
+<h4>拍数按模型阶段分解（部署口径，共 10.81 亿拍）</h4>
+<p class="how">这图怎么看：一根条一个模型阶段，长度是它占的总拍数。去噪解码器（decoder）一项占一半——10 个去噪步、每步约 212 段。注意 spatial_enhancer：只占 0.8% 的计算量却吃了 9.4% 的拍数，它就是"小矩阵 + 大搬运"的反面教材（下图 seg_0625）。</p>
+<svg viewBox="0 0 680 298" role="img" aria-label="拍数按模型阶段分解（部署口径，共 1080.8 M 拍）" style="width:100%;height:auto;display:block"><line x1="175" y1="10" x2="175" y2="268" stroke="#e1e0d9" stroke-width="1"/><text x="175" y="284" text-anchor="middle" font-size="11" fill="#898781">0</text><line x1="257.5" y1="10" x2="257.5" y2="268" stroke="#e1e0d9" stroke-width="1"/><text x="257.5" y="284" text-anchor="middle" font-size="11" fill="#898781">150</text><line x1="340" y1="10" x2="340" y2="268" stroke="#e1e0d9" stroke-width="1"/><text x="340" y="284" text-anchor="middle" font-size="11" fill="#898781">300</text><line x1="422.5" y1="10" x2="422.5" y2="268" stroke="#e1e0d9" stroke-width="1"/><text x="422.5" y="284" text-anchor="middle" font-size="11" fill="#898781">450</text><line x1="505" y1="10" x2="505" y2="268" stroke="#e1e0d9" stroke-width="1"/><text x="505" y="284" text-anchor="middle" font-size="11" fill="#898781">600</text><line x1="175" y1="10" x2="175" y2="268" stroke="#c3c2b7" stroke-width="1"/><path d="M175,14 L466.57,14 A4,4 0 0 1 470.57,18 L470.57,28 A4,4 0 0 1 466.57,32 L175,32 Z" fill="#2a78d6" data-tip="decoder：2117 段、537.4M 拍（49.7%）。10 个去噪步 × 每步约 212 段"/><text x="165" y="27.5" text-anchor="end" font-size="12.5" fill="#52514e">decoder（去噪解码）</text><text x="478.57" y="27.5" font-size="12.5" font-weight="600" fill="#0b0b0b">537.4 M · 49.7%</text><path d="M175,50 L295.575,50 A4,4 0 0 1 299.575,54 L299.575,64 A4,4 0 0 1 295.575,68 L175,68 Z" fill="#2a78d6" data-tip="feature_enhancer：366 段、226.5M 拍（21.0%）"/><text x="165" y="63.5" text-anchor="end" font-size="12.5" fill="#52514e">feature_enhancer</text><text x="307.575" y="63.5" font-size="12.5" font-weight="600" fill="#0b0b0b">226.5 M · 21.0%</text><path d="M175,86 L251.07999999999998,86 A4,4 0 0 1 255.07999999999998,90 L255.07999999999998,100 A4,4 0 0 1 251.07999999999998,104 L175,104 Z" fill="#2a78d6" data-tip="backbone：124 段、145.6M 拍（13.5%）"/><text x="165" y="99.5" text-anchor="end" font-size="12.5" fill="#52514e">backbone（2D 主干）</text><text x="263.08" y="99.5" font-size="12.5" font-weight="600" fill="#0b0b0b">145.6 M · 13.5%</text><path d="M175,122 L227.04500000000002,122 A4,4 0 0 1 231.04500000000002,126 L231.04500000000002,136 A4,4 0 0 1 227.04500000000002,140 L175,140 Z" fill="#2a78d6" data-tip="spatial_enhancer：只有 41 段、10.4G MAC，却吃 101.9M 拍（9.4%）——小矩阵+大搬运的典型"/><text x="165" y="135.5" text-anchor="end" font-size="12.5" fill="#52514e">spatial_enhancer</text><text x="239.04500000000002" y="135.5" font-size="12.5" font-weight="600" fill="#0b0b0b">101.9 M · 9.4%</text><path d="M175,158 L191.02,158 A4,4 0 0 1 195.02,162 L195.02,172 A4,4 0 0 1 191.02,176 L175,176 Z" fill="#2a78d6" data-tip="backbone_3d：90 段、36.4M 拍"/><text x="165" y="171.5" text-anchor="end" font-size="12.5" fill="#52514e">backbone_3d</text><text x="203.02" y="171.5" font-size="12.5" font-weight="600" fill="#0b0b0b">36.4 M · 3.4%</text><path d="M175,194 L187.72,194 A4,4 0 0 1 191.72,198 L191.72,208 A4,4 0 0 1 187.72,212 L175,212 Z" fill="#2a78d6" data-tip="text_encoder：36 段、30.4M 拍。本轮每次推理都重跑，缓存是后续优化"/><text x="165" y="207.5" text-anchor="end" font-size="12.5" fill="#52514e">text_encoder（BERT）</text><text x="199.72" y="207.5" font-size="12.5" font-weight="600" fill="#0b0b0b">30.4 M · 2.8%</text><path d="M175,230 L175.7425,230 A0.7425,0.7425 0 0 1 176.485,230.7425 L176.485,247.2575 A0.7425,0.7425 0 0 1 175.7425,248 L175,248 Z" fill="#2a78d6" data-tip="neck 1.9M + neck_3d 0.8M + text_feat_map 0.08M"/><text x="165" y="243.5" text-anchor="end" font-size="12.5" fill="#52514e">neck / neck_3d / 其他</text><text x="184.485" y="243.5" font-size="12.5" font-weight="600" fill="#0b0b0b">2.7 M · 0.2%</text></svg>
+<details><summary>数据表</summary>
+<table><thead><tr><th>阶段</th><th class="num">段数</th><th class="num">拍数（M，部署口径）</th><th class="num">占比</th><th class="num">MAC（G）</th></tr></thead><tbody>
+<tr><td>decoder</td><td class="num">2117</td><td class="num">537.4</td><td class="num">49.7%</td><td class="num">107.6</td></tr>
+<tr><td>feature_enhancer</td><td class="num">366</td><td class="num">226.5</td><td class="num">21.0%</td><td class="num">62.2</td></tr>
+<tr><td>backbone</td><td class="num">124</td><td class="num">145.6</td><td class="num">13.5%</td><td class="num">38.9</td></tr>
+<tr><td>spatial_enhancer</td><td class="num">41</td><td class="num">101.9</td><td class="num">9.4%</td><td class="num">10.4</td></tr>
+<tr><td>backbone_3d</td><td class="num">90</td><td class="num">36.4</td><td class="num">3.4%</td><td class="num">2.4</td></tr>
+<tr><td>text_encoder（BERT）</td><td class="num">36</td><td class="num">30.4</td><td class="num">2.8%</td><td class="num">1.7</td></tr>
+<tr><td>neck / neck_3d / text_feat_map</td><td class="num">8</td><td class="num">2.7</td><td class="num">0.2%</td><td class="num">0.6</td></tr>
+<tr><td><b>合计</b></td><td class="num"><b>2782</b></td><td class="num"><b>1080.8</b></td><td class="num"><b>100%</b></td><td class="num"><b>223.8</b></td></tr>
+</tbody></table></details>
+</figure>
+<p><b>利用率：有效 MAC 只占峰值槽位的 7.8%。</b>硬件每拍最多能做 1728 次乘加，10.81 亿拍对应 1.87 万亿次槽位；其中做"有用"乘加的只有 145.8 G（7.8%），算上矩阵补零对齐（padding）是 223.8 G（12.0%）。补零本身浪费了 53%（行对齐到 16 的倍数 + 108 列分组）。剩下的差距就是"阵列在等数据"。</p>
+<figure class="chart">
+<h4>代表段里 DMA 搬运忙时占总拍数的比例</h4>
+<p class="how">这图怎么看：一根条一个段，长度是"搬运部件忙的时间"占这个段总时长的比例（搬运和计算可以部分重叠，所以两边的百分比加起来可能超过 100%）。比例越高，说明这个段越"喂不饱"——乘法阵列大部分时间在等米下锅。</p>
+<svg viewBox="0 0 680 226" role="img" aria-label="代表段里 DMA 搬运忙时占总拍数的比例" style="width:100%;height:auto;display:block"><line x1="175" y1="10" x2="175" y2="196" stroke="#e1e0d9" stroke-width="1"/><text x="175" y="212" text-anchor="middle" font-size="11" fill="#898781">0%</text><line x1="257.5" y1="10" x2="257.5" y2="196" stroke="#e1e0d9" stroke-width="1"/><text x="257.5" y="212" text-anchor="middle" font-size="11" fill="#898781">25%</text><line x1="340" y1="10" x2="340" y2="196" stroke="#e1e0d9" stroke-width="1"/><text x="340" y="212" text-anchor="middle" font-size="11" fill="#898781">50%</text><line x1="422.5" y1="10" x2="422.5" y2="196" stroke="#e1e0d9" stroke-width="1"/><text x="422.5" y="212" text-anchor="middle" font-size="11" fill="#898781">75%</text><line x1="505" y1="10" x2="505" y2="196" stroke="#e1e0d9" stroke-width="1"/><text x="505" y="212" text-anchor="middle" font-size="11" fill="#898781">100%</text><line x1="175" y1="10" x2="175" y2="196" stroke="#c3c2b7" stroke-width="1"/><path d="M175,14 L493.40999999999997,14 A4,4 0 0 1 497.40999999999997,18 L497.40999999999997,28 A4,4 0 0 1 493.40999999999997,32 L175,32 Z" fill="#2a78d6" data-tip="seg_0221：104.7 万拍里 DMA 忙 102.3 万拍（97.7%），GEMM 只忙 5.3 万拍——典型&quot;喂不饱&quot;"/><text x="165" y="27.5" text-anchor="end" font-size="12.5" fill="#52514e">seg_0221（BERT 注意力）</text><text x="505.40999999999997" y="27.5" font-size="12.5" font-weight="600" fill="#0b0b0b">97.7%</text><path d="M175,50 L395.07000000000005,50 A4,4 0 0 1 399.07000000000005,54 L399.07000000000005,64 A4,4 0 0 1 395.07000000000005,68 L175,68 Z" fill="#2a78d6" data-tip="seg_0625：334.4 万拍里 DMA 忙 226.9 万拍（67.9%），GEMM 忙 107.4 万拍——部分重叠"/><text x="165" y="63.5" text-anchor="end" font-size="12.5" fill="#52514e">seg_0625（最重段）</text><text x="407.07000000000005" y="63.5" font-size="12.5" font-weight="600" fill="#0b0b0b">67.9%</text><path d="M175,86 L383.85,86 A4,4 0 0 1 387.85,90 L387.85,100 A4,4 0 0 1 383.85,104 L175,104 Z" fill="#2a78d6" data-tip="seg_0718：全模型跑 80 次的段类型。23.4 万拍里 DMA 忙 15.1 万拍（64.6%）"/><text x="165" y="99.5" text-anchor="end" font-size="12.5" fill="#52514e">seg_0718（decoder 高频段）</text><text x="395.85" y="99.5" font-size="12.5" font-weight="600" fill="#0b0b0b">64.6%</text><path d="M175,122 L271.65,122 A4,4 0 0 1 275.65,126 L275.65,136 A4,4 0 0 1 271.65,140 L175,140 Z" fill="#2a78d6" data-tip="seg_0134：38.6 万拍里 DMA 忙 11.8 万拍（30.5%），GEMM 忙 27.7 万拍——计算为主"/><text x="165" y="135.5" text-anchor="end" font-size="12.5" fill="#52514e">seg_0134（backbone 大段）</text><text x="283.65" y="135.5" font-size="12.5" font-weight="600" fill="#0b0b0b">30.5%</text><path d="M175,158 L214.56,158 A4,4 0 0 1 218.56,162 L218.56,172 A4,4 0 0 1 214.56,176 L175,176 Z" fill="#2a78d6" data-tip="seg_0162：96.4 万拍里 DMA 只忙 12.8 万拍（13.3%），GEMM 忙 78.9 万拍——计算密度高的好学生"/><text x="165" y="171.5" text-anchor="end" font-size="12.5" fill="#52514e">seg_0162（长计算段）</text><text x="226.56" y="171.5" font-size="12.5" font-weight="600" fill="#0b0b0b">13.3%</text></svg>
+<details><summary>数据表</summary>
+<table><thead><tr><th>段</th><th class="num">总拍数</th><th class="num">DMA 忙拍</th><th class="num">GEMM 忙拍</th><th class="num">DMA 忙占比</th></tr></thead><tbody>
+<tr><td>seg_0221（BERT 注意力）</td><td class="num">1,046,899</td><td class="num">1,023,325</td><td class="num">52,547</td><td class="num">97.7%</td></tr>
+<tr><td>seg_0625（spatial_enhancer 最重段）</td><td class="num">3,344,007</td><td class="num">2,269,393</td><td class="num">1,074,400</td><td class="num">67.9%</td></tr>
+<tr><td>seg_0718（decoder 高频段，全模型 80 次）</td><td class="num">233,659</td><td class="num">150,834</td><td class="num">71,946</td><td class="num">64.6%</td></tr>
+<tr><td>seg_0134（backbone 大段）</td><td class="num">386,457</td><td class="num">117,779</td><td class="num">277,448</td><td class="num">30.5%</td></tr>
+<tr><td>seg_0162（feature_enhancer 长计算段）</td><td class="num">964,044</td><td class="num">127,863</td><td class="num">788,735</td><td class="num">13.3%</td></tr>
+</tbody></table></details>
+</figure>
+</div>
+
+<div class="entry">
+<h3>和调研账本 0.27 秒的差距，拆开是三笔账 <span class="date">2026-08-31</span></h3>
+<p>早期调研的调度账本说这套硬件跑 HoloBrain 可以到 0.27 秒（250 MHz、优化调度假设）。现在 v0 实测 4.32 秒（250 MHz 口径），差 16 倍。这个差距必须拆开讲，<b>不能当成"硬件不行"一句话</b>：</p>
+<table>
+<thead><tr><th>差距来源</th><th>量级</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>①工作量本来就大</td><td>约 2 倍</td><td>本次跑的是 RoboTwin 4 相机配置、BERT 每次推理都重跑、没有任何缓存——有效乘加 145.8 G；账本口径是双视角 + BERT 缓存，73.7 G。同为"一次推理"，任务配置不同。</td></tr>
+<tr><td>②v0 调度的搬运债</td><td>约 8-10 倍</td><td>每段重装权重、激活反复装载、5.4 万条转置指令——有效利用率只有 7.8%。这是"先跑对"路线的已知代价，不是硬件上限。硬件页的双发射只解决了其中一小角（3.0%）。</td></tr>
+<tr><td>③估算没覆盖的开销</td><td>约 1.26 倍</td><td>访存停顿、总线仲裁这些，估算模型没算（软件页第七条对账的最后一档）。</td></tr>
+</tbody>
+</table>
+<p><b>下一轮的优化清单（按预期收益排序）：</b></p>
+<ol>
+<li><b>权重驻留</b>：同一权重在多个段重复装载（1.5 万条装载指令的对象），驻留进 WRAM 半区可整块消掉——spatial_enhancer 和 decoder 的高频段受益最大；</li>
+<li><b>COPY 下放编译期</b>：5.4 万条运行时转置，大部分是 swin 窗口重排和 im2col 布局，可以在编译时把权重/输入直接排成目标布局；</li>
+<li><b>BERT 缓存</b>：文本编码每次推理重跑 30.4M 拍，同一指令的 K/V 结果可以直接缓存复用（30 拍换 0.3M 拍级别的节省 × 每次推理）；</li>
+<li><b>段合并</b>：连续无 host 算子的段合并，消掉段间的激活反复装载。</li>
+</ol>
+<p>一句话总结：<b>v0 是"跑对"的版本，实测给性能优化画好了靶子；"跑快"是下一轮，杠杆明确。</b></p>
+</div>
+
+<h2>五、服务器资源纪律 <span class="date">2026-08-31 起</span></h2>
+<div class="entry">
+<p>服务器的 /home 盘（17T）已经 100% 满，一个字节都写不进。这两天的全部服务器工作都在 /tmp（根盘 111G 空闲）完成。规矩从现在起：上服务器先查磁盘；大产物（VCD、dump）放 /tmp 且用完即删；交付物（脚本、JSON 结果）及时拷回本地。</p>
+<p><b>要知道的一件事：</b>测拍和 VCD 的多数产物（types/sweep/golden 结果、fix_streams.py 等脚本、top3 贡献类的 SAIF 功耗注记文件）目前还在服务器 /tmp/ae_cycles 里——/tmp 重启会清空。<b>恢复工作的第一件事就是把它们抢救回本地。</b>核心结果（TOTAL.json、MEASURE_NOTES.txt、cycles_by_type.json、测量脚本）已经拷回来了。</p>
+</div>
+
+<h2>六、下一步（等你审阅后开工）</h2>
+<div class="entry">
+<ol>
+<li><b>端到端数值闭环</b>：合并 compiler 的 dma_len 正式修复 + v2 常数表重编译，host 驱动跑样本 000/001，判据 ≤ 0.045 rad（这是本轮主线剩下的最后一环）；</li>
+<li><b>SAIF 功耗注记</b>：把服务器上的 SAIF 抢救回来，用布线后检查点出全模型真实活动功耗（现在只有冒烟口径 6058 mW）；</li>
+<li><b>seg_0221 softmax 根因</b>：SM16 内部探针，定位 ~5% 系统性偏移的来源（可能影响端到端判据，优先级取决于第 1 条的结果）；</li>
+<li><b>服务器 /tmp 抢救</b>（第 1 条之前做）。</li>
+</ol>
+</div>
+
+<footer>
+<p>口径说明：拍数为 TB 计数器口径（不含 host 侧 CPU 算子时间，host 墙钟将单独报告）；"部署口径"= PRIM 数据通路 + 权重预取开；MAC 的 padded 口径含行/列对齐补零，useful 为去补零；198.5 MHz 为布线后实际可达频率，250 MHz 数字仅作上界参考。数字来源：05_sim/TOTAL.json（441 类全实测）、05_sim/bench.json、06_power/POWER_SUMMARY.txt。</p>
+<p>架构 · 生成于 2026-08-31 · 覆盖 2026-08-30 至 2026-08-31</p>
+</footer>
+
+</div>
+<script>
+(function(){
+  var tip = document.getElementById('tip');
+  document.querySelectorAll('[data-tip]').forEach(function(el){
+    el.addEventListener('mousemove', function(e){
+      tip.textContent = el.getAttribute('data-tip');
+      tip.style.opacity = 1;
+      var x = Math.min(e.clientX + 14, window.innerWidth - 300);
+      tip.style.left = x + 'px';
+      tip.style.top = (e.clientY + 18) + 'px';
+    });
+    el.addEventListener('mouseleave', function(){ tip.style.opacity = 0; });
+  });
+})();
+</script>
+</body>
+</html>

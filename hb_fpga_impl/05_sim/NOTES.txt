@@ -1,0 +1,80 @@
+NOTES — Verilator 迁移收尾（2026-08-31，服务器 /tmp/aers）
+=============================================================
+
+一、这轮干了什么（结论先行）
+----------------------------
+1. 跨工具位精确对拍在新 RTL（调度器双发射预取 pf + rq_ms T_MAX=39）上全绿：
+   resync_server.sh 39/39 PASS——4 用例（default/tail/pf/rqs）× 三遍
+   （REF / PRIM-pf0 / PRIM-pf1），iverilog 与 Verilator 的 DDR dump 逐字节一致、
+   与 golden 位精确、pf1 与 pf0 数据逐字节一致（预取只省拍不改数）、
+   cycles 跨工具全等。权重预取实测：pf/rqs 用例 8409→8001 拍（省 408，~4.9%）；
+   default/tail 用例无收益（负载里没有可后台预取的权重装载，也由此得证零漂移）。
+2. 旧 RTL 快照的移植验收链（/tmp/aerun，run_gates.sh g2）按指令废弃：
+   iverilog 全参数档单遍在当前机器负载（~5.4）下 9300s 没跑完 REF，且新链
+   用同一套 TB、更严的用例，证明价值已被覆盖。日志尾有 [skipped-deprecated] 标记。
+3. 两个跨工具分歧的根因都是 TB 写法（RTL 零改动），修法 = 阻塞赋值改 NBA：
+   - start=1 在 posedge 后阻塞赋值：iverilog 先评估 DUT、Verilator 先跑 TB，
+     调度器在 Verilator 里早启动 1 拍；固定流水线拍数不变，但 DMA 读停顿由
+     绝对时间上的 LFSR 决定，LOAD 路径的 cycles 会漂。
+   - rst_n=1 阻塞释放：rq_ms 的 slot 自由轮转计数器错相一拍 → S_DALIGN
+     等待拍数 0-3 之间变。
+4. 新坑（新向量才踩得到）：负载会读少量从未写过的 CTX padding 字。基线
+   tb_ae.sv 用层级脉冲清零（=00，golden 也是 00）、Verilator 2 态天然为 0，
+   只有 iverilog 的 fresh 进程是 X，"xx" 漏进 dump（default 用例 168 字节）。
+   修法：tb_ae_v.sv 加 `ifndef VERILATOR` 保护的 t=0 层级清零，三环境语义对齐。
+5. 服务器 /home（17T 盘）100% 满、0 字节可写：运行树全部搬 /tmp（aers=新链、
+   aerun=废弃旧链），/home 的 ae_sim 只留 19MB 源码脚本（清掉了 1.1G pip
+   缓存 .mmroot、VCD、vvp/dump 等可再生产物）。/tmp 重启会清，交付物已回本地。
+
+二、段执行接口（对接 segment_runner：+SEQ/+DDRIMG/+DUMP）
+---------------------------------------------------------
+已按契约实现并双工具验证（数据与基线逐字节一致）：
+- +DDRIMG=<路径>  DDR 输入映像，缺省 ./ddr_init.mem
+- +DUMP=<路径>    DDR 终态 dump，缺省按 MODE/PF 命名 dump_ddr_{ref,prim,prim2}.mem
+- +SEQ=<路径>     指令流映像：复位释放后经 seq_we/seq_waddr/seq_wdata（PS 装载
+                  通道）写满全部 SEQ_N 条，再拉 start。不给则完全不动端口，
+                  沿用 RTL initial 直读 ./seq.mem 的老路径（验收门用，逐拍不变）。
+- +MODE=0/1（REF/PRIM）、+PF=1（PRIM+权重预取）照旧。
+和 segment_runner 假设的差异/注意：
+a) ./seq.mem、./exp2_lut.mem 是 RTL 内写死的文件名。+SEQ 装载会覆盖 SEQ 全部
+   内容，文件缺失两工具都能容忍（iverilog 一条警告），但段目录里放份占位更干净。
+b) 无状态残留：每段独立进程，CTX/WRAM 清零语义三环境已对齐（见上 4）。
+c) +SEQ 端口装载把 start 推后 SEQ_N 拍 → LFSR 停顿相位不同 → cycles 与文件
+   路径差几拍（default 实测 8405→8416，dump 数据逐字节不变）。段间对账用数据，
+   别拿 cycles 对。
+d) 看门狗 -DV_WDG_CYC 缺省 2M 拍，长段要加大（sim_big 用 20M）。
+e) 每进程固定开销：8MB ddr_init.mem 的 readmemh 文本解析 ~2.9s（sim108 档
+   5.29s 里约 2.9s 是它）。段多且短时这项会主导——可只 dump/装载触碰区间。
+
+三、Verilator 还有多少提速空间（工程判断，未实测）
+--------------------------------------------------
+现状：--binary --timing 单线程，大负载 6845 cyc/s（1.49M 拍 218s）。
+查了 conda verilator 的 verilated.mk：OPT_FAST/OPT_GLOBAL 现在是 **-Os**，不是 -O3。
+按性价比排：
+1. make 时覆盖 OPT_FAST=-O3 OPT_GLOBAL=-O3（+ -march=native）：~1.15-1.4×。
+   vlbuild.sh 的 make 行加两个变量就行，零风险。
+2. 去 --timing 换显式 C++ main（eval + clk 翻转循环 + done 轮询 + C++ 侧 dump）：
+   TB 的事件调度只剩时钟翻转，~1.5-2.5×，是最大单项。DDR 从机是纯 always_ff，
+   不依赖 --timing，可留在 SV 里一起 eval。工作量约一天，含位精确回归。
+3. --threads 4-8：这类设计 0-2× 不稳（1728 PE 阵列并行度好，但调度/访存串行段
+   多），值得试但别指望。
+4. readmemh 文本解析：不算速率但算段并行时的固定成本（见二e）。
+合计现实空间 2-4×（→ ~15-25 kcy/s），313M 拍从 12.7h 压到 3-6h。
+但先算另一笔账：~300 段在 64 核上并发 16-32 个进程，等效吞吐是单进程的
+10-20×，零工程量。所以：优先段并行把核填满；引擎优化只在段数不足以填满核、
+或单段过长成为尾延迟时才值得做。真要做，先做 2（去 --timing），顺手带上 1。
+
+四、复现
+--------
+- 重同步一键（本地 05_sim/）：bash resync_gates.sh   # 上传新 RTL+脚本→服务器
+  /tmp/aers 跑 resync_server.sh（4 用例对拍 + 大负载），日志 $A/resync_run.log。
+- bench 数字口径（都在 /tmp/aers）：
+  smoke：iverilog tb_ae.sv 一次 vvp 三遍（60.30s / 24703 拍）；Verilator
+         tb_ae_v 三进程（0.19s / 24687 拍）。
+  sim108：Verilator 两进程 5.29/5.32s（16447/15999 拍）。
+  big：emit_big.py 向量 + Verilator +MODE=0（217.93s / 1,491,295 拍）。
+  详细数字与 basis 见 bench.json。
+- 工具链坑（vlbuild.sh 头有注释）：conda verilator 的 verilated.mk 硬编码
+  conda gcc16（撞老 glibc 的 timespec_get），系统 g++9 不认 -fcoroutines，
+  make 命令行用 CXX=/usr/bin/g++-10 AR=/usr/bin/ar LINK=/usr/bin/g++-10 绕开；
+  产物名是 obj_dir/Vtb_ae_v（大写 V）。

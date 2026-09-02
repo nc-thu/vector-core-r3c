@@ -1,0 +1,468 @@
+{
+    "__config_type__": "robo_orchard_lab.models.bip3d.structure:BIP3DConfig",
+    "class_type": "robo_orchard_lab.models.bip3d.structure:BIP3D",
+    "backbone": {
+        "type": "robo_orchard_lab.models.modules.swin_transformer:SwinTransformer",
+        "embed_dims": 96,
+        "depths": [
+            2,
+            2,
+            6,
+            2
+        ],
+        "num_heads": [
+            3,
+            6,
+            12,
+            24
+        ],
+        "window_size": 7,
+        "mlp_ratio": 4,
+        "qkv_bias": true,
+        "qk_scale": null,
+        "drop_rate": 0.0,
+        "attn_drop_rate": 0.0,
+        "out_indices": [
+            1,
+            2,
+            3
+        ],
+        "with_cp": true,
+        "convert_weights": false
+    },
+    "decoder": {
+        "type": "robo_orchard_lab.models.holobrain.action_decoder:HoloBrainActionDecoder",
+        "head": {
+            "type": "robo_orchard_lab.models.holobrain.layers:UpsampleHead",
+            "upsample_sizes": [
+                32,
+                64
+            ],
+            "input_dim": 256,
+            "dims": [
+                128,
+                64
+            ],
+            "norm": {
+                "type": "torch.nn.modules.normalization:RMSNorm",
+                "normalized_shape": 256
+            },
+            "act": {
+                "type": "torch.nn.modules.activation:SiLU",
+                "inplace": true
+            },
+            "norm_act_idx": [
+                0,
+                1
+            ],
+            "num_output_layers": 2,
+            "out_dim": 8
+        },
+        "mobile_head": null,
+        "transformer_cfg": {
+            "__config_type__": "robo_orchard_lab.models.holobrain.action_decoder:HoloBrainDecoderTransformerConfig",
+            "img_cross_attn": {
+                "type": "robo_orchard_lab.models.holobrain.layers:RotaryAttention",
+                "embed_dims": 256,
+                "num_heads": 8,
+                "max_position_embeddings": 32
+            },
+            "norm_layer": {
+                "type": "torch.nn.modules.normalization:RMSNorm",
+                "normalized_shape": 256
+            },
+            "ffn": {
+                "type": "robo_orchard_lab.models.layers.transformer_layers:FFN",
+                "embed_dims": 256,
+                "feedforward_channels": 2048,
+                "act_cfg": {
+                    "type": "torch.nn.modules.activation:SiLU",
+                    "inplace": true
+                }
+            },
+            "operation_order": [
+                "t_norm",
+                "temp_joint_attn",
+                "gate_msa",
+                "norm",
+                "img_cross_attn",
+                "norm",
+                "text_cross_attn",
+                "norm",
+                "scale_shift",
+                "ffn",
+                "gate_mlp",
+                "t_norm",
+                "temp_joint_attn",
+                "gate_msa",
+                "norm",
+                "img_cross_attn",
+                "norm",
+                "text_cross_attn",
+                "norm",
+                "scale_shift",
+                "ffn",
+                "gate_mlp",
+                "t_norm",
+                "temp_joint_attn",
+                "gate_msa",
+                "norm",
+                "img_cross_attn",
+                "norm",
+                "text_cross_attn",
+                "norm",
+                "scale_shift",
+                "ffn",
+                "gate_mlp",
+                "t_norm",
+                "temp_joint_attn",
+                "gate_msa",
+                "norm",
+                "img_cross_attn",
+                "norm",
+                "text_cross_attn",
+                "norm",
+                "scale_shift",
+                "ffn",
+                "gate_mlp",
+                "t_norm",
+                "temp_joint_attn",
+                "gate_msa",
+                "norm",
+                "img_cross_attn",
+                "norm",
+                "text_cross_attn",
+                "norm",
+                "scale_shift",
+                "ffn",
+                "gate_mlp",
+                "t_norm",
+                "temp_joint_attn",
+                "gate_msa",
+                "norm",
+                "img_cross_attn",
+                "norm",
+                "text_cross_attn",
+                "norm",
+                "scale_shift",
+                "ffn",
+                "gate_mlp"
+            ],
+            "joint_self_attn": {
+                "type": "robo_orchard_lab.models.holobrain.layers:JointGraphAttention",
+                "embed_dims": 256,
+                "num_heads": 8
+            },
+            "temp_cross_attn": {
+                "type": "robo_orchard_lab.models.holobrain.layers:RotaryAttention",
+                "embed_dims": 256,
+                "num_heads": 8,
+                "max_position_embeddings": 32
+            },
+            "text_cross_attn": {
+                "type": "robo_orchard_lab.models.holobrain.layers:RotaryAttention",
+                "embed_dims": 256,
+                "num_heads": 8,
+                "max_position_embeddings": 512
+            },
+            "temp_joint_attn": {
+                "type": "robo_orchard_lab.models.holobrain.layers:TemporalJointGraphAttention",
+                "embed_dims": 256,
+                "num_heads": 8,
+                "max_position_embeddings": 32
+            },
+            "timestep_norm_layer": {
+                "type": "robo_orchard_lab.models.holobrain.layers:AdaRMSNorm",
+                "normalized_shape": 256,
+                "condition_dims": 256,
+                "zero": true
+            },
+            "pre_norm": true
+        },
+        "base_cfg": {
+            "__config_type__": "robo_orchard_lab.models.holobrain.action_decoder:HoloBrainDecoderBaseConfig",
+            "training_noise_scheduler": {
+                "type": "diffusers.schedulers.scheduling_ddpm:DDPMScheduler",
+                "num_train_timesteps": 1000,
+                "beta_schedule": "squaredcos_cap_v2",
+                "prediction_type": "sample",
+                "clip_sample": false
+            },
+            "test_noise_scheduler": {
+                "type": "diffusers.schedulers.scheduling_dpmsolver_multistep:DPMSolverMultistepScheduler",
+                "num_train_timesteps": 1000,
+                "beta_schedule": "squaredcos_cap_v2",
+                "prediction_type": "sample"
+            },
+            "num_inference_timesteps": 10,
+            "feature_level": [
+                1,
+                2
+            ],
+            "state_dims": 8,
+            "embed_dims": 256,
+            "pred_steps": 64,
+            "act_cfg": {
+                "type": "torch.nn.modules.activation:SiLU",
+                "inplace": true
+            },
+            "num_test_traj": 1,
+            "chunk_size": 4,
+            "force_kinematics": false,
+            "with_mobile": false,
+            "mobile_traj_state_dims": 2,
+            "use_joint_mask": true,
+            "noise_type": "local_joint",
+            "pred_scaled_joint": false,
+            "prediction_type": "relative_joint_relative_pose"
+        },
+        "training_cfg": {
+            "__config_type__": "robo_orchard_lab.models.holobrain.action_decoder:HoloBrainTrainingConfig",
+            "loss": {
+                "type": "robo_orchard_lab.models.holobrain.loss:HoloBrainActionLoss",
+                "timestep_loss_weight": 1000,
+                "parallel_loss_weight": 0.1,
+                "smooth_l1_beta": 0.04,
+                "loss_mode": "smooth_l1"
+            },
+            "temporal_attn_drop": 0.05,
+            "num_parallel_training_sample": 4,
+            "teacher_forcing_rate": 0.02,
+            "teacher_forcing_mean_steps": null
+        },
+        "robot_encoder": {
+            "type": "robo_orchard_lab.models.holobrain.robot_state_encoder:HoloBrainRobotStateEncoder",
+            "transformer_cfg": {
+                "__config_type__": "robo_orchard_lab.models.holobrain.robot_state_encoder:HoloBrainEncoderTransformerConfig",
+                "joint_self_attn": {
+                    "type": "robo_orchard_lab.models.holobrain.layers:JointGraphAttention",
+                    "embed_dims": 256,
+                    "num_heads": 8
+                },
+                "norm_layer": {
+                    "type": "torch.nn.modules.normalization:RMSNorm",
+                    "normalized_shape": 256
+                },
+                "ffn": {
+                    "type": "robo_orchard_lab.models.layers.transformer_layers:FFN",
+                    "embed_dims": 256,
+                    "feedforward_channels": 2048,
+                    "act_cfg": {
+                        "type": "torch.nn.modules.activation:SiLU",
+                        "inplace": true
+                    }
+                },
+                "operation_order": [
+                    "norm",
+                    "joint_self_attn",
+                    null,
+                    null,
+                    "norm",
+                    "ffn",
+                    "norm",
+                    "joint_self_attn",
+                    null,
+                    null,
+                    "norm",
+                    "ffn",
+                    "norm",
+                    "joint_self_attn",
+                    null,
+                    null,
+                    "norm",
+                    "ffn",
+                    "norm",
+                    "joint_self_attn",
+                    null,
+                    null,
+                    "norm",
+                    "ffn",
+                    "norm"
+                ],
+                "temp_self_attn": {
+                    "type": "robo_orchard_lab.models.holobrain.layers:RotaryAttention",
+                    "embed_dims": 256,
+                    "num_heads": 8,
+                    "max_position_embeddings": 32
+                },
+                "pre_norm": true
+            },
+            "base_cfg": {
+                "__config_type__": "robo_orchard_lab.models.holobrain.robot_state_encoder:HoloBrainEncoderBaseConfig",
+                "embed_dims": 256,
+                "state_dims": 8,
+                "act_cfg": {
+                    "type": "torch.nn.modules.activation:SiLU",
+                    "inplace": true
+                },
+                "chunk_size": 1
+            }
+        }
+    },
+    "neck": {
+        "type": "robo_orchard_lab.models.modules.channel_mapper:ChannelMapper",
+        "in_channels": [
+            192,
+            384,
+            768
+        ],
+        "kernel_size": 1,
+        "out_channels": 256,
+        "act_cfg": null,
+        "bias": true,
+        "norm_cfg": {
+            "type": "torch.nn.modules.normalization:GroupNorm",
+            "num_groups": 32
+        },
+        "num_outs": 4
+    },
+    "text_encoder": {
+        "type": "robo_orchard_lab.models.bip3d.bert:BertModel",
+        "special_tokens_list": [
+            "[CLS]",
+            "[SEP]"
+        ],
+        "name": "./ckpt/bert-base-uncased",
+        "pad_to_max": false,
+        "use_sub_sentence_represent": true,
+        "add_pooling_layer": false,
+        "max_tokens": 768,
+        "use_checkpoint": true,
+        "return_tokenized": true
+    },
+    "feature_enhancer": {
+        "type": "robo_orchard_lab.models.bip3d.feature_enhancer:TextImageDeformable2DEnhancer",
+        "embed_dims": 256,
+        "num_layers": 6,
+        "text_img_attn_block": {
+            "v_dim": 256,
+            "l_dim": 256,
+            "embed_dim": 1024,
+            "num_heads": 4,
+            "init_values": 0.0001
+        },
+        "img_attn_block": {
+            "self_attn_cfg": {
+                "embed_dims": 256,
+                "num_levels": 4,
+                "im2col_step": 1
+            },
+            "ffn_cfg": {
+                "embed_dims": 256,
+                "feedforward_channels": 2048,
+                "ffn_drop": 0.0
+            }
+        },
+        "text_attn_block": {
+            "self_attn_cfg": {
+                "num_heads": 4,
+                "embed_dims": 256
+            },
+            "ffn_cfg": {
+                "embed_dims": 256,
+                "feedforward_channels": 1024,
+                "ffn_drop": 0.0
+            }
+        },
+        "num_feature_levels": 4,
+        "positional_encoding": {
+            "num_feats": 128,
+            "normalize": true,
+            "offset": 0.0,
+            "temperature": 20
+        }
+    },
+    "spatial_enhancer": {
+        "type": "robo_orchard_lab.models.bip3d.spatial_enhancer:DepthFusionSpatialEnhancer",
+        "embed_dims": 256,
+        "feature_3d_dim": 128,
+        "num_depth_layers": 2,
+        "min_depth": 0.01,
+        "max_depth": 1.2,
+        "num_depth": 128,
+        "with_feature_3d": true,
+        "loss_depth_weight": 1.0
+    },
+    "data_preprocessor": {
+        "type": "robo_orchard_lab.models.layers.data_preprocessors:BaseDataPreprocessor",
+        "channel_flip": true,
+        "unsqueeze_depth_channel": true,
+        "mean": [
+            123.675,
+            116.28,
+            103.53
+        ],
+        "std": [
+            58.395,
+            57.12,
+            57.375
+        ],
+        "batch_transforms": [
+            {
+                "type": "robo_orchard_lab.models.bip3d.spatial_enhancer:BatchDepthProbGTGenerator",
+                "min_depth": 0.01,
+                "max_depth": 1.2,
+                "num_depth": 128,
+                "origin_stride": 2,
+                "valid_threshold": 0.5,
+                "stride": [
+                    8,
+                    16,
+                    32,
+                    64
+                ]
+            }
+        ]
+    },
+    "backbone_3d": {
+        "type": "robo_orchard_lab.models.modules.swin_transformer:SwinTransformer",
+        "in_channels": 1,
+        "embed_dims": 16,
+        "depths": [
+            2,
+            2,
+            6,
+            2
+        ],
+        "num_heads": [
+            4,
+            8,
+            8,
+            16
+        ],
+        "window_size": 7,
+        "mlp_ratio": 4,
+        "qkv_bias": true,
+        "qk_scale": null,
+        "drop_rate": 0.0,
+        "attn_drop_rate": 0.0,
+        "out_indices": [
+            1,
+            2,
+            3
+        ],
+        "with_cp": true,
+        "convert_weights": false
+    },
+    "neck_3d": {
+        "type": "robo_orchard_lab.models.modules.channel_mapper:ChannelMapper",
+        "in_channels": [
+            32,
+            64,
+            128
+        ],
+        "kernel_size": 1,
+        "out_channels": 128,
+        "act_cfg": null,
+        "bias": true,
+        "norm_cfg": {
+            "type": "torch.nn.modules.normalization:GroupNorm",
+            "num_groups": 4
+        },
+        "num_outs": 4
+    },
+    "input_2d": "imgs",
+    "input_3d": "depths",
+    "embed_dims": 256,
+    "pre_spatial_enhancer": false
+}

@@ -1,0 +1,64 @@
+WARNING: ../rtl/ae_core.sv:266: $readmemh(seq.mem): Not enough words in the file for the requested range [0:2047].
+WARNING: ../rtl/ae_core.sv:266: $readmemh(seq.mem): Not enough words in the file for the requested range [0:63].
+[dmaup] cyc=9
+[dmaup] cyc=54
+[dmaup] cyc=132
+[dmaup] cyc=304
+[dmaup] cyc=472
+[dmaup] cyc=644
+[dmaup] cyc=808
+[dmaup] cyc=980
+[dmaup] cyc=1268
+[dmaup] cyc=1556
+[dmaup] cyc=4072
+[dmaup] cyc=4368
+[dmaup] cyc=4522
+[dmaup] cyc=4684
+[dmaup] cyc=4856
+[dmaup] cyc=5144
+[dmaup] cyc=5432
+[dmaup] cyc=7956
+[dmaup] cyc=8256
+[tb] REF -pf0: cycles=8405 gemm=5973 dma=844 mac_total=86016 skip_macs=0 skip_stages=0
+[dmaup] cyc=9
+[dmaup] cyc=50
+[dmaup] cyc=123
+[dmaup] cyc=296
+[dmaup] cyc=460
+[dmaup] cyc=636
+[dmaup] cyc=804
+[dmaup] cyc=980
+[dmaup] cyc=1268
+[dmaup] cyc=1556
+[dmaup] cyc=4072
+[dmaup] cyc=4368
+[dmaup] cyc=4522
+[dmaup] cyc=4560
+[dmaup] cyc=4603
+[dmaup] cyc=4892
+[dmaup] cyc=5184
+[dmaup] cyc=7700
+[dmaup] cyc=8000
+[tb] PRIM-pf0: cycles=8149 gemm=5720 dma=843 mac_total=82944 skip_macs=2048 skip_stages=2
+[dmaup] cyc=9
+[dmaup] cyc=53
+[dmaup] cyc=131
+[dmaup] cyc=308
+[dmaup] cyc=476
+[dmaup] cyc=652
+[dmaup] cyc=820
+[dmaup] cyc=996
+[dmaup] cyc=1288
+[dmaup] cyc=1576
+[dmaup] cyc=4092
+[dmaup] cyc=4388
+[dmaup] cyc=4542
+[dmaup] cyc=4586
+[dmaup] cyc=4626
+[dmaup] cyc=4920
+[dmaup] cyc=5208
+[dmaup] cyc=7724
+[dmaup] cyc=8024
+[tb] PRIM-pf1: cycles=8173 gemm=5721 dma=866 mac_total=82944 skip_macs=2048 skip_stages=2
+[tb] 三遍 dump 完成（compare.py 比 REF/PRIM；prim2 vs prim 逐位 diff）
+tb_ae.sv:216: $finish called at 247566000 (1ps)

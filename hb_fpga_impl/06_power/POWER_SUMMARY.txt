@@ -1,0 +1,120 @@
+功耗报告汇总（定版 RTL ae_top，2026-08-31）
+================================================
+
+器件 xczu7ev-ffvc1156-2-e，时钟 250 MHz（4 ns 约束），Vccint 0.85 V。
+工艺角 typical，环温 25 C，ThetaJA 1.0 C/W，250 LFM 风冷，中等散热板 + 中等板卡（12-15 层）。
+所有 Vivado 命令都在 E:/ae_syn/pwr 下跑（仓库路径带空格，会让 Vivado 批处理不稳定）。
+
+
+一、三个功耗数（并列）
+----------------------------------------------------------------
+口径                            总功耗      动态        静态      报告
+1 综合态 vectorless             4285 mW    3666 mW     619 mW    power_vectorless.rpt
+2 布线后 vectorless（基线）      4465 mW    3845 mW     620 mW    power_impl_vectorless.rpt
+3 冒烟 SAIF 注记（流程验证）     6058 mW    5428 mW     630 mW    power_saif.rpt
+----------------------------------------------------------------
+
+哪个数可信：
+- 1 和 2 都没有真实翻转数据（vectorless），Vivado 用默认活动假设（约 12.5% 翻转）
+  估动态功耗。区别是 2 经过了完整 place/route，网线电容是真实的，且报告里
+  "实现状态"置信度从 Low 升到 High。没有活动数据时的基线以 2 为准：4465 mW。
+- 3 拿冒烟仿真（COLS=12 小配置、PRIM+预取那遍里 2000 拍窗口）的真实翻转注记出来，
+  只证明 SAIF 链路能跑通，不代表真实模型负载。它比 2 高出约 1.6 W，主要高在
+  DSP（808 -> 1838 mW）：真实活动下 DSP 阵列比默认假设费电一倍多。也就是说
+  vectorless 对这个 DSP 为主的设计偏乐观，等真实模型 VCD 出来，以 SAIF 口径为准。
+
+
+二、电都在哪（布线后口径，By Hierarchy）
+----------------------------------------------------------------
+u_core 合计 3841 mW（动态大头），其中：
+  u_gemm   2924 mW —— PE 阵列 u_arr 2473 mW + 27 个 requant 共约 270 mW
+                     （DSP 1728 个全部占满）
+  WRAM     约 540 mW —— 108 个 g_w[].u_bank，各约 5 mW（BRAM 122.5 块）
+  u_ctx     123 mW（URAM 64 块）
+  u_cp      101 mW
+  u_sm       49 mW
+  u_dma      23 mW
+  u_sched     9 mW
+按资源类型（布线后）：Signals 956 / DSP 808 / CLB Logic 806 / BRAM 599 /
+Clocks 557 / URAM 118 / Static 620（mW）。
+结论一句话：约 85% 的功耗在 u_gemm（PE 阵列 + requant）和它喂的 WRAM/DSP 上，
+调度、DMA、softmax 这些控制通路加起来不到 100 mW。
+
+
+三、置信度和警告（Vivado 报告原文口径）
+----------------------------------------------------------------
+布线后报告（power_impl_vectorless.rpt）：
+  实现状态 High（已布线）；时钟节点活动 High（>95%）；I/O 活动 High；器件模型 High；
+  内部节点活动 Medium（注记 <25%）→ 总体置信度 Medium。短板只有一个：没有真实活动数据。
+综合态报告（power_vectorless.rpt）：同上，但实现状态 Low（仅综合）。
+冒烟 SAIF 报告（power_saif.rpt）：注记 1540/386125 个网（0.4% 直接命中），实现状态 Low。
+没有约束缺失类报错；功耗预算（design power budget）未设置（只是提示）。
+注意：OOC 网表没有真实 IO 负载，所有 Vcco 电流为 0 —— 上板后 IO 部分会额外加一点。
+
+
+四、复现命令
+----------------------------------------------------------------
+A1 综合态 vectorless（约 5 分钟）：
+  cd /e/ae_syn/pwr
+  D:/software/Vivado/2021.2/bin/vivado.bat -mode batch -source power_vec.tcl
+  （open_checkpoint E:/ae_syn/pf_tmax/out/ae_top.dcp + report_power）
+
+A2 布线后 vectorless（约 50 分钟）：
+  cd /e/ae_syn/pwr
+  D:/software/Vivado/2021.2/bin/vivado.bat -mode batch -source power_impl.tcl
+  （P&R 时把时钟放松到 10 ns，报功耗前改回 4 ns。原因：DSP 100% 占用的网表按
+   4 ns 跑 router 非常慢，而功耗只依赖物理布线，不依赖时序收敛。）
+
+B 冒烟 SAIF 全链路（iverilog -> vcd2saif.py -> read_saif -> report_power）：
+  cd hb_fpga_impl/01_rtl/sim
+  iverilog -g2012 -o pw_dump.vvp -I ../rtl -DDUMP_VCD -DDUMP_RUN=2 -DDUMP_DELAY=200 \
+           -DDUMP_LEN=2000 -DCLK_HALF=2  $RTL_MAIN  tb_ae.sv     （$RTL_MAIN 见 regression.sh）
+  vvp pw_dump.vvp                     （打印 [vcd] 行里有窗口起点的 ps 数）
+  cd ../../06_power
+  python vcd2saif.py ../01_rtl/sim/tb_ae.vcd smoke.saif \
+          --re-root tb_ae.dut --wrap tb_ae.dut.u_core --t-start 68326000
+  D:/software/Vivado/2021.2/bin/vivado.bat -mode batch -source run_power_saif.tcl \
+          -tclargs <smoke.saif 绝对路径> [DCP] [输出rpt]
+  （参数 2/3 可省，默认综合 DCP 和 ./power_saif.rpt。）
+
+真实模型 VCD 到位后怎么接：
+  只换 vcd2saif.py 的输入文件和 --t-start（窗口起点看 [vcd] 打印），其余命令不动。
+  想在布线后网表上注记，DCP 参数传 E:/ae_syn/pwr/ae_top_impl_ooc.dcp，更准。
+  模型仿真要用全配置（COLS=108），冒烟是 COLS=12，阵列部分网名对不上。
+
+
+五、tb_ae.sv 的 VCD 采样改动（默认全关，回归不受影响）
+----------------------------------------------------------------
+编译加 -DDUMP_VCD 才生效，三个开关 + 一个时钟参数：
+- CLK_HALF   半周期 ns，默认 5（10 ns/拍，回归原节奏）。功耗运行必须 -DCLK_HALF=2
+             （4 ns/拍 = 250 MHz），否则翻转率按 100 MHz 折算，逻辑动态功耗低估约 2.5 倍。
+- DUMP_RUN   在第几遍运行开窗：0=REF / 1=PRIM-pf0 / 2=PRIM-pf1，默认 2。
+- DUMP_DELAY / DUMP_LEN  start 之后第 DUMP_DELAY 拍开始，写 DUMP_LEN 拍（默认 200/2000）。
+             全量 $dumpvars 的 VCD 会到 GB 级，所以只开限窗。
+- DUMP_FILE  输出文件名，默认 tb_ae.vcd。
+窗口起点（ps）要喂给 vcd2saif.py 的 --t-start：不给的话，窗口之前的未知时间会摊进
+DURATION，翻转率被稀释约一个量级。起点看 vvp 打印的 "[vcd] ... dump ON" 时刻。
+
+
+六、关键坑（按踩的顺序，都是实测）
+----------------------------------------------------------------
+1. Windows 版 Vivado 2021.2 不带 vcd2saif（只有 Linux 版有）→ 自写 06_power/vcd2saif.py。
+2. 路径不能带空格：仓库在 "GPU ARCH" 下，Vivado 批处理会随机出错，所以工作目录用 /e/ae_syn。
+3. vivado 命令行 -tclargs 会吞掉其后的参数：-nojournal/-log 必须放在 -source 之前。
+4. read_saif 2021.2 没有 -input/-instance_name 参数（老文档的写法会报 Unknown option），
+   只有 -strip_path/-no_strip，默认剥掉 SAIF 最外两层 INSTANCE。
+5. SAIF 文件必须整体包在 (SAIFILE ... ) 括号里，DIRECTION 写 "backward"；
+   网条目形如 (名字 (T0 x) (T1 x) (TX x) (TC n))，名字不能加引号（加引号直接
+   Power 33-52 syntax error）。缺 (SAIFILE 外壳最阴险：解析器不报错，但一条网都
+   不注记，Design nets matched 恒为 1（那 1 个来自时钟约束，不是 SAIF）。本次定位
+   卡了很久，最后用 XSim 自带的 open_saif/log_saif 生成参考文件才对出差别。
+6. 层次必须用 INSTANCE 嵌套表达，不能把层级路径写进网名（"u_core/xxx" 匹配不上）。
+7. tb 例化的 dut 是 ae_core，对应网表里的 ae_top/u_core：SAIF 做成 tb_ae{dut{u_core{...}}}，
+   read_saif 默认剥两层正好剩 u_core 挂到网表实例上（vcd2saif.py 的 --wrap 参数干这个；
+   等效做法：单根 INSTANCE u_core 配 read_saif -no_strip）。
+8. RTL 信号名和综合后网名只有部分重合（寄存器和总线保留，组合网被改名为 *_i_n_0）：
+   冒烟 SAIF 45745 个网直接命中 1540 个，其余靠活动传播覆盖邻域，报告 Confidence
+   会如实反映注记覆盖率。
+9. P&R 用 10 ns 放松时钟 + 报功耗前改回 4 ns 的组合，见 A2 说明。
+10. 冒烟 SAIF 数字比 vectorless 高 1.6 W 不是"功耗变大了"，是 vectorless 的默认
+    活动假设偏低。真实口径以模型 VCD 的 SAIF 注记为准。

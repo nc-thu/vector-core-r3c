@@ -1,0 +1,39 @@
+/home/nc23/.conda/envs/holobrain/lib/python3.10/site-packages/datasets/utils/experimental.py:37: UserWarning: 'register_feature' is experimental and might be subject to breaking changes in the future.
+  warnings.warn(
+[self] fp64 core == pure-integer reference (linear x4 shifts + conv + encodings) OK
+Use default teacher_forcing_mean_steps: 16
+[load] model up; forced eager path on 6 MHA modules
+/home/nc23/.conda/envs/holobrain/lib/python3.10/site-packages/torch/functional.py:539: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at /pytorch/aten/src/ATen/native/TensorShape.cpp:3637.)
+  return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
+[fp  ] references at seeds [1000, 1100, 1200] (5s)
+[cache] fp outputs cached for 431 modules (1.8 GiB CPU)
+[cal ] sample 0 (instr 0) 0.8s
+[cal ] sample 1 (instr 1) 0.8s
+[cal ] sample 2 (instr 2) 0.8s
+[cal ] sample 3 (instr 3) 0.8s
+[cal ] sample 4 (instr 4) 0.8s
+[cal ] sample 5 (instr 5) 0.8s
+[cal ] sample 6 (instr 6) 0.8s
+[cal ] sample 7 (instr 7) 0.8s
+[bl.d] linear 420/421 conv 10/10 | r=min/p50/max = 1.55e-04/2.25e-03/1.56e-02 | s=8 encoding: m>=1 on 258/430, m>=8 on 0 | bias_aug 314 (c hist {'64': 57, '32': 79, '16': 77, '8': 54, '4': 38, '2': 9}) bias_free 28 bias_fp 88 | m_v1 underflow 0 acc>XW27 0 | never_called 0
+[A  ] w8a8 rerun seed1000 mae_all=0.01122 (gate: 0.01122, |d|=0.00000) jpos=0.00879 | 0.8s
+[B_s8] rq_v2 T_MAX=0 encoding: mae_all=0.26287 jpos=0.46533 (172 dead (m=0), 258 precision-starved (1<=m<8) -> documented failure mode)
+[B_v1] seed 1000: mae_all=0.03208 jpos=0.02894 max_jpos=0.1692 grip=0.03320
+[B_v1] seed 1100: mae_all=0.03395 jpos=0.03249 max_jpos=0.1805 grip=0.03618
+[B_v1] seed 1200: mae_all=0.03087 jpos=0.02501 max_jpos=0.1706 grip=0.03261
+[cov ] input>calib*1.05 on 6/430 modules; sat_frac>1% on 0
+[top10] highest relative output drift (B_v1 vs fp, seed 1000):
+        0.8430  backbone.stages.2.blocks.4.ffn.layers.1                                  vision_2d   abs=0.44038
+        0.8122  text_encoder.language_backbone.body.model.encoder.layer.10.output.dense  text_bert   abs=0.60409
+        0.7847  backbone.stages.2.blocks.5.ffn.layers.1                                  vision_2d   abs=0.54264
+        0.7295  backbone.stages.2.blocks.3.ffn.layers.1                                  vision_2d   abs=0.30576
+        0.7223  backbone.stages.2.downsample.reduction                                   vision_2d   abs=0.46175
+        0.6855  text_encoder.language_backbone.body.model.encoder.layer.1.output.dense   text_bert   abs=0.29387
+        0.6559  text_encoder.language_backbone.body.model.encoder.layer.9.output.dense   text_bert   abs=0.43870
+        0.6442  text_encoder.language_backbone.body.model.encoder.layer.0.output.dense   text_bert   abs=0.36078
+        0.6283  backbone.stages.3.blocks.0.ffn.layers.1                                  vision_2d   abs=0.31900
+        0.5777  feature_enhancer.img_attn_blocks.1.ffn.layers.1                          fusion      abs=2.19339
+[B_v1] mean jpos=0.02881 (gate 0.03/0.06 -> green) | 0.7s/fwd
+[save] /home/nc23/workspace/holobrain/hw_calib/hw_calib_results.json (69 kB)
+[save] /home/nc23/workspace/holobrain/hw_calib/hw_calib_table.json (1870 kB)
+[done] gate=green total 21s

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>电路总结：模块资源账、AE_ACTV 引擎位精确落地、INT4 打包备好（2026-08-31）</title>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:#f9f9f7;color:#0b0b0b;font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;line-height:1.75;font-size:15px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 22px 80px}
+header.page{border-bottom:1px solid #e1e0d9;padding-bottom:18px;margin-bottom:10px}
+h1{font-size:23px;margin:0 0 10px;line-height:1.4}
+.meta{font-size:13px;color:#52514e;display:flex;flex-wrap:wrap;gap:4px 20px}
+nav.pagenav{margin:12px 0 0;font-size:13.5px}
+nav.pagenav a{color:#2a78d6;text-decoration:none;margin-right:16px}
+h2{font-size:19px;margin:40px 0 4px}
+.hint{font-size:13px;color:#898781;margin:0 0 10px}
+.entry{background:#fcfcfb;border:1px solid rgba(11,11,11,.10);border-radius:10px;padding:16px 20px;margin:14px 0}
+.date{display:inline-block;font-size:12px;font-weight:600;color:#52514e;background:#f0efec;border-radius:5px;padding:1px 8px;margin-left:8px;vertical-align:2px;white-space:nowrap}
+p{margin:8px 0}
+ul,ol{margin:8px 0;padding-left:22px}
+li{margin:4px 0}
+figure.chart{margin:18px 0;background:#fcfcfb;border:1px solid rgba(11,11,11,.10);border-radius:10px;padding:14px 18px 8px}
+figure.chart h4{margin:2px 0 2px;font-size:15px}
+figure.chart .how{font-size:13px;color:#52514e;margin:0 0 8px}
+table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0}
+th,td{border-bottom:1px solid #e1e0d9;text-align:left;padding:6px 8px;vertical-align:top}
+th{color:#52514e;font-weight:600;border-bottom:1px solid #c3c2b7}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ok{border-left:3px solid #3e9c5c;background:#f6fbf7;padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0}
+.warn{border-left:3px solid #d64545;background:#fdf6f6;padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0}
+.info{border-left:3px solid #2a78d6;background:#f5f9fe;padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0}
+code{background:#f0efec;border-radius:4px;padding:1px 5px;font-size:12.5px}
+.running{display:inline-block;font-size:12px;font-weight:600;color:#8a6100;background:#fff4dd;border-radius:5px;padding:1px 8px;vertical-align:2px;white-space:nowrap}
+#tip{position:fixed;opacity:0;pointer-events:none;background:#0b0b0b;color:#fff;font-size:12.5px;line-height:1.5;padding:6px 10px;border-radius:6px;max-width:280px;z-index:9;transition:opacity .12s}
+footer{margin-top:44px;padding-top:14px;border-top:1px solid #e1e0d9;font-size:12.5px;color:#898781}
+</style>
+</head>
+<body>
+<div id="tip"></div>
+<div class="wrap">
+
+<header class="page">
+<h1>电路总结：模块资源账、AE_ACTV 引擎位精确落地、INT4 打包备好（2026-08-31）</h1>
+<div class="meta">
+<span>生成时刻：<b>2026-08-31 16:24:00</b></span>
+<span>本页范围：2026-08-31 上午三份工作记录之后 → 本页生成时刻</span>
+</div>
+<nav class="pagenav">
+<a href="2026-08-31_2026-08-31_1624_架构总结.html">架构总结</a>
+<a href="2026-08-31_2026-08-31_1624_算法总结.html">算法总结</a>
+<a href="2026-08-31_2026-08-31_1624_电路总结.html">电路总结</a>
+<a href="../08_report/2026-08-31_1128_实测vs账本差距问题讨论.html">问题讨论页 v3</a>
+<a href="../08_report/2026-08-31_1253_数据集视角与指令集答疑.html">答疑页</a>
+<a href="../WORKLOG.md">完整工作日志</a>
+</nav>
+</header>
+
+<div class="ok"><p style="margin:4px 0"><b>电路这半天三件事：</b></p>
+<p style="margin:4px 0">① 从布线后的设计里拉出<b>每个模块的资源账</b>：DSP 1728 个全满、全在乘法阵列；1,469 LUT 的 DMA 承担 41% 的拍数，18,410 LUT 的 copy 重排网络只承担 1.4%——面积和产出的反差一眼可见。</p>
+<p style="margin:4px 0">② <b>AE_ACTV 算子引擎 RTL 落地</b>：微观 20480/20480 字节精确、全芯片回归 12/12 位精确，调通过程抓出两个真 RTL bug；综合 5147 LUT + 0 DSP，超自设门槛 106%——BIAS 模式的 16 份无 DSP 乘法是大头，下一轮换乘法结构。</p>
+<p style="margin:4px 0">③ INT4 的电路侧准备就绪：nibble 打包目录备好（LOAD_W 拍数 −9.07%），requant 乘子 ×127/7 已实证；慢档 RTL 全链在服务器上跑（约 38 小时）。</p></div>
+
+
+<h2>一、模块资源账：每个模块占多少面积、承担多少计算 <span class="date">2026-08-31 10:17:33（布线后 DCP）</span></h2>
+<div class="entry">
+<p>从布线后的 checkpoint 提层级利用率报表，u_core 合计 103,846 LUT（占全片 230,400 的 45.1%）。DSP 一个不剩全在阵列，BRAM 主体是权重存储：</p>
+<table>
+<tr><th>模块</th><th class="num">LUT</th><th class="num">DSP</th><th>BRAM / URAM</th><th>干什么</th><th class="num">对应拍数占比</th></tr>
+<tr><td>u_arr（PE 阵列）</td><td class="num">42,267</td><td class="num">1,728（满片）</td><td>—</td><td>16×108 脉动阵列的乘加</td><td class="num">GEMM 599.1M · 55.4%</td></tr>
+<tr><td>u_cp（copy 交叉）</td><td class="num">18,410</td><td class="num">0</td><td>—</td><td>列间转置重排网络</td><td class="num">COPY 15.2M · 1.4%</td></tr>
+<tr><td>requant（27 套）</td><td class="num">16,940</td><td class="num">0</td><td>—</td><td>INT32 累加压回 INT8</td><td class="num">计入 GEMM</td></tr>
+<tr><td>u_gemm（胶水）</td><td class="num">12,117</td><td class="num">0</td><td>—</td><td>行馈给、写回控制</td><td class="num">计入 GEMM</td></tr>
+<tr><td>u_sm（SM16）</td><td class="num">10,164</td><td class="num">0</td><td>—</td><td>16 行并行 softmax</td><td class="num">计入 ATTN_S</td></tr>
+<tr><td>u_dma</td><td class="num">1,469</td><td class="num">0</td><td>—</td><td>DDR 搬运引擎</td><td class="num">LOAD+STORE 446.9M · 41.4%</td></tr>
+<tr><td>u_core（胶水）</td><td class="num">1,224</td><td class="num">0</td><td>14 RAMB36</td><td>顶层连接</td><td class="num">—</td></tr>
+<tr><td>u_sched</td><td class="num">999</td><td class="num">0</td><td>—</td><td>描述符调度状态机</td><td class="num">调度 19.6M · 1.8%</td></tr>
+<tr><td>u_ctx</td><td class="num">260</td><td class="num">0</td><td>64 URAM</td><td>激活缓存（CTX）</td><td class="num">被 LOAD_CTX/GEMM 用</td></tr>
+<tr><td>WRAM</td><td class="num">—</td><td class="num">0</td><td>108 RAMB36</td><td>权重 bank</td><td class="num">被 LOAD_W/GEMM 用</td></tr>
+</table>
+<figure class="chart">
+<h4>每个模块占多少 LUT</h4>
+<p class="how">怎么看：条子越长 LUT 越多。乘法阵列是最大的一块；LUT 排第二的 copy 重排网络干的是"伺候阵列"的活。</p>
+<svg viewBox="0 0 680 370" role="img" aria-label="每个模块占多少 LUT（布线后实测，共 103,958 已用）" style="width:100%;height:auto;display:block"><line x1="175" y1="10" x2="175" y2="340" stroke="#e1e0d9" stroke-width="1"/><text x="175" y="356" text-anchor="middle" font-size="11" fill="#898781">0万</text><line x1="248.33333333333331" y1="10" x2="248.33333333333331" y2="340" stroke="#e1e0d9" stroke-width="1"/><text x="248.33333333333331" y="356" text-anchor="middle" font-size="11" fill="#898781">1万</text><line x1="321.66666666666663" y1="10" x2="321.66666666666663" y2="340" stroke="#e1e0d9" stroke-width="1"/><text x="321.66666666666663" y="356" text-anchor="middle" font-size="11" fill="#898781">2万</text><line x1="395" y1="10" x2="395" y2="340" stroke="#e1e0d9" stroke-width="1"/><text x="395" y="356" text-anchor="middle" font-size="11" fill="#898781">3万</text><line x1="468.3333333333333" y1="10" x2="468.3333333333333" y2="340" stroke="#e1e0d9" stroke-width="1"/><text x="468.3333333333333" y="356" text-anchor="middle" font-size="11" fill="#898781">4万</text><line x1="175" y1="10" x2="175" y2="340" stroke="#c3c2b7" stroke-width="1"/><path d="M175,14 L480.958,14 A4,4 0 0 1 484.958,18 L484.958,28 A4,4 0 0 1 480.958,32 L175,32 Z" fill="#2a78d6" data-tip="16×108 脉动阵列：全部 1728 个 DSP（乘法器）都在这里，所有矩阵乘法由它完成。87,544 个寄存器存部分积"/><text x="165" y="27.5" text-anchor="end" font-size="12.5" fill="#52514e">PE 阵列 u_arr</text><text x="492.958" y="27.5" font-size="12.5" font-weight="600" fill="#0b0b0b">42,267 · 40.7%</text><path d="M175,50 L306.00666666666666,50 A4,4 0 0 1 310.00666666666666,54 L310.00666666666666,64 A4,4 0 0 1 306.00666666666666,68 L175,68 Z" fill="#2a78d6" data-tip="转置/重排网络：swin 窗口重排、im2col 都靠它在列间搬数据。一次推理要执行 54,032 条 COPY 指令"/><text x="165" y="63.5" text-anchor="end" font-size="12.5" fill="#52514e">copy 重排 u_cp</text><text x="318.00666666666666" y="63.5" font-size="12.5" font-weight="600" fill="#0b0b0b">18,410 · 17.7%</text><path d="M175,86 L295.2266666666667,86 A4,4 0 0 1 299.2266666666667,90 L299.2266666666667,100 A4,4 0 0 1 295.2266666666667,104 L175,104 Z" fill="#2a78d6" data-tip="量化回收：把 32 位累加结果压回 INT8。27 套时分复用服务 108 列（每套管 4 列）"/><text x="165" y="99.5" text-anchor="end" font-size="12.5" fill="#52514e">requant ×27</text><text x="307.2266666666667" y="99.5" font-size="12.5" font-weight="600" fill="#0b0b0b">16,940 · 16.3%</text><path d="M175,122 L259.858,122 A4,4 0 0 1 263.858,126 L263.858,136 A4,4 0 0 1 259.858,140 L175,140 Z" fill="#2a78d6" data-tip="u_gemm 内部行缓冲 tile_buf + 输出排水（drain）控制"/><text x="165" y="135.5" text-anchor="end" font-size="12.5" fill="#52514e">GEMM 胶水</text><text x="271.858" y="135.5" font-size="12.5" font-weight="600" fill="#0b0b0b">12,117 · 11.7%</text><path d="M175,158 L245.536,158 A4,4 0 0 1 249.536,162 L249.536,172 A4,4 0 0 1 245.536,176 L175,176 Z" fill="#2a78d6" data-tip="16 条并行查表车道算注意力 softmax"/><text x="165" y="171.5" text-anchor="end" font-size="12.5" fill="#52514e">softmax u_sm</text><text x="257.536" y="171.5" font-size="12.5" font-weight="600" fill="#0b0b0b">10,164 · 9.8%</text><path d="M175,194 L181.77266666666668,194 A4,4 0 0 1 185.77266666666668,198 L185.77266666666668,208 A4,4 0 0 1 181.77266666666668,212 L175,212 Z" fill="#2a78d6" data-tip="搬数引擎：在 DDR 和片上之间倒数据。逻辑不大，但它是性能瓶颈所在"/><text x="165" y="207.5" text-anchor="end" font-size="12.5" fill="#52514e">DMA u_dma</text><text x="193.77266666666668" y="207.5" font-size="12.5" font-weight="600" fill="#0b0b0b">1,469 · 1.4%</text><path d="M175,230 L179.976,230 A4,4 0 0 1 183.976,234 L183.976,244 A4,4 0 0 1 179.976,248 L175,248 Z" fill="#2a78d6" data-tip="u_core 一级的 FIFO/行缓冲，14 块 BRAM"/><text x="165" y="243.5" text-anchor="end" font-size="12.5" fill="#52514e">core 胶水</text><text x="191.976" y="243.5" font-size="12.5" font-weight="600" fill="#0b0b0b">1,224 · 1.2%</text><path d="M175,266 L178.66299999999998,266 A3.6630000000000003,3.6630000000000003 0 0 1 182.326,269.663 L182.326,280.337 A3.6630000000000003,3.6630000000000003 0 0 1 178.66299999999998,284 L175,284 Z" fill="#2a78d6" data-tip="按段读描述符、发指令。双发射改造就在这里"/><text x="165" y="279.5" text-anchor="end" font-size="12.5" fill="#52514e">调度器 u_sched</text><text x="190.326" y="279.5" font-size="12.5" font-weight="600" fill="#0b0b0b">999 · 1.0%</text><path d="M175,302 L175.95333333333332,302 A0.9533333333333333,0.9533333333333333 0 0 1 176.90666666666667,302.9533333333333 L176.90666666666667,319.0466666666667 A0.9533333333333333,0.9533333333333333 0 0 1 175.95333333333332,320 L175,320 Z" fill="#2a78d6" data-tip="上下文缓存，本体放在 64 块 URAM 里，逻辑只有 260 LUT"/><text x="165" y="315.5" text-anchor="end" font-size="12.5" fill="#52514e">CTX 缓存 u_ctx</text><text x="184.90666666666667" y="315.5" font-size="12.5" font-weight="600" fill="#0b0b0b">260 · 0.3%</text></svg>
+</figure>
+<figure class="chart">
+<h4>10.81 亿拍都花在哪（按拍数归因）</h4>
+<p class="how">怎么看：和上一张图对照着看——拍数的大头在搬运（LOAD+STORE 合计 41.4%），而搬运引擎 u_dma 只有 1,469 LUT；反过来 copy 交叉 18,410 LUT 只承担 1.4% 的拍。<b>面积大小和干活多少不是一回事。</b></p>
+<svg viewBox="0 0 680 262" role="img" aria-label="10.81 亿拍都花在哪（按拍数归因，不再按指令条数）" style="width:100%;height:auto;display:block"><line x1="175" y1="10" x2="175" y2="232" stroke="#e1e0d9" stroke-width="1"/><text x="175" y="248" text-anchor="middle" font-size="11" fill="#898781">0</text><line x1="251.15384615384616" y1="10" x2="251.15384615384616" y2="232" stroke="#e1e0d9" stroke-width="1"/><text x="251.15384615384616" y="248" text-anchor="middle" font-size="11" fill="#898781">150</text><line x1="327.3076923076923" y1="10" x2="327.3076923076923" y2="232" stroke="#e1e0d9" stroke-width="1"/><text x="327.3076923076923" y="248" text-anchor="middle" font-size="11" fill="#898781">300</text><line x1="403.46153846153845" y1="10" x2="403.46153846153845" y2="232" stroke="#e1e0d9" stroke-width="1"/><text x="403.46153846153845" y="248" text-anchor="middle" font-size="11" fill="#898781">450</text><line x1="479.61538461538464" y1="10" x2="479.61538461538464" y2="232" stroke="#e1e0d9" stroke-width="1"/><text x="479.61538461538464" y="248" text-anchor="middle" font-size="11" fill="#898781">600</text><line x1="175" y1="10" x2="175" y2="232" stroke="#c3c2b7" stroke-width="1"/><path d="M175,14 L475.15846153846155,14 A4,4 0 0 1 479.15846153846155,18 L479.15846153846155,28 A4,4 0 0 1 475.15846153846155,32 L175,32 Z" fill="#2a78d6" data-tip="矩阵乘本体。忙时每拍平均 373 个乘加 = 峰值的 22%：小矩阵和排水填充摊薄了引擎——这是 padding/形状匹配问题，不是搬运"/><text x="165" y="27.5" text-anchor="end" font-size="12.5" fill="#52514e">GEMM 引擎</text><text x="487.15846153846155" y="27.5" font-size="12.5" font-weight="600" fill="#0b0b0b">599.1 M · 55.4%</text><path d="M175,50 L275.8892307692308,50 A4,4 0 0 1 279.8892307692308,54 L279.8892307692308,64 A4,4 0 0 1 275.8892307692308,68 L175,68 Z" fill="#2a78d6" data-tip="算完的结果写回 DDR，共 660.9 MB，折算只有 3.2 字节/拍——最慢的搬运，第一大单项。治它要靠编译器加大段+流式写回"/><text x="165" y="63.5" text-anchor="end" font-size="12.5" fill="#52514e">STORE（写回 DDR）</text><text x="287.8892307692308" y="63.5" font-size="12.5" font-weight="600" fill="#0b0b0b">206.6 M · 19.1%</text><path d="M175,86 L254.71846153846155,86 A4,4 0 0 1 258.71846153846155,90 L258.71846153846155,100 A4,4 0 0 1 254.71846153846155,104 L175,104 Z" fill="#2a78d6" data-tip="激活从 DDR 重装片上，共 1306.5 MB。on-chip 算子融合（第六节）直接削这笔"/><text x="165" y="99.5" text-anchor="end" font-size="12.5" fill="#52514e">LOAD_CTX（激活重装）</text><text x="266.71846153846155" y="99.5" font-size="12.5" font-weight="600" fill="#0b0b0b">164.9 M · 15.3%</text><path d="M175,122 L209.28,122 A4,4 0 0 1 213.28,126 L213.28,136 A4,4 0 0 1 209.28,140 L175,140 Z" fill="#2a78d6" data-tip="权重装载。预取已吃掉 33.7M，还暴露约 42M 拍——预取窗口扩到 COPY/新引擎运行期可再吃回一部分"/><text x="165" y="135.5" text-anchor="end" font-size="12.5" fill="#52514e">LOAD_W（权重装载）</text><text x="221.28" y="135.5" font-size="12.5" font-weight="600" fill="#0b0b0b">75.4 M · 7.0%</text><path d="M175,158 L180.95076923076923,158 A4,4 0 0 1 184.95076923076923,162 L184.95076923076923,172 A4,4 0 0 1 180.95076923076923,176 L175,176 Z" fill="#2a78d6" data-tip="段间隙、随机数读停顿、总线仲裁"/><text x="165" y="171.5" text-anchor="end" font-size="12.5" fill="#52514e">调度+LFSR 停顿</text><text x="192.95076923076923" y="171.5" font-size="12.5" font-weight="600" fill="#0b0b0b">19.6 M · 1.8%</text><path d="M175,194 L178.85846153846154,194 A3.858461538461538,3.858461538461538 0 0 1 182.71692307692308,197.85846153846154 L182.71692307692308,208.14153846153846 A3.858461538461538,3.858461538461538 0 0 1 178.85846153846154,212 L175,212 Z" fill="#2a78d6" data-tip="5.4 万条看着吓人，拍数只占 1.4%。真实罪状是打断权重预取（预取只在 GEMM/SM 运行期发射），是条数问题不是拍数问题"/><text x="165" y="207.5" text-anchor="end" font-size="12.5" fill="#52514e">COPY（运行时转置）</text><text x="190.71692307692308" y="207.5" font-size="12.5" font-weight="600" fill="#0b0b0b">15.2 M · 1.4%</text></svg>
+</figure>
+<figure class="chart">
+<h4>模型各阶段的计算时间占比</h4>
+<p class="how">怎么看：decoder 一个阶段吃掉一半时间，阵列（面积最大的模块）在所有阶段都是主要执行者——这张图就是阵列时间的去向。</p>
+<svg viewBox="0 0 680 298" role="img" aria-label="模型各阶段的计算时间占比（实测 1080.8M 拍，部署口径）" style="width:100%;height:auto;display:block"><line x1="175" y1="10" x2="175" y2="268" stroke="#e1e0d9" stroke-width="1"/><text x="175" y="284" text-anchor="middle" font-size="11" fill="#898781">0%</text><line x1="235" y1="10" x2="235" y2="268" stroke="#e1e0d9" stroke-width="1"/><text x="235" y="284" text-anchor="middle" font-size="11" fill="#898781">10%</text><line x1="295" y1="10" x2="295" y2="268" stroke="#e1e0d9" stroke-width="1"/><text x="295" y="284" text-anchor="middle" font-size="11" fill="#898781">20%</text><line x1="355" y1="10" x2="355" y2="268" stroke="#e1e0d9" stroke-width="1"/><text x="355" y="284" text-anchor="middle" font-size="11" fill="#898781">30%</text><line x1="415" y1="10" x2="415" y2="268" stroke="#e1e0d9" stroke-width="1"/><text x="415" y="284" text-anchor="middle" font-size="11" fill="#898781">40%</text><line x1="475" y1="10" x2="475" y2="268" stroke="#e1e0d9" stroke-width="1"/><text x="475" y="284" text-anchor="middle" font-size="11" fill="#898781">50%</text><line x1="175" y1="10" x2="175" y2="268" stroke="#c3c2b7" stroke-width="1"/><path d="M175,14 L469.2,14 A4,4 0 0 1 473.2,18 L473.2,28 A4,4 0 0 1 469.2,32 L175,32 Z" fill="#2a78d6" data-tip="537.4M 拍。10 个去噪步，全在动作头 GEMM 上"/><text x="165" y="27.5" text-anchor="end" font-size="12.5" fill="#52514e">decoder（去噪解码）</text><text x="481.2" y="27.5" font-size="12.5" font-weight="600" fill="#0b0b0b">49.7%</text><path d="M175,50 L297,50 A4,4 0 0 1 301,54 L301,64 A4,4 0 0 1 297,68 L175,68 Z" fill="#2a78d6" data-tip="226.5M 拍。特征增强/融合层"/><text x="165" y="63.5" text-anchor="end" font-size="12.5" fill="#52514e">feature_enhancer</text><text x="309" y="63.5" font-size="12.5" font-weight="600" fill="#0b0b0b">21.0%</text><path d="M175,86 L252,86 A4,4 0 0 1 256,90 L256,100 A4,4 0 0 1 252,104 L175,104 Z" fill="#2a78d6" data-tip="145.6M 拍。每个相机各过一遍主干"/><text x="165" y="99.5" text-anchor="end" font-size="12.5" fill="#52514e">backbone（2D 主干）</text><text x="264" y="99.5" font-size="12.5" font-weight="600" fill="#0b0b0b">13.5%</text><path d="M175,122 L227.4,122 A4,4 0 0 1 231.4,126 L231.4,136 A4,4 0 0 1 227.4,140 L175,140 Z" fill="#2a78d6" data-tip="101.9M 拍。只有 10.4G 带零乘加却吃 9.4% 时间——小矩阵+大搬运的典型受害者"/><text x="165" y="135.5" text-anchor="end" font-size="12.5" fill="#52514e">spatial_enhancer</text><text x="239.4" y="135.5" font-size="12.5" font-weight="600" fill="#0b0b0b">9.4%</text><path d="M175,158 L191.4,158 A4,4 0 0 1 195.4,162 L195.4,172 A4,4 0 0 1 191.4,176 L175,176 Z" fill="#2a78d6" data-tip="36.4M 拍"/><text x="165" y="171.5" text-anchor="end" font-size="12.5" fill="#52514e">backbone_3d</text><text x="203.4" y="171.5" font-size="12.5" font-weight="600" fill="#0b0b0b">3.4%</text><path d="M175,194 L187.8,194 A4,4 0 0 1 191.8,198 L191.8,208 A4,4 0 0 1 187.8,212 L175,212 Z" fill="#2a78d6" data-tip="30.4M 拍。本轮每次推理都重跑；缓存后这 2.8% 可以直接省掉"/><text x="165" y="207.5" text-anchor="end" font-size="12.5" fill="#52514e">text_encoder（BERT）</text><text x="199.8" y="207.5" font-size="12.5" font-weight="600" fill="#0b0b0b">2.8%</text><path d="M175,230 L175.6,230 A0.6,0.6 0 0 1 176.2,230.6 L176.2,247.4 A0.6,0.6 0 0 1 175.6,248 L175,248 Z" fill="#2a78d6" data-tip="neck 1.9M + neck_3d 0.8M + text_feat_map 0.08M"/><text x="165" y="243.5" text-anchor="end" font-size="12.5" fill="#52514e">neck 等</text><text x="184.2" y="243.5" font-size="12.5" font-weight="600" fill="#0b0b0b">0.2%</text></svg>
+</figure>
+</div>
+
+<h2>二、AE_ACTV 引擎 RTL：位精确落地，抓出两个真 bug <span class="date">2026-08-31 下午（代理 2.1 小时）</span></h2>
+<div class="entry">
+<p>on-chip 方案（架构总结页第三节）的第一版 RTL 落地，先做 ACTV（查表激活）+ BIAS 两种模式：</p>
+<ul>
+<li><b>微观对拍</b>：8 个随机用例（覆盖行组尾数、列宽尾数、表长尾数、负乘子、饱和角落），RTL 与 numpy 黄金逐字节比对 <b>20480/20480 全部精确</b>。</li>
+<li><b>全芯片回归</b>：op=6 黄金语义加进 gen_vectors.py，默认用例向量逐字节不变（md5 一致），新增用例在三个位置插 ACTV/BIAS 指令加表装载——四项位精确全过，regression.sh <b>12/12 ALL PASS</b>。</li>
+<li><b>抓出的 RTL bug</b>：①尾组行掩码读了还没锁存的行数寄存器，拿到的是上一条描述符的值，掩码全错（修法：行掩码把行数当显式参数传）；②仿真器对 genvar 位选择求值不可靠、表武装写时序差一拍。黄金脚本自己也有一个 bug（把执行完的终态当初态 dump 给测试台），修掉后一个用例从假通过变真通过。</li>
+</ul>
+<p><b>编码</b>：op=6，b_src 字段复用为子模式（0=ACTV、1=BIAS），其余字段原位复用，256 位布局不动。一个坑记下：<b>ACTV 表映像必须把每个表项复制到所在字的全部 16 个槽位</b>（512B）——CTX 是广播读、按槽位对号，第一版"每个 lane 只收自己那 16 项"的布局是错的。</p>
+</div>
+
+<h2>三、AE_ACTV 综合：功能达标，面积超自设门槛一倍</h2>
+<div class="entry">
+<figure class="chart">
+<h4>AE_ACTV 引擎综合后用了多少 LUT（OOC，目标 250MHz）</h4>
+<p class="how">怎么看：整引擎 5147 LUT，是调研时自设门槛（2500）的两倍。超在哪：BIAS 模式的 16 份 8b×16b 无 DSP 乘法（4410 LUT）；查表的 ACTV 模式（1307）单看达标。下一轮给 BIAS 换乘法结构——查表分解或共享乘法器分时复用。</p>
+<svg viewBox="0 0 680 190" role="img" aria-label="AE_ACTV 引擎综合后用了多少 LUT（OOC，目标 250MHz）" style="width:100%;height:auto;display:block"><line x1="175" y1="10" x2="175" y2="160" stroke="#e1e0d9" stroke-width="1"/><text x="175" y="176" text-anchor="middle" font-size="11" fill="#898781">0</text><line x1="233.92857142857144" y1="10" x2="233.92857142857144" y2="160" stroke="#e1e0d9" stroke-width="1"/><text x="233.92857142857144" y="176" text-anchor="middle" font-size="11" fill="#898781">1000</text><line x1="292.8571428571429" y1="10" x2="292.8571428571429" y2="160" stroke="#e1e0d9" stroke-width="1"/><text x="292.8571428571429" y="176" text-anchor="middle" font-size="11" fill="#898781">2000</text><line x1="351.7857142857143" y1="10" x2="351.7857142857143" y2="160" stroke="#e1e0d9" stroke-width="1"/><text x="351.7857142857143" y="176" text-anchor="middle" font-size="11" fill="#898781">3000</text><line x1="410.7142857142857" y1="10" x2="410.7142857142857" y2="160" stroke="#e1e0d9" stroke-width="1"/><text x="410.7142857142857" y="176" text-anchor="middle" font-size="11" fill="#898781">4000</text><line x1="469.64285714285717" y1="10" x2="469.64285714285717" y2="160" stroke="#e1e0d9" stroke-width="1"/><text x="469.64285714285717" y="176" text-anchor="middle" font-size="11" fill="#898781">5000</text><line x1="175" y1="10" x2="175" y2="160" stroke="#c3c2b7" stroke-width="1"/><path d="M175,14 L474.30535714285713,14 A4,4 0 0 1 478.30535714285713,18 L478.30535714285713,28 A4,4 0 0 1 474.30535714285713,32 L175,32 Z" fill="#2a78d6" data-tip="4507 逻辑 LUT + 640 LUTRAM + 985 FF + 2 BRAM36 + 0 DSP；WNS −0.229ns @250MHz ≈ 238MHz，高于实测 198.5MHz 时钟"/><text x="165" y="27.5" text-anchor="end" font-size="12.5" fill="#52514e">两模式合计（整引擎）</text><text x="486.30535714285713" y="27.5" font-size="12.5" font-weight="600" fill="#0b0b0b">5147 · 超门槛 106%</text><path d="M175,50 L430.875,50 A4,4 0 0 1 434.875,54 L434.875,64 A4,4 0 0 1 430.875,68 L175,68 Z" fill="#2a78d6" data-tip="16 份 8b×16b 无 DSP 乘法，每 lane 约 234 LUT——超支的大头，下一轮换乘法结构（查表分解或共享乘法器分时复用）"/><text x="165" y="63.5" text-anchor="end" font-size="12.5" fill="#52514e">其中 BIAS 模式</text><text x="442.875" y="63.5" font-size="12.5" font-weight="600" fill="#0b0b0b">4410</text><path d="M175,86 L318.32142857142856,86 A4,4 0 0 1 322.32142857142856,90 L322.32142857142856,100 A4,4 0 0 1 318.32142857142856,104 L175,104 Z" fill="#2a78d6" data-tip="调研时给 ACTV+BIAS 两模式定的预算"/><text x="165" y="99.5" text-anchor="end" font-size="12.5" fill="#52514e">自设门槛（两模式合计）</text><text x="330.32142857142856" y="99.5" font-size="12.5" font-weight="600" fill="#0b0b0b">2500</text><path d="M175,122 L248.01964285714286,122 A4,4 0 0 1 252.01964285714286,126 L252.01964285714286,136 A4,4 0 0 1 248.01964285714286,140 L175,140 Z" fill="#2a78d6" data-tip="667 逻辑 LUT + 640 LUTRAM，查表实现，单看在门槛内"/><text x="165" y="135.5" text-anchor="end" font-size="12.5" fill="#52514e">其中 ACTV 模式（查表）</text><text x="260.01964285714286" y="135.5" font-size="12.5" font-weight="600" fill="#0b0b0b">1307 · 达标</text></svg>
+</figure>
+<ul>
+<li>DSP 用量为 <b>0</b>（门槛达标——不动满片的乘法器资源）；2 块 BRAM36 存表。</li>
+<li>时序 WNS −0.229ns @250MHz，折合约 238MHz，高于实测运行的 198.5MHz 时钟——当前够用。</li>
+<li>全片还有约 120k LUT 空余，5k LUT 不构成容量问题；真正的关注点是扩到五模式（norm/rotary/softmax-bias）时的缩放，BIAS 这种乘法结构必须先治。</li>
+</ul>
+</div>
+
+<h2>四、INT4 的电路侧：打包目录备好，requant 链实证 <span class="date">2026-08-31 下午</span></h2>
+<div class="entry">
+<ul>
+<li><b>nibble 打包</b>（w4_packed/ 已备好）：BERT 权重两个 4 位装一个字节，字节 −50.0%，折合导出总量 −26.6%；LOAD_W 拍数 est −9.07%（147.49M→134.11M），全链 est −2.13%。描述符条数不变——打包对指令流零侵入，只动 DMA 解包。</li>
+<li><b>requant 链实证</b>：BERT GEMM 的 requant 常数按 INT4 新尺度重算，有效乘子精确放大 127/7=18.14 倍（例：32390/2<sup>25</sup> → 18364/2<sup>20</sup>），aug bias 幅度同步缩小约 18 倍——常数表通路不用改 RTL。</li>
+</ul>
+</div>
+
+<h2>五、慢档 RTL 全链在跑，位精确是本轮所有改动的验收标准 <span class="running">进行中</span></h2>
+<div class="entry">
+<p>慢档（RTL 逐段）全链在服务器 nohup 跑样本 000：47/3118 段（1.5%），约 45 秒/段，预计还需约 38 小时。快慢档段级已证位精确，数值结论预期与快档一致，跑完留完整记录。本轮电路侧的每一步改动（AE_ACTV 引擎、op=6 语义、编译器修复）都走了同一条验收路径：<b>微观对拍 → 全芯片位精确回归 → 综合实测</b>，不带病前进。</p>
+</div>
+
+
+<footer>
+<p>数据来源：E:/ae_syn/pwr/hier_util.rpt（布线后 DCP 层级账，Vivado 2021.2 xczu7ev）；09_onchip_rtl/（AE_ACTV RTL、微观与全芯片对拍、OOC 综合报告）；09_int4_impl/w4_packed/（nibble 打包）；05_sim（慢档 RTL 全链）。</p>
+<p>生成时刻：<b>2026-08-31 16:24:00</b>。上一份总结：《2026-08-31 架构/硬件/软件工作记录》（08_report/）。compute-bound 改造代理仍在跑，结果出来后另出页，不在本份总结里。</p>
+</footer>
+
+</div>
+
+<script>
+(function(){
+  var tip = document.getElementById('tip');
+  document.querySelectorAll('[data-tip]').forEach(function(el){
+    el.addEventListener('mousemove', function(e){
+      tip.textContent = el.getAttribute('data-tip');
+      tip.style.opacity = 1;
+      var x = Math.min(e.clientX + 14, window.innerWidth - 300);
+      tip.style.left = x + 'px';
+      tip.style.top = (e.clientY + 18) + 'px';
+    });
+    el.addEventListener('mouseleave', function(){ tip.style.opacity = 0; });
+  });
+})();
+</script>
+
+</body>
+</html>

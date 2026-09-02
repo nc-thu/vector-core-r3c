@@ -1,0 +1,65 @@
+[
+ {
+  "sample": 0,
+  "vidx": 0,
+  "instr": "Lift the rounded base blue cup up and drop it on the light g",
+  "w8_jpos": 0.018230542540550232,
+  "w8_mae_all": 0.018520543351769447,
+  "cfg_jpos": 0.029156994074583054,
+  "cfg_mae_all": 0.021332155913114548
+ },
+ {
+  "sample": 0,
+  "vidx": 10,
+  "instr": "Make sure the rounded base blue cup ends up on the wooden co",
+  "w8_jpos": 0.021103480830788612,
+  "w8_mae_all": 0.018690628930926323,
+  "cfg_jpos": 0.026772767305374146,
+  "cfg_mae_all": 0.020103465765714645
+ },
+ {
+  "sample": 0,
+  "vidx": 25,
+  "instr": "Using the arm, slide the light blue plastic cup onto the coa",
+  "w8_jpos": 0.020565105602145195,
+  "w8_mae_all": 0.019625794142484665,
+  "cfg_jpos": 0.028724104166030884,
+  "cfg_mae_all": 0.020675349980592728
+ },
+ {
+  "sample": 0,
+  "vidx": 50,
+  "instr": "Lift the smooth blue drinking cup up and drop it on the smal",
+  "w8_jpos": 0.01952134631574154,
+  "w8_mae_all": 0.01903936080634594,
+  "cfg_jpos": 0.024968523532152176,
+  "cfg_mae_all": 0.020879661664366722
+ },
+ {
+  "sample": 1,
+  "vidx": 5,
+  "instr": "Using the arm, drop the cup with light blue color onto the s",
+  "w8_jpos": 0.02904653176665306,
+  "w8_mae_all": 0.021350594237446785,
+  "cfg_jpos": 0.03326908499002457,
+  "cfg_mae_all": 0.023397060111165047
+ },
+ {
+  "sample": 1,
+  "vidx": 40,
+  "instr": "Drop the medium blue cylindrical cup firmly on the small coa",
+  "w8_jpos": 0.03045019321143627,
+  "w8_mae_all": 0.02181296981871128,
+  "cfg_jpos": 0.033352531492710114,
+  "cfg_mae_all": 0.02282661572098732
+ },
+ {
+  "sample": 2,
+  "vidx": 15,
+  "instr": "Direct the rounded base blue cup to the small coaster with g",
+  "w8_jpos": 0.02413170225918293,
+  "w8_mae_all": 0.02335677668452263,
+  "cfg_jpos": 0.02013067901134491,
+  "cfg_mae_all": 0.021994352340698242
+ }
+]

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>R1 独立写通道与 R2 CTX 预取：原理 2026-09-01</title>
+<style>
+  body{font-family:"Microsoft YaHei",SimSun,serif;max-width:1000px;margin:24px auto;padding:0 16px;color:#111;background:#fff;line-height:1.75}
+  h1{font-size:22px;border-bottom:2px solid #000;padding-bottom:6px}
+  h2{font-size:18px;border-left:5px solid #000;padding-left:8px;margin-top:32px}
+  h3{font-size:15px;margin-top:22px}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14px}
+  th,td{border:1px solid #444;padding:5px 8px;text-align:left}
+  th{background:#eee}
+  .num{text-align:right;font-variant-numeric:tabular-nums}
+  .mono{font-family:Consolas,monospace;font-size:13px;background:#f4f4f4;padding:1px 4px}
+  .meta{color:#555;font-size:13px}
+  .box{border:1px dashed #888;padding:10px 14px;margin:12px 0;background:#fafafa}
+  .hint{color:#555;font-size:13px;margin:4px 0}
+  svg text{font-family:"Microsoft YaHei",SimSun,serif}
+</style>
+</head>
+<body>
+
+<h1>R1（独立写通道）和 R2（CTX 预取）是怎么把 899M 拍压到 427M 的</h1>
+<p class="meta">生成时刻：2026-09-01 11:38:00　|　两项均已 RTL 落地并硬件实证（2026-08-31 设计，2026-09-01 Verilator 位精确门全过）　|　RTL：<span class="mono">14_rtl_r1r2/rtl/</span>（ae_dma.sv / ae_core.sv / ae_sched.sv）</p>
+
+<h2>零、先建立一个图景</h2>
+<p>加速器干活只有三类事：<b>算</b>（GEMM 阵列、softmax、激活引擎）、<b>读</b>（从 DDR 把权重和激活搬进片上）、<b>写</b>（把结果写回 DDR）。搬数据的是 DMA——一个专门搬数据的部件，CPU 只需要告诉它"从哪搬到哪"，它自己完成剩下的。</p>
+<p>改造前的旧 DMA 只有一条"单车道"：读和写共用一个状态机。它先放下手里的写、去读一批，读完再写——什么并发都没有。所以旧总时间是三件事的<b>串行和</b>：算 387M 拍 + 读 292M 拍 + 写 218M 拍 ≈ 899M 拍（4.54ms）。</p>
+<p>R1 和 R2 各解开一个死结：</p>
+<div class="box">
+<p><b>R1（独立写通道）：把"写"从单车道里拆出来。</b>读和算干完各自的事就算结束，写自己在旁边慢慢流——只要最慢的一条车道不超过"算"的 387M 拍，写就完全免费。</p>
+<p><b>R2（CTX 预取）：把"读激活"藏进"算"的空档。</b>GEMM 正在算这一段的时候，DMA 就提前把下一段要的激活搬进来。等下一段真正开始时，数据已经在片上等着了。</p>
+<p>两招一起上：总时间从"算+读+写"的串行和，变成三条车道的最大值 + 一点依赖停顿 = <b>427M 拍（2.15ms），GEMM 计算占总时间 78.9%</b>——"算"第一次成为绝对主线。</p>
+</div>
+
+<h2>一、R1 独立写通道：具体怎么拆的</h2>
+<h3>1.1 改造前的问题</h3>
+<p>旧 <span class="mono">ae_dma.sv</span> 是一个状态机服务所有请求。STORE（把结果写回 DDR）执行时，整条 DMA 都在等它：AW 地址握手 → W 数据 → B 响应，走完才轮到下一条 LOAD。而 STORE 的量不小——全帧 593MB、218M 拍，占总时间 24%。这段时间里 GEMM 阵列是闲的。</p>
+<h3>1.2 改造后</h3>
+<p>把一个状态机拆成两个独立引擎（[ae_dma.sv](../14_rtl_r1r2/rtl/ae_dma.sv)）：</p>
+<table>
+<tr><th></th><th>读引擎（rd_st）</th><th>写引擎（wr_st）</th></tr>
+<tr><td>走的 AXI 通道</td><td>AR（发读地址）→ R（收数据）</td><td>AW（发写地址）→ W（给数据）→ B（收响应）</td></tr>
+<tr><td>干什么</td><td>LOAD_CTX / LOAD_W / 后台预取，数据写进片上 CTX/WRAM</td><td>STORE，数据从 CTX 读出写进 DDR</td></tr>
+<tr><td>状态机</td><td>R_IDLE→R_AR→R_R→R_R2→R_FIN</td><td>W_IDLE→W_AW→W_RD→W_WD2→W_W→W_B→W_FIN</td></tr>
+</table>
+<p>AXI 总线本身就是全双工的——读地址/读数据 和 写地址/写数据/写响应 是物理上独立的两套线，以前只是没人用。<b>拆开后 STORE 和 GEMM 真并发</b>：Verilator 实测里能直接看到，seg_0600 段 STORE 与计算重叠了 2026 拍（占该段 45.5%）。</p>
+<h3>1.3 正确性：谁先谁后不能乱</h3>
+<p>并发最大的坑是抢资源。写引擎要从 CTX 读数据出去，而 CTX 只有一个读口（A 口），GEMM 喂数也要用 A 口。规则定成：<b>GEMM 永远优先</b>——写引擎在 W_RD/W_RD2 状态发现 GEMM 占着 A 口，就地停拍等它让出，绝不读到错的数据。调度器那边配合改一条：STORE 描述符发射后不再等完成（fire-and-forget），直接推进到下一条；LOAD 保持阻塞语义不变。</p>
+
+<h2>二、R2 CTX 预取：具体怎么藏的</h2>
+<h3>2.1 改造前的问题</h3>
+<p>每段开始前要先花一大笔时间装激活（LOAD_CTX，全帧 680MB、184M 拍，占 20%）。这段时间 GEMM 阵列完全闲着——数据没到，算不了。</p>
+<h3>2.2 改造后</h3>
+<p>调度器里本来就有一个预取状态机（pf FSM），以前只认得一种任务：趁 GEMM 算着的时候，提前把下一段的<b>权重</b>装进 WRAM。R2 做的事：</p>
+<ol>
+<li><b>预取标签从 1 种扩到 2 种</b>（<span class="mono">ae_sched.sv</span> 的 pf_issue_ok 接受 TAG_W 和 TAG_CTX）——预取状态机现在也认得"下一段的激活"了。</li>
+<li><b>CTX 本身有空间可放</b>：CTX 是 2MB 的片上存储，激活图按半区轮换使用（bit11 是半区标志），当前段用 A 半区时，预取的数据写进 B 半区，互不踩踏。</li>
+<li><b>时机的关键判断：</b>CTX 只有一个写口（B 口），GEMM 算完往外写结果也走 B 口。但 GEMM 只有在最后写回阶段（S_WB/S_WBTR）才碰 B 口，喂数的几十到几百拍里 B 口是空的——预取就专挑这个空档写。GEMM 进入写回时，预取暂停让位。</li>
+</ol>
+<svg viewBox="0 0 900 200" style="width:100%;max-width:900px;background:#fff">
+  <text x="10" y="20" font-size="13" font-weight="bold">R2 时间线：装载被藏进 GEMM 的计算期</text>
+  <text x="10" y="46" font-size="11">改造前：</text>
+  <rect x="90" y="32" width="180" height="22" fill="#fff" stroke="#000"/>
+  <text x="130" y="48" font-size="11">LOAD_CTX 装激活</text>
+  <rect x="270" y="32" width="300" height="22" fill="#ccc" stroke="#000"/>
+  <text x="360" y="48" font-size="11">GEMM 计算（阵列忙）</text>
+  <rect x="570" y="32" width="180" height="22" fill="#fff" stroke="#000"/>
+  <text x="610" y="48" font-size="11">LOAD_CTX 又装…</text>
+  <text x="10" y="100" font-size="11">改造后：</text>
+  <rect x="90" y="86" width="660" height="22" fill="#ccc" stroke="#000"/>
+  <text x="330" y="102" font-size="11">GEMM 计算连续不断（阵列始终忙）</text>
+  <rect x="370" y="118" width="250" height="20" fill="#eee" stroke="#000" stroke-dasharray="4,3"/>
+  <text x="378" y="132" font-size="11">DMA 在这段时间里把下一段激活偷运进 CTX 另一半区</text>
+  <text x="10" y="168" font-size="11" fill="#555">怎么看：上面一行的两个白框（装载等待）在下面一行消失了——不是不用装，是装的动作挪进了灰色计算期里。</text>
+</svg>
+
+<h3>2.3 踩过的坑（如实交代，2026-09-01 修复）</h3>
+<p>R2 上线后在一段特殊的测试上翻过车：k=257 的长 GEMM 段开预取时，输出有 83 个字节差 ±1。排查发现预取写 CTX 时如果撞上引擎用写口，<b>这次写会被静默丢掉</b>——而 DMA 读引擎不知道，照常报"预取完成"，调度器以为数据到位，后面的计算就用了残缺数据。修法是加一个握手（pf_ctx_stall）：预取的写落不了地时，DMA 就地停拍等待，写一个不丢。修复后该段全 DDR 逐位一致，且预取照常省拍（净省 2,256 拍，−4.2%）。<b>这个 bug 只在长 GEMM 段出现</b>，因为喂入窗口长、预取撞上写口的概率才够高——短段一直测不出来。</p>
+
+<h2>三、效果与证据（全部实测口径）</h2>
+<table>
+<tr><th>指标</th><th>改造前</th><th>R1+R2 后</th><th>变化</th></tr>
+<tr><td>总拍数</td><td class="num">899.4M</td><td class="num"><b>426.7M</b></td><td class="num"><b>−52.6%</b></td></tr>
+<tr><td>每帧时间（198.5MHz）</td><td class="num">4.54ms</td><td class="num"><b>2.15ms</b></td><td class="num">−52.6%</td></tr>
+<tr><td>GEMM 占总时间</td><td class="num">37.4%</td><td class="num"><b>78.9%</b></td><td>主线达成（目标 &gt;50%）</td></tr>
+</table>
+<p>逐段实测（Verilator，位精确 + 拍数都有）：seg_0600 省 548 拍（−18.4%）、seg_0602 省 2256 拍（−4.2%）、seg_0529 省 0 拍（撞了半区边界，按设计就该如此）。段与段有差异是正常的——预取有没有空档、写通道有没有撞车，取决于每段自己的形状。</p>
+<p>资源代价：全芯片 LUT 只涨了 28 个（134,734→134,762；DMA 双引擎加的 774 个 LUT 被别处的综合优化抵掉了），DSP 1,728 不变（满片），时序达标（WNS −1.038ns @250MHz）。<b>一拍不花的代价换一半时间</b>——这是当时决定先做 R1/R2 而不是别的的原因。</p>
+
+<h2>四、为什么 R1 必须配 R2（单独一个都不行）</h2>
+<p>只做 R1（写藏进计算）：总时间 = max(算 387, 读 292) + 写被藏 = 46.8% 的 GEMM 占比，没过 50% 线——因为读还是串行挡在计算前面。</p>
+<p>只做 R2（读藏进计算）：写回还堵着——写口和预取写抢同一个 CTX B 口，时序上互相牵制，模型上也不成立。</p>
+<p><b>两个一起做，三条车道才真正各走各的</b>：max(算 387, 读 292, 写 218) = 387，这就是 427M（387 + 40M 依赖停顿）的来历。</p>
+
+<h2>五、剩下的时间花在哪（衔接下一轮）</h2>
+<p>427M 里的构成：GEMM 336.4（78.9%）+ COPY 40.3（9.4%）+ AE_ACTV 10.0（2.3%）+ 依赖停顿 40（9.4%）。读写已经全部藏在计算背后（读 292 &lt; 387、写 218 &lt; 387，都不露头）。<b>所以下一步只能压计算本身</b>——这就是 R3 行组流水（GEMM 336→185M，见 18_r3_plan）和它之后的读压缩（见 20_read_compress）的由来。</p>
+
+<h2>六、验证状态（截至本页）</h2>
+<ul>
+<li>功能正确性：iverilog 微观 21 用例（221,184/221,184 字节位精确）+ 全芯片回归 12/12 + Verilator 三个代表段 PF=0/1 全部位精确（全 DDR diff=0，含 R2 bug 修复后的复验）。</li>
+<li>周期收益：三代表段实测（上表）+ 全帧模型 426.7M；周期模型对拍偏差 −2.1% ~ −2.7%（15% 门内）。</li>
+<li>综合：250MHz OOC，LUT 135,111（含 R2 修复 +349）、DSP 1,728 满片持平、WNS −1.038ns。</li>
+</ul>
+
+</body>
+</html>

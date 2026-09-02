@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>加速器架构框图 · 2026-09-01</title>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:#111;font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;line-height:1.6;font-size:15px}
+.wrap{max-width:1520px;margin:0 auto;padding:26px 20px 80px}
+header.page{border-bottom:1px solid #999;padding-bottom:14px;margin-bottom:14px}
+h1{font-size:22px;margin:0 0 8px}
+.meta{font-size:13px;color:#555;display:flex;flex-wrap:wrap;gap:4px 20px}
+h2{font-size:18px;margin:36px 0 8px}
+.hint{font-size:13px;color:#666;margin:0 0 10px}
+.svgbox{border:1px solid #ccc;border-radius:8px;padding:10px;overflow-x:auto;background:#fff}
+table{border-collapse:collapse;width:100%;font-size:13.5px;margin:10px 0}
+th,td{border:1px solid #bbb;text-align:left;padding:6px 9px;vertical-align:top}
+th{background:#f2f2f2;font-weight:600}
+td.f{font-family:Consolas,Menlo,monospace;font-size:12.5px;white-space:nowrap}
+ol{padding-left:24px}
+li{margin:4px 0}
+footer{margin-top:40px;padding-top:12px;border-top:1px solid #999;font-size:12.5px;color:#666}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="page">
+<h1>HoloBrain 加速器架构框图（INT8 · 16×108 脉动阵列 · ZCU104）</h1>
+<div class="meta">
+<span>生成时刻：<b>2026-09-01 10:12:26</b></span>
+<span>RTL 基线：14_rtl_r1r2（R1 双引擎 DMA + R2 CTX 预取 + AE_ACTV 四模式）</span>
+<span>图例：<b>实线箭头 = 数据流</b> · 虚线箭头 = 控制/握手 · 粗灰线 = 描述符总线 / AXI 总线 · 灰底盒 = 片上存储</span>
+</div>
+</header>
+
+<figure class="svgbox">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1480 1330" font-family="system-ui,'Segoe UI','Microsoft YaHei',sans-serif">
+<defs>
+<marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#111"/></marker>
+<marker id="arG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#777"/></marker>
+</defs>
+
+<style>
+.bx{fill:#fff;stroke:#111;stroke-width:1.5}
+.bxh{fill:#f2f2f2;stroke:#111;stroke-width:1.5}
+.mem{fill:#e9e9e9;stroke:#111;stroke-width:1.5}
+.eng{fill:#fff;stroke:#111;stroke-width:1.5}
+.arb{fill:#fafafa;stroke:#555;stroke-width:1.2;stroke-dasharray:none}
+.t{font-size:14.5px;font-weight:700;fill:#111}
+.s{font-size:12px;fill:#222}
+.n{font-size:11.5px;fill:#444}
+.lb{font-size:11.5px;fill:#333}
+.dl{fill:none;stroke:#111;stroke-width:1.6}
+.ctl{fill:none;stroke:#444;stroke-width:1.1;stroke-dasharray:5 4}
+.bus{stroke:#999;stroke-width:6}
+</style>
+
+<!-- ============ 顶部：PS / 编译器 / 规格 ============ -->
+<rect class="bxh" x="40" y="28" width="560" height="96"/>
+<text class="t" x="52" y="50">Zynq PS · Host（A53）</text>
+<text class="s" x="52" y="70">host_driver：段调度 + 段间 CPU 算子</text>
+<text class="n" x="52" y="87">（softmax 本体 / 窗口重排 / deformable / PSE solve）</text>
+<text class="n" x="52" y="104">AXI4-Lite 寄存器：CTRL（start·hoist·pf_en）· STATUS · 性能计数 · SEQ 下载（0x40–0x60）</text>
+
+<rect class="bx" x="640" y="28" width="380" height="96"/>
+<text class="t" x="652" y="50">离线编译器（compiler_a3/a4）</text>
+<text class="s" x="652" y="70">段切分 · actv/norm 融合（op=6）· CTX 驻留</text>
+<text class="n" x="652" y="87">描述符流（SEQ 程序）· 权重 blob / 表映像生成</text>
+<text class="n" x="652" y="104">段 = SEQ 程序 + DDR 映像 + STORE 清单（自包含契约）</text>
+
+<rect class="bx" x="1060" y="28" width="380" height="96"/>
+<text class="t" x="1072" y="50">整机规格（250MHz 综合）</text>
+<text class="s" x="1072" y="70">PE 阵列 16×108 · DSP 1,728（满片）</text>
+<text class="n" x="1072" y="87">CTX 2MB URAM · WRAM 442KB BRAM · DDR 档 64MB</text>
+<text class="n" x="1072" y="104">整片 LUT 134,762 / 230,400（58.5%）· WNS −1.038ns</text>
+
+<!-- PS → core AXI4-Lite -->
+<path class="ctl" d="M200,124 L200,170" marker-end="url(#ar)"/>
+<text class="lb" x="210" y="152">AXI4-Lite（控制 / SEQ 装载）</text>
+
+<!-- host ↔ DDR 右侧走线 -->
+<path class="ctl" d="M600,76 L1460,76 L1460,1280 L1440,1280" marker-end="url(#ar)"/>
+<text class="lb" x="1468" y="700" transform="rotate(90 1468 700)">host 段间读写中间结果（a3 后残余边界）</text>
+
+<!-- ============ 核心大框 ae_top / ae_core ============ -->
+<rect class="bx" x="40" y="170" width="1400" height="1010"/>
+<text class="t" x="56" y="196">ae_top（AXI4-Lite 从机）→ ae_core（PL 加速核）</text>
+
+<!-- ============ 调度器 ============ -->
+<rect class="bx" x="60" y="212" width="500" height="188"/>
+<text class="t" x="72" y="234">u_sched — ae_sched 原语调度器</text>
+<text class="n" x="72" y="251">引擎 one-hot（eng_g/sm/cp/dma/a）；R1：STORE 发射即推进（fire-and-forget）</text>
+<rect class="mem" x="76" y="258" width="150" height="130"/>
+<text class="s" x="86" y="278" font-weight="700">SEQ RAM</text>
+<text class="n" x="86" y="296">2048 × 256b</text>
+<text class="n" x="86" y="312">BRAM</text>
+<text class="n" x="86" y="330">描述符流</text>
+<text class="n" x="86" y="348">（PS 通道装载 /</text>
+<text class="n" x="86" y="364">仿真 $readmemh）</text>
+<text class="s" x="240" y="278">主 FSM：T_FETCH → T_LATCH → T_EXEC</text>
+<text class="n" x="240" y="294">→ T_RUN_{G|SM|CP|DMA|A} → T_ADV → T_FIN</text>
+<text class="n" x="240" y="310">skip 状态：inv 掩码 MAC 缩减</text>
+<rect class="arb" x="240" y="320" width="304" height="68"/>
+<text class="s" x="248" y="338" font-weight="700">pf 预取 FSM（PF_RD→PF_LAT→PF_ISSUE）</text>
+<text class="n" x="248" y="354">前瞻：TAG_W 权重 + TAG_C 激活（R2）</text>
+<text class="n" x="248" y="370">发射窗 pf_win = T_RUN_{G|SM|A}（COPY 不开窗）</text>
+
+<!-- pf 后台命令虚线（沿左边缘下到 rd 引擎） -->
+<path class="ctl" d="M75,400 L75,1050" marker-end="url(#ar)"/>
+<text class="n" x="40" y="720" transform="rotate(-90 40 720)">pf 后台命令（影子寄存器 addr/len/tag/base）</text>
+
+<!-- ============ 描述符总线 ============ -->
+<path class="bus" d="M310,400 L310,428" stroke-linecap="round"/>
+<line class="bus" x1="70" y1="428" x2="1400" y2="428" stroke-linecap="round"/>
+<path class="bus" d="M260,428 L260,448"/><path class="bus" d="M570,428 L570,448"/>
+<path class="bus" d="M835,428 L835,448"/><path class="bus" d="M1205,428 L1205,448"/>
+<text class="lb" x="70" y="420">desc[255:0] 描述符总线（op | b_src | m | n | k | a_base | b_base | y_base | rq_m/rq_m2 | rq_s | dma_addr/len）</text>
+<text class="n" x="1120" y="420">start / busy / done 逐引擎握手（虚线省略）</text>
+
+<!-- ============ 引擎行 ============ -->
+<rect class="eng" x="110" y="448" width="310" height="200"/>
+<text class="t" x="122" y="470">u_gemm — ae_gemm</text>
+<text class="s" x="122" y="492">u_arr：ae_sysarr 16×108 PE（DSP 1,728）</text>
+<text class="s" x="122" y="510">requant：rq_ms ×27（SHARE=4 时分复用）</text>
+<text class="n" x="122" y="530">A = 激活（CTX）· B = 权重（WRAM）· Y = CTX</text>
+<text class="n" x="122" y="547">16 行组 tile：feed → MAC → drain → 写回</text>
+<text class="n" x="122" y="564">wb_active：写回阶段标志（R2 让拍依据）</text>
+<text class="n" x="122" y="581">Y 逐列 requant：sat8((u·m)>>>s)</text>
+
+<rect class="eng" x="450" y="448" width="240" height="200"/>
+<text class="t" x="462" y="470">u_sm — ae_softmax</text>
+<text class="s" x="462" y="492">SM16（行 softmax 引擎）</text>
+<text class="n" x="462" y="512">exp2 Q12 LUT + 38 拍整数恢复除法</text>
+<text class="n" x="462" y="529">S → P 原地（A 口读 / B 口整列写）</text>
+<text class="n" x="462" y="546">causal 掩码支持</text>
+
+<rect class="eng" x="720" y="448" width="230" height="200"/>
+<text class="t" x="732" y="470">u_actv — ae_actv</text>
+<text class="n" x="732" y="492">sub0 ACTV：256×8 直查表</text>
+<text class="n" x="732" y="509">sub1 BIAS：y'=sat8((y·m+b)>>>s)</text>
+<text class="n" x="732" y="526">sub2 NORM：LN / RMS / AdaRMS</text>
+<text class="n" x="732" y="543">（两遍扫描 + rsqrt LUT）</text>
+<text class="n" x="732" y="560">sub3 ELTWISE：残差加（双输入）</text>
+<text class="n" x="732" y="577">原地变换 · 表映像经 CTX 装载</text>
+
+<rect class="eng" x="990" y="448" width="430" height="200"/>
+<text class="t" x="1002" y="470">u_cp — ae_copy（转置交叉网络）</text>
+<text class="s" x="1002" y="492">CTX A 口广播读 → 16×108 字节交叉 → WRAM B 口</text>
+<text class="n" x="1002" y="512">注意力两相路径：K^T / VT 供给 B 阵（54,032 条 / 40.3M 拍）</text>
+<text class="n" x="1002" y="529">18,410 LUT · 写后打拍寄存（时序保护）</text>
+
+<!-- ============ 走线：引擎 ↔ 存储 ============ -->
+<!-- GEMM A 读 -->
+<path class="dl" d="M170,648 L170,726" marker-end="url(#ar)"/>
+<text class="lb" x="176" y="690">A 阵读（激活）</text>
+<!-- GEMM Y 写（左侧绕行到 B 口仲裁） -->
+<path class="dl" d="M130,648 L130,662 L84,662 L84,978 L100,978" marker-end="url(#ar)"/>
+<text class="n" x="78" y="860" transform="rotate(-90 78 860)">Y 写回（requant 后 · 16-lane 掩码写）</text>
+<!-- GEMM B 读（WRAM A 口） -->
+<path class="dl" d="M400,648 L400,655 L1150,655 L1150,790" marker-end="url(#ar)"/>
+<text class="lb" x="1020" y="647">B 阵读（权重）</text>
+<!-- SM 读 / 写 -->
+<path class="dl" d="M560,648 L560,726" marker-end="url(#ar)"/>
+<text class="lb" x="566" y="690">S 阵读</text>
+<path class="dl" d="M470,648 L470,668 L94,668 L94,992 L100,992" marker-end="url(#ar)"/>
+<text class="n" x="88" y="912" transform="rotate(-90 88 912)">P 列写</text>
+<!-- ACTV 读 / 写 -->
+<path class="dl" d="M790,648 L790,726" marker-end="url(#ar)"/>
+<text class="lb" x="796" y="690">原地读</text>
+<path class="dl" d="M930,648 L930,662 L962,662 L962,985 L940,985" marker-end="url(#ar)"/>
+<text class="n" x="966" y="880" transform="rotate(-90 966 880)">原地写回</text>
+<!-- COPY 读（CTX A） -->
+<path class="dl" d="M1060,648 L1060,675 L925,675 L925,726" marker-end="url(#ar)"/>
+<text class="lb" x="1066" y="668">K^T / VT 源读</text>
+<!-- COPY 写（WRAM B，右侧绕行） -->
+<path class="dl" d="M1395,648 L1395,670 L1432,670 L1432,990 L1420,990" marker-end="url(#ar)"/>
+<text class="n" x="1438" y="850" transform="rotate(-90 1438 850)">转置写入</text>
+
+<!-- ============ 存储行 ============ -->
+<rect class="arb" x="100" y="726" width="840" height="64"/>
+<text class="s" x="112" y="746" font-weight="700">CTX A 口 · 广播读仲裁</text>
+<text class="n" x="112" y="764">one-hot：GEMM ▸ SM ▸ ACTV ▸ COPY；GEMM 运行期归 GEMM，GEMM 空闲时 STORE 写引擎并发取用（R1 并发道）</text>
+
+<rect class="mem" x="100" y="790" width="840" height="160"/>
+<text class="t" x="112" y="812">u_ctx — ae_ctx_ram（CTX 激活缓存）</text>
+<text class="s" x="112" y="834">16-bank URAM · 131,072 字 × 128b = 2MB</text>
+<text class="n" x="112" y="856">A 口：广播读（1 地址 → 16 lane × 8b，跨 16 行同列）</text>
+<text class="n" x="112" y="873">B 口：16-lane 字节写（we_byte 掩码）</text>
+<text class="n" x="112" y="890">驻留：行 tile Y / softmax P / norm·actv 原地图 / 装载中的 X</text>
+<text class="n" x="112" y="907">（a3 融合：段内 GEMM→ACTV→GEMM 链不经 DDR）</text>
+<text class="n" x="112" y="930">单 CTX 实例 · 读/写端口物理分离</text>
+
+<rect class="mem" x="970" y="790" width="450" height="160"/>
+<text class="t" x="982" y="812">WRAM（权重 B 阵）</text>
+<text class="s" x="982" y="834">108 × ae_dpram（8b × 4,096 字，BRAM）= 442KB</text>
+<text class="n" x="982" y="856">A 口：GEMM 读（bit11 半区对分双缓冲，k ≤ 2048）</text>
+<text class="n" x="982" y="873">B 口：COPY 转置写 / DMA 权重装载</text>
+<text class="n" x="982" y="890">pf 预取目标（TAG_W；与 GEMM 半区隔离判断）</text>
+
+<rect class="arb" x="100" y="958" width="840" height="56"/>
+<text class="s" x="112" y="976" font-weight="700">CTX B 口 · 写仲裁（one-hot）</text>
+<text class="n" x="112" y="994">GEMM-Y ▸ SM ▸ ACTV ▸ 前台 LOAD ▸ 后台 CTX 预取（R2；GEMM 写回期让拍，pf_ctx_stall 反压读引擎 rready）</text>
+
+<rect class="arb" x="970" y="958" width="450" height="56"/>
+<text class="s" x="982" y="976" font-weight="700">WRAM B 口 · 写仲裁</text>
+<text class="n" x="982" y="994">COPY ▸ DMA（W 装载 / TAG_W 后台预取）</text>
+
+<!-- ============ DMA 行 ============ -->
+<rect class="eng" x="60" y="1050" width="640" height="120"/>
+<text class="t" x="72" y="1072">u_dma · 读引擎 rd（AR/R 通道）</text>
+<text class="n" x="72" y="1092">FSM：R_IDLE → R_AR → R_R → R_R2 → R_FIN</text>
+<text class="n" x="72" y="1109">前台 LOAD：TAG_CTX → CTX B 口 / TAG_W → WRAM B 口</text>
+<text class="n" x="72" y="1126">后台预取：pf 命令影子寄存器锁存（GEMM 期并发装下段）</text>
+<text class="n" x="72" y="1143">pf_ctx_stall：B 口被占时冻结 rready，写不丢失（R2 修复）</text>
+
+<rect class="eng" x="730" y="1050" width="690" height="120"/>
+<text class="t" x="742" y="1072">u_dma · 写引擎 wr（AW/W/B 通道）</text>
+<text class="n" x="742" y="1092">FSM：W_IDLE → W_AW → W_RD → W_RD2 → W_W → W_B → W_FIN</text>
+<text class="n" x="742" y="1109">STORE：CTX A 口读源 → DDR（R1 独立写通道，fire-and-forget）</text>
+<text class="n" x="742" y="1126">与 GEMM / 读引擎真并发：AXI 读/写通道物理独立</text>
+<text class="n" x="742" y="1143">单条搬运上限 256KB（编译器超长拆条）</text>
+
+<!-- rd → CTX B 仲裁（前台 LOAD + 后台 CTX 预取） -->
+<path class="dl" d="M200,1050 L200,1014" marker-end="url(#ar)"/>
+<text class="lb" x="206" y="1036">LOAD 装载 / 后台 CTX 预取写</text>
+<!-- pf_ctx_stall 反压（虚线） -->
+<path class="ctl" d="M400,1014 L400,1050" marker-end="url(#ar)"/>
+<text class="lb" x="406" y="1036">pf_ctx_stall（反压）</text>
+<!-- rd → WRAM B 仲裁 -->
+<path class="dl" d="M640,1050 L640,1032 L1100,1032 L1100,1014" marker-end="url(#ar)"/>
+<text class="lb" x="646" y="1028">W 装载 / TAG_W 后台预取</text>
+<!-- wr → CTX A 口（STORE 读源，右缝上行） -->
+<path class="dl" d="M760,1050 L760,1022 L948,1022 L948,754 L940,754" marker-end="url(#ar)"/>
+<text class="n" x="952" y="900" transform="rotate(-90 952 900)">STORE 读源（R1 并发）</text>
+
+<!-- ============ DDR ============ -->
+<rect class="bxh" x="40" y="1240" width="1400" height="80"/>
+<text class="t" x="56" y="1264">DDR4（64MB 档 · 段自包含映像）</text>
+<text class="n" x="56" y="1284">X 输入激活 · W 权重 blob（含 ACTV 直查表 / NORM γβ 表映像）· Y 输出 · host 段间中间结果</text>
+<text class="n" x="56" y="1300">a3 融合后段内中间量驻留 CTX；残余段界（softmax 本体 / 窗口重排 / deformable）仍经 DDR 往返</text>
+
+<!-- AXI 总线（DMA ↔ DDR） -->
+<path class="dl" d="M300,1170 L300,1240" marker-end="url(#ar)" marker-start="url(#ar)" stroke-width="3"/>
+<text class="lb" x="310" y="1212">AXI4 64b · AR/R（读请求/数据）</text>
+<path class="dl" d="M1080,1170 L1080,1240" marker-end="url(#ar)" marker-start="url(#ar)" stroke-width="3"/>
+<text class="lb" x="1090" y="1212">AXI4 64b · AW/W/B（写地址/数据/响应）</text>
+
+</svg>
+</figure>
+
+<h2>模块索引（图 ↔ RTL 对应）</h2>
+<table>
+<tr><th>模块（图中名）</th><th>RTL 文件</th><th>职责</th><th>关键参数 / 端口</th></tr>
+<tr><td>ae_top</td><td class="f">ae_top.sv</td><td>AXI4-Lite 从机：寄存器（CTRL/STATUS/性能计数）+ SEQ 描述符下载</td><td>COLS=108 · CTX_WORDS=131072 · W_WORDS=4096 · SEQ_N=2048</td></tr>
+<tr><td>u_sched</td><td class="f">ae_sched.sv</td><td>原语调度器：取描述符→译码→start 引擎；pf 预取 FSM（TAG_W + TAG_C）</td><td>T_RUN_{G|SM|CP|DMA|A} one-hot；pf_win = T_RUN_{G|SM|A}；R1 后 STORE fire-and-forget</td></tr>
+<tr><td>u_gemm</td><td class="f">ae_gemm.sv</td><td>脉动阵列 GEMM + 逐列 requant；16 行组 tile 流水</td><td>u_arr(ae_sysarr) 16×108 PE；rq_ms×27（SHARE=4）；wb_active（R2）</td></tr>
+<tr><td>u_sm</td><td class="f">ae_softmax.sv</td><td>SM16 行 softmax（注意力 S→P）</td><td>exp2 Q12 LUT + 38 拍恢复除法；causal 掩码</td></tr>
+<tr><td>u_cp</td><td class="f">ae_copy.sv</td><td>CTX→WRAM 运行时转置（K^T / VT 供 B 阵）</td><td>16×108 字节交叉网络；18,410 LUT</td></tr>
+<tr><td>u_actv</td><td class="f">ae_actv.sv</td><td>片上算子引擎：ACTV/BIAS/NORM/ELTWISE 四子模式，原地变换</td><td>op=6 · b_src=子模式；24,852 LUT · 0 DSP；表映像经 CTX 自装载</td></tr>
+<tr><td>u_dma</td><td class="f">ae_dma.sv</td><td>R1 双引擎：读引擎（AR/R）+ 写引擎（AW/W/B）独立并发</td><td>pf_ctx_stall 反压（R2 修复）；2,405 LUT；单条 ≤256KB</td></tr>
+<tr><td>u_ctx</td><td class="f">ae_ctx_ram.sv</td><td>CTX 激活缓存（16-bank URAM）</td><td>2MB；A 口广播读 / B 口 16-lane 字节写</td></tr>
+<tr><td>WRAM</td><td class="f">ae_dpram×108</td><td>权重 B 阵（BRAM）</td><td>442KB；A 口 GEMM 读（bit11 半区双缓冲）/ B 口 COPY·DMA 写</td></tr>
+<tr><td>SEQ RAM</td><td class="f">ae_core.sv 内嵌</td><td>描述符程序存储</td><td>2048×256b BRAM；PS 通道运行时装载</td></tr>
+</table>
+
+<h2>一条典型段的执行序（数据通路走查）</h2>
+<ol>
+<li><b>装载</b>：读引擎从 DDR 把 X（TAG_CTX→CTX B 口）和 W（TAG_W→WRAM B 口）搬上片；pf FSM 在上一段 GEMM 期间已把下一段要用的 W/CTX 预取好（影子寄存器命令）。</li>
+<li><b>GEMM</b>：u_gemm 从 CTX A 口广播读激活、WRAM A 口读权重，16 行组 feed→MAC→drain，Y 经 rq_ms requant 后从 CTX B 口写回；写回期（wb_active）后台 CTX 预取让拍，让出后经 pf_ctx_stall 解除反压继续。</li>
+<li><b>片上算子</b>：Y 原地过 u_actv（SiLU 直查表 / NORM 两遍扫描 / ELTWISE 残差加）——a3 融合段里 GEMM→ACTV→GEMM 全程不出 CTX。</li>
+<li><b>注意力供给</b>：注意力两相段的 Q/K/V 经 u_cp 转置写入 WRAM 当 B 阵；S 阵过 u_sm 得 P，P 留在 CTX 给 PV 段直读。</li>
+<li><b>回写</b>：写引擎把段输出从 CTX A 口读出写回 DDR（STORE），与后续 GEMM 并行（R1）；host 在段界跑 CPU 算子（softmax 本体/窗口重排/deformable），再由下一段 LOAD 回来。</li>
+</ol>
+
+<footer>
+<p>生成时刻 2026-09-01 10:12:26 · 拓扑与信号名逐条核对自 14_rtl_r1r2/rtl/{ae_top, ae_core, ae_sched, ae_dma}.sv · 黑白灰度配色</p>
+</footer>
+
+</div>
+</body>
+</html>

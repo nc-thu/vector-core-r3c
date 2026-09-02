@@ -1,0 +1,378 @@
+NOTES_rtl.txt — AE_ACTV submode=2 NORM（含 AdaRMS）+ submode=3 ELTWISE 落地笔记
+====================================================================
+时间线（全部 2026-08-31，按完成时刻排）：
+  09:xx  目录拷贝 + 基线回归 12/12 ALL PASS
+  10:xx  spec/norm_spec.json + spec/norm_gold.py 落盘（v1.0 冻结）
+  15:xx  actv_gold.py 加 6 个 NORM 用例 + 微观对拍位精确（221184/221184 字节）
+  16:xx  全芯片回归 12/12 不回退
+  19:23  真实张量数值门 148/148 PASS（spec 升 v1.1：g_shift 改 floor + sa_out 下限）
+  19:4x  OOC 综合门（见文末）
+  20:31  AdaRMS + ELTWISE 进 RTL（pass2 切 5 级流水）；微观 21 用例位精确
+  20:35  全芯片回归 12/12 不回退（第二轮，含 ELTWISE/AdaRMS）
+  20:38  ELTWISE 真实张量门 148/148 PASS（max|Δ| ≤ 1 LSB）；spec 升 v1.2
+  20:4x  OOC 综合门 v1.2（见文末第二节）
+
+一、这是什么
+-----------
+给 AE_ACTV（op=6）加两个子模式：
+  submode=2=NORM：LayerNorm/RMSNorm（一遍统计 + 一遍变换，原地写回 CTX），
+                  v1.2 起支持 AdaRMS/AdaLN（word0 bit83=ada + t 表区，逐行乘 t6）。
+  submode=3=ELTWISE：双输入残差加 y = sat8(((x1·m1 + x2·m2) + 2^(s-1))>>>s)，
+                  x1=y_base 原地输出、x2=b_base 只读，m1=rq_m、m2=desc[135:120]、
+                  s=rq_s；每列 2 拍交替读（CTX 单读口）。
+目的：把 host 上的 norm / 残差加算子搬进 PL，消掉段界 DDR 往返。
+语义唯一来源：spec/norm_spec.json（v1.2）+ spec/norm_gold.py。
+表映像由编译器代理按 spec 生成（12_actv/a3/ 在跑，用同一份 build_image）。
+
+二A、AdaRMS 机制速记（v1.2 新增）
+---------------------------------
+  * t6 = clamp(round(t_r·64), int8)，t 区 ceil(m/16) 字接在 b 表后，
+    字 b_base+1+4*NLO+r/16 的 lane r%16 = t6[r]。
+  * 恒等式保证回归安全：非 ada 时 t8v 恒 64，(64·x+32)>>>6 == x 对一切
+    整数 x 成立——旧 v1.1 站点的输出逐位不变（回归 12/12 实证）。
+  * 零拍数开销：t 字读藏在统计级 c7 拍（A 口空闲）发地址，2 拍读延迟后
+    恰好在 A_N_P2 首拍落进 rd_r，A_N_P2 首拍锁进 t16。
+    （注意必须是 c7 不是 c8：c8 发读会晚一拍落到 P2 第二拍，对不上。）
+  * pass2 流水在 S3(9×16乘) 后加一级 S4：tt = t17_q·t6 → ta=(tt+32)>>>6
+    → tb19 = ta + b_q3；写回挪到第 5 级（p2v4/p2j4）。
+
+二B、ELTWISE 机制速记（v1.2 新增）
+----------------------------------
+  * 描述符复用空闲位 desc[135:120] 当 m2（ae_core 加 wire d_rqm2，已核实
+    该位段在原解码里无人使用）。
+  * A_IDLE 直入 A_E_LT（无表装载）；发址奇偶交替：偶拍 grp_base+jc 读 x1、
+    奇拍 x2g_r+jc 读 x2（x2g_r 随行组 +n 推进）；2 拍读延迟后按 pd2 相位
+    分流：x1 进 x1_q，x2 到达拍合并写回列 jw。吞吐 1 列/2 拍。
+  * 发址流 iv1 比 iv2 多保 1 拍（末列 x2 数据在途），isu_done 后自然排空。
+  * 血泪坑（第 11 条）：A_IDLE start 块原来不清 jw/jr——ELTWISE 直入执行级，
+    继承上一用例的 jw=47（≥n），整组数据全写进同一个字。修法：start 块
+    无条件清 jr/jw/run_v1/run_v2（其余子模式的装载级本来就会再清一遍，安全）。
+  * 位精确：微观 E1..E4（正/负乘子/int16 极值/s=0/尾组/n=1）与黄金逐位一致。
+
+三、拍数公式（v1.2 起两个子模式分开报；公式是安全上界，实测略低 10~40 拍）
+---------------------------------------------------------------------------
+  NORM（含 AdaRMS，两者同拍数——t 字读藏在统计级空闲拍）：
+    T_NORM = 5 + 2*ceil(n/16)*20 + ceil(m/16) * (2n + 152)
+             ├ 装载：常数区 5 拍 + g/b 两表各 ceil(n/16) 组、每组 20 拍
+             │       （串行装载：CTX A 口被一遍扫描占着，B 口只写，无法重叠，
+             │         如实计费；n=3072 时表装载 7680 拍，占大头）
+             └ 每行组：pass1 扫描 n+2 拍 + 统计 16 lane×8 拍+4 + pass2 n+5 拍
+                       （pass2 5 级流水，v1.2 比 v1.1 多 1 拍写回深度）
+  ELTWISE（无表装载）：
+    T_ELT  = 2 + ceil(m/16) * (2n + 5)     （每列 2 拍交替读 + 排空）
+
+  实测（sim/tb_ae_actv.sv 逐用例打印，2026-08-31 20:31 v1.2 RTL）：
+    N1 n=1    m=5    170 拍      N5 n=64   m=48       1010 拍
+    N2 n=257  m=18  1990 拍      N6 n=48   m=33        874 拍
+    N3 n=2049 m=16  9386 拍      N7 adaRMS n=96  m=20   936 拍
+    N4 n=3072 m=17(RMS) 20280 拍 N8 adaLN  n=48  m=17   624 拍
+                                N9 stripe n=48  m=8    374 拍
+    E1 n=40 m=18 169 拍 = 2×(2·40+5)−1   E3 n=64 m=16 133 拍 = 1×(2·64+5)
+    E2 n=17 m=33 115 拍 = 3×(2·17+5)−2   E4 n=1  m=5    7 拍 = 1×(2·1+5)
+  NORM 每行组实测 ≈ 2n + 150（v1.1 四级流水时 137 上界，v1.2 五级 +5，
+  流水化把 WNS 从 −4.9ns 修回来，这一拍买的是时序）。
+
+  全模型：a2 站点 m/n 分布 × 423 次调用 ≈ 15.5M 拍 + 装载 ≈ 0.83M 拍，
+  在 07_onchip_ops §2.1 预算内。ELTWISE 每站点 ≈ ceil(m/16)(2n+5) 拍，
+  比 NORM 便宜一个量级（n=3072 时 6.3k vs 128k 拍/行组）。
+
+四、门结果
+----------
+  ① 微观位精确：221184/221184 字节全一致（21 用例：8 旧 ACTV/BIAS + 6 NORM +
+     N7/N8 AdaRMS + N9 条纹原地 + E1..E4 ELTWISE，覆盖 n=1/257/2049/3072、
+     m 尾组、常数行、全 127、全 −128、γ 负、β 饱和、RMS、t∈[0.05,2]、
+     负乘子、int16 极值、s=0）——超 20000 字节门槛 11 倍（2026-08-31 20:31）。
+  ② 全芯片回归：12/12 ALL PASS（ACTV/BIAS/NORM 原样通过，不回退；
+     2026-08-31 20:35，含 AdaRMS/ELTWISE 改动后第二轮）。
+  ③ NORM 真实张量数值门（data/norm_real_gate.py，2026-08-31 19:23）：
+     148/148 站点 PASS（LayerNorm 123 + RMSNorm 25，宽度 16..768，
+     γ/β 为 checkpoint 真值，x 为 a2 流段实跑的真实激活，sa 取 hw_calib_table）。
+     最差 max|Δ| = 2.00 LSB（门 ≤2），最差 |meanΔ| = 0.020 LSB（门 <0.2）。
+     脚本 4.2s 跑完；两级等价自检内置（fp64 段解释器 vs fast_interp 原版
+     逐字节、向量化引擎 vs engine_row 逐位）。
+     AdaRMS 语义数值：norm_gold.py 自测 ada RMS / ada LN t∈[0.05,2] 两用例
+     max|Δ| ≤ 2.00、|mean| < 0.2（2026-08-31），微观 N7/N8 位精确覆盖引擎侧。
+  ④ ELTWISE 真实张量门（data/eltwise_real_gate.py，2026-08-31 20:38）：
+     148/148 站点 PASS（≥50 门槛的 3 倍；同宽度两张不同段实跑的真实激活图当
+     x1/x2，sa1/sa2 用两图真实 so，sa_out 用该宽度真实下游 gemm 的校准 sa）。
+     全部站点 max|Δ| ≤ 1 LSB（146 站 =1、2 站 =0），最差 |meanΔ| = 0.036。
+     编译公式 eltwise_params（Q8.8 优先、溢出降 s）在真实尺度比（≤ 60×）
+     下全部 s=8。脚本 3.3s；自检：向量化 vs eltwise_row 逐位。
+  ⑤ 原地条纹门（N9）：每组数据块后 8 个常数条纹字变换后逐字节不变——
+     全 CTX 221184 字节比对天然覆盖越界写检查，PASS。
+  ⑥ OOC 综合门：见文末（目标 ≤10k LUT 增量、DSP 0）。
+
+四A、ELTWISE 真实门怎么取数（残差加没有独立 trace 算子）
+--------------------------------------------------------
+  HoloBrain 的残差加藏在 layer forward 里（x + attn(ln(x))），ops_trace 只有
+  gemm/elem_norm/custom/attn 四类，没有 add 节点；host_plan 的 'other' 步
+  也是 embedder/upsample 一类。所以门的数据对这样取：
+    x1/x2 = 同宽度、两个不同段实跑产出的真实 act_out 图（真实激活字节），
+    sa1/sa2 = 两图各自的真实输出尺度 so（manifest），
+    sa_out = 该宽度真实下游 gemm 的校准 sa（hw_calib_table，与 norm 门同源）。
+  站点清单复用 norm 门的 (module, 宽度, 消费者) 归因（148 个），每宽度跑
+  两个最小拍数的段（共 26 段，3.3s）。这是"真实数据 + 真实尺度"的数值门，
+  站点到描述符的映射留给编译器代理（它有段界/张量 id 信息）。
+
+五、真实张量门怎么搭的（NORM 门，避免下次再踩归因坑）
+---------------------------------------------
+  1. 站点归因不要用 after_seg 调度序或 ddr 邻接——实测不可靠
+     （after_seg 只是调度位；同段多张同宽度图会配错）。
+     可靠的是 ops_trace.json 的 in_ids/out_ids 张量 id 数据流。
+  2. 输入张量：按 gate_rtl.py 既有口径（权重真值 + 段输入确定性随机 int8）
+     独立实跑段解释器，从段 manifest 的 act_out 图收字节（STORE 'wm' 布局：
+     x[r,c] = ddr[base + ((r//16)*n + c)*16 + r%16]）。22 种宽度、10 个段
+     就覆盖全部 148 个模块。
+  3. sa_out 归因：取 ops_trace 里该 norm 输出的 gemm 消费者的 sa，再叠加
+     spec v1.1 的下限（见下）。注意一个 norm 输出可能有多个 sa 不同的 gemm
+     消费者（各自 m_requant 吸收尺度差），不存在唯一"真"尺度。
+  4. fp64 段解释器：fast_interp 的 GEMM 换 fp64 乘加（int8 部分积 < 2^27，
+     fp64 整数算术精确）——int64 原版在大段上慢 1~2 个量级。先在真实段上
+     与原版逐字节对拍再使用。
+  5. engine_row 纯 Python 逐行跑 m=20480 太慢；gate 里用 int64 向量化拷贝
+     （全部中间量 ≤ 2^62），先对 engine_row 逐位对拍再使用。
+
+六、v1.1 返修记录（数值门第一轮 141/148 → 根因全是编译器公式，引擎不动）
+------------------------------------------------------------------------
+  失败形态（第一轮 7 个失败站点）：
+    a) max|Δ| = 3..10、meanΔ 偏负 —— 逐元素解剖发现 w 预饱和为 0%，
+       真凶是 w 量化粒度：Δy ≈ G_max·2^-(gs+1)，G_max = γ_max/sa_out。
+       layers.49 的 max|Δ|=10 = 659/64，严丝合缝。
+    b) 重饱和站点（y_ref 饱和率 90%）meanΔ 系统性 −1：参考路径 clip ±127，
+       引擎/部署 sat8 是 [−128,127]，负轨差 1 LSB——参考约定错误，不是引擎错。
+  三处修复（全在编译器公式/参考约定，引擎 RTL 一字未动）：
+    a) fp32_ref 重量化改 sat8 = clip[−128,127]（与部署同约定）。
+    b) g_shift 由 ceil(220/z_max) 改 floor(256/z_max)：ceil 对小 z_max 过冲
+       到 2 倍（z_max=3 → gs=7 → w 域 384 大面积饱和，实测把 141 拉到 116）；
+       floor 保证 z_max·2^gs ≤ 256，w 域不饱和优先。
+    c) 新增 sa_out 下限 = z_max·γ_max/512：粒度不足不靠抬 gs（会和 w 域冲突），
+       靠抬 sa_out 压 G；下游 gemm 的 m_requant 吸收尺度差。
+       可行性条件：z_max·γ_max/sa_out ≤ 512 ≈ w 预算 256 × 2。
+  z_max 本身是站点校准量（spec v1.0 就这么写，缺省 8）：真实站点实测
+  z_max ≤ 4.3（LN）/ 1.3（decoder RMS），gate 取 1.05×实测 max|z|。
+
+七、Verilog 坑清单（本轮血泪，全在 rtl/ae_actv.sv 注释里有对应说明）
+---------------------------------------------------------------------
+  1. 有符号向量的位选是无符号的：r1s[26:0] 再 >>> 变逻辑移位，出垃圾值。
+     解法：全宽有符号寄存器先移位、再饱和收窄。
+  2. signed×unsigned 混乘整体退化无符号：μ 低 12 位必须当无符号拆出，
+     乘法里显式 $signed({1'b0, mu_lo})。二次踩坑：流水化后 g_q2 声明成
+     无符号 16b，w9_q×g_q2 又退化（−38 变 474）——所有 16b 表值进乘法
+     一律显式 $signed。
+  3. 拼接做加法丢符号进位：{a,12'd0}+{{19{b[25]}},b} 在 45b 上下文里做，
+     负和的 bit45 丢掉，值恰差 2^45（最难查的一个，表象是少数字节 ±1-2）。
+     解法：用有符号表达式 (a <<< 12) + b，让加法在赋值目标宽度下先做
+     符号扩展。
+  4. 函数返回值不能位选（iverilog 语法）：sat15 用中间变量钳位。
+  5. 15'sd32768 超界字面量截断：饱和上界用 16b 常量比较。
+  6. 统计级寄存器（s1/s2/mu_rf/inv_rf/q_rf）跨调用、跨行组要显式清零：
+     blast 转出和 A_NEXT 两处清，否则残值污染下一用例（case12 全行错）。
+  7. 中间量位宽：μ·inv 需要 59b（q_rf 声明 [58:0]）；4095² ≈ 2^24 超有符号
+     24b 域，sq_lo 加宽 [25:0]。
+  8. always @(posedge) 里的 $display 探针显示的是边沿提交前的旧值
+     （inv_rf/q_rf 探针误导过两轮）；定位技巧=探针 RTL 中间寄存器 +
+     Python 黄金逐级对账。
+  9. $readmemh 路径相对 cwd：仿真要在 sim/ 目录跑，综合要把 rsqrt_lut.mem
+     拷到综合工作目录。
+ 10. 写使能的流水级数要与写数据对齐：写回使能比数据多等一级，每地址写入
+     的就是下一列的数据（表象：out[A] == exp[A+1]，整体错位一列）。
+     排查口诀：tb 探针打印 rd_r + 写口波形，和黄金逐列对账。
+ 11. A_IDLE start 块不清 jw/jr：ELTWISE 直入执行级（无装载级顺手清零），
+     继承上一用例的 jw=47（≥n），整组数据全写进同一个字。修法：start 块
+     无条件清 jr/jw/run_v1/run_v2。
+ 12. （环境，非 RTL）本机 Git Bash 的 bash 工具吃 heredoc 引号（python - <<
+     'EOF' 报 unexpected EOF）：多段文本补丁一律写成 .py 文件再执行，
+     别用 heredoc。iverilog 在 /c/iverilog/bin（PATH 里没有时要写全路径）。
+ 13. $signed(变基部位选 rd_r[8*g +: 8]) 嵌在三元表达式里时，iverilog 按无符号
+     先零扩展再参与选择（LRM 应符号扩展）——表象：x² 累加出负数（S2=-55511，
+     x=-14 算成 242·(-14)）。同一个 $signed 直接当乘/加操作数则行为正确。
+     解法：先落 `wire signed [7:0] xb = rd_r[8*g +: 8];` 再 {{8{xb[7]}},xb}
+     显式符号扩展，iverilog/Vivado 两个工具都无歧义。最小复现：tsgn2.sv
+     （直接位选 [7:0] 不复现，必须变基位选 +: 才触发）。
+
+八、复现命令
+------------
+  cd 12_actv/sim && python actv_gold.py gen && \
+      /c/iverilog/bin/iverilog.exe -g2012 -o sim_ae_actv.vvp \
+      tb_ae_actv.sv ../rtl/ae_actv.sv && /c/iverilog/bin/vvp.exe \
+      sim_ae_actv.vvp && python actv_gold.py check   # 微观位精确（21 用例）
+  cd 12_actv/sim && PATH="/c/iverilog/bin:$PATH" bash regression.sh
+                                                     # 全芯片 12 项
+  python spec/norm_gold.py                    # 黄金自测（含 ada 用例）
+  python data/norm_real_gate.py               # NORM 真实张量门（~5s）
+  python data/eltwise_real_gate.py            # ELTWISE 真实张量门（~3s）
+  OOC：E:\ae_syn\actv_norm（ae_actv.sv + rsqrt_lut.mem + synth_actv.tcl），
+       /d/software/Vivado/2021.2/bin/vivado.bat -mode batch -source synth_actv.tcl
+
+九、OOC 综合门（Vivado 2021.2，XCZU7EV-2，250MHz 目标）
+------------------------------------------------------------------------
+  基线（旧 ae_actv，仅 ACTV+BIAS，09_onchip_rtl/syn/util_actv_full.rpt）：
+    5147 LUT（含 640 LUTRAM）、2 BRAM_36Kb、DSP 0
+  门：总 LUT ≤ 15147（增量 ≤10k）、DSP = 0、WNS 对照旧 −0.229。
+
+  第 1 次（+NORM 单周期组合链，v1.1 语义）：22187 LUT / 5 DSP / WNS −4.883
+    —— 三门全超（LUT 门超 7k、DSP 5、时序崩），触发流水化返修。
+
+  第 2 次（v1.2：5 级流水 + AdaRMS t 乘级 + ELTWISE 独立数据通路，
+  2026-08-31 20:42）：31060 LUT / 1 DSP / WNS −3.760（1013 失败端点）
+    —— 反直觉：流水化后比单周期版还大 8.9k。定性归因（对照代码估算）：
+    ×16 lane 的乘法阵列是 LUT 大头——g_elt 两份 8×16、g_norm 的 8×27+
+    9×16+17×8、xsq 16 份 8×8，加 61b 桶移/sat 全落 fabric；LUT2 占 10011
+    （乘法部分积 AND2 为主）。DSP=1 来自统计级某乘法（未定位，v1.2.1 重构
+    后再看）。
+
+  第 3 次（v1.2.1 面积重构，2026-08-31 21:1x 起综合）——不动语义/拍数，
+    三处结构性复用与收窄（重构后微观 21 用例 221184/221184 位精确、
+    回归 12/12 ALL PASS、拍数逐用例与 v1.2 相同）：
+    a) g_elt 整块删除：ELTWISE 复用 BIAS 的 16 份 8×16 乘法阵列（两模式
+       串行运行绝不并发）。x1 拍乘 m1、把 +2^(s-1) 折进保持项 ea_q；
+       x2 拍乘 m2，走 BIAS 同一条 加>>>s/sat8 出口——(ea+half)+eb ≡
+       ea+eb+half 整数精确，逐位不变。省一整套 16×(2×8×16) 阵列。
+    b) g_xsq 删除：pass1 的 x² 借同一阵列（B 口选 rd_r 字节自乘，
+       p1_sq=md_norm && st==A_N_P1），乘积走 pmul 出口给 s2 累加。
+    c) g_norm 61b 宽路径收窄成 38b：qn 拆高低（qn[61:24] 与 |qn[23:0]|），
+       D = xinv − qn_hi − borrow，恒等式 floor(prh/2^S) = D >>>(S−24)
+       （S=44−gsh∈[37,44]，Python 20 万组随机含负值逐位验证）；
+       桶移 6 级→固定 >>>13 接线 + 3 级桶移(7−gsh)，sat9 比较位宽 61b→25b。
+    结果：见下方 results 段。
+
+  results（第 3 次，v1.2.1，2026-08-31 21:3x）：25531 LUT（24875 逻辑 +
+    656 LUTRAM）/ 1 DSP / WNS −3.733。比 v1.2 省 5.5k，但仍超门 1.04 万。
+    两点定位结论：
+    ① DSP=1 是统计级 sq_mid（assign sq_mid = (mu_hi*mu_lo) <<< 1）——乘积带
+      后移位让 use_dsp=no 属性失配，整个 20×13 乘法被提成 DSP48；
+    ② WNS −3.733 的最差路径不在 pass2，在统计级 c3 一拍：ms_c_reg → var→
+      +eps→max → 49b LOD 偶化 → 桶移 → 512×15 ROM 查表 → r0_c_reg，
+      35 级逻辑 7.723ns（route 占 66%）。pass2 的 5 级流水本身时序是够的。
+
+  ---- 面积消融（v1.2.1，2026-08-31 21:5x，abl1 区）----
+    砍 g_norm 到 1 lane（其余不动）综合：12909 LUT-as-Logic →
+    每 lane 实测 797.7 LUT，16 条 = 12.76k。分解：8×27 乘 xinv ≈ 280、
+    9×16 乘 wg ≈ 160、17×8 乘 tt ≈ 170、38b 减/桶移/sat glue ≈ 180。
+    非折叠部分（基线 5147 + 统计 ~2.5k + pass1 加法 0.7k + ELT glue 1.1k +
+    寄存器堆写解复用 1.1k + 杂项）≈ 12.1k。
+    数学结论：仅 pass2 乘法阵列（12.76k）就已超过 10k 增量门。
+    在"1 列/拍 + 纯 fabric + DSP=0"三个条件联立下 15147 门不可达：
+      16 lane（1 列/拍）≈ 25.5k；8 lane（每列 2 拍，T=3n+组开锁）≈ 19.9k
+      （12.1k 固定 + 8×798 + 0.8k 输入/写口 gear）；4 lane（每列 4 拍，
+      T=5n）≈ 16.4-16.7k——全部超门。要到 15147 必须再砍固定部分（基线
+      5147 动不了），即拍数退到 ≥5n 且面积仍刀尖——联合约束无解。
+
+  第 4 次（v1.2.2，2026-08-31 22:0x）——最后一次修复尝试，选低风险路：
+    不折叠（保 1 列/拍语义与 spec v1.2 契约拍数公式不变），只修三门中
+    能修的两门（DSP、WNS）并顺手省一点面积：
+    a) sq_mid DSP 修复：拆独立乘积网线 sqm = mu_hi*mu_lo（use_dsp=no），
+       <<<13 并进 mid_sh，数值逐位不变；
+    b) 统计级 c3 三段拆拍（8→11 拍/lane）：c3 只做 var+eps+max 存 ve_c，
+       c4 做 LOD+桶移（吃 ve_c），c5 查 rtab（吃 mq_c）——把 35 级最差
+       路径拆成三段各 ≤14 级；每组 +32 拍（N4 20280→20344，N1 170→202），
+       公式上界 2n+152→2n+184；
+    c) c9/c10 再拆一拍：桶移+sat27 存 inv（c9）与 32×27 乘 qn（c10，
+       吃锁存 invq_c）分离；
+    d) 统计乘法器共享：S1·invn 与 S2·invn 合一（c0/c1 换操作数，s2 零
+       扩展成有符号乘值不变），省 ~0.2k。
+    验证：微观 21 用例 221184/221184 位精确 PASS；全芯片回归 12/12 ALL
+    PASS（09 基线不回退）。
+    results（第 4 次，v1.2.2，2026-08-31 21:49）：24782 LUT（24126 逻辑 +
+      656 LUTRAM）/ DSP 0 / WNS −0.653（324 失败端点）。
+      —— DSP 门修复（1→0）；WNS −3.733→−0.653（关键路径从统计级 c3 移到
+      pass2 S5 写口：md_norm_reg→ctx_wdata_reg[121]，20 级逻辑 4.643ns、
+      route 62%——与旧引擎基线 −0.229 同量级，布局布线后可收敛量级）；
+      LUT 25531→24782（省 749：乘法器共享 −200 + 拆拍后 Vivado 映射更省）。
+
+  ==== OOC 门收官结论（2026-08-31 22:00，第 4 次后停，如实上报）====
+    LUT 门：未达标（24782 > 15147，超 63.7%）。按消融数据这是结构性的，
+    不是调优问题：仅 NORM pass2 的 16 lane 乘法阵列就 12.76k LUT，超过
+    整个 10k 增量预算；非折叠固定部分 12.1k（基线 5147 动不了）。
+    三档工作点（消融实测/外推，供协调者决策）：
+      16 lane  1 列/拍  T=2n+184/组  ≈24.8k LUT（本版，拍数最优）
+      8 lane   每列 2 拍 T=3n+184/组  ≈19.9k LUT（估）
+      4 lane   每列 4 拍 T=5n+184/组  ≈16.4k LUT（估，仍超门 0.9k）
+    联合约束（1 列/拍 + ≤15147 + DSP 0）在纯 fabric 下无解；要过门只能
+    放弃 1 列/拍（拍数退 ≥5n 且仍刀尖）或放宽 LUT 门（NORM 增量单独计费）。
+    DSP 门：过（0）。
+    WNS：−0.653，对照旧 −0.229 同量级（差距 0.42ns，写口一拍可收）。
+    其余各门（微观位精确 / 回归 / NORM 真实张量 / ELTWISE 真实张量 /
+    条纹）全过，语义与 spec v1.2 契约逐位一致。
+
+  ---- 协调者 2026-08-31 裁决：保留 16 lane @ 1 列/拍（24,782 LUT），不缩 lane ----
+    理由（协调者原意）：
+    ① 全片 XCZU7EV 有 230,400 LUT，现设计（不含本引擎）约 106.5k，加上这台
+      引擎约 126k = 全片 55%，余量充足——15147 这道门是增量预算口径，不是
+      全片资源约束；
+    ② 07_onchip_ops 的 60k 是整个算子族预算（后续还要装 swin 散射 ~2.5k 等），
+      ACTV 四模式合计 24.8k 在族预算内放得下；
+    ③ 缩到 8/4 lane 只省 4.9k/8.4k LUT，却要付出约 +9M/+30M 拍——拍数是
+      本轮主指标，不划算。
+    结论：OOC LUT 门按"协调者放宽"关账，本版 v1.2.2（16 lane/1 列/拍/
+      24,782 LUT/DSP 0/WNS −0.653）即为交付版本；后续以此跑全芯片综合与
+      Verilator 门。
+
+十、给 Verilator 门代理的差异清单（12_actv 交付版 vs 09_onchip_rtl 基线）
+------------------------------------------------------------------------
+  RTL 文件级差异（12_actv/rtl 对 09_onchip_rtl/rtl，逐文件 cmp）：
+    * ae_actv.sv   改（266 行 → 732 行）——整个 NORM/ELTWISE 引擎 + ACTV/BIAS
+      保持逐位兼容。描述符新增字段：submode@246（2=NORM 3=ELTWISE）、
+      rq_m2@desc[135:120]（ELTWISE 第二乘子）。v1.2.2 版本号见文件头。
+    * ae_core.sv   改（301 → 302 行，就两处）——加 wire d_rqm2 = desc[135:120]，
+      u_actv 例化多接一个口 .rq_m2(d_rqm2)。★ 全芯片跑 NORM/ELTWISE 必须
+      用这份 core；用 09 版 core 接新 actv 会让 m2 悬空（ELTWISE 乘子恒错）。
+    * 其余 19 个 .sv 全部逐字节相同（ae_pkg/ae_sched/ae_sysarr/... 未动，
+      bak_v1_serial/bak_v2_rq108/hif8 子目录也未动）。
+    * 新增非 RTL 依赖：rsqrt_lut.mem（ae_actv 的 initial $readmemh 读它，
+      512×15b 分布式 ROM 初值，与 spec/norm_gold.py --dump-lut 同一张表）——
+      仿真/综合工作目录里必须放一份。
+
+  描述符/契约（语义唯一来源，勿从 RTL 反推）：
+    spec/norm_spec.json（v1.2，冻结）——位域、表映像布局、数值语义、
+    编译器公式、各门结果全在里面。
+
+  sim 侧怎么跑（都在 12_actv/sim，iverilog 在 /c/iverilog/bin）：
+    1) 微观位精确门（21 用例 = 8 旧 ACTV/BIAS + 6 NORM + 2 AdaRMS + 1 条纹
+       + 4 ELTWISE，221,184 字节）：
+         cd 12_actv/sim
+         iverilog -g2012 -o sim_ae_actv.vvp tb_ae_actv.sv ../rtl/ae_actv.sv
+         vvp sim_ae_actv.vvp          # 出 actv_ctx_out.mem + 逐用例拍数
+         python actv_gold.py check    # 判据：PASS — 221184 字节全部位精确
+       （rsqrt_lut.mem 已在 sim 目录；iverilog 会打十几条 "sorry: constant
+        selects" 告警，是老毛病，不影响结果。）
+    2) NORM/ELTWISE 真实张量门（Python 语义级，不碰 RTL）：
+         python spec/norm_gold.py          # 黄金自测（含 ada 用例）
+         python data/norm_real_gate.py     # NORM 148 站点（~5s）
+         python data/eltwise_real_gate.py  # ELTWISE 148 站点 max|Δ|≤1（~3s）
+    3) 全芯片基线回归（验证 09 老引擎没被碰坏；注意它用的是 09_onchip_rtl
+       的 RTL，不覆盖 NORM/ELTWISE）：
+         cd 09_onchip_rtl/sim && PATH="/c/iverilog/bin:$PATH" bash regression.sh
+       → 12/12 ALL PASS。NORM/ELTWISE 走 ae_sched/ae_core 的全链路对拍
+       目前没有覆盖（微观门只到 ae_actv 模块级）——这正是 Verilator 门
+       要补的空白。
+    4) 拍数对账（新口径，v1.2.2 统计级 11 拍/lane）：
+       T_NORM = 5 + 2*ceil(n/16)*20 + ceil(m/16)*(2n+184)（ada 同式零开销）
+       T_ELT  = 2 + ceil(m/16)*(2n+5)
+       实测锚点：N4(3072,17)=20344  N1(1,5)=202  N7-ada(96,20)=1000
+                 E3(64,16)=133  E1(40,18)=169  E4(1,5)=7
+    5) 已知 iverilog 坑（写 Verilator TB 时同样要防）：
+       - $signed(变基部位选) 嵌在三元里被零扩展——先落 signed 线网再显式
+         {{}} 扩展（本 NOTES 坑 #13）；
+       - actv_ctx0.mem 字节序：每行一个 128b 字，lane L 字节在行内十六进制
+         位置 2*(15-L)（iverilog $readmemh MSB-first）。
+
+  全芯片综合（协调者 2026-08-31 收尾项）：工作区 /e/ae_syn/actv_v122_fullchip
+  （rtl = 09 全套 + 12_actv 的 ae_actv.sv/ae_core.sv 两个覆盖），脚本
+  synth.tcl = 09 版 + read 列表补 ae_actv.sv + 层级 utilization。
+
+  全芯片 PPA（v1.2.2，2026-08-31 22:2x，OOC 模式、250MHz 约束、记录不迭代）：
+    整片 LUT   134,734 / 230,400 = 58.5%（LUT as Logic 132,126 + LUTRAM 2,608）
+    BRAM       126.5 / 312 tiles = 40.5%（比基线 122.5 多 4 块 = u_actv 的
+               bias/g 表 BRAM）
+    DSP        1,728 / 1,728 = 100% —— 与基线持平 ✓（u_actv DSP=0，没抢
+               PE 阵列的乘法器）
+    u_actv 层级 24,852 LUT（24,196 逻辑 + 640 LUTRAM + 16 分布式），
+               FF 6,080，BRAM 4 块 —— 对 OOC 24,782 偏 +0.28%，±15% 门内 ✓
+    WNS@250MHz −1.359（最差路径在 u_actv 内部：md_norm_reg → ctx_wdata_reg，
+               即 OOC 里那条 S5 写口路径，全片上下文里代价变大；324 端点级
+               ——按协调者要求记录不迭代，留给实现阶段处理）
+    与基线（integ，106,525 LUT / 122.5 BRAM / 1,728 DSP）对比：u_core
+    +28,209 = u_actv +24,852（本轮）+ u_gemm +3,286（09 里 requant/pe_pack
+    演进，先于本轮已存在）+ core glue +205 + 其余模块 ±0.1k；即本轮
+    v1.2.2 净增 24.9k，全片余量 95,666 LUT（41.5%）。

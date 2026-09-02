@@ -1,0 +1,958 @@
+{
+ "research": [
+  {
+   "key_facts": [
+    {
+     "topic": "Q1-判定",
+     "fact": "最终判定：公开代码无法直接复现 LIBERO 96.7（repo 无 LIBERO eval 脚本/训练配置/权重），但全部公开证据链一致指向「LIBERO 96.7 用了模拟器 GT depth」。理由：(1) 已发布 GD 预训练模型 with_feature_3d=true，不吃 depth 前向直接 crash，喂全零 depth 虽能跑但等于废掉 depth 分支；(2) repo 专门写了 LIBERO 数据集生成器，开 camera_depths=True 渲染并存储两路相机的 MuJoCo depth；(3) 三个已发布 processor 全部 load_depth=true。若他们没给 LIBERO 喂 depth，就必须专门训一个 with_depth=False 的 LIBERO 变体，与论文『depth 是正式输入』矛盾。confidence: 用了 depth=high(0.9)；depth 来源=MuJoCo 渲染 GT（无噪声传感器模型）=high(0.85)",
+     "evidence": "证据链见下面各条：hf_cfg/pretrain_model.config.json (with_feature_3d=true); R/robo_orchard_lab/dataset/libero/generate_dataset.py:201; R/robo_orchard_lab/robo_orchard_lab/models/bip3d/spatial_enhancer.py:227-231; hf_cfg/robotwin2_0_processor.json (load_depth=true)。R = E:/GPU ARCH/vector_core_sim/research_holobrain/robo_orchard_lab",
+     "confidence": "high"
+    },
+    {
+     "topic": "Q1a-depth 渲染来源",
+     "fact": "LIBERO 环境通过 robosuite 的 get_real_depth_map 把 MuJoCo OpenGL depth buffer 转成米制深度：这是渲染器直出的完美 GT，没有噪声/丢点传感器模型。get_camera_data 只在 obs 里存在 {cam}_depth 键时才打包 depth（camera_depths=False 时不产生该键）。单测验证了 GT 精度：把 MuJoCo 物体 3D 坐标投影到像素，与渲染 depth 对拍，误差 < 5cm",
+     "evidence": "R/robo_orchard_lab/envs/robosuite.py:30-51 (import get_real_depth_map from robosuite.utils.camera_utils, get_depth_image 调用它)；R/robo_orchard_lab/robo_orchard_lab/envs/libero/obs.py:100-109 (depth_key in libero_obs 才打包, pix_fmt=ImageMode.F)；R/robo_orchard_lab/tests/test_robo_orchard_lab/envs/test_libero.py:261-292 (投影 vs depth 对拍 atol=5e-2)",
+     "confidence": "high"
+    },
+    {
+     "topic": "Q1a-相机配置",
+     "fact": "LiberoEnvCfg 默认 camera_depths=False、256×256、双相机（LIBERO 标准：agentview 第三视角 + robot0_eye_in_hand 腕部）。但 LIBERO 数据集生成器显式覆盖为 camera_depths=True。相机名来自 env.camera_names（LIBERO OffScreenRenderEnv 默认双相机），数据集特征表硬编码了两路相机的 image+depth 共 4 个相机列",
+     "evidence": "R/robo_orchard_lab/robo_orchard_lab/envs/libero/env.py:205-210 (OffScreenRenderEnv(camera_depths=cfg.camera_depths))、env.py:816-818 (camera_heights/widths=256, camera_depths=False 默认)、obs.py:87-89 (camera_names=env.camera_names)；R/robo_orchard_lab/robo_orchard_lab/dataset/libero/generate_dataset.py:104-121 (LiberoDatasetFeatures: agentview_image/agentview_depth/robot0_eye_in_hand_image/robot0_eye_in_hand_depth)；to_mcap.py:49-52 (cameras=[agentview, robot0_eye_in_hand])",
+     "confidence": "high"
+    },
+    {
+     "topic": "Q1b-processor 是否 load_depth",
+     "fact": "是。三个 HF 官方 processor 全部 load_depth=true，deploy transforms 的 ItemSelection 全部包含 depths 键；HoloBrainProcessorCfg 默认 load_depth=True，且 Struct2Dict 里 load_depth=True 时 assert data.depth is not None——depth 是部署输入的硬性要求，不是可选项。dataset 侧 depth 编码为 uint16 毫米 PNG（×1000 截断到 65.535m），推理服务器解码时 /1000 还原成米",
+     "evidence": "R/projects/holobrain/configs/config_robotwin_dataset.py:353-361 (load_depth=config['with_depth'], with_depth=True 见 config_holobrain_gd_common.py:23)、:269 (deploy ItemSelection 含 depths)；R/robo_orchard_lab/robo_orchard_lab/models/holobrain/processor.py:141-143 (assert data.depth is not None)、:231-232 (默认 load_depth=True)；hf_cfg/robotwin2_0_processor.json / robotwin2_0_ur5_wsg_processor.json / real_world_agilex_grasp_anything_processor.json 均为 load_depth=true 且 ItemSelection 含 depths；generate_dataset.py:138-180 (uint16 mm PNG 编码)；R/projects/holobrain/scripts/inference_server.py:111-130 (depth/1000.0 解码)",
+     "confidence": "high"
+    },
+    {
+     "topic": "Q1b-depth 是 GT 还是传感器模型",
+     "fact": "模拟器 GT：MuJoCo 渲染 + get_real_depth_map 近远平面反变换，无噪声模型、无效点、无空洞。真机侧才是传感器 depth（RealSense D435i，uint16mm）。也就是说 LIBERO 96.7 的 depth 输入质量上限是『完美深度』，FPGA 部署若配真实深度相机存在 sim-to-real 质量差风险",
+     "evidence": "R/robo_orchard_lab/envs/robosuite.py:44-51 (get_real_depth_map(sim, depth_map))；R/projects/holobrain/REALBOT_DEPLOY_GUIDE.md:39 (Camera: Intel RealSense D435i × 3)；inference_server.py:111-130 (真机 depth 请求字段)",
+     "confidence": "high"
+    },
+    {
+     "topic": "Q1c-depth 缺失/为零时能否 forward",
+     "fact": "三种情况：(1) depths 键缺失——processor 端 assert 直接报错；绕过 processor 直接调模型时，BIP3D.extract_feat 里 inputs.get('depths') 为 None 会跳过 backbone_3d（feature_3d=None），但 DepthFusionSpatialEnhancer 在 with_feature_3d=true 路径调 deformable_format(None) 抛 TypeError——crash，不是优雅降级。(2) depths 全零——能跑不报错（推理端无数值检查），backbone_3d 吃全零图输出无意义特征；训练端 GT 生成器把 depth<=0 标 invalid（权重视为 0），说明设计上零=无效，但该检查只在训练生效。(3) 真正的可插拔开关是训练配置 with_depth：False 时 backbone_3d/neck_3d=None 且 with_feature_3d=False，走纯 RGB 分支（depth_prob 只由 2D 特征回归）。GenieSim3 基准就是 RGB-only 数据 + use_depth=false 跑的，证明可插拔分支存在且被用过——但那是另训的配置，不是已发布的 GD pretrain 权重",
+     "evidence": "R/robo_orchard_lab/robo_orchard_lab/models/holobrain/processor.py:141-143；R/robo_orchard_lab/robo_orchard_lab/models/bip3d/structure.py:84-94 (backbone_3d is not None and input_3d is not None else feature_3d=None)；spatial_enhancer.py:227-231 (with_feature_3d 分支 deformable_format(feature_3d)) 与 :233-235 (RGB-only 分支)；spatial_enhancer.py:78-80 (BatchDepthProbGTGenerator 训练时才生效)、:47-52/91-96 (depth<=0 为 invalid)；config_holobrain_gd_common.py:23 (with_depth=True)、:246-265 (backbone_3d 仅 with_depth 时构建)；R/projects/holobrain/benchmarks/geniesim3.md:30,68,184 (dataset_without_depth, use_depth=false)",
+     "confidence": "high"
+    },
+    {
+     "topic": "Q1c-已发布权重结构上强制 depth",
+     "fact": "HF 官方 pretrain_model.config.json：backbone_3d=Swin(in_channels=1, embed_dims=16, depths=[2,2,6,2])、neck_3d=ChannelMapper(out 128, num_outs=4)、spatial_enhancer=DepthFusionSpatialEnhancer(with_feature_3d=true, min_depth=0.01, max_depth=1.2, num_depth=128, loss_depth_weight=1.0)、input_3d='depths'、unsqueeze_depth_channel=true。depth 前处理只做通道维扩展和 HWC→CHW，不做 mean/std 归一化（米制原值进 backbone_3d）",
+     "evidence": "hf_cfg/pretrain_model.config.json (backbone_3d/spatial_enhancer/input_3d/pre_spatial_enhancer=false 字段)；R/robo_orchard_lab/robo_orchard_lab/models/layers/data_preprocessors.py:140-157 (image_keys 走 mean/std，depth_keys 只 permute+unsqueeze)",
+     "confidence": "high"
+    },
+    {
+     "topic": "Q2-LIBERO 视角数 N",
+     "fact": "LIBERO = 2 路（agentview 第三视角 + robot0_eye_in_hand 腕部相机），RGB+depth 各 2 张，共 4 个图像输入。参照：RoboTwin aloha=4 路（front/left/right/head）、ur5_wsg=3 路、真机 GraspAnything=3 路（left/right/middle RealSense）。模型对视角数不敏感（cam_names 列表决定 token 数），同一 pretrain 权重横跨 2~4 view",
+     "evidence": "R/robo_orchard_lab/robo_orchard_lab/dataset/liberto 无误——to_mcap.py:49-52 (agentview, robot0_eye_in_hand)；generate_dataset.py:106-113 (两相机 image+depth 特征)；config_robotwin_dataset.py:55-60 (robotwin2_0 4 cams)、:112 (ur5_wsg 3 cams)；inference_server.py:93-130 (left/right/middle)；processor.py:118-126 (cam_names 决定视角)",
+     "confidence": "high"
+    },
+    {
+     "topic": "Q3-推理部署路径",
+     "fact": "完整链路：(1) HF/本地 artifact = safetensors 权重 + {prefix}.config.json（pipeline 配置）+ {dataset}_processor.json（processor 配置），HoloBrainInferencePipeline.load_pipeline 支持 hf:// URI；(2) 部署入口 = Flask+gevent HTTP 服务器（inference_server.py），POST 多部件表单：每路 color+depth(.npy in uint16mm)+intrinsic+双臂关节态+指令，返回 64 步 action chunk，200Hz 插值上采样；(3) 处理流 = MultiArmManipulationInput → HoloBrainProcessor.pre_process(Struct2Dict+transforms) → BIP3D.predict → post_process 取 pred_actions；(4) 生成 = DPMSolverMultistepScheduler(prediction_type=sample) 10 步去噪。没有 ONNX/torchscript/BPU 导出：holobrain 全部 load_impl=native/accelerate（纯 PyTorch），ONNX 只出现在另一个项目 projects/sem；BPU/hbm/地平线编译工具链在本 repo 无任何痕迹",
+     "evidence": "R/robo_orchard_lab/robo_orchard_lab/pipeline/inference/mixin.py:164-212 (save/load_pipeline, hf:// 格式, load_impl∈{native,accelerate})；inference_server.py:40-49 (Flask/gevent/CONTROL_HZ=200)、:228-244 (required_keys 含 3 路 depth)；processor.py:177-190 (pre/post_process)；R/robo_orchard_lab/robo_orchard_lab/models/holobrain/action_decoder.py:649-692 (set_timesteps(10)+scheduler.step 循环)；hf_cfg/pretrain_model.config.json (num_inference_timesteps=10)；torch_model.py:560 (load_impl 仅 native/accelerate)；ONNX 仅 R/projects/sem/robotwin/onnx_scripts/export_onnx.py",
+     "confidence": "high"
+    },
+    {
+     "topic": "Q3-SimpleRTC 位置",
+     "fact": "repo 里叫 RTCInferencePlugin（无 SimpleRTC 字样，论文术语对应此实现）：真时 chunking，把上一帧未执行的 remaining_actions 与新预测按权重融合，权重从 1 线性/指数衰减到 0（decay = ci*(exp(ci)-1)/(e-1)），max_horizon=32。挂在 HoloBrainActionDecoder.async_inference_plugin 配置项上，仅当输入带 remaining_actions 键时触发（async 模式），训练不用。processor 的 MultiArmManipulationInput.remaining_actions/delay_horizon 字段即为其输入接口",
+     "evidence": "R/robo_orchard_lab/robo_orchard_lab/models/rtc_plugin/rtc_plugin.py:25-87 (RTCInferencePlugin, 指数衰减混合公式)；action_decoder.py:205/285 (async_inference_plugin 配置与 build)、:593-603 (remaining_actions in inputs 才触发)；processor.py:84-88 (remaining_actions/delay_horizon 字段)；REALBOT_DEPLOY_GUIDE.md:148-156 (手动往 model.config.json 加 async_inference_plugin JSON)",
+     "confidence": "high"
+    },
+    {
+     "topic": "Q4-LIBERO 权重与配置公开性",
+     "fact": "未公开。全 repo（projects/examples/configs/docs）搜 libero 只命中核心包的 env/dataset/tests 共 13 个文件，holobrain 项目 configs 只有 robotwin/agibot_geniesim/agilex_ro 三个 dataset 注册器，training_datasets=[robotwin2_0, robotwin2_0_ur5_wsg]，deploy_datasets 同。HF 只放了 GD pretrain 权重 + RoboTwin×2/GraspAnything×3 个后训 processor，无 LIBERO processor/权重。README 只给了 RoboTwin 与 GenieSim3 两个基准的评测指南。LIBERO 96.7 无法用公开代码复现；且 LIBERO 是单臂 Panda 7 关节，而公开训练配置全是 14 关节双臂（joint_mask 14 维、scale_shift 14 维），单臂到双臂动作空间的映射配置未公开",
+     "evidence": "grep -i libero 全库 13 文件均非项目配置；R/projects/holobrain/configs/config_holobrain_gd_common.py:34-42 (training/deploy_datasets 仅 robotwin)；dataset_factory.py:50-58 (只注册 3 个 dataset 配置)；config_robotwin_dataset.py:34-114 (14 关节双臂 scale_shift/joint_mask)；hf_cfg/ 目录仅 3 个 processor json + pretrain config；R/projects/holobrain/README.md:42-43,98-110 (仅 RoboTwin/GenieSim 评测文档)",
+     "confidence": "high"
+    },
+    {
+     "topic": "Q1-旁证：LIBERO 后训迹象",
+     "fact": "repo 存在完整的 LIBERO 训练数据生产线（HDF5 demo 重放到离线数据集，含 depth/joints/tf/action_goal_eef/env_state），说明团队内部做过 LIBERO 数据打包（大概率用于 LIBERO 后训练或加进 pretrain 混合），只是训练/评测配置没放出来。这加强了『LIBERO 评测走的就是这条含 depth 的数据管线』的推断",
+     "evidence": "R/robo_orchard_lab/robo_orchard_lab/dataset/libero/generate_dataset.py:198-203 (LiberoEnvCfg(camera_depths=True, format_datatypes=True) 重放 demo)、:319-351 (make_libero_dataset 全套件打包入口)；to_mcap.py:33-70 (LIBERO→MCAP 双相机 RGBD topic 映射)",
+     "confidence": "medium"
+    },
+    {
+     "topic": "GD 输入分辨率与推理步数（论文事实核对）",
+     "fact": "代码与论文一致：GD dst_wh=(320,256)（RoboTwin 处理器 Resize 320×256；真机 processor 是 384×256）、patch_size=64、10 步 DPMSolverMultistep(prediction_type=sample, x0 预测)、pred_steps=64/chunk_size=4、hist_steps=1（单帧观测，无历史图像帧堆叠）。LIBERO 原生 256×256 渲染会被拉伸到 320×256",
+     "evidence": "config_holobrain_gd_common.py:19-21 (hist/pred/chunk)、:43 (dst_wh=(320,256))、:44 (patch_size=64)、:365-371 (DPMSolverMultistep+num_inference_timesteps=10)；hf_cfg/robotwin2_0_processor.json (Resize dst_wh=[320,256])；real_world_agilex_grasp_anything_processor.json (dst_wh=[384,256])",
+     "confidence": "high"
+    }
+   ],
+   "module_params": [
+    {
+     "module": "backbone_3d（depth Swin, 已发布 GD pretrain 内置）",
+     "params": "≈0.76M (est)",
+     "macs": "≈0.19 GMAC/view @320×256；LIBERO 2 view ≈0.38 GMAC；RoboTwin 4 view ≈0.76 GMAC",
+     "basis": "Swin in_ch=1, d=16, depths=[2,2,6,2], win=7：每 block ≈12d² (qkv 3d²+proj d²+mlp 8d²)，s1..s4 = 2×12×16² + 2×12×32² + 6×12×64² + 2×12×128² ≈ 0.72M，+patch embed 256 + 3 个下采样 8d²≈43k ≈ 0.76M。MACs=Σ(每 stage 参数×token 数)，tokens: 5120/1280/320/80 (80×64→10×8)。confidence: low-medium（自定义 Swin 实现细节未逐行核对相对位置偏移/额外 norm）"
+    },
+    {
+     "module": "neck_3d（ChannelMapper 1×1, [32,64,128]→128, num_outs=4）",
+     "params": "≈0.05M (est)",
+     "macs": "≈0.01 GMAC/view",
+     "basis": "conv1×1: 32×128+64×128+128×128+128×128(第4级) ≈45k 权重；MACs = Σ(通道积×各层 token): 1280×32×128+320×64×128+80×128×128+20×128×128 ≈ 9.5M/view。confidence: medium"
+    },
+    {
+     "module": "DepthFusionSpatialEnhancer（含 pts 深度概率头与融合 FFN）",
+     "params": "≈1.3M (est)",
+     "macs": "≈2.2 GMAC/view；LIBERO 2 view ≈4.4 GMAC",
+     "basis": "pts_prob_pre_fc 256→128=32.9k；pts_prob_fc MLP(256,256,128,2层)≈98.6k；pts_fc 3→128≈0.5k；fusion_fc=FFN(512→1024→512)≈1.05M+Linear(512→256)≈131k（fusion_dim=embed256+feat3d128+feat3d128=512，因 with_feature_3d=true）+LN≈0.5k → 合计≈1.31M。token 数/view = strides(8,16,32,64)@320×256 = 1280+320+80+20 = 1700；MACs ≈ 1700×(256×128 + 256²+256×128 + 512×1024×2 + 512×256) ≈ 2.2G。depth_prob 对 128 个深度锚点做 softmax 属逐元素，不计 GEMM。confidence: low-medium（估算，未实测 profiler）"
+    },
+    {
+     "module": "（对照）已发布 GD 全模型 depth 分支占比",
+     "params": "depth 支路合计 ≈2.1M / 全模型（0.2B 量级）≈1%",
+     "macs": "depth 支路 ≈4.8 GMAC/2view，相比 RGB 主干+enhancer+decoder（数十 GMAC 量级）占比很小",
+     "basis": "backbone_3d 0.76M + neck_3d 0.05M + spatial_enhancer 1.3M ≈ 2.1M params；MACs 0.38+0.01+4.4 ≈ 4.8 GMAC(2 view)。结论：给 FPGA 部署评估——HB-GD 的 depth 输入带来的是『每 view 多一张 16bit 深度图的输入带宽+预处理』而非大额算力；算力大头仍是 RGB Swin 主干与 decoder。confidence: low-medium"
+    }
+   ],
+   "risks": [
+    "LIBERO 96.7 不可复现：无公开 LIBERO eval 脚本、训练配置、后训权重；单臂 Panda(7 关节)到双臂 14 关节动作空间的映射配置完全未公开。FPGA 部署评估若以 LIBERO 为基准场景，只能拿 GD pretrain 权重自建评测，数字未必能对上 96.7",
+    "96.7 的 depth 输入是 MuJoCo 渲染 GT（无噪声、无空洞、5cm 内精度）。真实深度相机（RealSense）有噪声/边缘空洞/量程差异，depth 分支真机表现未在 LIBERO 上验证过——对『depth 是否是 96.7 的必要条件』的任何定量结论都要打折",
+    "max_depth=1.2m 的深度概率锚点范围按 RoboTwin 桌面尺度设定；LIBERO agentview 相机到桌面约 1.1~1.5m，部分场景深度可能超出锚点范围（推理端不截断但深度分布头外推），精度影响未知",
+    "若 depth 键缺失，已发布模型会直接 crash（不是优雅降级）；若喂全零 depth 不报错但 depth 分支输出无意义——做消融/降级实验时必须显式区分这两种情况",
+    "repo 无 ONNX/torchscript/BPU 导出路径（仅另一项目 projects/sem 有 ONNX）；地平线 BPU 部署工具链不在开源 repo 内，FPGA/GPU 端口需要自己从 PyTorch native 权重转",
+    "backbone_3d/spatial_enhancer 的参数量与 MAC 为手算估算（自定义 Swin 实现），confidence low-medium；正式 MAC 账建议用 torch profiler 对 hf 权重实测校正"
+   ],
+   "open_questions": [
+    "LIBERO 96.7 用的是 GD pretrain 直接 zero-shot/内部混合评测，还是 LIBERO 专项后训？repo 的 LIBERO 数据生成器暗示做了数据打包，但训练配方（scale_shift、joint_mask、单臂映射）未公开",
+    "论文『SimpleRTC』与 repo RTCInferencePlugin 的超参对应关系（max_horizon=32, delay_horizon 由客户端传入）——LIBERO 评测时是否开 RTC、控制频率 20Hz 下 delay_horizon 取值多少，无公开证据",
+    "真机 GraspAnything processor 分辨率是 384×256 而 GD 论文口径 320×256——部署 MAC 账按哪个分辨率算需与上游对齐",
+    "depth 全零时模型输出质量掉多少（LIBERO 上跑一次消融即可回答，但需自建 eval harness）；这是判断『depth 分支对 96.7 贡献度』的关键实验",
+    "HB-GD 在地平线 BPU 上的官方部署形态（量化方案、depth 分支是否保留）完全无公开信息"
+   ]
+  },
+  {
+   "key_facts": [
+    {
+     "topic": "检测头确实不在 HB-GD 结构里",
+     "fact": "pretrain_model.config.json 的 decoder 字段是 HoloBrainActionDecoder（扩散动作头），整份配置没有任何 bbox/query-selection/instance-bank 字段；BIP3D.__init__ 只构建 backbone/decoder/neck/text_encoder/feature_enhancer/spatial_enhancer/data_preprocessor/backbone_3d/neck_3d/text_feat_map 九个模块，无任何检测组件；grounding_decoder 子包（bbox3d_decoder/instance_bank）只被自己的 __init__.py 引用，主路径完全不用。",
+     "evidence": "hf_cfg/pretrain_model.config.json:33-34 (decoder type=HoloBrainActionDecoder)；robo_orchard_lab/models/bip3d/structure.py:37-58 (仅九个模块)；structure.py:131-169 (_forward 数据流 backbone→text→enhancer→spatial→decoder，无 box head)；grep grounding_decoder 仅命中 robo_orchard_lab/robo_orchard_lab/models/bip3d/grounding_decoder/* 自身",
+     "confidence": "high"
+    },
+    {
+     "topic": "text_img 双向注意力只作用于最后一个尺度 (stride 32)",
+     "fact": "每层增强器先用 SingleScaleBiAttentionBlock 只融合 feature_2d[:, level_start_index[-1]:]（第 4 级，stride 32，每视角仅 10×8=80 token，各视角拼接后与文本互注意），然后 deformable self-attn 在全部 4 级 1700 token 上做，最后文本自注意。这决定了 bi-attn 的 MAC 很小（视觉侧只有 80·nc 个 token）。",
+     "evidence": "robo_orchard_lab/robo_orchard_lab/models/bip3d/feature_enhancer.py:188-218 (feature_2d_fused = feature_2d[:, level_start_index[-1]:]，随后 img_attn_blocks 作用于完整 feature_2d)",
+     "confidence": "high"
+    },
+    {
+     "topic": "MSDeformableAttention 的 n_points/num_heads",
+     "fact": "img_attn_block.self_attn_cfg 只配了 embed_dims=256, num_levels=4, im2col_step=1；num_heads=8、num_points=4 都走代码默认值。每 query 采样 8heads×4levels×4points=128 个点，head_dim=32。",
+     "evidence": "hf_cfg/pretrain_model.config.json:344-355；robo_orchard_lab/robo_orchard_lab/models/bip3d/layers.py:66-67 (num_heads: int = 8), :91 (num_points: int = 4), :139-147 (sampling_offsets Linear(256,256), attention_weights Linear(256,128), value/output_proj Linear(256,256))",
+     "confidence": "high"
+    },
+    {
+     "topic": "Swin window 对 80×64 网格的 padding 处理",
+     "fact": "每个 ShiftWindowMSA 前向把 H、W 分别 pad 到 7 的倍数（corner padding，右/下补零），pad 出的 token 参与窗口 GEMM 计算后才裁掉。四个 stage 的 padded token 数：5120→5880 (120 窗), 1280→1470 (30 窗), 320→441 (9 窗), 80→196 (4 窗)。padding 浪费合计约 1.1 GMAC/视角（占 Swin 总量 13%）。",
+     "evidence": "robo_orchard_lab/robo_orchard_lab/models/modules/swin_transformer.py:614-618 (pad_r/pad_b 公式), :661-667 (window_partition 后整窗送 w_msa), :686-687 (计算完才裁剪)",
+     "confidence": "high"
+    },
+    {
+     "topic": "BERT 每次推理只跑一次，不进 10 步去噪循环",
+     "fact": "BIP3D._forward 里 extract_text_feature 只调用一次；HoloBrainActionDecoder.forward 在 denoise 循环外接收已算好的 text_dict 和 img_feature，循环内 (10 步 DPMSolver++) 只调 forward_layers。但跨 action chunk 的指令级缓存代码里没有实现——每次 model() 都会重新分词+重跑 BERT（部署时可自行缓存，同一 episode 指令不变）。",
+     "evidence": "robo_orchard_lab/robo_orchard_lab/models/bip3d/structure.py:131-133 (extract_text_feature 调一次)；robo_orchard_lab/robo_orchard_lab/models/holobrain/action_decoder.py:434-435 (text_dict/img_feature 循环外准备), :649-666 (for t in timesteps 循环内只用 forward_layers)",
+     "confidence": "high"
+    },
+    {
+     "topic": "BERT 冻结是论文事实，代码里没有对应开关",
+     "fact": "bip3d 代码路径没有对 text_encoder 的 requires_grad 冻结逻辑；freeze_vlm/freeze_vision 只存在于 Qwen 版 HoloBrain (holobrain/structure.py)。冻结只影响训练，不影响推理 MAC 账。",
+     "evidence": "robo_orchard_lab/robo_orchard_lab/models/holobrain/structure.py:122-129, :468-469 (freeze_vlm 仅 Qwen 版)；bip3d/structure.py 全文无 freeze",
+     "confidence": "high"
+    },
+    {
+     "topic": "BERT 输入长度不 pad 到 max",
+     "fact": "pad_to_max=false → tokenizer 按 batch 内最长指令 padding，bs=1 推理时 L=指令实际 wordpiece 长度。LIBERO 指令（如 'put the black bowl on the plate'）估 L≈12-20，取 16 为代表值；max_tokens=768 只是截断上限。",
+     "evidence": "hf_cfg/pretrain_model.config.json:326 (pad_to_max=false), :329 (max_tokens=768)；robo_orchard_lab/robo_orchard_lab/models/bip3d/bert.py:184-192 (padding='longest')；指令来源 env.task_info.description (dataset/libero/generate_dataset.py:259)",
+     "confidence": "medium"
+    },
+    {
+     "topic": "相机数量：RoboTwin=4，真机=3，LIBERO 大概率 2",
+     "fact": "processor 配置：robotwin2_0 用 4 相机 (front/left/right/head)@320×256，真机 agilex 用 3 相机 (left/right/middle)@384×256；LIBERO 数据生成代码固定写 agentview + robot0_eye_in_hand 两路。MAC 账按每视角给出，乘 nc 即得总量；LIBERO 的官方 eval processor 配置不在本地素材里。",
+     "evidence": "hf_cfg/robotwin2_0_processor.json:6-11, :66-69 (cam_names, Resize dst_wh=[320,256])；hf_cfg/real_world_agilex_grasp_anything_processor.json:6-10, :154-157 (3 相机, 384×256)；robo_orchard_lab/robo_orchard_lab/dataset/libero/generate_dataset.py:106-111 (agentview + robot0_eye_in_hand)",
+     "confidence": "medium"
+    },
+    {
+     "topic": "动作头下游只用 stride16/32 两级，但增强器仍算 4 级",
+     "fact": "HoloBrainActionDecoder feature_level=[1,2]（stride 16/32 两级进动作头），但 feature_enhancer 的 deformable self-attn 和 spatial_enhancer（深度分支）仍处理全部 4 级 1700 token/视角，这部分 MAC 不能省。",
+     "evidence": "hf_cfg/pretrain_model.config.json:198-201 (feature_level [1,2])；robo_orchard_lab/robo_orchard_lab/models/holobrain/action_decoder.py:287-301 (format_img_feature_maps 按 feature_level 取子集)",
+     "confidence": "high"
+    }
+   ],
+   "module_params": [
+    {
+     "module": "Swin-T 2D backbone @320×256 (每视角)",
+     "params": "27.5M",
+     "macs": "8.48 GMAC",
+     "basis": "patch_embed Conv2d(3,96,4,4): 4.9K params, 5120tok×4608=23.6M MAC (swin_transformer.py:1018-1025)。每 block 12C²+13C+169h params；MAC= T_pad×(4C²+98C)[QKV+proj+窗注意力] + T×8C²[FFN]，T/T_pad: S1 5120/5880, S2 1280/1470, S3 320/441, S4 80/196。S1: 2blk=1.299G+ds 94.4M；S2: 2blk=1.244G+ds 94.4M；S3: 6blk=3.925G+ds 94.4M；S4: 2blk=1.709G。合计 8.484 GMAC（校验：同公式@224²=4.49G 与 Swin-T 论文 4.5G 一致）。params=4,896+224,694+74,496(S1)+891,756+296,448(S2)+10,658,952+1,182,720(S3)+14,183,856(S4)+2,688(3×输出LN)=27,520,506"
+    },
+    {
+     "module": "ChannelMapper neck (每视角)",
+     "params": "2.12M",
+     "macs": "0.145 GMAC",
+     "basis": "3×Conv1x1+GN: 192/384/768→256，作用于 1280/320/80 token = 62.9M+31.5M+15.7M；extra Conv3x3 s2 768→256 产生第4级 5×4=20 token (channel_mapper.py:86-114, i==len 时用 inputs[-1]) = 20×6912×256=35.4M。params=(192+384+768)×256+3×256+768×256×9+256+4×512(GN)=2,116,608"
+    },
+    {
+     "module": "BERT-base-uncased (每条指令一次)",
+     "params": "108.9M (encoder 85.1M + embedding 23.8M)",
+     "macs": "1.36 GMAC @L=16 (区间 0.85-2.6 GMAC, L=10-30)",
+     "basis": "12L×768H×3072FFN。每层每token GEMM=3×768²(QKV)+768²(attn out)+2×768×3072(FFN)=7,077,888；注意力bmm=2×12head×L²×64=1,536L²。总MAC=12×(L×7,077,888+1,536L²)：L=16→1.364G；L=10→0.85G；L=30→2.56G。params: embeddings 23,837,184 (word 23.44M+pos 0.39M+type+LN) + 12×7,087,872=85,054,464，无 pooler (bert.py:328 add_pooling_layer=false)。'~86M' 即 encoder 部分"
+    },
+    {
+     "module": "text_feat_map Linear(768→256)",
+     "params": "0.197M",
+     "macs": "3.1 MMAC @L=16",
+     "basis": "structure.py:53-58 nn.Linear(language_dim=768, 256)；L×768×256=16×196,608=3.1M，每指令一次"
+    },
+    {
+     "module": "TextImageDeformable2DEnhancer ×6层: bi-attn 块 (SingleScaleBiAttentionBlock)",
+     "params": "9.47M (6×1.579M)",
+     "macs": "0.476 GMAC @nc=1,L=16 (0.88G @nc=2)",
+     "basis": "BiMultiHeadAttention: v/l/values_v/values_l_proj 256→1024 (4×263,168) + out_v/out_l 1024→256 (2×262,400) + 2LN+2gamma (layers.py:560-566)。只作用于最后一级 80·nc 个视觉token (feature_enhancer.py:188)。每层MAC=3×N_v×262,144 + 3×L×262,144 + 3×1024×N_v×L（QK^T 算一次两向共用, layers.py:618+637）。nc=1,L=16: 62.9M+12.6M+3.9M=79.4M/层 ×6"
+    },
+    {
+     "module": "TextImageDeformable2DEnhancer ×6层: deformable img 块",
+     "params": "7.69M (6×1.282M)",
+     "macs": "13.08 GMAC/视角 (6×2.180G)",
+     "basis": "MSDeformAttn(embed256,h8,levels4,points4): sampling_offsets 65,792 + attention_weights 32,896 + value/output_proj 2×65,792 = 230,272 (layers.py:139-147)；FFN2048 1,050,880；2LN 1,024。每层每视角 MAC: 1700tok×(65,536[sampling_offsets]+32,768[attn_w]+65,536[value]+65,536[output]) + 1700×8×16×32[采样加权和]=6.96M + FFN 1700×2×256×2048=1,782.6M → 2.18 GMAC，其中 FFN 占 82%"
+    },
+    {
+     "module": "TextImageDeformable2DEnhancer ×6层: text 自注意块",
+     "params": "4.74M (6×0.790M)",
+     "macs": "76 MMAC @L=16 (每指令一次, 不乘视角)",
+     "basis": "nn.MultiheadAttention(256,4h): in_proj 197,376+out 65,792=263,168 (transformer_layers.py:110-112)；FFN1024 525,760；2LN 1,024。每层MAC= L×196,608[qkv]+2×256×L²[QK/AV]+L×65,536[out]+L×524,288[FFN] = 12.7M @L=16 ×6"
+    },
+    {
+     "module": "Feature enhancer 合计 (6层)",
+     "params": "21.9M",
+     "macs": "13.63 GMAC/视角 (nc=1,L=16)",
+     "basis": "9,474,048+7,693,056+4,739,712+1,024(level_embed) = 21,907,840。MAC = 6×(79.4M[bi] + 2,180M[img] + 12.7M[text])；视觉部分乘 nc，text 部分每指令一次"
+    },
+    {
+     "module": "2D+文本路径总计 (单次模型调用, 10步去噪之前)",
+     "params": "160.6M",
+     "macs": "LIBERO(nc=2,L=16): 45.7 GMAC；RoboTwin(nc=4): 90.0 GMAC；每视角视觉部分恒为 22.2 GMAC",
+     "basis": "params: 27.52+2.12+108.89+0.20+21.91=160.64M。每视角视觉 MAC = Swin 8.484 + neck 0.145 + img块 13.081 + bi视觉侧 0.396(nc=1) = 22.11 GMAC。nc=2 总 = 2×21.71[纯视觉] + bi 0.878 + BERT 1.364 + text块 0.076 + feat_map 0.003 = 45.74 GMAC；nc=4 = 4×21.71+1.68+1.44=89.96 GMAC"
+    }
+   ],
+   "risks": [
+    "窗口 padding 的 MAC 计入还是跳过：账里按'pad 后整窗都算'计（与 GPU 实现一致），专用硬件若跳过 padding 行/列可省约 1.1 GMAC/视角（Swin 的 13%）；FPGA 实现时窗口 49 token 对 16 行阵列也带来填充问题",
+    "LIBERO 指令 token 长度 L 没有本地语料可数，L=16 是估计值；BERT MAC 对 L 线性（L=10→0.85G, L=30→2.56G），对总量影响 ≤2 GMAC",
+    "LIBERO 相机数=2 是从 dataset/libero/generate_dataset.py 的固定两路相机推断的，官方 eval processor 不在本地素材里；若论文用单相机则总量 24.2 GMAC，用 4 相机则 91 GMAC——nc 是总账的最大不确定项",
+    "deformable attention 的 bilinear 采样不是 GEMM：加权和我只算了 1700×8×16×32=7M MAC/层，双线性插值（每点4邻居×乘加）再加约 3-4 倍标量乘加，但相对 FFN 1.78G 可忽略；FPGA 上它是 gather+MAC 混合算子，不是纯脉动阵列负载",
+    "BERT '冻结'来自论文叙述（任务给定事实），代码无冻结开关；若有人据此想裁掉 BERT 训练相关部分，注意 embedding 查表 23.4M 参数在推理仍需要（除非整条指令缓存后连 BERT 都不加载）",
+    "bi-attn 各视角共享同一条指令做联合注意力（拼接后单次 bmm），视角间无法完全独立并行——多相机部署时这一层是跨视角耦合点",
+    "Swin with_cp=true 只是训练期 gradient checkpointing，不影响 MAC；config convert_weights=false 不影响结构"
+   ],
+   "open_questions": [
+    "LIBERO 评测到底用几个相机（1/2/4 直接决定总量 24-91 GMAC）？需要论文正文或官方 eval processor 配置确认",
+    "LIBERO 指令的实际 wordpiece 长度分布（跑一次 tokenizer 即可闭合 BERT 的 0.85-2.56G 区间）",
+    "spatial_enhancer (DepthFusionSpatialEnhancer, num_depth_layers=2) 和 backbone_3d(Swin 微型 16-dim)/neck_3d 属 3D 深度路径，本任务未算——如果 parent 需要全模型账，这部分另行计算（它消费同一批 4 级特征图 + 128 档深度概率体）",
+    "动作解码器本体（HoloBrainActionDecoder, 20.8M 论文值, 10 步 DPMSolver++ × 每步 transformer）不在本任务范围，但它是延迟主账的另一大块，注意别把本任务的 ~45 GMAC 当成全部"
+   ],
+   "gemm_candidates": [
+    {
+     "m": 1700,
+     "n": 2048,
+     "k": 256,
+     "count": 6,
+     "name": "enhancer img FFN up (最大 GEMM 流)",
+     "notes": "每视角每层1次×6层；1700=1280+320+80+20 token；单次 0.893 GMAC，是整个 2D 路径最大的可脉动 GEMM"
+    },
+    {
+     "m": 1700,
+     "n": 256,
+     "k": 2048,
+     "count": 6,
+     "name": "enhancer img FFN down",
+     "notes": "同上，0.893 GMAC/次"
+    },
+    {
+     "m": 1700,
+     "n": 256,
+     "k": 256,
+     "count": 30,
+     "name": "enhancer MSDeformAttn 投影组 (value/output/sampling_offsets)",
+     "notes": "每视角每层 5 个 Linear(256→~256)：value_proj+output_proj+sampling_offsets 各 65,536 MAC/tok + attention_weights (1700,128,256)×6；等价 30 次 (1700,256,256)"
+    },
+    {
+     "m": 5880,
+     "n": 288,
+     "k": 96,
+     "name": "Swin S1 QKV (窗口等价展平)",
+     "count": 2,
+     "notes": "窗口真实形态 m=49×120 窗/块，2 块/视角；展平等价 m=5880 含 padding token；下同"
+    },
+    {
+     "m": 5120,
+     "n": 384,
+     "k": 96,
+     "count": 2,
+     "name": "Swin S1 FFN up (+down (5120,96,384)×2)",
+     "notes": "FFN 在未 pad 的 5120 token 上"
+    },
+    {
+     "m": 1470,
+     "n": 576,
+     "k": 192,
+     "count": 2,
+     "name": "Swin S2 QKV (30 窗×49)",
+     "notes": "FFN: (1280,768,192)×2 + (1280,192,768)×2；proj: (1470,192,192)×2"
+    },
+    {
+     "m": 441,
+     "n": 1152,
+     "k": 384,
+     "count": 6,
+     "name": "Swin S3 QKV (9 窗×49, 6 块)",
+     "notes": "S3 是 Swin 中 MAC 最大的 stage (4.02G)；FFN: (320,1536,384)×6 + (320,384,1536)×6"
+    },
+    {
+     "m": 196,
+     "n": 2304,
+     "k": 768,
+     "count": 2,
+     "name": "Swin S4 QKV (4 窗×49, padding 率 2.45×)",
+     "notes": "FFN: (80,3072,768)×2 + (80,768,3072)×2；窗口真实 m=49×4 窗"
+    },
+    {
+     "m": 1280,
+     "n": 256,
+     "k": 192,
+     "count": 1,
+     "name": "neck L0 Conv1x1 (stride8)",
+     "notes": "另有 (320,256,384)、(80,256,768) 各1次；extra (20,256,6912) Conv3x3s2 1次"
+    },
+    {
+     "m": 20,
+     "n": 256,
+     "k": 6912,
+     "count": 1,
+     "name": "neck extra Conv3x3 s2 (第4级来源)",
+     "notes": "k=768×9 展开；产出 stride64 的 5×4=20 token，专供 deformable 第4级"
+    },
+    {
+     "m": 80,
+     "n": 1024,
+     "k": 256,
+     "count": 18,
+     "name": "bi-attn 视觉侧投影 (nc=1)",
+     "notes": "v_proj/values_v/out_v 每层3次×6层，m=80·nc；文本侧 (L,1024,256)×18；QK/AV bmm: 每 (4head, 80nc, L, 256)×3×6"
+    },
+    {
+     "m": 16,
+     "n": 2304,
+     "k": 768,
+     "count": 12,
+     "name": "BERT QKV (m=L, 每指令一次不乘视角)",
+     "notes": "L=指令长度(~16)；FFN up (L,3072,768)×12 + down (L,768,3072)×12 + attn out (L,768,768)×12；可整条缓存"
+    }
+   ]
+  },
+  {
+   "key_facts": [
+    {
+     "topic": "PSE 组成与执行位置",
+     "fact": "PSE = backbone_3d(1通道Swin) + neck_3d(ChannelMapper) + DepthFusionSpatialEnhancer + BatchDepthProbGTGenerator(仅训练)。pre_spatial_enhancer=false，即空间增强器在 6 层 TextImageDeformable2DEnhancer 之后、decoder 之前执行，每次动作推理只跑 1 次，不随 DPMSolver 10 步迭代重复。",
+     "evidence": "structure.py:131-157（先 feature_enhancer 后 spatial_enhancer）; pretrain_model.config.json:467 (pre_spatial_enhancer=false)、:197 (num_inference_timesteps=10); action_decoder.py:420-431 (10 步迭代只在 decoder.forward 内部)",
+     "confidence": "high"
+    },
+    {
+     "topic": "depth 输入分辨率",
+     "fact": "Resize 到 320×256 同时作用于 imgs 和 depths（两套数据集 pipeline 均如此）；depth 未经归一化，直接以米为单位；unsqueeze 成 1 通道后 [bs, V, 1, 256, 320] 喂给 in_channels=1 的 Swin。",
+     "evidence": "robotwin/transforms.py:448-476 (Resize 同循环处理 imgs/depths)、:477 (image_wh=[320,256]); horizon_manipulation/transforms.py:287-309; data_preprocessors.py:149-157; pretrain_model.config.json:389 (unsqueeze_depth_channel), :419 (in_channels=1); mean/std 只作用于 image_keys，depth 无归一化 (data_preprocessors.py:143-147)",
+     "confidence": "high"
+    },
+    {
+     "topic": "token 网格",
+     "fact": "深度 Swin(patch4) 逐 stage：64×80(5120,C16) → 32×40(1280,C32) → 16×20(320,C64) → 8×10(80,C128)；out_indices [1,2,3] 出 3 层(stride 8/16/32)，neck_3d 的 extra 3×3 s2 conv 补第 4 层 4×5(20, stride 64)。2D 分支同网格，故空间增强器处理 4 层共 1700 token/路相机。",
+     "evidence": "swin_transformer.py:1043-1074 (stages/PatchMerging)、1078-1081 (out norms); channel_mapper.py:86-114 (extra conv 3×3 s2); pretrain_model.config.json:439-443, :462 (num_outs=4); 特征图经 structure.py:82,92 unflatten 成 [bs,cam,...]，deformable_format 后 [bs,cam,1700,C] (utils.py:27-47)",
+     "confidence": "high"
+    },
+    {
+     "topic": "深度分布头结构",
+     "fact": "在全部 4 个 level 的 1700 个 token 上预测 128 bin 深度分布（非只 stride 8）。头 = Linear(256→128)(pre_fc) 拼上 128 维 depth-Swin 特征 → 2 层 MLP(256→256→128) → softmax。GT 生成器仅在训练期运行：深度图先半分辨率(128×160)，再按 kernel 4/8/16/32 avg_pool 出 4 个 level（对应 stride 8/16/32/64），线性插值散到 2 个相邻 bin，valid 像素占比 <0.5 的 patch 监督权重置 0。bin 范围 0.01–1.2 m，bin 宽约 9.4 mm。",
+     "evidence": "spatial_enhancer.py:227-235 (concat 后统一过 MLP)、:198-203 (MLP dim=256)、:79-80 (仅训练)、:71+84-89 (origin_stride=2 半分辨率)、:138-156 (avg_pool 4 level)、:146-151 (valid_threshold=0.5); pretrain_model.config.json:400-415 (stride[8,16,32,64], origin_stride=2, valid_threshold=0.5), :375-385; MLP 定义 transformer_layers.py:298-321",
+     "confidence": "high"
+    },
+    {
+     "topic": "融合机制",
+     "fact": "不是 cross-attention 也不是简单相加，是 LADS 式「深度分布加权的 3D 点特征」：每个 token 生成 128 个深度假设点，经 torch.linalg.solve 用 4×4 投影矩阵反投影到 ego 坐标系，每点过 Linear(3→128)，用 depth_prob 对 128 个深度加权求和得 128 维几何特征；最后 concat[2D 256 | depth 128 | pts 128]=512 → FFN(512→1024→512) → Linear(512→256) + 残差(feature_2d) + LayerNorm。",
+     "evidence": "spatial_enhancer.py:189-209 (结构定义)、:218-243 (forward 全流程)、:237-239 (加权求和)、:241-242 (残差+LN)",
+     "confidence": "high"
+    },
+    {
+     "topic": "projection_mat 来源与量级",
+     "fact": "projection_mat = intrinsic @ T_world2cam @ T_base2world @ inv(T_base2ego)，ego 坐标系。进入模型只做一件事：get_pts 里对 N×D=1700×128 个齐次像素坐标做批量化 4×4 solve（X = pts @ (proj^T)^{-1}），约 21.8 万个 4×4 求解/路相机/帧，等价约 14 MMAC 的元素级运算，量级可忽略。关键部署事实：相机固定于机体时该矩阵不随时间变化，pts 及其 Linear(3→128) 嵌入（83.5 MMAC）可完全离线预计算缓存。",
+     "evidence": "robotwin/transforms.py:862-869 (ego 投影链); spatial_enhancer.py:250-281 (get_pts: linspace 网格×128 深度 → solve → [...,:3]); 官方注释 '# b,cam,N,3' (spatial_enhancer.py:280)",
+     "confidence": "high"
+    },
+    {
+     "topic": "可插拔 depth（无深度传感器）",
+     "fact": "两种情况：(1) 输入字典没有 'depths' 键 → structure.py 置 feature_3d=None → with_feature_3d=true 时 deformable_format(None) 直接 TypeError 崩溃，官方 checkpoint 不能不带 depths 张量部署；(2) depths 存在但全零 → 全流程正常跑通，backbone_3d 输出退化为常数图，depth_prob 退化为与内容无关的先验，但融合分支有残差 (+feature_2d) 和 LN 兜底，输出形状与数值仍成立。训练期 GT 生成器对 valid 比例<0.5 的 patch 权重置 0，说明架构容忍部分缺失深度，但全零输入属分布外，精度未知。工程结论：无深度传感器时喂全零图即可跑，但需实测精度。",
+     "evidence": "structure.py:84-94 (input_3d None → feature_3d=None); spatial_enhancer.py:227-228 (deformable_format(None) 必崩)、:241-242 (残差路径); spatial_enhancer.py:79-80 + :91-96,146-151 (训练期无效深度 patch 零权重); decoder 不消费 feature_3d/depth_prob (action_decoder.py:420 **kwargs 吞掉)，feature_enhancer 也不用 (feature_enhancer.py:154-159)",
+     "confidence": "high (崩溃行为代码确证) / low (全零深度精度)"
+    },
+    {
+     "topic": "算力结构洞察",
+     "fact": "PSE 总账 2.28M 参数 / 约 2.63 GMAC/路相机/次推理，其中 68% 是融合 FFN([1700,512]×[512,1024] 等，GEMM 友好)；深度 Swin 只占 11% (0.277 GMAC) 且被 window padding 放大（stage3 8×10 补到 14×14，注意力部分 2.45×）。窗口注意力 head_dim 仅 4/4/8/8，是碎片化小 GEMM。Swin s0 的 K=16 恰好是阵列 K 维一个 tile。",
+     "evidence": "本文件逐 stage 计算（见 module_params basis）；padding 计算：swin_transformer.py:614-618 (pad 到 window 7 倍数); head_dim: 16/4,32/8,64/8,128/16 (config num_heads 4,8,8,16)",
+     "confidence": "medium"
+    },
+    {
+     "topic": "推理频率",
+     "fact": "PSE 与整个视觉/文本编码器每次模型前向只执行 1 次；DPMSolver++ 10 步只重复 decoder。故每个动作 chunk 的 PSE 成本 = 2.63 GMAC × 相机路数 V（robotwin 处理器 4 路 = 10.5 GMAC；LIBERO 相机数未在素材中给出，按路数线性放大）。",
+     "evidence": "structure.py:105-169 (predict→_forward 一次); pretrain_model.config.json:192-197 (DPMSolver++/10 步在 decoder 侧)",
+     "confidence": "high"
+    }
+   ],
+   "module_params": [
+    {
+     "module": "backbone_3d (Swin-T micro, in_ch=1, embed16, depths[2,2,6,2], heads[4,8,8,16], win7, patch4)",
+     "params": "0.79M (790,648)",
+     "macs": "0.277 GMAC/路相机 (含窗口padding；不含padding为0.236 GMAC)",
+     "basis": "参数逐块: 每block=12C²+13C+169h (qkv 3C²+3C, proj C²+C, FFN 8C²+5C, 2×LN 4C, rel-pos表169h)。s0(C16,h4)×2=7,912; s1(C32,h8)×2=28,112; s2(C64,h8)×6=308,016; s3(C128,h16)×2=401,952; PatchEmbed 272+LN32; PatchMerging LN+Linear: 64→32=2,176, 128→64=8,448, 256→128=33,280; 输出LN 448。MAC: 注意力按padding后token数(qkv 4C²+98C/token)、FFN按真实token(8C²/token)：s0=5880×2592×2blk+5120×2048×2=51.5M; s1=42.2M; s2=441×22656×6+320×32768×6=122.9M; s3=196×78080×2+80×131072×2=51.6M; PM共7.86M; patch_embed conv 1.31M。padding: 64×80→70×84, 32×40→35×42, 16×20→21×21, 8×10→14×14 (swin_transformer.py:614-618)"
+    },
+    {
+     "module": "neck_3d (ChannelMapper: 1×1 conv 32/64/128→128 + extra 3×3s2 128→128, GN4)",
+     "params": "0.18M (177,664)",
+     "macs": "12.1 MMAC/路相机",
+     "basis": "conv参数 4224+8320+16512+147584(3×3s2)+4×GN(256)。MAC: 1280×4096 + 320×8192 + 80×16384 + 20×9×16384 = 5.24+2.62+1.31+2.95M (channel_mapper.py:67-114; 输出网格 32×40/16×20/8×10/4×5)"
+    },
+    {
+     "module": "spatial_enhancer.pts_prob_pre_fc (Linear 256→128)",
+     "params": "32,896",
+     "macs": "55.7 MMAC/路相机",
+     "basis": "1700 token × 256×128 (spatial_enhancer.py:191-193, :229)"
+    },
+    {
+     "module": "spatial_enhancer.pts_prob_fc (深度分布头 MLP, 2层 256→256→128 + softmax128)",
+     "params": "98,688",
+     "macs": "167.1 MMAC/路相机 (GEMM) + 0.22M softmax(非GEMM)",
+     "basis": "Linear(256,256)=65,792 + Linear(256,128)=32,896; MAC=1700×65536 + 1700×32768 (spatial_enhancer.py:198-203, :230-231; MLP结构 transformer_layers.py:303-307)"
+    },
+    {
+     "module": "spatial_enhancer.get_pts + pts_fc (3D反投影 + 点嵌入 Linear 3→128)",
+     "params": "512",
+     "macs": "83.6 MMAC (pts_fc GEMM, K=3) + 约14 MMAC等价 (4×4 solve, 非GEMM)；相机固定时可整体离线缓存为 0",
+     "basis": "点数 N×D = 1700×128 = 217,600；pts_fc = 217,600×3×128；solve = 217,600 次 4×4 求解 (约64 MAC/点)。projection_mat 为 ego 系常量→可预计算 (spatial_enhancer.py:250-281, :237)"
+    },
+    {
+     "module": "spatial_enhancer.加权聚合 (depth_prob × pts_feature, sum over 128 bins)",
+     "params": "0",
+     "macs": "27.9 MMAC/路相机 (非GEMM: 1700个 [1×128]·[128×128] 向量加权求和)",
+     "basis": "217,600×128 乘加 (spatial_enhancer.py:238)"
+    },
+    {
+     "module": "spatial_enhancer.fusion_fc (FFN 512→1024→512 + Linear 512→256) + fusion_norm LN(256) + 残差",
+     "params": "1.18M (1,181,952)",
+     "macs": "2.005 GMAC/路相机 (占PSE总量76%)",
+     "basis": "FFN: 512×1024+1024 + 1024×512+512 = 1,050,112; out Linear 131,328; LN 512。MAC = 1700×(512×1024+1024×512) + 1700×512×256 = 1,782.6M + 222.8M (spatial_enhancer.py:205-209, :240-242)"
+    },
+    {
+     "module": "BatchDepthProbGTGenerator (深度GT生成, 128bin, origin_stride=2, stride[8,16,32,64])",
+     "params": "0",
+     "macs": "0 (推理期直接return)",
+     "basis": "spatial_enhancer.py:79-80 (not training → return)；训练期元素操作量级: 半分辨率128×160×128bin 距离张量 ≈ 2.6M 元素/路 + 4级avg_pool (纯训练成本)",
+     "basis_note": ""
+    },
+    {
+     "module": "PSE 合计 (backbone_3d + neck_3d + spatial_enhancer 头)",
+     "params": "2.28M (2,282,360)",
+     "macs": "约2.63 GMAC/路相机/次推理 (含padding; ×V路线性放大, 4路=10.5 GMAC)",
+     "basis": "0.277G + 0.012G + 0.222G(分布头) + 0.084G(pts_fc) + 0.028G(聚合) + 0.014G等价(solve) + 2.005G(融合FFN) ≈ 2.63 GMAC; 参数 790,648+177,664+1,314,048。注意: 编码器侧每chunk仅执行1次，不×10个扩散步"
+    }
+   ],
+   "risks": [
+    "反投影批量化 4×4 linalg.solve (spatial_enhancer.py:278-280): 1700×128=217,600 个 4×4 求解/路/帧，约 14 MMAC 等价元素操作。FPGA 上应改为 CPU/向量核预求逆 + 批量 matvec；且相机固定时 projection_mat 是常量，整个 pts 与其 128 维嵌入可离线缓存，推理期省掉 83.6 MMAC GEMM + 全部 solve",
+    "深度概率加权 3D 特征聚合 (spatial_enhancer.py:238): 27.9M 次乘加，形态是 1700 个 [1×128]·[128×128]，M=1 对 16 行脉动阵列利用率仅 1/16，应放向量核或展成 K=128 的归约",
+    "pts_fc 是 K=3 的病态 GEMM (M=217,600, K=3, N=128): 16 宽 K 维需 pad 到 16，约 5.3× K 维浪费；建议按 3-pass 向量 MAC 实现（且如上可整体缓存掉）",
+    "Swin 窗口注意力碎片化: 每 window 49×49、head_dim 仅 4/4/8/8，qk/av 共约 51 MMAC(占深度分支18%)但散成 120/30/9/4 个小 bmm；N=49 对 108 列阵列约 55% 浪费，需要小 tile 单元或 window 拼接",
+    "window-7 padding 显著放大小图: 8×10 补到 14×14 (2.45×)、16×20 补到 21×21 (1.38×)，是 backbone_3d 0.236→0.277 GMAC 差值来源；窗口切分/roll/mask/rel-pos-bias 全是 gather/scatter + 加法 (swin_transformer.py:608-692)",
+    "PatchMerging 的 unfold 是 im2col 式 gather (swin_transformer.py:369-414)；deformable_format 的 flatten/transpose/cat 是纯数据搬移 1700×(256+128) 元素进出各一次 (utils.py:20-65)",
+    "softmax(128 bin)×1700 token = 21.8万次 exp + LN(256/512)×1700：小但需 LUT/exp 单元",
+    "cv2.resize 双线性作用于深度图 (transforms.py:499-500)：深度跨物体边界会被插值混合，是精度风险而非性能风险；部署真实深度传感器时需保证米制量程与训练一致 (bin 范围 0.01–1.2 m，bin 宽 9.4 mm，也是 INT8 输入量化的合理尺度参考)",
+    "depth 输入无归一化直接进网络 (data_preprocessors.py:149-157 只做通道处理)：INT8 部署需自行定标深度输入 (建议按 1.2m 满量程)",
+    "无深度传感器场景：缺 depths 键必崩 (structure.py:84-94 + spatial_enhancer.py:227-228)，必须喂全零张量；精度靠残差兜底但未经验证——这是部署决策的最大实证未知项"
+   ],
+   "open_questions": [
+    "HB-GD 在 LIBERO 上用几路相机？素材只给了 robotwin(4路) 和 real_world 处理器，LIBERO 处理器缺失；PSE 成本按路数线性放大 (2.63 GMAC/路)",
+    "LIBERO 96.7% 是否用的是仿真完美深度？真实传感器噪声 (RealSense/ZED 误差常>9.4mm bin 宽) 下的退化幅度未知，直接决定 PSE 的实际价值",
+    "全零深度输入的端到端成功率未测——唯一决定「无深度传感器部署」可行性的实验；架构上可行 (残差+训练期无效patch零权重)，但属分布外",
+    "深度分支 INT8 量化敏感度未测：Swin 输入是单通道米制浮点，分布与 RGB 图差异大，逐层定标策略待验证",
+    "pts_fc/get_pts 缓存方案的等价性: 若机器人相机相对 base 有标定误差或晃动，缓存的 pts 会与实时投影矩阵不一致，需确认标定刚性前提"
+   ],
+   "gemm_candidates": [
+    {
+     "name": "fusion_ffn_fc1 [1700×512]×[512×1024]",
+     "m": 1700,
+     "n": 1024,
+     "k": 512,
+     "count": 1,
+     "notes": "PSE 最大 GEMM (0.89 GMAC/路)。M=1700, N=1024→10个108列tile(浪费5%), K=512=32个K tile，16×108阵列友好。计数均按每路相机每帧"
+    },
+    {
+     "name": "fusion_ffn_fc2 [1700×1024]×[1024×512]",
+     "m": 1700,
+     "n": 512,
+     "k": 1024,
+     "count": 1,
+     "notes": "0.89 GMAC/路"
+    },
+    {
+     "name": "fusion_out [1700×512]×[512×256]",
+     "m": 1700,
+     "n": 256,
+     "k": 512,
+     "count": 1,
+     "notes": "0.22 GMAC/路"
+    },
+    {
+     "name": "depth_prob MLP [1700×256]×[256×256] 和 [1700×256]×[256×128]",
+     "m": 1700,
+     "n": 256,
+     "k": 256,
+     "count": 2,
+     "notes": "0.17 GMAC/路 合计; pre_fc [1700×256]×[256×128] 另有 0.056 GMAC"
+    },
+    {
+     "name": "pts_fc [217600×3]×[3×128]",
+     "m": 217600,
+     "n": 128,
+     "k": 3,
+     "count": 1,
+     "notes": "0.084 GMAC; K=3 病态 (pad 到 K=16 浪费 5.3×)。相机固定时可整体缓存掉 (见 risks)"
+    },
+    {
+     "name": "backbone_3d s2 qkv/ffn (最大 Swin stage)",
+     "m": 320,
+     "n": 192,
+     "k": 64,
+     "count": 6,
+     "notes": "s2 每块还有 proj[320×64×64]、ffn[320,64→256]与[320,256→64] 各6次; 该 stage 合计 0.123 GMAC; s0: M=5120,K=16,N=48(×2)+ffn K16/N64(×2); s1: M=1280,K=32,N=96(×2); s3: M=80,K=128,N=384(×2)+ffn K128/N512(×2)"
+    },
+    {
+     "name": "backbone_3d 窗口注意力 qk/av (batched 小GEMM)",
+     "m": 49,
+     "n": 49,
+     "k": 4,
+     "count": 960,
+     "notes": "按 s0: 120window×2块×4头... 实为 per-window per-head bmm; K=head_dim(4/4/8/8); 全部 stage 合计约 51 MMAC; N=49 对 108 列阵列利用率约 45%, 建议小tile单元"
+    },
+    {
+     "name": "PatchMerging linear [1280×64]×[64×32] 等 ×3",
+     "m": 1280,
+     "n": 32,
+     "k": 64,
+     "count": 3,
+     "notes": "三个 PM 分别 M=1280/320/80, K=64/128/256, N=32/64/128; 共 7.9 MMAC; 前置 unfold 是 gather"
+    },
+    {
+     "name": "patch_embed conv4×4 s4 [5120×16]×[16×16]",
+     "m": 5120,
+     "n": 16,
+     "k": 16,
+     "count": 1,
+     "notes": "im2col 后即 GEMM; K=16 恰好一个 K tile"
+    },
+    {
+     "name": "neck_3d 1×1 conv ×3 + extra 3×3s2 conv",
+     "m": 1280,
+     "n": 128,
+     "k": 32,
+     "count": 4,
+     "notes": "1280×32×128 / 320×64×128 / 80×128×128 / 20×1152×128(extra 3×3, im2col后 K=1152); 合计 12.1 MMAC"
+    }
+   ]
+  },
+  {
+   "key_facts": [
+    {
+     "topic": "token 结构（Q1）",
+     "fact": "动作 token = (关节, 4 步 chunk)：14 关节 × 16 chunk = 224 个 256 维 token。每个 token 的输入是 4 步 × 8 维状态 = 32 维，过一个 Linear(32→256)。8 维 = [关节角 a, x, y, z, qw, qx, qy, qz]，其中 a 通道被 use_joint_mask 掩成常数 -1（RoboTwin 掩码下 12 个臂关节全部置 -1，仅 2 个夹爪自由度真正去噪，但 14 个 token 全部照算）。时间维 hist=1 不进动作序列，而是经 robot_encoder 编成 K/V（14 token × 1 hist chunk）拼进 temp_joint_attn 的 key（KV 长 14×17=238）。",
+     "evidence": "action_decoder.py:753-770 (num_chunk=64/4=16, reshape(bs,nj,nc,-1), input_layers); config chunk_size=4/pred_steps=64/state_dims=8 (pretrain_model.config.json:202-210); 维度含义 action_decoder.py:117-118; apply_joint_mask utils.py:182-212; 掩码长度 14 见 robotwin2_0_processor.json:42-57",
+     "confidence": "high"
+    },
+    {
+     "topic": "N_j 证据（Q1）",
+     "fact": "三个已发布 processor 的 joint_mask 长度全部是 14（RoboTwin piper 双臂、RoboTwin ur5_wsg 双臂、真机 agilex 双臂），模型参数与 N_j 无关。LIBERO embodiment 配置未随 hf_cfg 发布；LIBERO 环境代码显示动作为 8 维（Franka 7 臂 + 1 夹爪）、相机为 agentview + eye_in_hand 共 2 个，推断 N_j=8、N_cam=2，但未拿到官方 processor。",
+     "evidence": "robotwin2_0_processor.json:42-57, robotwin2_0_ur5_wsg_processor.json:41-56, real_world_agilex_grasp_anything_processor.json:67-82 (均 14); envs/libero/env.py:310 (action 必须 8 维); dataset/libero/to_mcap.py:49-52 (agentview, robot0_eye_in_hand)",
+     "confidence": "high for 14 (released ckpts); low for LIBERO N_j=8"
+    },
+    {
+     "topic": "JointGraphAttention 是否稀疏（Q2）",
+     "fact": "不稀疏，是全连接稠密注意力。没有 URDF 邻接 mask：attn = softmax(完整 n×m 矩阵)。「图」只体现在乘性位置偏置——14×14 关节相对距离矩阵先过 ScalarEmbedder(2×Linear 256→256) 变成每对关节一个 256 维向量，再逐元素乘进 q。解码器用的 TemporalJointGraphAttention 同理：注意力矩阵是 (N_j×T_q)×(N_j×T_k) 的完整外积（224×238），用 6 维 einsum 算，时间维另有因果 tril mask（有效 entry 只占 56%），关节维无 mask。全部可映射为稠密 GEMM/bmm。",
+     "evidence": "layers.py:283-292 (JointGraphAttention 全程无 mask, (q*k).sum(-1)); layers.py:365-384 (joint_pos_encoder + 6D einsum + 仅 temporal_attn_mask); action_decoder.py:784-792 (tril 因果 mask); layers.py:382 (reshape 成 [b,h,224,238] 后 softmax、AV)",
+     "confidence": "high"
+    },
+    {
+     "topic": "img_cross_attn 的 K/V 规模（Q3）",
+     "fact": "feature_level=[1,2] 取的是 4 级金字塔的第 1、2 级 = stride 16 和 32（不是 8/16）。320×256 输入下每视角 token = 20×16 + 10×8 = 320+80 = 400（不是 1600）；384×256 真机配置下每视角 480。多视角在 token 维拼接：n_img = N_cam×400（RoboTwin2_0 4 相机=1600，ur5/真机 3 相机=1200/1440，LIBERO 估 2 相机=800）。",
+     "evidence": "neck in_channels[192,384,768]+num_outs=4+extra stride2 (pretrain_model.config.json:302-318, channel_mapper.py:86-99) → 4 级=stride 8/16/32/64; feature_level=[1,2] (config:198-201); 多相机拼接 structure.py:70-82 + deformable_format(utils.py:30-40) + action_decoder.py:300-305 (flatten(1,2)); 分辨率 robotwin2_0_processor.json:64-69 (320×256), real_world processor:154-158 (384×256)",
+     "confidence": "high"
+    },
+    {
+     "topic": "K/V 是否每步重算（Q3/Q6）",
+     "fact": "是，且无任何缓存：10 步 DPMSolver 的每一步都完整调用 forward_layers，6 层的 img/text K/V 投影每步每层重算（整个推理共 60 次 img K/V、60 次 text K/V）。但 K（img_feature、text_feature）不依赖 noisy_action，跨步不变——若加缓存可省掉 90% 的 K/V 投影（4 相机口径约 11.3 GMAC/周期，占总 MAC 23%）。同样可缓存而未缓存的还有 temp_joint 的 14×14 关节距离 ScalarEmbedder（每层每步重算 25.7 MMAC，共 1.54 GMAC，其中 1.39 GMAC 冗余）。robot_encoder 只在循环外跑一次（×1）。",
+     "evidence": "循环 action_decoder.py:654-665 (每 t 调一次 forward_layers, img_feature 每次传入); k/v_proj 在 RotaryAttention.forward 内 layers.py:181-185 (无 cache); robot_encoder 一次 action_decoder.py:465-468; joint_distance 每次重嵌 layers.py:365-367",
+     "confidence": "high"
+    },
+    {
+     "topic": "×10 vs ×1 的清单（Q6）",
+     "fact": "×10：input_layers、t_embed、6 层解码器全部（AdaRMSNorm/temp_joint/img_cross/text_cross/FFN/gate）、UpsampleHead、get_prediction、scheduler.step、FK recompute（noise_type=local_joint 只对关节角通道去噪，位姿 7 维每步由 FK 重算）。×1：robot_encoder（含其 4 层 JointGraphAttention+FFN，0.18 GMAC）、视觉侧全部（backbone/neck/enhancer 不属于 action expert 账）。num_test_traj=1，无多轨迹复制。DPMSolverMultistep 每 timestep 恰好 1 次网络前向 → 恰好 10 次 forward_layers。",
+     "evidence": "action_decoder.py:654-690 (循环体内容); 465-468 (encoder 在外); noise_type local_joint config:215; recompute 676-682; num_test_traj=1 config:209; 单步一次前向 657-665",
+     "confidence": "high"
+    },
+    {
+     "topic": "UpsampleHead 上采样方式（Q4）",
+     "fact": "两段「SiLU+RMSNorm → 1D 双线性插值×2 → Conv1d(k=3)」：16 chunk →(interp 32)→ Conv1d(256→128) →(interp 64)→ Conv1d(128→64)，再过 2×Linear(64→64)+Linear(64→8)，输出 [bs, 64 步, 14 关节, 8 维]。不是线性插值+纯 MLP，中间夹了两层 1D 卷积。每去噪步 73.9 MMAC（其中 conv0 44.0M、conv1 22.0M、输出 MLP 7.8M），插值本身只有 ~0.17M 次 lerp，可忽略。",
+     "evidence": "layers.py:438-497 (Upsample/Conv1d(3,pad=1)/output_layers 结构与 forward 顺序); config upsample_sizes[32,64], dims[128,64], out_dim 8 (pretrain_model.config.json:36-60)",
+     "confidence": "high"
+    },
+    {
+     "topic": "参数对账 vs 论文 20.8M（Q5）",
+     "fact": "逐模块代码级加总 = 20,853,960 ≈ 20.85M，与论文 Table 2 action expert 20.8M 差 0.3%，无需解释缺口。构成：解码器 6 层 transformer 14.20M（68%）+ 状态编码器 6.12M（29%）+ input/t_embed/head 0.54M（3%）。前提：action expert = HoloBrainActionDecoder（含内建 robot_encoder），不含 BERT/视觉。",
+     "evidence": "本文 module_params 表逐项；config pretrain_model.config.json:33-300（6 层、4 层 encoder、FFN 2048、AdaRMSNorm zero=6 输出）",
+     "confidence": "high"
+    },
+    {
+     "topic": "总算力（10 步口径）",
+     "fact": "每个控制周期（batch=1）action expert GMAC：RoboTwin2_0（4 相机 320×256, n_text≈32）：每步 4.99 GMAC ×10 + 编码器 0.18 = 50.0 GMAC；ur5_wsg 3 相机：44.2；真机 3 相机 384×256：47.7；LIBERO 估算（2 相机 800 token）：N_j=14 口径 38.1、N_j=8 口径 23.7（后者 confidence=low）。4 相机口径下每步构成：img_cross 51%、FFN 28%、temp_joint 14%、text_cross 4.5%、head+input 3%。公式（N_j=14）：每步 MAC = 2.58G + 1.475M×(n_img+n_text)。",
+     "evidence": "见 module_params 各 basis；n_text 为 BERT 实际长度（pad_to_max=false, config:323-332），32 为代表性取值，±16 token 仅 ±0.24 GMAC/周期",
+     "confidence": "high（结构）/ medium（n_text 取值）"
+    },
+    {
+     "topic": "证据路径约定",
+     "fact": "本报告中 file:line 均相对 e:/GPU ARCH/vector_core_sim/research_holobrain/，即 action_decoder.py = robo_orchard_lab/robo_orchard_lab/models/holobrain/action_decoder.py，layers.py 同目录，config = hf_cfg/pretrain_model.config.json，processor.json = hf_cfg/ 下三个文件。只读未改任何文件。",
+     "evidence": "—",
+     "confidence": "high"
+    }
+   ],
+   "module_params": [
+    {
+     "module": "HoloBrainRobotStateEncoder（状态编码器，4 层 [norm→JointGraphAttention→norm→ffn→norm]，input_fc 8→256）",
+     "params": "6.12M",
+     "macs": "0.18 GMAC ×1/周期",
+     "basis": "params=input_fc 0.332M + 4×JointGraphAttention 0.394M + 4×FFN 1.051M + 13×RMSNorm。MAC（hist=1 步, chunk=1, 14 token）: input_fc 14×(8×256+5×256²)=4.6M; 每层 JGA = qkv 3×14×256² + 距离嵌入 196×2×256² + attn/AV 2×8×14×14×32 + proj 14×256² = 29.5M（其中 25.7M 是 14×14 距离矩阵的 ScalarEmbedder!）; 每层 FFN 14×2×256×2048=14.7M; 合计 181.2 MMAC。robot_state_encoder.py:103-120,138-175; layers.py:222-294"
+    },
+    {
+     "module": "input_layers（action decoder 输入投影）",
+     "params": "0.273M",
+     "macs": "60.6 MMAC/步 → 0.61 GMAC/10步",
+     "basis": "Linear(4×8=32→256)+4×Linear(256→256)+2×LN; 224 token: 224×(32×256+4×256²)=60.6M。action_decoder.py:266-269,761; layers.py:26-45"
+    },
+    {
+     "module": "t_embed（ScalarEmbedder, 扩散时间步）",
+     "params": "0.132M",
+     "macs": "0.13 MMAC/步 → 可忽略",
+     "basis": "2×Linear(256→256)，bs=1 每步 1 次。action_decoder.py:282-284,751; layers.py:48-75"
+    },
+    {
+     "module": "AdaRMSNorm ×6（t_norm, zero=True 出 6 个调制量：scale/shift/gate_msa/shift_mlp/scale_mlp/gate_mlp）",
+     "params": "2.37M (6×0.395M)",
+     "macs": "0.39 MMAC/步/层 → 23.6 MMAC/10步",
+     "basis": "Linear(256→1536) 作用于 1 个条件向量; 3×RMSNorm+gate/scale_shift 为 [1,224,256] 逐元素(~0.3M ops/层)。layers.py:393-435; action_decoder.py:938-947"
+    },
+    {
+     "module": "TemporalJointGraphAttention ×6（temp_joint_attn, 8 头, head_dim 32）",
+     "params": "2.37M (6×0.394M)",
+     "macs": "113.5 MMAC/步/层 → 6.81 GMAC/10步",
+     "basis": "每层: q_proj 224×256²=14.7M + k/v_proj 2×238×256²=31.2M + 关节距离 ScalarEmbedder 196×2×256²=25.7M + 6D einsum 8×14×16×14×17×32=13.6M + AV 8×224×238×32=13.7M + proj 14.7M。KV 长 = 14×(1 hist+16 chunk)=238。layers.py:297-390; action_decoder.py:893-912"
+    },
+    {
+     "module": "RotaryAttention ×6 img_cross_attn（max_pos 32, key 无 rotary）",
+     "params": "1.58M (6×0.263M)",
+     "macs": "422.6 MMAC/步/层（n_img=1600）→ 25.4 GMAC/10步；公式 29.4M+0.2458M×n_img",
+     "basis": "q/proj 各 224×256² + k/v 2×n_img×256² + QKᵀ/AV 各 8×224×n_img×32。n_img=N_cam×400(320×256)/480(384×256)。3 相机=324.3M/层, 2 相机=226.0M/层。layers.py:130-219; action_decoder.py:923-931"
+    },
+    {
+     "module": "RotaryAttention ×6 text_cross_attn（max_pos 512, BERT K/V）",
+     "params": "1.58M (6×0.263M)",
+     "macs": "37.2 MMAC/步/层（n_text=32）→ 2.23 GMAC/10步；公式 29.4M+0.2458M×n_text",
+     "basis": "同上结构, K/V=n_text（BERT pad_to_max=false, 实际指令长度~10-32 token）。layers.py:130-219; action_decoder.py:913-922"
+    },
+    {
+     "module": "FFN ×6（256→2048→256, SiLU）",
+     "params": "6.31M (6×1.051M)",
+     "macs": "234.9 MMAC/步/层 → 14.09 GMAC/10步",
+     "basis": "224×(256×2048+2048×256)=234.9M。transformer_layers.py:206-281; config:74-82"
+    },
+    {
+     "module": "RMSNorm ×18（decoder 3/层）+ ×13（encoder）",
+     "params": "7.9K",
+     "macs": "逐元素，~0.1M ops/层/步",
+     "basis": "torch RMSNorm affine 默认 True, 每 norm 256 参数。config:70-73"
+    },
+    {
+     "module": "UpsampleHead（头）",
+     "params": "0.132M",
+     "macs": "73.9 MMAC/步 → 0.74 GMAC/10步",
+     "basis": "Conv1d(256→128,k3)@L32: 14×32×98,304=44.0M + Conv1d(128→64,k3)@L64: 14×64×24,576=22.0M + 2×Linear(64,64)+Linear(64,8): 896×8,704=7.8M; 双线性插值 0.17M lerp。layers.py:438-497"
+    },
+    {
+     "module": "合计 action expert（decoder+robot_encoder）",
+     "params": "20.85M（论文 Table 2 = 20.8M, 差 0.3%）",
+     "macs": "50.0 GMAC/周期（4 相机 320×256, n_text=32）; 44.2（3 相机）; 47.7（3 相机 384×256）; LIBERO 估 38.1（N_j=14,2 相机）/ 23.7（N_j=8,2 相机, conf=low）",
+     "basis": "每步 = input 60.6M + t_embed 0.13M + 6×(0.39+113.5+422.6+37.2+234.9)M + head 73.9M = 4.986 GMAC; ×10 + encoder 0.181G = 50.04 GMAC。N_j=8 时每步 = 1.397G + 1.180M×(n_img+n_text)"
+    }
+   ],
+   "risks": [
+    "非 GEMM 主项——softmax：img cross-attn 分数矩阵 [8 头,224,1600]×6 层×10 步 = 1.72 亿元素（exp+sum+div），temp_joint 另有 2560 万；FPGA 上需要专门的 exp/归一化流水，是 GEMM 之外最大的逐元素负载",
+    "temp_joint_attn 的 6D einsum 不是规整大 GEMM：每层等价于 1568 个 [16×32]@[32×17] 微型 GEMM（batch=8 头×14×14 关节对，M=16,K=32,N=17），K/N 都远小于 108 列脉动阵列宽度，利用率会很差；前面还有一步 0.8M/层的逐元素广播乘（q×关节距离嵌入）",
+    "注意力 head_dim=32 的细 GEMM：QK^T 是 K=32、AV 是 N=32，且 8 头不能合并成一个 GEMM（块对角），只能 8×6=48 个 bmm/步（img）+48（temp AV）+48（text）——对 16×108 阵列是大量窄矩阵",
+    "可省而未省的重复计算：img/text K/V 投影每步重算，跨步不变，缓存后可省 11.3 GMAC/周期（占总 23%，4 相机口径）；temp_joint 的 14×14 关节距离 ScalarEmbedder 每层每步重算，可再省 1.39 GMAC（3%）——这是软件级优化，不改变数学结果，但直接影响 FPGA 部署的预算",
+    "temp_joint 时间维因果 tril mask：16×17 注意力中有效项仅 56%，稠密计算浪费 44%（6.1 GMAC/10 步中约 2.7 可省，若做稀疏化）",
+    "GEMM 之间的逐元素链：每层 3×RMSNorm + SiLU + gate_msa/gate_mlp/scale_shift + AdaRMSNorm 调制，作用在 [1,224,256]，全周期约 3000-4000 万次逐元素 op + 访存，memory-bound，容易成为小算子瓶颈",
+    "UpsampleHead 的 Conv1d(k=3) 需要 im2col/滑窗（两个 GEMM 448×768×128 和 896×384×64），双线性插值 17 万 lerp/步——量小但非 GEMM",
+    "FK recompute（utils.py:142-180）+ DPMSolver step + 采样噪声：每步一次、非 GEMM、串行依赖，量级 ~[1,64,14] 矩阵链×10 次，小但不可并入阵列",
+    "n_text 随指令变长（BERT 不 padding），text K/V 是动态形状 GEMM（M=10~32），调度上要么 padding 到固定 32 要么动态",
+    "RoboTwin/真机 embodiment 下 14 个关节 token 中 12 个臂关节的关节角通道被掩成常数 -1（只去噪 2 个夹爪 DOF），但全部 224 token 照常过 6 层——按 embodiment 裁剪 token 有理论冗余，但会改变模型行为，未经官方验证"
+   ],
+   "open_questions": [
+    "LIBERO 的官方 embodiment 配置（N_j、N_cam、分辨率、n_text）未随 hf_cfg 发布：LIBERO 口径 23.7（N_j=8/2 相机）还是 38.1 GMAC（N_j=14/2 相机）无法定论，confidence=low；唯一本地证据是 envs/libero 的 8 维 action 与 2 相机列表",
+    "论文 Table 2 的 20.8M 是否严格等于 decoder+robot_encoder 的并集——本文代码级加总 20.85M 与之差 0.3%，强烈支持该口径，但 Table 2 原文未逐项核对（arXiv 2602.12062 未在本地）",
+    "量产/部署版推理是否加了跨步 K/V 缓存或步数蒸馏：release 代码没有缓存（每步全量重算 K/V），若官方部署版有缓存，实测延迟会低于本文 MAC 账 20-25%",
+    "n_text 的实际分布：BERT pad_to_max=false，LIBERO 指令典型 10-25 token；对总量影响 <0.5 GMAC，不影响结论但影响 text GEMM 的 shape 规划",
+    "async_inference_plugin（remaining_actions 延迟执行分支）在发布配置中为 None；若真机部署启用，会在每步 pred 后插入拼接逻辑（非 GEMM，量级可忽略），但需确认"
+   ],
+   "gemm_candidates": [
+    {
+     "name": "FFN.fc1 (per denoise step)",
+     "m": 224,
+     "n": 2048,
+     "k": 256,
+     "count": 6,
+     "notes": "117.4 MMAC each; ×10 步 = 60 个/周期; M=224 适配 16 行阵列, 最规整的大 GEMM"
+    },
+    {
+     "name": "FFN.fc2 (per denoise step)",
+     "m": 224,
+     "n": 256,
+     "k": 2048,
+     "count": 6,
+     "notes": "117.4 MMAC each; K=2048 长卷积维, 阵列复用好"
+    },
+    {
+     "name": "img K/V 投影 (per denoise step)",
+     "m": 1600,
+     "n": 256,
+     "k": 256,
+     "count": 12,
+     "notes": "104.9 MMAC each (n_img=1600, 4 相机); K 跨步不变 → 缓存后仅第 1 步需要, 可省 11.3 GMAC/周期; 3 相机时 M=1200"
+    },
+    {
+     "name": "img QK^T bmm (per denoise step, 8 头)",
+     "m": 224,
+     "n": 1600,
+     "k": 32,
+     "count": 48,
+     "notes": "每头 [224×32]@[32×1600], 共 73.4 MMAC/层; K=32 细 GEMM, 头间块对角不可合并"
+    },
+    {
+     "name": "img AV bmm (per denoise step, 8 头)",
+     "m": 224,
+     "n": 32,
+     "k": 1600,
+     "count": 48,
+     "notes": "每头 [224×1600]@[1600×32]; N=32 窄, 需 8 头 batch; K=1600 长"
+    },
+    {
+     "name": "temp_joint q/k/v/out 投影 (per denoise step)",
+     "m": 224,
+     "n": 256,
+     "k": 256,
+     "count": 24,
+     "notes": "q/out M=224 (12 个), k/v M=238 (12 个); 各 14.7-15.6 MMAC; 规整"
+    },
+    {
+     "name": "temp_joint 6D einsum 微型 GEMM (per denoise step)",
+     "m": 16,
+     "n": 17,
+     "k": 32,
+     "count": 9408,
+     "notes": "batch=8 头×196 关节对×6 层, 每个仅 8.7 KMAC; 对 108 列阵列利用率极差, 建议按层重排成 bmm 或预乘展开"
+    },
+    {
+     "name": "temp_joint AV (per denoise step, 8 头)",
+     "m": 224,
+     "n": 32,
+     "k": 238,
+     "count": 48,
+     "notes": "reshape 后 [224×238]@[238×32] 规整 bmm; 因果 mask 有效项 56%"
+    },
+    {
+     "name": "text K/V + QK/AV (per denoise step)",
+     "m": 224,
+     "n": 32,
+     "k": 32,
+     "count": 108,
+     "notes": "K/V 投影 M=n_text(动态 10-32)×12; QK^T/AV 各 48 个 [224×32]@[32×n_text]; 总量小(<0.3 GMAC/周期)"
+    },
+    {
+     "name": "关节距离 ScalarEmbedder (per denoise step)",
+     "m": 196,
+     "n": 256,
+     "k": 256,
+     "count": 12,
+     "notes": "[196×256]@[256×256]×2/层×6 层 = 25.7 MMAC/层; 输入跨步不变 → 可缓存, 省 1.39 GMAC/周期; encoder 侧另有 4 个同类 (M=196) 仅 ×1"
+    },
+    {
+     "name": "UpsampleHead conv im2col GEMM (per denoise step)",
+     "m": 448,
+     "n": 128,
+     "k": 768,
+     "count": 1,
+     "notes": "conv0: 44.0 MMAC; conv1 为 M=896,K=384,N=64 共 22.0 MMAC; 后接 2×[896×64]@[64×64]+[896×64]@[64×8]"
+    },
+    {
+     "name": "input_layers (per denoise step)",
+     "m": 224,
+     "n": 256,
+     "k": 32,
+     "count": 1,
+     "notes": "Linear(32→256) 1.8 MMAC + 4×[224×256]@[256×256] 共 58.7 MMAC; encoder 侧同类 M=14 (×1/周期)"
+    }
+   ]
+  }
+ ],
+ "verify": {
+  "verdicts": [
+   {
+    "claim": "高风险点①：LIBERO depth 证据链闭环（env 观测键名 / transform load_depth / forward 分支三环）",
+    "verdict": "confirmed",
+    "correction": "三环全部代码实证，闭环成立。环1 env：env.py:205-210 把 cfg.camera_depths 传给 OffScreenRenderEnv，默认 camera_depths=False（env.py:816-818），而 LIBERO 数据集生成器 generate_dataset.py:198-203 显式 camera_depths=True；obs.py:100-109 仅当 {cam}_depth 键存在时打包 depth（pix_fmt=ImageMode.F）；depth 来源确认为 robosuite get_real_depth_map（robosuite.py:30-34 import，:44-51 调用），即 MuJoCo 渲染 GT；test_libero.py:261-292 投影对拍 atol=5e-2 属实。环2 transform：三个 HF processor json 均 load_depth=true 且 ItemSelection 含 depths（逐一解析确认），HoloBrainProcessorCfg 默认 load_depth=True（processor.py:231-232），Struct2Dict 在 load_depth=True 时 assert data.depth is not None（processor.py:141-143），config_robotwin_dataset.py 的 load_depth=config['with_depth'] 且 with_depth=True（config_holobrain_gd_common.py:23）。环3 forward：structure.py:84-94 缺 depths 键→feature_3d=None；spatial_enhancer.py:227-231 with_feature_3d=true 时 deformable_format(feature_3d)，传 None 直接抛错；pretrain config with_feature_3d=true。注意『LIBERO 96.7 用了 depth』仍是有力推断而非直接证明（repo 无 LIBERO eval 配置），四路的表述方式（证据链一致指向）是准确的。"
+   },
+   {
+    "claim": "高风险点②：deformable attention 的 num_heads=8 / num_points=4 来自代码默认值而非猜测",
+    "verdict": "confirmed",
+    "correction": "实质确认但引文行号需修正。真实代码默认值在 bip3d/layers.py:89（num_heads: int = 8）和 :91（num_points: int = 4）；第二路引的 layers.py:66-67 实际是 docstring（且 docstring 误导性地写 'Default: 64'，更凸显必须以 :89 为准）。pretrain_model.config.json:345-348 的 self_attn_cfg 只设 embed_dims/num_levels/im2col_step，确不覆盖默认值。sampling_offsets=Linear(256,256)、attention_weights=Linear(256,128)（layers.py:139-144）与该路 230,272 参数/层、每 query 采样 8×4×4=128 点的账全部复核一致。"
+   },
+   {
+    "claim": "高风险点③：动作专家参数 20.8M 对账（第四路：逐模块加总 20,853,960）",
+    "verdict": "confirmed",
+    "correction": "独立重加总得 20,854,088，与该路 20,853,960 差 128 参数（<0.001%），与论文 20.8M 差 0.3%，对账成立。构成复核：6 层 decoder transformer（t_norm 6×AdaRMSNorm(Linear 256→1536, zero=True)=2,368,512 + temp_joint 6×394,496 + img/text cross 6×262,912×2 + FFN 6×1,050,880 + 18×RMSNorm）=14,200,320；input_layers(Linear 32→256+4×Linear 256→256+2LN, linear_act_ln 结构已核 layers.py:26-45)+t_embed+head=536,648；encoder（4×(JGA 394,496+FFN 1,050,880)+13 norm+input_fc 332,288, robot_state_encoder.py:103-112 已核）=6,117,120。细微处：RotaryAttention/JGA 的 k_proj bias=False（65,536 而非 65,792），该路按 0.394M/0.263M 取整掩盖了此差，不影响结论。"
+   },
+   {
+    "claim": "高风险点④：Swin-T 在 80×64 输入上的 window padding 处理（pad 到 7 倍数、整窗计算后裁剪、padding 浪费量）",
+    "verdict": "confirmed",
+    "correction": "swin_transformer.py:614-618 pad_r/pad_b 公式+F.pad（右/下补零）、:661-667 整窗送 w_msa、:686-687 计算后才裁剪，全部属实。padded token 数 5120→5880(120窗)/1280→1470(30窗)/320→441(9窗)/80→196(4窗) 算术复核无误。2D Swin-T 27.52M 参数、8.484 GMAC@320×256 我逐 stage 重算完全吻合（校验口径 @224²=4.49G 亦合理）；backbone_3d 0.236→0.277 GMAC 的 padding 差值同样复核一致。with_cp=true 为训练期 checkpointing，不影响账。"
+   },
+   {
+    "claim": "高风险点⑤：cross-attn K/V 是否每去噪步重算（无缓存，60 次 img K/V + 60 次 text K/V）",
+    "verdict": "confirmed",
+    "correction": "代码闭环证实：action_decoder.py:654-666 每个 timestep 调一次 forward_layers，img_feature/text_dict/robot_feature 在循环外算好（robot_encoder 一次，:465-468）原样传入；holobrain/layers.py:181-185 RotaryAttention.forward 每次 q_proj/k_proj/v_proj 全部现算，全文件无任何 cache 字段。K/V 输入不依赖 noisy_action，跨步不变——缓存可省的量复核：img K/V 2×1600×65,536×6 层×10 步=12.6 GMAC，缓存后省 11.3 GMAC（4 相机口径，占 50.0 GMAC 的 23%）成立；temp_joint 的 14×14 关节距离 ScalarEmbedder 每层每步重嵌（layers.py:365-367）可再省 1.39 GMAC 亦属实。"
+   },
+   {
+    "claim": "第二路：bi-attn（SingleScaleBiAttentionBlock）作用于第 4 级 stride 32、每视角 80 token，bi 块 0.476 GMAC@nc=1 / 0.88G@nc=2，2D+文本总账 LIBERO 45.7 / RoboTwin 90.0 GMAC",
+    "verdict": "wrong",
+    "correction": "切片代码 feature_enhancer.py:188 引用正确，但最后一级是 stride 64 不是 stride 32：neck 的第 4 级来自 ChannelMapper extra 3×3 stride-2 conv，且 channel_mapper.py forward 里 extra 输出 append 在最后（outs=[s8,s16,s32,s64]），level_start_index[-1]=1680，feature_2d[:,1680:] 是 stride-64 级，每视角仅 4×5=20 token（不是 10×8=80）。修正：bi 块 MAC = 每层 3×N_v×262,144+3×L×262,144+3×1024×N_v×L，N_v=20·nc → nc=1 约 0.176 GMAC（非 0.476）、nc=2 约 0.276（非 0.88）、nc=4 约 0.476。总账修正：LIBERO(nc=2) ≈ 45.1 GMAC（非 45.7）、RoboTwin(nc=4) ≈ 88.8 GMAC（非 90.0）；每视角纯视觉 21.81 GMAC（非 22.2）。参数账（1.579M/块、合计 21.9M）不受影响，『bi-attn 占比小』的定性结论反而更强。gemm_candidates 中 bi-attn 视觉侧投影 m 应为 20·nc 而非 80·nc。"
+   },
+   {
+    "claim": "第一路：neck_3d（ChannelMapper）≈0.05M 参数、≈9.5M MAC/view",
+    "verdict": "wrong",
+    "correction": "第 4 级不是 1×1 conv（128×128=16.5K），channel_mapper.py:86-114 的 extra conv 是 3×3 stride-2（128×128×9+128=147,584 参数，im2col 后 K=1152）。正确值（与第三路一致，我已复核）：neck_3d = 177,664 参数 ≈ 0.18M，12.1 MMAC/路（1×1 三次 5.24+2.62+1.31M + extra 2.95M）。连带修正第一路 depth 支路合计：≈2.28M 参数（非 2.1M）、2 视角 ≈5.3 GMAC（非 4.8）；0.2B 占比约 1% 的定性结论不变。"
+   },
+   {
+    "claim": "第一路：backbone_3d ≈0.76M 参数 / ≈0.19 GMAC/view（est）",
+    "verdict": "uncertain",
+    "correction": "该路自标 low-medium 的估算偏低约 4%：按 config（in_ch=1, embed 16, depths [2,2,6,2], heads [4,8,8,16], win 7）逐块精确重算（含 bias/LN/rel-pos 表 169h/PatchMerging）得 790,648 参数、0.277 GMAC/view（含 padding）——即第三路的数字是准的，应采信第三路。MAC 差异更大（0.19 vs 0.277）主要因该路按参数×token 数的粗算低估了窗口注意力的 padding 放大。"
+   },
+   {
+    "claim": "第一路：LIBERO 权重/训练/eval 配置未公开，repo 无 LIBERO 部署路径；LIBERO 数据生产线存在且含 depth",
+    "verdict": "confirmed",
+    "correction": "repo 全库 grep -ril libero 恰好 13 个文件，全部在核心包 env/dataset/tests+setup.py，projects/holobrain 零命中；dataset_factory.py:50-58 只注册 agibot_geniesim/agilex_ro/robotwin 三个 dataset；training/deploy_datasets 仅 robotwin 两项（config_holobrain_gd_common.py 已核）；HF 侧仅 GD pretrain+3 个 processor，无 LIBERO processor；README 只给 RoboTwin 与 GenieSim3 评测入口。单臂 7 关节到 14 关节双臂动作空间映射未公开的判断成立。"
+   },
+   {
+    "claim": "第三路：PSE 合计 2.28M 参数 / ≈2.63 GMAC/路/次推理，编码器侧每 chunk 仅执行 1 次不乘 10 个扩散步",
+    "verdict": "confirmed",
+    "correction": "逐项重算全部吻合：backbone_3d 790,648/0.277G（含 padding）、neck_3d 177,664/12.1M、spatial_enhancer 1,314,048（pre_fc 32,896 + MLP 98,688[MLP(256,256,128,2) 结构已核 transformer_layers.py:296-312] + pts_fc 512 + fusion 1,181,952 + LN 512），fusion FFN 2.005G 占 76% 属实；bin 0.01–1.2m/128 档、origin_stride=2、valid_threshold=0.5 与 config:375-415 一致；pre_spatial_enhancer=false（config:467）即 PSE 在 6 层 enhancer 后、decoder 前执行一次，structure.py:131-157 已核。get_pts 的 4×4 solve 与 pts_fc(3→128) 可离线缓存的部署判断成立（projection_mat 为 ego 系常量，transforms.py:862-869 已核）。"
+   },
+   {
+    "claim": "第四路：token 结构 224 动作 token（14×16）、temp_joint KV=238、img_cross 每视角 400 token（stride16+32）、每步 4.99 GMAC/周期 50.0 GMAC（4 相机）",
+    "verdict": "confirmed",
+    "correction": "全部复核一致：num_chunk=64/4=16（action_decoder.py:753-761 已核）；feature_level=[1,2] 取 4 级中第 1、2 级=stride16(320)+stride32(80)=400/视角（format_img_feature_maps:287-305 已核）；KV=14×(1+16)=238、因果 tril 有效项 152/272=56% 属实（:784-792）；每步=input 60.6M + 6×(0.39+113.5+422.6+37.3+234.9)M + head 73.9M ≈ 4.99 GMAC，×10+encoder 0.18G=50.0 GMAC，公式与量级全部重算吻合。LIBERO 口径 38.1（N_j=14）/23.7（N_j=8）GMAC 维持 confidence=low 是恰当的（envs/libero/env.py:310 确认 8 维 action，但官方 embodiment 配置缺失）。"
+   },
+   {
+    "claim": "第四路：RoboTwin joint_mask 下 12 个臂关节角通道被掩成 -1，仅 2 个夹爪 DOF 真正去噪，但 224 token 全部照算",
+    "verdict": "confirmed",
+    "correction": "utils.py:182-212 apply_joint_mask：joint_mask=True 的关节把第一通道（关节角）置 constant -1，其余通道不动；三个 processor 的 joint_mask 均为 [T×6, F, T×6, F]（12 True + 2 False，解析 json 确认）——与『12 臂关节掩掉、2 夹爪去噪』一致。noise_type=local_joint 下 scheduler.step 只作用于 pred[...,:1]（action_decoder.py:676-682），位姿通道每步由 recompute FK 重算（utils.py:142-180）亦核实。"
+   },
+   {
+    "claim": "第二路：BERT 每次推理只跑一次、不进 10 步去噪循环；跨 action chunk 无指令级缓存；BERT 冻结无代码开关",
+    "verdict": "confirmed",
+    "correction": "structure.py:131-133 extract_text_feature 一次；decoder 循环内只用 text_dict（action_decoder.py:657-666）；发布代码无任何指令缓存（每次 model() 重新分词+跑 BERT）属实。freeze_vlm/freeze_vision 仅存在于 Qwen 版 holobrain/structure.py:122-129 与 :468-469，bip3d/structure.py 全文无 freeze 逻辑（grep 为空）属实。pad_to_max=false→padding='longest'（bert.py:184-192）属实。"
+   },
+   {
+    "claim": "第二路引文：bert.py:328 add_pooling_layer=false",
+    "verdict": "wrong",
+    "correction": "引文行号错误：bert.py 全文仅 297 行，不存在 :328。事实本身正确，出处应为 hf_cfg/pretrain_model.config.json:328（\"add_pooling_layer\": false）。BERT 108.9M 参数（embedding 23,837,184 + encoder 85,054,464，无 pooler）与 1.36 GMAC@L=16 的账复核无误。"
+   },
+   {
+    "claim": "第一路：SimpleRTC 对应 repo 的 RTCInferencePlugin（max_horizon=32、指数衰减权重、仅 async 推理触发）",
+    "verdict": "confirmed",
+    "correction": "rtc_plugin.py:25-87 逐行核实：decay = ci*(exp(ci)-1)/(e-1)（docstring 写 linearly 但代码是指数衰减，第一路表述『线性/指数衰减』并给出公式是准确的）；max_horizon 默认 32；仅当输入含 remaining_actions 且 delay_horizon 时触发（action_decoder.py:592-606）；REALBOT_DEPLOY_GUIDE.md:148-156 确认需手动往 model.config.json 加 async_inference_plugin；processor.py:84-88 字段属实。"
+   },
+   {
+    "claim": "第一路：部署链路为 Flask+gevent HTTP 服务器（CONTROL_HZ=200、uint16mm depth/1000 解码、64 步 chunk），repo 无 ONNX/BPU 导出",
+    "verdict": "confirmed",
+    "correction": "inference_server.py:48-49 CONTROL_HZ=200、:93-130 三路 depth .npy/1000.0 解码、:225-245 required_keys 含三路 depth+双臂关节态+instruction，全部属实；mixin.py:164-212+ load_impl Literal['native','accelerate']；全库 ONNX 仅 projects/sem（bip3d/layers.py 一处 docstring 提及 onnx 算子加载，非导出路径）；grep bpu/hbm 零命中。DPMSolverMultistep 10 步 prediction_type=sample 与 config:192-197 一致。"
+   },
+   {
+    "claim": "第一路/第三路：缺 depths 键时已发布 GD 权重直接 crash（非优雅降级）；全零 depth 能跑但属分布外；with_depth=False 的可插拔分支存在且被 GenieSim3 用过",
+    "verdict": "confirmed",
+    "correction": "三段均代码实证：structure.py:84-94 + spatial_enhancer.py:227-228（deformable_format(None) 抛 TypeError）；推理路径无 depth 数值检查（全零可跑），训练期 GT 生成器才把 depth<=0 标 invalid（spatial_enhancer.py:78-80/91-96，仅训练生效）；config_holobrain_gd_common.py:246-265 backbone_3d 仅 with_depth 时构建；geniesim3.md:30/68/184 dataset_without_depth + use_depth=false 属实。'全零 depth 精度未知'维持 low 是恰当的。"
+   },
+   {
+    "claim": "第二路：检测头不在 HB-GD 结构里；text_img bi-attn 各视角拼接后与指令做联合注意力（跨视角耦合点）",
+    "verdict": "confirmed",
+    "correction": "BIP3D.__init__（structure.py:37-58）恰建九个模块，全 config 无 bbox/query-selection 字段；grounding_decoder/bbox3d_decoder/instance_bank 在 models 主路径零引用（grep 排除包自身为空）。bi-attn 拼接耦合：feature_enhancer.py:189-193 把 nc 个视角的最后一级 unflatten 后 flatten(1,2) 拼成 [bs, nc×N, C] 单次 bmm，确认视角间在该层耦合。"
+   }
+  ],
+  "summary": "核验完成：抽查了四路全部关键数字（自己打开代码逐块重算）并核对了所有 file:line 引用。总体质量很高——绝大多数数字与引用精确成立，包括五个高风险点中的四个完全确认：①LIBERO depth 证据链三环（env 键名 camera_depths/generate_dataset.py:198-203、transform load_depth 三 json+processor.py:141-143、forward 分支 structure.py:84-94+spatial_enhancer.py:227-231）全部代码实证闭环；②MSDeformAttn num_heads=8/num_points=4 确为代码默认值（layers.py:89/:91，config:345-348 不覆盖）；③动作专家 20.85M 对账成立（我独立重加总 20,854,088，与其 20,853,960 差 128 参数）；④Swin window padding 处理与 5880/1470/441/196 padded token 数、Swin-T 27.52M/8.484 GMAC 逐 stage 重算吻合；⑤cross-attn K/V 确认每去噪步重算且无缓存（layers.py:181-185 + action_decoder.py:654-666），W 流/时延账的『可缓存 11.3 GMAC(23%)』结论成立。发现两处实质数字错误：(1) 第二路 bi-attn 视觉 token 数按 80/视角（stride 32）算是错的——ChannelMapper 的 extra 3×3 s2 conv 输出 append 在最后，level_start_index[-1]: 切的是 stride-64 级，每视角仅 20 token，bi 块 MAC 应为 0.176 GMAC@nc=1（非 0.476），2D 总账 LIBERO 45.1（非 45.7）、RoboTwin 88.8（非 90.0 GMAC），定性结论（占比小）不变；(2) 第一路 neck_3d 0.05M 低估——extra conv 是 3×3 s2（147.6K 参数），正确 0.178M/12.1 MMAC，连带 depth 支路合计应为 ≈2.28M/≈5.3 GMAC@2view（采信第三路）。另有两处引文行号错误（bert.py:328 不存在，应为 pretrain config:328；num_heads 默认值在 layers.py:89 而非 :66-67 的 docstring），事实本身都对。第一路 backbone_3d 0.76M 系粗算低估 4%，精确值 790,648（第三路正确）。第三路 PSE 全套（2.28M/2.63 GMAC/路）、第四路全部 token 数与 MAC 公式、第一路 repo 公开性结论（13 文件、无 LIBERO 权重、无 ONNX/BPU）均独立复核通过。总体：全模型 MAC 结论在修正后不确定性 <±1.5%，唯一无法用本地素材闭合的仍是 LIBERO 相机数/N_j/n_text（各路已恰当标 confidence=low/medium）。核验仅读未改任何文件；根目录 E:/GPU ARCH/vector_core_sim/research_holobrain/（robo_orchard_lab/ 为代码库，hf_cfg/ 为官方配置）。"
+ },
+ "account": {
+  "spec_files": [
+   "e:/GPU ARCH/vector_core_sim/research_holobrain/profile/holobrain_spec.py",
+   "e:/GPU ARCH/vector_core_sim/research_holobrain/profile/holobrain_hw.py"
+  ],
+  "json_outputs": [
+   "e:/GPU ARCH/vector_core_sim/research_holobrain/profile/holobrain_spec.json",
+   "e:/GPU ARCH/vector_core_sim/research_holobrain/profile/holobrain_hw.json"
+  ],
+  "total_macs": "73.66 GMAC/chunk（LIBERO 主档：2 视图 + N_j=8 + L=16 + 320×256 + depth on + DPMSolver++ 10 步）。分阶段：Vision2D(Swin-T+neck) 17.26 / Fusion(6 层增强器) 26.42 / 动作专家×10 23.41 / depth 分支+PSE 5.20 / BERT+映射 1.37。区间：RGB-only 68.5（去 depth 分支）、去噪 4 步 59.7、N_j=14 87.4、3 视图 102.7、4 视图 131.8、RoboTwin 全口径(4 视图 N_j=14 L=32) 149.8 GMAC",
+  "params_total": "183.8M（Swin-T 27.52 + BERT-base 108.89 + 6 层增强器 21.91 + 动作专家 20.85[论文 Table2 20.8M 对账差 0.3%] + depth 分支 2.28 + neck×2/text_map 2.4）≈ 论文 0.2B 量级",
+  "hw_108_cycles": "108 列两档：LWreal（引擎串行）89.4M 拍 = 0.450 s@198.5MHz（0.358 s@250）；CONC（三引擎并发）54.3M 拍 = 0.274 s@198.5（0.217 s@250），阵列利用率 78%、269 GMAC/s。216 列参照：BW128 CONC 0.18 s（util 61%）",
+  "realtime_verdict": "达标且裕量大：chunk=64 步，30Hz 预算 2.13s / 50Hz 预算 1.28s。108 列现行硅片 CONC 0.27s → 30Hz 裕量 7.8×、50Hz 裕量 4.7×（LWreal 0.45s 也达标：4.7×/2.8×）。结论：HB-GD 在现行 16×108 阵列上不是算力问题，风险在非 GEMM 算子（deformable 采样/3D 反投影/einsum 未计入）与 INT8 量化精度（depth 米制输入定标未验证）",
+  "wall_ranking": "108 列：喂料 feed 54.2M > W 流 49.3M > softmax÷16 18.6M > COPY 8.6M > elem÷16 7.9M > drain52 0.4M（墙=feed）。216+128b 后 W 降到 27.4M，feed 34.7M 成唯一墙；216+64b 时 W 54.8M 是墙。softmax 项主要来自 img cross-attn [8h,128,800]×6 层×10 步 + 7840 个 49×49 窗口 softmax，COPY 主要来自窗口 K/V 逐窗搬运",
+  "w_stream": "0.33 GB/chunk（INT8 按次装载）：全模型权重一次 ≈0.18 GB（BERT 85 MB 为最大单项，指令不变可整条缓存掉）+ 动作专家 15.5 MB/步 ×10 = 155 MB（忠实上游：K/V 投影与关节距离嵌入每步重算无缓存，R5 核验确认）。img/text K/V + dist hoist 后 0.31 GB、67.4 GMAC（省 7% 时间）。对照：SwiftVLA 1.41 GB、Evo-1 448 4.26 GB",
+  "comparison": "同账本同硬件档：HB-GD LIBERO 主档 73.7 GMAC = SwiftVLA 部署 3 视图(417.8 GMAC) 的 1/5.7、Evo-1 448/N32(1096.1) 的 1/14.9、Evo-1 C1 224/N10(443.3) 的 1/6.0。时间（108/64b CONC）：0.27s vs SwiftVLA 1.40s（5.1×快）vs Evo-1 C1 1.49s（5.4×）vs Evo-1 448 3.65s（13.4×）。即使用 RoboTwin 全口径（4 视图 N_j=14 L=32，149.8 GMAC / 0.57s@108）也只有 SwiftVLA 的 1/2.8。SwiftVLA/Evo-1 三行与 swiftvla_hw.json 逐位一致（417.8/1096.1/443.3 GMAC 复现成功）",
+  "not_modeled": [
+   "MSDeformableAttention 采样+加权和：6.96 MMAC/层/视角(加权和)+双线性插值~4×，6 层×2 视角≈84 MMAC+335M 元素操作 → 向量核/CPU（gather+MAC 混合）；4 条投影(value/output/sampling_offsets/weights)已进 gemm_items",
+   "PSE get_pts 4×4 反投影：217,600 次 4×4 solve/视角≈14 MMAC 等价 → CPU 预求逆+批量 matvec；相机固定时 pts+pts_fc(83.6 MMAC) 可整体离线缓存",
+   "PSE depth 概率加权聚合：1700 个 [1×128]·[128×128]=27.9 MMAC/视角 → 向量核（M=1 病态，16 行阵列利用率 1/16）；softmax(128bin) 另 21.8 万 exp/视角",
+   "temp_joint 6D einsum（QK^T 等价）：N_j=8 4.46 MMAC/层/步（N_j=14 13.6M），每层 8×64 个 [16×32]@[32×17] 微 GEMM → 向量核或重排 bmm",
+   "temp_joint tril 因果 mask：16×17 有效项 56%，稠密 AV 已全额计入（44% 可稀疏化省）→ mask 本身软逻辑",
+   "UpsampleHead 双线性插值：~0.17M lerp/步×10 → 软逻辑/向量核",
+   "FK recompute + DPMSolver++ step + 采样噪声：[1,64,N_j] 矩阵链×10 步串行 → CPU/软逻辑",
+   "RoPE/RMSNorm/LN/SiLU/AdaRMS 调制/gate：elem 粗账 1.24 G-ops/chunk → 向量核，memory-bound",
+   "Swin 窗口切分/roll/rel-pos-bias/PatchMerging unfold：每层 ~T×C 元素 gather-scatter（2D+3D 共 24 块×视角）→ DMA/软逻辑",
+   "BERT tokenizer + word embedding 查表：L 次 23.4M 参数表 gather → 表驻 DDR；指令跨 chunk 不变，BERT 整个 1.37 GMAC 可缓存掉",
+   "depth 输入预处理：uint16mm PNG 解码 /1000 + cv2.resize 双线性 → CPU；输入带宽已按 81.9KB/视角 int8 计入 boundary DMA"
+  ],
+  "caveats": [
+   "LIBERO 主档 2 视图+N_j=8 是推断而非官方配置：相机数 confidence=medium（dataset/libero 生成器固定 agentview+腕部两路），N_j=8 confidence=low（envs/libero 8 维 action，但官方 LIBERO embodiment processor 未发布且公开权重全是 14 关节双臂训的）；敏感度行覆盖 3/4 视图与 N_j=14（68.5–149.8 GMAC）",
+   "n_text=16 是估计（LIBERO 指令 12–20 wordpiece，pad_to_max=false 按实际长度）；BERT MAC 对 L 线性，L=10–32 对总量影响 <2 GMAC",
+   "窗口注意力按逐窗 49×49 等价 attn 条目计入：MAC 精确（qkv/proj/FFN 用 padded token 5880/1470/441/196，与 GPU 实现一致），K/V 逐窗 COPY+softmax+描述符碎片化开销已如实计入；若做窗口拼接 batched bmm 可摊薄 COPY/描述符开销但 MAC 不变；跳过 padding 行/列可再省 Swin 13%",
+   "非 GEMM 算子（not_modeled 11 项）的周期未计入总时间：HB-GD 的 deformable 采样是每视角 6 层核心算子，向量化效率未知，实际延迟会比 0.27s 高一些（该部分相对 SwiftVLA 占比更高）",
+   "W 流按次装载口径：Swin/neck/enhancer img 块权重每视角重装（×2），动作专家每步重装 ×10 忠实上游（K/V 无缓存，R5 核验确认）；K/V+dist hoist 可省 7% 时间",
+   "INT8 全模型量化假设未验证：depth 输入米制原值无归一化（bin 0.01–1.2m、宽 9.4mm 可作定标参考），depth 分支量化敏感度未测",
+   "LIBERO 96.7 的 depth 是 MuJoCo 渲染 GT（无噪声无空洞）；真实深度相机存在 sim-to-real 质量差，且缺 depths 键官方权重直接 crash、喂全零属分布外精度未知——depth 分支对 96.7 的贡献度未做消融",
+   "hw 账不含 CPU 侧：tokenizer、图像/深度解码与 resize、Flask 服务器开销；也不含 RTC 真时 chunking（若每个控制步都触发重推理，每秒调用量 ×控制频率，0.27s/chunk 的口径不变但吞吐需求变）",
+   "drain+52 只对 GEMM 列组计（对 HB 影响 <1.5%，因 GEMM 描述符总数不大）；COPY/softmax 无 drain",
+   "SwiftVLA 对照行用其主档 hoist_kv=True 口径（其 hw_main 同口径），HB 主档用忠实上游无缓存口径——若 HB 也 hoist 则 0.25s@108/64b，结论不变",
+   "每 chunk=一次完整前向产出 64 步动作（20.8M 动作专家论文口径对账 20.85M 差 0.3%）；10 步 DPMSolver++ 每步恰一次 forward_layers（num_test_traj=1）",
+   "峰值利用率 78%（108 CONC）低于 SwiftVLA 84.9%：HB 的 m=128 动作 token GEMM、m=20/49 小 GEMM 和窗口碎片更多；216 列 util 掉到 61%，加宽收益有限（0.27→0.18s）"
+  ]
+ }
+}

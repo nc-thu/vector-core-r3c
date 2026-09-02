@@ -1,0 +1,112 @@
+[gold] 21 用例生成完毕（CTX 13824 字）
+  case0: A1 pad-row  m=18 n=20  tbl_base=64 k=0
+  case1: A2 2 full  m=32 n=5   tbl_base=320 k=0
+  case2: A3 1grp    m=7  n=33  tbl_base=576 k=0
+  case3: B1 k=n     m=18 n=20  tbl_base=832 k=20
+  case4: B2 ktail   m=33 n=17  tbl_base=836 k=17
+  case5: B3 neg-m   m=5  n=40  tbl_base=840 k=40
+  case6: B4 sat     m=16 n=8   tbl_base=846 k=8
+  case7: A4 square  m=16 n=16  tbl_base=848 k=0
+  case8: N1 n=1 LN  m=5       tbl_base=12000 k=1
+  case9: N2 tail    m=18 n=257  tbl_base=12010 k=257
+  case10: N3 long LN m=16 n=2049  tbl_base=12100 k=2049
+  case11: N4 RMS pad m=17 n=3072  tbl_base=12700 k=3072
+  case12: N5 corner  m=48 n=64   tbl_base=13500 k=64
+  case13: N6 γneg βsat m=33 n=48  tbl_base=13530 k=48
+  case14: N7 adaRMS  m=20 n=96   tbl_base=13560 k=96
+  case15: N8 adaLN-tx m=17 n=48  tbl_base=13600 k=48
+  case16: N9 stripe  m=8  n=48   tbl_base=13620 k=48
+  case17: E1 0.75add m=18 n=40  tbl_base=2200 k=40
+  case18: E2 neg-m1 m=33 n=17   tbl_base=2400 k=17
+  case19: E3 extremes m=16 n=64  tbl_base=2600 k=64
+  case20: E4 s=0    m=5  n=1    tbl_base=2750 k=1
+../rtl/ae_actv.sv:200: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:200: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:200: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:200: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:200: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:200: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:200: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:200: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:200: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:200: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:200: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:200: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:200: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:200: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:200: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:200: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:385: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:385: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:385: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:385: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:385: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:385: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:385: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:385: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:385: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:385: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:385: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:385: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:385: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:385: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:385: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:385: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:403: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:321: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:453: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+[tb] case0 done，用时 308 拍（sub=0 m=18 n=20 k=0 y=0 tbl=64）
+[tb] case1 done，用时 278 拍（sub=0 m=32 n=5 k=0 y=80 tbl=320）
+[tb] case2 done，用时 297 拍（sub=0 m=7 n=33 k=0 y=112 tbl=576）
+[tb] case3 done，用时 79 拍（sub=1 m=18 n=20 k=20 y=0 tbl=832）
+[tb] case4 done，用时 92 拍（sub=1 m=33 n=17 k=17 y=48 tbl=836）
+[tb] case5 done，用时 98 拍（sub=1 m=5 n=40 k=40 y=100 tbl=840）
+[tb] case6 done，用时 26 拍（sub=1 m=16 n=8 k=8 y=140 tbl=846）
+[tb] case7 done，用时 280 拍（sub=0 m=16 n=16 k=0 y=148 tbl=848）
+[tb] case8 done，用时 203 拍（sub=2 m=5 n=1 k=1 y=3010 tbl=12000）
+[tb] case9 done，用时 2056 拍（sub=2 m=18 n=257 k=257 y=3020 tbl=12010）
+[tb] case10 done，用时 9419 拍（sub=2 m=16 n=2049 k=2049 y=3600 tbl=12100）
+[tb] case11 done，用时 20346 拍（sub=2 m=17 n=3072 k=3072 y=5700 tbl=12700）
+[tb] case12 done，用时 1109 拍（sub=2 m=48 n=64 k=64 y=1200 tbl=13500）
+[tb] case13 done，用时 973 拍（sub=2 m=33 n=48 k=48 y=1400 tbl=13530）
+[tb] case14 done，用时 1002 拍（sub=2 m=20 n=96 k=96 y=1650 tbl=13560）
+[tb] case15 done，用时 690 拍（sub=2 m=17 n=48 k=48 y=1860 tbl=13600）
+[tb] case16 done，用时 407 拍（sub=2 m=8 n=48 k=48 y=1550 tbl=13620）
+[tb] case17 done，用时 171 拍（sub=3 m=18 n=40 k=40 y=2100 tbl=2200）
+[tb] case18 done，用时 118 拍（sub=3 m=33 n=17 k=17 y=2300 tbl=2400）
+[tb] case19 done，用时 134 拍（sub=3 m=16 n=64 k=64 y=2500 tbl=2600）
+[tb] case20 done，用时 8 拍（sub=3 m=5 n=1 k=1 y=2700 tbl=2750）
+[tb] dump 完成（actv_ctx_out.mem，221184 字节）
+tb_ae_actv.sv:138: $finish called at 381665000 (1ps)
+[check] PASS — 221184 字节全部位精确（21 用例）

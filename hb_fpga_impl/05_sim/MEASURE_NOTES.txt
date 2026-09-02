@@ -1,0 +1,86 @@
+05_sim 全模型分层拍数测量 — 过程笔记与坑（2026-08-31，服务器 nc23 /tmp/ae_cycles）
+
+一、这轮测的是什么
+  全模型 2782 段（HoloBrain HB-GD 0.2B 编译产物 build_full），按"拍数类型"去重后
+  441 类，每类取代表段上 Verilator 跑两遍：MODE=0（REF）与 MODE=1+PF=1（PRIM+权重
+  预取，部署口径）。总数 = Σ(类型拍数 × 实例数)。类型签名 = 整条 256 位描述符流
+  （截到 DONE）按字节全等 —— 441 类覆盖全部 2782 段实例，不依赖任何"地址无关"假设
+  （实测全字段与只留形状字段都是 441 类，编译器本来就是按字节复用段）。
+  ddr_init.mem 现场生成：权重区 = weights_blob 真值切片（manifest 有偏移），
+  激活区 = 按段号定种子的随机 int8。VCD/黄金对拍用同一份字节。
+
+二、最重要的发现：compiler 的 dma_len 编码溢出（本轮修掉）
+  desc() 把 dma_len<<61 塞进 18 位字段 [78:61]，DMA_MAX=262128(0x3FFF0)，超长
+  LOAD/STORE 的高位溢进 is_loop_end(79)/in_loop(80)/steps 低位（更长的进 steps 高位）。
+  RTL 与黄金解释器都只读 18 位：
+    窄化后 ≠0 → DMA 静默截断（少搬字节，数据错，不挂死）
+    窄化后 ==0 → remain 下溢 0xFFFFFFF8 → DMA 无限循环 → 看门狗 FATAL
+  影响面（fix_report.json）：1276/2782 段、2932 条描述符、新增分片 4599，
+  其中窄化=0（原必挂死）恰好 2 条：seg_0142 / seg_0158 的 STORE（m=20480×n=64
+  =1,310,720 字节）。as-is 流 sweep 里这 2 类实拍 20,000,000 拍撞看门狗，其余
+  溢出段全部静默少搬数据。
+  修法 fix_streams.py：外科手术拆分（不重编译、不动布局），STORE/LOAD-CTX 按
+  DMA_MAX 切、LOAD-W 按 108 对齐的 261792 切，base/addr 字段按分片推进。
+  校验：Σ 修复后 STORE 字节 = 660,897,024 == Σ manifest 输出 words×16，0 段不一致。
+  本目录 cycles_by_type/TOTAL 均为修复流（build_full_fixed）上的数字；
+  results_asis_sweep.json 留了 as-is 口径作对照（704.6M pf1，含 2 类挂死）。
+
+三、est 对账：v0 的 313M 为什么差这么多（三重低估）
+  est_check.py 按 441 类逐条重算三档：
+    est_v0     = 313,022,320（与 manifest 逐类全等，口径复现无误）
+    est_lenfix = 544,477,453（只修长度读法：在修复流上跑同一模型，+74%）
+    est_fixed  = 854,792,941（再修 gemm mt：+57%）
+  两个 est 模型 bug（都源自 hw_zcu104 gem_cycles.py 的抄写）：
+    1) mt = ceil16(m)//16 双重除法。ceil16(x)=(x+15)//16 返回组数，再 //16 全部
+       段的 gemm 组数被除小 16 倍（m≤256 时直接算 0 组 → 单条 gemm 只估 4 拍）。
+    2) est 读 18 位窄 dma_len，溢出段在 est 里同样被低估（并入 lenfix 档）。
+  同一个双重除法还坑了 compiler 的 macs 字段（compiler.py:313
+  (ceil16(m)//16)*16*COLS*k）：manifest Σmacs=8.03G，RTL mac_total=223.76G。
+  修正口径（ceil16(m)*16*COLS*k，与 RTL "每 k 切片记 16×108" 语义一致）后
+  逐拍全等（as-is 侧已验证：223.763G − 223.688G 的差恰好是 2 个挂死类的 macs）。
+  有效 MAC（m*n_loc*k，去 padding）= 145.8G。
+
+四、TB/工具坑（下轮别再踩）
+  1) sim_fast 二进制是旧版 tb_ae_v.sv（161 行，只认 +MODE/+PF）编译的：+SEQ/
+     +DDRIMG/+DUMP 等 %s plusarg 全部静默无效，一直靠 cwd 默认名兜底 —— 每个工作
+     目录放 seq.mem 符号链接 + 生成 ddr_init.mem 恰好就是 intended 内容，测量口径
+     没坏，但 +DUMP=/dev/null 是空话，每类落了 25MB×2 的默认名 dump（盘多耗 ~20GB）。
+     判别实验：+SEQ 指向别的段，cycles 不变 → plusarg 没进。
+     trace 二进制（tb_ae_v_t.sv，新源码）的 %s plusarg 正常：VCD 首时间戳
+     #8226000 = 2048 拍 SEQ 端口装载后的 start 脉冲，证明 +SEQ 真的走了端口通路。
+  2) 黄金对拍读 dump 要用默认名 dump_ddr_prim2.mem（mode=1,pf=1），见上条。
+  3) VCD 窗口：tb_ae_v_t.sv 在 start 脉冲旁开 dumpvars，VCD 首时间戳就是窗口
+     起点。vcd2saif 必须 --t-start <首个#时间戳>（如 8226000）；给 0 会把 VCD
+     之前的 8.2us SEQ 装载阶段补成 X，稀释翻转率 ~25%。vcd_run.py 已自动探测。
+  4) readmemh 固定 2.9s/进程（8MB 稀疏图）；Verilator 2 态，未声明区=0，黄金
+     parse_sparse_mem 同口径，位精确才能过。
+  5) 看门狗 -DV_WDG_CYC=20M，最长类型 ~3.7M 拍，5 倍余量。
+  6) 大类型节奏：fast 二进制 ~10kcyc/s（-O3），百万拍类型单进程 2-6 分钟；
+     trace 二进制 ~2kcyc/s 且 VCD ~8-16KB/拍（1728 个 u_pe 域），最重类型
+     seg_0625（3.34M 拍）VCD 52.9GB，vcd2saif 纯 Python ~2MB/s 全量要 7 小时
+     —— 实际切成前 10GB 窗口（63.1 万拍，36 条描述符的 ~17 遍循环）转 SAIF，
+     全量的删掉（顺带回收 53GB 盘）。t010/t027 是全段 SAIF。
+
+六、黄金对拍的 seg_0221（text_encoder）失配分析
+  11 个代表段 10 个位精确（含最长流 0162、80 实例 0718、修复重点 0625）。
+  唯一失配的 0221 是 11 段中唯一含 op=1（ATTN_S）的段：BERT 单段注意力，
+  12 个头，每头 8×8 分数矩阵（m=8 n=8 k=64 非因果）。
+  形态：5923/12288 输出字节小幅漂移（RTL 系统性偏大 ~5%，如 2→8、-17→-11），
+  MAC 计数与拍数全等 —— 是 softmax 数值路径，不是搬运/编码问题。
+  已排除：exp LUT 逐项一致（129 项 0 差）、se 去掉 argmax / mx±1 / 次大值 /
+  除法差 1 等单变量假设都不复现 RTL 输出。根因未定，需要 SM16 内部探针
+  （P1/P2/DIV 级 dump）做后续；hw_zcu104 的 39/39 验收没覆盖 8×8 非因果形状。
+  拍数测量不受影响（数据无关性已证），全参数证据链其余部分成立。
+
+五、产物清单
+  types.json            441 类（修复流口径，typify.py 产出；types_asis.json 为 as-is 对照）
+  results/sweep.json    修复流 441 类双模式实测（results_asis_sweep.json 为 as-is）
+  results/aux.json      数据无关性（5 类 激活全零 vs 随机 × 两模式）+ 确定性（3 类 ×2 遍）
+  results/golden.json   11 代表段 RTL vs 黄金位精确（覆盖 9 个阶段 + 最长流 + 80实例类）
+  cycles_by_type.json   每类：两模式拍数、est 三档、macs 三口径、阶段、实例数
+  TOTAL.json            总数、毫秒(@198.5/250MHz)、阶段分解、对账、aux/golden 摘要
+  vcd/t???.saif + vcd_notes.json   贡献 top3 类的功耗注释（250MHz 口径，V_HALF=2）
+  fix_streams.py / typify.py / measure.py / golden_run.py / vcd_run.py /
+  est_check.py / aggregate.py / seg_stage.json / fix_report.json
+
+（数字与结论见 TOTAL.json 和最终汇报；本文件只记过程与坑。）

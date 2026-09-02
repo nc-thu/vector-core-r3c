@@ -1,0 +1,178 @@
+============================================================
+NOTES_r2fix.txt — R2 CTX 预取在长 GEMM 窗口下数据正确性 bug 修复
+时间戳: 2026-08-31 开始
+============================================================
+
+【bug 现象】
+seg_0602 GEMM k=257（257 拍喂入 + 长写回），PF=1 时 83 字节错，
+全在 STORE 区，错位集中在 lane 0 row 0，每处 ±1 LSB。
+PF=0 同段逐位一致 → 不是 requant 数学问题，是让拍/隔离边界 bug。
+seg_0600/0529（短段 k=9/64）PF=1 不触发。
+
+【RTL 关键路径阅读】
+1. ae_core.sv CTX B 口 mux（line 262-291）：
+   仲裁优先级：eng_g → eng_sm → eng_a → eng_dma(前台LOAD) → bg_wran && !gemm_wb_active
+   ★ 关键发现：eng_g（=sched.st==T_RUN_G）覆盖整个 GEMM 执行期，
+     bg_wran 分支只在 eng_g=0 时才可达。
+     而 gemm_wb_active=(g_st==S_WB)||(g_st==S_WBTR) 只在 GEMM 内部 S_WB/S_WBTR
+     阶段才=1，这阶段必然 eng_g=1 → bg_wran 分支根本进不去。
+     所以 bg_wran 分支里的 `&& !gemm_wb_active` 是「死门」：永远 0，
+     即 eng_g=0 时 gemm_wb_active 必然=0，门永远开着。
+   ★ 这意味着：CTX 预取写 B 口在 GEMM 跑完后（T_ADV/T_FETCH/T_LATCH/T_EXEC
+     等阶段）会照常发射，没有 wb_active 的真正保护。理论上 eng_g 已让出，
+     GEMM 不再写 B 口，应该无冲突——除非有「让拍错位」。
+
+2. ae_gemm.sv wb_active 时序（line 130）：
+   wb_active = (st==S_WB)||(st==S_WBTR)  ← 组合译码当前状态寄存器
+   ★ 关键发现：wb_we_r（实际驱动 ctxb_we 的寄存器）是「状态机里赋值的
+     寄存器」，比状态本身晚一拍。
+     - 周期 N：st=S_WB（最后一拍 wb_i8==n_loc-1），always_ff 里 wb_we_r<=1,
+       st<=S_NEXTMT。
+     - 周期 N+1：st=S_NEXTMT，wb_we_r=1 → ctxb_we=1，B 口写实际发生！
+       但此时 wb_active=0（st 不是 S_WB/S_WBTR）。
+   ★ 即：GEMM 写回的「最后一拍 ctxb_we 脉冲」发生在 st 已切到 S_NEXTMT
+     的那一拍，wb_active 已掉到 0。注释 line 132-133 已承认这点
+     （「最后一拍的 we 会延续到状态切换后的下一拍」），所以地址按 wb_we_r
+     走、不按 st 走。但 wb_active 是按 st 走的，两者错一拍。
+
+3. ae_core.sv eng_g 时序：
+   eng_g = (sched.st==T_RUN_G)。sched 在 g_done 时切出 T_RUN_G。
+   g_done 在 GEMM S_FIN 拍置位（done<=1），下一拍采样到。
+   - 周期 N+1：GEMM st=S_NEXTMT（最后一拍 ctxb_we=1），g_done 仍=0
+     （要 S_FIN 才置 1）→ sched 仍在 T_RUN_G → eng_g=1。
+   - 周期 N+2：GEMM st=S_FIN，done<=1（下一拍才=1）→ sched 仍 T_RUN_G。
+   - 周期 N+3：GEMM st=S_IDLE, g_done=1 → sched T_RUN_G 看到 g_done，
+     切到 T_ADV/T_RUN_SM → eng_g 在 N+3 末拍或 N+4 才掉到 0。
+   所以 eng_g 比 ctxb_we 晚落，整个 GEMM 写回期 eng_g 都=1。
+   ★ 这意味着：CTX B 口在 GEMM 写回全程被 eng_g 占住，bg_wran CTX 预取
+     写不进来。bug 不在「GEMM 写回期 CTX B 口被预取撞」。
+
+【重新审视：bug 到底在哪？】
+既然 eng_g 优先级全程把 CTX B 口让给 GEMM，CTX 预取写不进 GEMM 写回区，
+那 83 字节错从哪来？
+
+候选 1：CTX 预取写发生在 GEMM 跑完之后（eng_g=0），但写的目标地址
+        与本段 STORE 读的地址重叠。即预取目标 CTX 区与 STORE 源 CTX 区
+        地址冲突——程序契约问题，不是 RTL bug。需查 seq.mem。
+
+候选 2：WRAM 半区隔离失效。TAG_W 预取写 WRAM B 口，GEMM 同时读 WRAM A 口。
+        pf_issue_ok 检查 pf_desc_base_r[W_AW-1]!=d_bbase[W_AW-1]。
+        但 d_bbase 是「当前描述符」的 b_base；如果预取在 T_RUN_SM/T_RUN_A
+        窗口发射（这些阶段 GEMM 已不在跑，d_bbase 是上一条 GEMM 的残留），
+        半区判定用错了基准。
+        ★ 查 pf_win：T_RUN_G || T_RUN_SM || T_RUN_A。
+          T_RUN_SM/T_RUN_A 时 d_bbase 仍是上一条 GEMM 的描述符字段
+          （desc_r 没更新到下一条 GEMM）。如果下一条 GEMM 用了与预取目标
+          同半区的 b_base，半区隔离就会误判为「不同半区」而放行预取，
+          实际写时撞 GEMM 读区。
+        但 seg_0602 的错在 STORE 区，不在 GEMM 输入。这条排除？
+
+候选 3：CTX 预取写发生在 eng_g=0 的窗口（T_RUN_SM/T_RUN_A/T_ADV），
+        预取写的 CTX 地址与 softmax/ACTV 的写地址同拍撞 B 口。
+        - softmax 走 eng_sm 分支（B 口 16'hFFFF 全写），优先级高于 bg_wran。
+          如果 bg_wran 在 T_RUN_SM 期间发射 CTX 预取写，被 eng_sm 优先级
+          压住，写被丢。但 DMA rd 引擎不 stall，r_byi 继续走 → 丢拍。
+        ★ 这就是根因方向！pf_win 包含 T_RUN_SM/T_RUN_A，在这些阶段
+          softmax/ACTV 占 B 口，CTX 预取写被丢，但 DMA rd 引擎继续推进，
+          rd_done 照常 fire → pf_done=1 → 后续 LOAD 命中预取但 CTX 数据
+          残缺 → 后续 GEMM/STORE 用错数据。
+
+候选 4：更直接——预取 DMA 完成后 rd_done fire，但部分 CTX 写被丢，
+        数据残缺。seg_0602 的 STORE 错可能因为 STORE 读的 CTX 区
+        被一次「目标地址与 STORE 源重叠的预取」半残写覆盖。
+
+【待验证】
+- 查 seq.mem seg_0602：是否存在预取目标 CTX 地址与 STORE 源地址重叠？
+- 查 pf_win 在 T_RUN_SM/T_RUN_A 时 CTX 预取是否被 eng_sm/eng_a 丢拍。
+- 关键：ae_dma 的 rd 引擎在 ctx_we 写被 mux 丢时，是否真的不 stall
+  （即 r_byi 照常推进、r_remain 照常递减）。
+
+【初步结论】
+bg_wran 路径下 DMA rd 引擎没有「写被丢就停拍」的反馈机制。
+ae_core B 口 mux 用优先级仲裁，被压掉的 bg_wran 写静默丢失，
+DMA rd 引擎继续吃 AXI 拍、递增 r_byi，最终 rd_done 照常 fire。
+pf_done=1 → 调度器认为预取完成 → 后续 LOAD 命中但 CTX 数据残缺。
+长 GEMM（k=257）窗口大、预取量大，残缺拍数多 → 错字节多。
+短段（k=9/64）窗口小、预取要么不发射要么少量拍被丢，错字节少到
+不进 STORE 区或被四舍五入掩盖。
+
+修法方向：
+A. 让 pf_win 收紧到只在 T_RUN_G 且 GEMM 不在写回期发射 CTX 预取
+   （但这样长 GEMM 反而没窗口，性能损失）。
+B. 让 CTX 预取写不被丢：bg_wran 期间如果 B 口被 GEMM/SM/ACTV 占，
+   给 DMA rd 引擎一个 stall 反馈，让它停拍等 B 口让出。
+   ★ 这是最小且正确的修法——加一条「bg_wran && CTX 预取写被 mux
+     压掉」时 rd 引擎 stall 的信号。
+C. 简单粗暴：pf_win 去掉 T_RUN_SM/T_RUN_A，只留 T_RUN_G。
+   CTX 预取只在 GEMM 期发，GEMM 期 eng_g 占 B 口 → CTX 预取永远被丢
+   → 等于 CTX 预取实际不工作（退化）。不行。
+D. 在 pf_issue_ok 里对 TAG_CTX 加地址隔离：预取目标 CTX 地址段
+   不得与任何引擎当前工作区重叠。但地址隔离在 RTL 里判断成本高。
+
+倾向 B：加 stall 反馈。但要看 ae_dma rd 引擎怎么接 stall。
+============================================================
+
+============================================================
+【根因确认 + 修复记录】时间戳: 2026-09-01
+============================================================
+【根因】（iverilog 探针证实）
+ae_core 的 CTX B 口 mux 是纯优先级仲裁：eng_g > eng_sm > eng_a > 前台LOAD > bg_wran。
+后台 CTX 预取（TAG_CTX）在 bg_wran 窗口内若撞上 GEMM/softmax/ACTV/前台LOAD，
+其 B 口写被静默丢弃——但 ae_dma rd 引擎没有任何"写被丢就停拍"的反馈：
+rready 恒 = (rd_st==R_R)，r_byi/r_remain 照常推进，rd_done 照常 fire。
+→ 调度器 pf_done=1 认为预取完成，后续 LOAD 命中预取直接跳过装载，
+  CTX 里是残缺/旧数据 → GEMM/STORE 用错数据 → seg_0602 STORE 区 83 字节错。
+原 gemm_wb_active 让拍门是死门：eng_g=1 期间 bg_wran 分支永远进不去，
+wb_active 只在 eng_g=0 时才可能为 1，此时门恒开——它从未真正挡过任何冲突。
+
+【探针证据】tb_ae.sv 加 PF_DROP_DBG 探针（统计被压掉的 CTX 预取写拍数）：
+修复前随机种子下 pf_ctx_drop_cnt=7（写丢失确实发生）；
+修复后 pf_ctx_drop_cnt=0。
+短段（k=9/64）GEMM 窗口小、预取装载 2048B 突发大多落在 GEMM 后的空窗，
+撞拍少到不进 STORE 源区 → 不触发。长 GEMM（k=257 喂入 257 拍+写回）把
+预取发射窗口撑大，撞拍几率和数量都上去了。
+
+【修复】（最小改动，三处）
+1. ae_dma.sv：新增输入 pf_ctx_stall、输出 rd_tag_o（当前锁存 tag）。
+   rready = (rd_st==R_R) && !pf_ctx_stall —— R_R 状态体全部动作都挂在
+   (rvalid && rready) 下，rready 冻结即 r_byi/r_remain/ctx_we 全冻结，
+   FSM 零改动，AXI R 拍自然背压。
+2. ae_core.sv：例化连线 + 计算 pf_ctx_stall：
+   pf_ctx_stall = bg_wran && (rd_tag_o==CTX) && (B口被 eng_g/eng_sm/eng_a/前台LOAD占)。
+   即"后台 CTX 预取在飞且本拍 B 口 mux 选了别的引擎"时拉高。
+3. 原 bg_wran 分支的 !gemm_wb_active 死门保留不动（无害）。
+
+【冒烟验证】COLS=12 tb_ae 三遍（REF/PRIM-pf0/PRIM-pf1）：
+- compare.py 四项 CTX/DDR 全部位精确 PASS
+- pf_ctx_drop_cnt: 7 → 0
+- cycles 无变化（本负载丢失的写不进 STORE 源区，修的是隐性数据危害）
+
+============================================================
+【验证门结果】时间戳: 2026-09-01 10:50
+============================================================
+① iverilog 微观 21 用例：221,184/221,184 字节位精确 PASS（含 NORM/ELTWISE）
+② iverilog 全芯片回归：12/12 ALL PASS
+   （gen_vectors / sim_ae / compare / tb_rq / tb_sm16 / tb_pe_pack /
+    tb_pe_pack_dsp / gem_cycles / gen_actv / sim_ae_actv / compare_actv / tb_ae_actv）
+③ Verilator seg_0602 PF=1（bug 判据）：
+   输出区 256/256 字节 PASS，全 DDR diff = 0/524288 —— 修复前 83 字节错 → 0
+   cycles=51094（model_cal 偏差 -4.4%，IN_15%）
+④ Verilator seg_0600/0529 PF=1：256/256、32/32 PASS，全 DDR diff=0 —— 不回退
+   Verilator 三段 PF=0 复验：全部位精确（PF=0 基线锚点无破坏）
+   附：seg_0602 PF=1 51094 拍 vs PF=0 53350 拍 → 预取净省 2256 拍（-4.2%）
+⑤ 全芯片综合（Vivado 2021.2 OOC 250MHz，/e/ae_syn/r1r2_fullchip）：
+   LUT 135,111（基线 134,762，+349 / +0.26%）
+   WNS -1.038 ns（与基线持平，≥-1.038 门刚好达标）
+   DSP 1,728 / URAM 64 持平
+   +349 主要落在 u_dma（rready 让拍门控扇进 ctx_wdata/welane 的使能路径，
+   约 +460 LUT，部分被 u_gemm 重综合 -111 抵消）。
+
+【结论】R2 CTX 预取长窗口 bug 已修复，全部验证门通过。
+改动文件：rtl/ae_dma.sv（+pf_ctx_stall/rd_tag_o 端口，rready 让拍门控）、
+          rtl/ae_core.sv（pf_ctx_stall 组合逻辑 + 连线）。
+tb 侧：tb_ae.sv 加 PF_DROP_DBG 探针（默认开，一行无害打印），
+       tb_ae_seg.sv 加 +PF= plusarg（默认 1）。
+
+【修复后 RTL 快照状态】
+14_rtl_r1r2/rtl/ae_dma.sv、ae_core.sv 已同步到服务器 /tmp/ae_vgate/rtl/
+和综合工作区 /e/ae_syn/r1r2_fullchip/rtl/。

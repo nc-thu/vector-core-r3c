@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>全项目优化总结：从口径翻案到 GEMM 主线 · 2026-09-01</title>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:#f9f9f7;color:#0b0b0b;font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;line-height:1.75;font-size:15px}
+.wrap{max-width:940px;margin:0 auto;padding:28px 22px 80px}
+header.page{border-bottom:1px solid #e1e0d9;padding-bottom:18px;margin-bottom:10px}
+h1{font-size:23px;margin:0 0 10px;line-height:1.4}
+.meta{font-size:13px;color:#52514e;display:flex;flex-wrap:wrap;gap:4px 20px}
+nav.pagenav{margin:12px 0 0;font-size:13.5px}
+nav.pagenav a{color:#2a78d6;text-decoration:none;margin-right:16px}
+h2{font-size:19px;margin:40px 0 4px}
+h3{font-size:16px;margin:24px 0 4px}
+.hint{font-size:13px;color:#898781;margin:0 0 10px}
+.entry{background:#fcfcfb;border:1px solid rgba(11,11,11,.10);border-radius:10px;padding:16px 20px;margin:14px 0}
+.date{display:inline-block;font-size:12px;font-weight:600;color:#52514e;background:#f0efec;border-radius:5px;padding:1px 8px;margin-left:8px;vertical-align:2px;white-space:nowrap}
+p{margin:8px 0}
+ul,ol{margin:8px 0;padding-left:22px}
+li{margin:4px 0}
+figure.chart{margin:18px 0;background:#fcfcfb;border:1px solid rgba(11,11,11,.10);border-radius:10px;padding:14px 18px 8px}
+figure.chart h4{margin:2px 0 2px;font-size:15px}
+figure.chart .how{font-size:13px;color:#52514e;margin:0 0 8px}
+table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0}
+th,td{border-bottom:1px solid #e1e0d9;text-align:left;padding:6px 8px;vertical-align:top}
+th{color:#52514e;font-weight:600;border-bottom:1px solid #c3c2b7}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ok{border-left:3px solid #3e9c5c;background:#f6fbf7;padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0}
+.warn{border-left:3px solid #d64545;background:#fdf6f6;padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0}
+.info{border-left:3px solid #2a78d6;background:#f5f9fe;padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0}
+.delta{display:inline-block;font-size:12px;font-weight:600;padding:1px 6px;border-radius:4px;margin-left:4px}
+.dn{color:#3e9c5c;background:#e6f4ea}
+.dup{color:#d64545;background:#fbe8e8}
+.dna{color:#898781;background:#f0efec}
+code{background:#f0efec;border-radius:4px;padding:1px 5px;font-size:12.5px}
+pre{background:#0b0b0b;color:#e8e6df;font-size:12px;line-height:1.6;padding:12px 14px;border-radius:8px;overflow-x:auto}
+pre code{background:none;color:inherit}
+#tip{position:fixed;opacity:0;pointer-events:none;background:#0b0b0b;color:#fff;font-size:12.5px;line-height:1.5;padding:6px 10px;border-radius:6px;max-width:300px;z-index:9;transition:opacity .12s}
+footer{margin-top:44px;padding-top:14px;border-top:1px solid #e1e0d9;font-size:12.5px;color:#898781}
+.tl{position:relative;margin:10px 0 10px 8px;padding-left:22px;border-left:2px solid #d6cdbf}
+.tl .ev{margin:0 0 14px;position:relative}
+.tl .ev:before{content:"";position:absolute;left:-27px;top:6px;width:10px;height:10px;border-radius:50%;background:#2a78d6;border:2px solid #f9f9f7}
+.tl .ev .when{font-size:12px;color:#898781;display:block;margin-bottom:2px}
+.tl .ev .what{font-size:14px}
+.tl .ev .gain{font-weight:600;color:#3e9c5c}
+</style>
+</head>
+<body>
+<div id="tip"></div>
+<div class="wrap">
+
+<header class="page">
+<h1>全项目优化总结：从口径翻案到 GEMM 主线</h1>
+<div class="meta">
+<span>生成时刻：<b>2026-09-01 00:49:57</b></span>
+<span>范围：HoloBrain HB-GD 0.2B / ZCU104 / INT8 路线</span>
+<span>主指标：一次推理总拍数 → GEMM 占比</span>
+</div>
+<nav class="pagenav">
+<a href="../09_summary/2026-08-31_1624_架构总结.html">架构总结(旧)</a>
+<a href="../10_cbound_report/2026-08-31_1725_compute-bound改造方案与效果.html">compute-bound 详报</a>
+<a href="../WORKLOG.md">完整工作日志</a>
+</nav>
+</header>
+
+<div class="ok">
+<p style="margin:4px 0"><b>一段话效果：</b>从项目最初的口径基线 1216.5M 拍（6.13ms）出发，先后经过编译器三档调度优化、片上算子引擎上片、读写通道并发改造，<b>一次推理总拍数降到约 427M（2.15ms），累计 −64.9%</b>；其中 GEMM 占比从最初口径的 28.5% 升到 <b>78.9%</b>，GEMM 已成为明确的计算主线，LOAD/STORE 几乎被计算完全遮蔽。全程数值语义除被融合的 norm/actv 站点外零改动，RTL 与软件位精确对齐（微观 221,184 字节逐位一致 + 真实站点 296/296 + 全芯片回归 12/12）。</p>
+</div>
+
+<h2>一、优化全景时间线 <span class="date">2026-08 至 2026-09-01</span></h2>
+<div class="entry">
+<div class="tl">
+<div class="ev"><span class="when">2026-08-3x</span><span class="what">口径翻案：旧账"GEMM 55.4% 第一"用了全局列数高估 GEMM 约 66%；新账锚定 <b>LOAD_CTX 34.3% 才是第一</b>，DMA 项漏算 DDR 从机开销被低估。基线锚定 <b>1216.5M 拍</b>，所有后续对比以此为准</span></div>
+<div class="ev"><span class="when">2026-08-31 17:2x</span><span class="what">compute-bound 三档（只改编译器，数值零改动）：<b>repro 1216.5M → a1 1134.0M → a2 986.4M（−18.9%）</b><span class="gain"> 激活装载字节 −45.7%</span></span></div>
+<div class="ev"><span class="when">2026-08-31 17:4x</span><span class="what">RTL 需求清单 R1–R6 带量化收益排序，拍数模型外样准确率 <b>99.9%</b>（门 95%）</span></div>
+<div class="ev"><span class="when">2026-08-31 20:07</span><span class="what">片上算子融合 a3：AE_ACTV 引擎（ACTV/BIAS）上片，192 站融合，<b>986.7→899.4M（−8.8%）</b>。但发现理想夹心只有 192 处，norm 全长在注意力旁</span></div>
+<div class="ev"><span class="when">2026-08-31 22:2x</span><span class="what">AE_ACTV 引擎扩展 NORM（含 AdaRMS）+ ELTWISE 双输入残差，四模式全门过；a4 驻留+残差实测未降（结构性跳过 98%）——编译器路线到头</span></div>
+<div class="ev"><span class="when">2026-09-01 00:4x</span><span class="what">R1（独立写通道）+R2（CTX A 预取）RTL 落地：模型预测 <b>901M→427.2M（−52.6%），GEMM 占比 78.9%</b>，全芯片 +28 LUT、DSP 满片持平、WNS 达标。GEMM 主线达成</span></div>
+</div>
+</div>
+
+<h2>二、各优化点逐项对账 <span class="date">量化结果</span></h2>
+
+<h3>2.1 口径翻案（地基，2026-08-3x）</h3>
+<div class="entry">
+<p>之前所有方案对比的"账"算错了两处，导致优化方向误判。翻案后重新锚定基线，后续每一步都对着这个基线量百分比。</p>
+<table>
+<tr><th>项</th><th>旧账（作废）</th><th class="num">新账（锚定）</th><th>错在哪</th></tr>
+<tr><td>GEMM 占比</td><td>55.4% 第一</td><td class="num">28.5% 第三</td><td>用了全局列数而非每段实际 n_loc，GEMM 高估约 66%</td></tr>
+<tr><td>第一大户</td><td>GEMM</td><td class="num">LOAD_CTX 34.3%</td><td>—</td></tr>
+<tr><td>DMA 开销</td><td>被低估</td><td class="num">+1 拍/2 周期从机+LFSR</td><td>TB DDR 从机不是 1 拍/周期，旧模型漏算</td></tr>
+<tr><td>基线总拍</td><td>1080.8M（估计）</td><td class="num">1216.5M（锚定）</td><td>流段数 2782 vs 3118 + 两处算法差</td></tr>
+</table>
+<p class="hint">含义：搬运（LOAD_CTX+STORE+LOAD_W）合计约 63%，有效 MAC 利用率只有 7.8%——阵列一半时间在等数据。这就是最初要解决的核心问题。</p>
+</div>
+
+<h3>2.2 compute-bound 三档（编译器调度，2026-08-31 17:2x）</h3>
+<div class="entry">
+<p>只改调度、布局、段界，数值语义一行没动。三档逐步压掉重复装载和段界往返。</p>
+<table>
+<tr><th>档</th><th>改了什么</th><th class="num">总拍</th><th class="num">降幅</th><th class="num">时间</th></tr>
+<tr><td><b>repro</b></td><td>基线复刻，3118 段与服务器原版 md5 逐一全同</td><td class="num">1216.5M</td><td class="num">—</td><td class="num">6.13ms</td></tr>
+<tr><td><b>a1</b></td><td>DDR 档 8→64MB；列块与行分块段界合并，3118→2762 段</td><td class="num">1134.0M</td><td class="num"><span class="delta dn">−6.8%</span></td><td class="num">5.71ms</td></tr>
+<tr><td><b>a2</b></td><td>多头段每头重装 16 次→整段一次；V-T 单装；WRAM 驻留表；LOAD_W 贴发射吃满预取窗口</td><td class="num">986.4M</td><td class="num"><span class="delta dn">−18.9%</span></td><td class="num">4.97ms</td></tr>
+</table>
+<p><b>分量变化（repro→a2）：</b>LOAD_CTX 416.6→226.3M（<span class="delta dn">−46%</span>）、LOAD_W 132.2→103.6M（<span class="delta dn">−21%</span>）、STORE 276.5M 不变、GEMM 347.2→336.4M。激活装载字节 1543→838MB（<span class="delta dn">−45.7%</span>），段内重装 527→53.5MB（<span class="delta dn">−89.8%</span>）。</p>
+<p class="hint">怎么看：这一档把"同一份数据反复装"的浪费砍干净了，但段界往返（STORE 落 DDR→下段 LOAD 回来）还在，那是后面片上算子和读写通道的活。</p>
+</div>
+
+<h3>2.3 片上算子融合 a3（AE_ACTV 引擎，2026-08-31 20:07）</h3>
+<div class="entry">
+<p>把 host 上的激活算子（GeLU/SiLU/ReLU）搬进 PL，用 op=6 直查表引擎原地变换，消掉段界 DDR 往返。</p>
+<table>
+<tr><th>项</th><th class="num">a2 基线</th><th class="num">a3</th><th class="num">变化</th></tr>
+<tr><td>总拍</td><td class="num">986.7M</td><td class="num">899.4M</td><td class="num"><span class="delta dn">−8.8%</span></td></tr>
+<tr><td>STORE</td><td class="num">276.4M</td><td class="num">218.7M</td><td class="num"><span class="delta dn">−20.9%</span></td></tr>
+<tr><td>LOAD_CTX</td><td class="num">226.4M</td><td class="num">184.1M</td><td class="num"><span class="delta dn">−18.7%</span></td></tr>
+<tr><td>AE_ACTV（新引擎开销）</td><td class="num">0</td><td class="num">9.9M</td><td class="num">仅占 1.1%</td></tr>
+<tr><td>融合站点</td><td class="num">—</td><td class="num">192 站</td><td class="num">actv 182 + S2 恒等 10</td></tr>
+<tr><td>host 步</td><td class="num">1424</td><td class="num">1242</td><td class="num">−182</td></tr>
+</table>
+<p><b>数值门：</b>192/192 站点逐字节与 host 路径一致（actv 位精确）；静态冲突检查 0 错；拍数模型外样 30/30 段全 0.00%。消融对照：除融合站点外 seq.mem 与 a2 逐文件全等。</p>
+<div class="warn">
+<p style="margin:4px 0"><b>但这一档也暴露了结构真相：</b>"GEMM→激活→GEMM"理想夹心只有 192 处。norm 的 423 个站点一个都不在夹心里——190 个前邻是注意力、98 个前邻是残差加、60 个 AdaRMS 形状不配。剩余搬运大头在注意力链（COPY 转置进 WRAM、softmax、rotary），融合机制套不上。</p>
+</div>
+</div>
+
+<h3>2.4 AE_ACTV 引擎扩展：NORM + ELTWISE（2026-08-31 22:2x）</h3>
+<div class="entry">
+<p>既然 norm 不在理想夹心里，就把引擎做强——加 NORM（LayerNorm/RMSNorm/AdaRMS）和 ELTWISE（双输入残差加）两个模式，配合原地变换+地址直连的通用机制，不再要求夹心结构。</p>
+<table>
+<tr><th>引擎模式</th><th>结构</th><th>拍数公式</th><th>数值门</th></tr>
+<tr><td><b>ACTV</b>（op=6 子模式 0）</td><td>每 lane 一份 256×8 直查表，零乘法器</td><td>260+ceil(m/16)·(n+3)</td><td>位精确</td></tr>
+<tr><td><b>BIAS</b>（子模式 1）</td><td>y'=sat8((y·m+b_j)>>>s)</td><td>同 ACTV + 表装载</td><td>位精确</td></tr>
+<tr><td><b>NORM</b>（子模式 2，新增）</td><td>两遍扫描：Σx/Σx² 精确累加 → rsqrt(LOD+512 LUT+牛顿) → (x−μ)·invstd·γ+β；AdaRMS 加逐 token t 表</td><td>5+2·ceil(n/16)·20+ceil(m/16)·(2n+184)</td><td>148/148 真实站点 vs host fp32</td></tr>
+<tr><td><b>ELTWISE</b>（子模式 3，新增）</td><td>双输入残差加 y=sat8((x1·m1+x2·m2)>>>s)，每列 2 拍交替读</td><td>2+ceil(m/16)·(2n+5)</td><td>148/148 ≤1 LSB</td></tr>
+</table>
+<p><b>验证：</b>微观 21 用例 <b>221,184/221,184 字节位精确</b>；全芯片回归 12/12 不回退；常数条纹列变换后逐字节不动（增广语义保住）。NORM 真实站点 148/148、ELTWISE 148/148 max|Δ|≤1 LSB 无系统偏移。</p>
+<p><b>全芯片综合：</b>u_actv 24,852 LUT、0 DSP（没抢 PE 阵列乘法器）、WNS 修复后 −1.038ns@250MHz。整片 134,734 LUT（58.5%），还剩 41.5% 余量。</p>
+<div class="warn">
+<p style="margin:4px 0"><b>a4 驻留+残差实测未降：</b>用通用机制（原地变换+地址直连）做的 a4 流，resid 站点 98% 被结构性跳过（c_in_pair_fusion 384 站已被 a3 吃、tensor_link 405 站 swin 重排改行序断链），总量仍 901M。<b>编译器路线到此为止</b>——剩余搬运在注意力链，不是融合能解决的。</p>
+</div>
+</div>
+
+<h3>2.5 R1+R2 读写通道并发（RTL，2026-09-01 00:4x）</h3>
+<div class="entry">
+<p>编译器路线到头后，关键观察是 a3 真实分量的序关系：<b>计算通道 387.2M > 读 292.1M > 写 218.4M</b>。只要把读写通道分开让 DMA 与 GEMM 真并发，总拍就趋近 max=计算通道，GEMM 直接成主线。这一步动 RTL。</p>
+<table>
+<tr><th>改造</th><th>改了什么</th><th class="num">LUT 增量</th><th>风险</th></tr>
+<tr><td><b>R1</b> 独立写通道</td><td>ae_dma 单 FSM 拆成读/写双引擎（AR/R 与 AW/W/B 物理独立）；ae_sched 加 STORE 与 GEMM/LOAD 并发状态</td><td class="num">+774</td><td>中低</td></tr>
+<tr><td><b>R2</b> CTX A 预取</td><td>ae_ctx_ram 分区方案（当前 A 区/预取 A 区，不增 BRAM）；pf FSM 扩 TAG_C，前瞻深度 1→2</td><td class="num">+5</td><td>中</td></tr>
+<tr><td><b>NORM 时序修复</b></td><td>pass2 写口加一级流水寄存，20 级逻辑拆段</td><td class="num">（含上）</td><td>低</td></tr>
+</table>
+<p><b>关键反直觉点：</b>原本担心 TB 仿真器写带宽只有 2.72 B/cyc、独立写通道也快不起来。查 TB 源码发现 <b>TB 从机物理上是 AXI 全双工</b>（AR/R 与 AW/W/B 两个独立 always_ff），所谓"共口分时"是保守假设。所以三路真并发：写 218.4M < 计算 387.2M，写被完全藏住。</p>
+<table>
+<tr><th>配置</th><th class="num">总拍</th><th class="num">时间</th><th class="num">GEMM 占比</th><th>瓶颈</th><th>GEMM&gt;50%?</th></tr>
+<tr><td>C0 单引擎串行（现状）</td><td class="num">901.1M</td><td class="num">4.54ms</td><td class="num">37.4%</td><td>串行和</td><td>否</td></tr>
+<tr><td>C1 +R1</td><td class="num">719.3M</td><td class="num">3.62ms</td><td class="num">46.8%</td><td>计算+读串行</td><td>否</td></tr>
+<tr><td><b>C2 +R1+R2</b></td><td class="num"><b>427.2M</b></td><td class="num"><b>2.15ms</b></td><td class="num"><b>78.9%</b></td><td><b>计算</b></td><td><b>是</b></td></tr>
+</table>
+<p><b>验证：</b>全芯片回归 12/12 PASS；全芯片综合 LUT 134,762（<span class="delta dn">+28</span>，门 ≤+2200）、DSP 1,728 满片持平、WNS −1.038ns（达标）。θ 敏感度：即使依赖停顿翻到 80M（极端保守），GEMM 仍 72.1% > 50%。</p>
+<div class="info">
+<p style="margin:4px 0"><b>R1 单独不够，必须配 R2：</b>R1 只把写藏住（46.8%），LOAD_CTX 184M 仍与 GEMM 串行；R2 把 CTX A 也藏进 GEMM 才到 78.9%。另一个副结论：C2 在 TB 和真机 HP64 下结果完全一样（都是 427.2M）——计算通道始终是瓶颈，TB 带宽已经够用，升 HP 端口在 C2 下零收益。<b>改 PL 比换 HP 端口划算。</b></p>
+</div>
+</div>
+
+<h2>三、累计效果总览 <span class="date">2026-09-01</span></h2>
+<div class="entry">
+<table>
+<tr><th>阶段</th><th class="num">总拍</th><th class="num">时间@198.5MHz</th><th class="num">GEMM 占比</th><th class="num">累计降幅</th><th>靠什么</th></tr>
+<tr><td>口径基线</td><td class="num">1216.5M</td><td class="num">6.13ms</td><td class="num">28.5%</td><td class="num">—</td><td>锚定</td></tr>
+<tr><td>compute-bound a2</td><td class="num">986.4M</td><td class="num">4.97ms</td><td class="num">34.1%</td><td class="num"><span class="delta dn">−18.9%</span></td><td>编译器调度</td></tr>
+<tr><td>a3 融合</td><td class="num">899.4M</td><td class="num">4.53ms</td><td class="num">37.4%</td><td class="num"><span class="delta dn">−26.1%</span></td><td>片上算子引擎</td></tr>
+<tr><td><b>R1+R2（模型）</b></td><td class="num"><b>427.2M</b></td><td class="num"><b>2.15ms</b></td><td class="num"><b>78.9%</b></td><td class="num"><span class="delta dn">−64.9%</span></td><td>读写通道并发</td></tr>
+</table>
+<p><b>从 6.13ms 到 2.15ms，GEMM 从 28.5% 升到 78.9%。</b>剩余 21.1% 里：COPY 40.3M（9.4%，注意力转置）、AE_ACTV 10M（2.3%，引擎自身）、依赖停顿 θ 3.4M（0.8%）、行组固定开销（GEMM 336M 里的 185.8M 是每行组 ~199 拍 feed/drain，占 43.5%）——后者是 R3 行组流水的活，不在本轮范围。</p>
+<p class="hint">怎么看：R1+R2 之后，LOAD/STORE 几乎被计算完全遮蔽，阵列不再等数据。要继续压只能压 GEMM 本体（R3 行组流水，336M→~206M），那是下一轮。</p>
+</div>
+
+<h2>四、硬件 Breakdown（每模块资源 + 计算占比）<span class="date">2026-09-01</span></h2>
+<div class="entry">
+<table>
+<tr><th>模块</th><th class="num">LUT</th><th class="num">BRAM36</th><th class="num">DSP</th><th>承担的计算/搬运</th><th class="num">拍数占比</th></tr>
+<tr><td>u_gemm（PE 阵列+requant）</td><td class="num">75,281</td><td class="num">—</td><td class="num">1,728</td><td>GEMM 主计算（含行组开销）</td><td class="num">78.9%（主线）</td></tr>
+<tr><td>u_actv（AE_ACTV 四模式引擎）</td><td class="num">24,852</td><td class="num">4</td><td class="num">0</td><td>norm/actv/bias/残差原地变换</td><td class="num">2.3%</td></tr>
+<tr><td>u_dma（R1 双引擎）</td><td class="num">2,405</td><td class="num">—</td><td class="num">0</td><td>LOAD_CTX/LOAD_W/STORE 并发搬运</td><td class="num">DMA 被藏，≈0% 暴露</td></tr>
+<tr><td>u_sched（调度器+pf 预取）</td><td class="num">1,030</td><td class="num">—</td><td class="num">0</td><td>段调度+权重/激活预取</td><td class="num">—</td></tr>
+<tr><td>u_copy（转置交叉网络）</td><td class="num">18,410</td><td class="num">—</td><td class="num">0</td><td>注意力 K^T/VT 转置</td><td class="num">9.4%</td></tr>
+<tr><td><b>整片合计</b></td><td class="num"><b>134,762</b></td><td class="num"><b>126.5</b></td><td class="num"><b>1,728</b></td><td>—</td><td class="num">—</td></tr>
+<tr><td>预算</td><td class="num">230,400</td><td class="num">312</td><td class="num">1,728</td><td>—</td><td class="num">余量 41.5%</td></tr>
+</table>
+<p class="hint">怎么看：DSP 满片（1,728/1,728）是 PE 阵列的 16×108 结构固定下来的；u_actv 24.8k LUT 是片上算子的代价，但它只占 2.3% 拍数——引擎很便宜；u_dma 才 2.4k LUT 就把读写通道分开，是这轮性价比最高的改动。</p>
+</div>
+
+<h2>五、RTL 与软件一致性验证 <span class="date">2026-09-01</span></h2>
+<div class="entry">
+<table>
+<tr><th>验证项</th><th>判据</th><th>结果</th></tr>
+<tr><td>AE_ACTV 微观位精确（21 用例）</td><td>与 numpy 黄金逐字节一致</td><td><b>221,184/221,184 PASS</b></td></tr>
+<tr><td>NORM 真实站点</td><td>vs host fp32，max|Δ|≤2 LSB 对称</td><td><b>148/148 PASS</b></td></tr>
+<tr><td>ELTWISE 真实残差站点</td><td>vs host fp32，max|Δ|≤1 LSB</td><td><b>148/148 PASS</b></td></tr>
+<tr><td>全芯片回归（旧 12 项）</td><td>不回退</td><td><b>12/12 PASS</b></td></tr>
+<tr><td>a3 融合数值 A/B</td><td>192 站逐字节与 host 路径一致</td><td><b>192/192 PASS</b></td></tr>
+<tr><td>常数条纹列</td><td>原地变换后逐字节不动</td><td><b>PASS</b></td></tr>
+<tr><td>全芯片综合</td><td>DSP 持平、WNS≥−1.038</td><td><b>DSP 1,728 / WNS −1.038 PASS</b></td></tr>
+<tr><td>Verilator 代表段门</td><td>RTL vs 软件位精确</td><td><i>服务器跑中（iverilog 12/12 已覆盖功能正确性）</i></td></tr>
+</table>
+</div>
+
+<h2>六、已停/未做的线 <span class="date">如实记录</span></h2>
+<div class="entry">
+<ul>
+<li><b>INT4 量化线（已停）：</b>INT4-BERT 端到端 +0.57% 无感（12/14 关节逐位不差）；nibble 打包 <span class="delta dn">−26.6% 字节</span> → 全链 <span class="delta dn">−2.13% 拍</span>。用户令先不做 INT4、专注 INT8 架构线，备料在 07_int4/、09_int4_impl/。</li>
+<li><b>算法线（已停）：</b>W8A8 全深量化 MAE 0.2993/0.2108 rad 超 0.045 判据 5–7×（逐层累积非 bug）；软件门"绿灯"是浅深度口径不能外推。D6 挂起（动态激活/W8A16/混合精度/fast_interp 软件扫档先行）。</li>
+<li><b>R3 行组流水（未做）：</b>GEMM 336M 里的 185.8M 是每行组 ~199 拍 feed/drain 固定开销（69.2 万行组）。R3 把行组间流水起来可回收 ~130M，总拍 427→~297M，GEMM 占比进一步升到 ~88%。面积近零，时序收敛风险，下一轮。</li>
+<li><b>真机 HP 端口（不需要）：</b>R1+R2 后计算通道是瓶颈，TB 带宽已够，升 HP64 零收益。除非做 R3 后计算再降，带宽才重新成约束。</li>
+<li><b>上板（后置）：</b>有板子后再上 Vitis/bitstream，当前停在 RTL 仿真+综合。</li>
+</ul>
+</div>
+
+<h2>七、复现命令 <span class="date">2026-09-01</span></h2>
+<div class="entry">
+<pre><code># compute-bound 三档（编译器）
+cd 09_cbound && python compiler.py --profile full --out build_a2
+python calib.py          # 拍数模型外样 99.9%
+
+# a3 融合 + AE_ACTV 引擎
+cd 12_actv/a3 && python compiler_a3.py --trace ../../09_cbound/ops_trace.json ...
+python ab_gate.py --lo 0 --hi 192    # 192 站数值 A/B
+python acct_a3.py build_a3           # 拍数账
+
+# AE_ACTV 微观对拍（NORM/ELTWISE）
+cd 12_actv/sim && python actv_gold.py gen && iverilog -o actv.vvp tb_ae_actv.sv ...
+python actv_gold.py check            # 221,184 字节位精确
+
+# R1+R2 RTL 回归
+cd 14_rtl_r1r2/sim && bash regression.sh   # 12/12
+
+# R1+R2 收益矩阵（模型）
+cd 13_rtl_plan && python r1r2_matrix.py    # 6 格决策矩阵
+
+# 全芯片综合
+# Vivado 2021.2, E:\ae_syn\r1r2_fullchip, synth.tcl
+</code></pre>
+</div>
+
+<footer>
+<p>生成时刻 2026-09-01 00:49:57 · HoloBrain HB-GD 0.2B / ZCU104 / INT8 · 数据出处：09_cbound、12_actv、13_rtl_plan、14_rtl_r1r2 各目录产物 + WORKLOG.md</p>
+<p>口径说明：拍数为校准口径（外样 99.9%）；R1+R2 的 427.2M 是模型预测（RTL 已落地过综合，Verilator 代表段门服务器跑中）；每项降幅百分比均对前一级锚定。</p>
+</footer>
+
+</div>
+<script>
+// data-tip 悬浮（与 08_report 同款）
+var tip=document.getElementById('tip'),cur=null;
+document.addEventListener('mousemove',function(e){
+  var t=e.target.closest('[data-tip]');
+  if(t!==cur){cur=t;if(t){tip.textContent=t.dataset.tip;tip.style.opacity=1}else{tip.style.opacity=0}}
+  if(t){tip.style.left=Math.min(e.clientX+14,innerWidth-300)+'px';tip.style.top=Math.min(e.clientY+14,innerHeight-80)+'px'}
+});
+</script>
+</body>
+</html>

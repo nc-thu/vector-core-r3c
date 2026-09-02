@@ -1,0 +1,30 @@
+{
+  "cols": 12,
+  "ctx_words": 1024,
+  "w_words": 64,
+  "seq_len": 40,
+  "params": {
+    "mq": 18,
+    "mc": 16,
+    "dk": 20,
+    "dv": 8,
+    "steps": 2,
+    "frames": 1,
+    "case": "actv",
+    "seed": 20260826
+  },
+  "perf_ref": {
+    "macs": 86016,
+    "skip_stages": 0,
+    "skip_macs": 0,
+    "n_exec": 66
+  },
+  "perf_prim": {
+    "macs": 82944,
+    "skip_stages": 2,
+    "skip_macs": 2048,
+    "n_exec": 66
+  },
+  "eq_ctx": true,
+  "eq_ddr": true
+}

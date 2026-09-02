@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>算法总结：链路零误差但 W8A8 全深链超判据 5–7 倍，INT4 落地无感（2026-08-31）</title>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:#f9f9f7;color:#0b0b0b;font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;line-height:1.75;font-size:15px}
+.wrap{max-width:920px;margin:0 auto;padding:28px 22px 80px}
+header.page{border-bottom:1px solid #e1e0d9;padding-bottom:18px;margin-bottom:10px}
+h1{font-size:23px;margin:0 0 10px;line-height:1.4}
+.meta{font-size:13px;color:#52514e;display:flex;flex-wrap:wrap;gap:4px 20px}
+nav.pagenav{margin:12px 0 0;font-size:13.5px}
+nav.pagenav a{color:#2a78d6;text-decoration:none;margin-right:16px}
+h2{font-size:19px;margin:40px 0 4px}
+.hint{font-size:13px;color:#898781;margin:0 0 10px}
+.entry{background:#fcfcfb;border:1px solid rgba(11,11,11,.10);border-radius:10px;padding:16px 20px;margin:14px 0}
+.date{display:inline-block;font-size:12px;font-weight:600;color:#52514e;background:#f0efec;border-radius:5px;padding:1px 8px;margin-left:8px;vertical-align:2px;white-space:nowrap}
+p{margin:8px 0}
+ul,ol{margin:8px 0;padding-left:22px}
+li{margin:4px 0}
+figure.chart{margin:18px 0;background:#fcfcfb;border:1px solid rgba(11,11,11,.10);border-radius:10px;padding:14px 18px 8px}
+figure.chart h4{margin:2px 0 2px;font-size:15px}
+figure.chart .how{font-size:13px;color:#52514e;margin:0 0 8px}
+table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0}
+th,td{border-bottom:1px solid #e1e0d9;text-align:left;padding:6px 8px;vertical-align:top}
+th{color:#52514e;font-weight:600;border-bottom:1px solid #c3c2b7}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ok{border-left:3px solid #3e9c5c;background:#f6fbf7;padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0}
+.warn{border-left:3px solid #d64545;background:#fdf6f6;padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0}
+.info{border-left:3px solid #2a78d6;background:#f5f9fe;padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0}
+code{background:#f0efec;border-radius:4px;padding:1px 5px;font-size:12.5px}
+.running{display:inline-block;font-size:12px;font-weight:600;color:#8a6100;background:#fff4dd;border-radius:5px;padding:1px 8px;vertical-align:2px;white-space:nowrap}
+#tip{position:fixed;opacity:0;pointer-events:none;background:#0b0b0b;color:#fff;font-size:12.5px;line-height:1.5;padding:6px 10px;border-radius:6px;max-width:280px;z-index:9;transition:opacity .12s}
+footer{margin-top:44px;padding-top:14px;border-top:1px solid #e1e0d9;font-size:12.5px;color:#898781}
+</style>
+</head>
+<body>
+<div id="tip"></div>
+<div class="wrap">
+
+<header class="page">
+<h1>算法总结：链路零误差但 W8A8 全深链超判据 5–7 倍，INT4 落地无感（2026-08-31）</h1>
+<div class="meta">
+<span>生成时刻：<b>2026-08-31 16:24:00</b></span>
+<span>本页范围：2026-08-31 上午三份工作记录之后 → 本页生成时刻</span>
+</div>
+<nav class="pagenav">
+<a href="2026-08-31_2026-08-31_1624_架构总结.html">架构总结</a>
+<a href="2026-08-31_2026-08-31_1624_算法总结.html">算法总结</a>
+<a href="2026-08-31_2026-08-31_1624_电路总结.html">电路总结</a>
+<a href="../08_report/2026-08-31_1128_实测vs账本差距问题讨论.html">问题讨论页 v3</a>
+<a href="../08_report/2026-08-31_1253_数据集视角与指令集答疑.html">答疑页</a>
+<a href="../WORKLOG.md">完整工作日志</a>
+</nav>
+</header>
+
+<div class="ok"><p style="margin:4px 0"><b>算法这半天一个大红灯、一个绿灯、一个维持原判：</b></p>
+<p style="margin:4px 0">① <b>红灯</b>：端到端数值链跑通且链路零实现误差，但 W8A8 全深度量化下关节角误差 0.2993 rad，<b>超 0.045 判据 5–7 倍</b>。五步定界确认是量化方案本身逐层累积，不是 bug——要过判据必须升级量化方案（决策点 D6，待拍板）。</p>
+<p style="margin:4px 0">② <b>绿灯</b>：INT4 把 BERT 权重（占字节 53%）换成 4 位，端到端只差 <b>+0.57%</b>（14 个关节 12 个逐位不差）。BERT 不敏感在真实链上坐实，等基座方案修好随时可上。</p>
+<p style="margin:4px 0">③ <b>维持原判</b>：数据集继续用 RoboTwin。实测口径对上了账本 RoboTwin 档的 97.4%，想拿 LIBERO 档数字跑双视角对照即可，不用换数据集。</p></div>
+
+
+<h2>一、端到端数值链定案：链路干净，方案超差 <span class="date">2026-08-31 上午（代理 3.6 小时）</span></h2>
+<div class="entry">
+<p>编译器两处 bug 修复（见架构总结页）之后，三道校验门全过：</p>
+<ul>
+<li>回写总字节 751,525,888 与 manifest 逐段一致；</li>
+<li>RTL 对黄金解释器 6 段位精确（MAC 对账一致）；</li>
+<li>段输出与 int64 精算 <b>0/1,966,080 处不一致</b>；快档引擎与黄金解释器抽 6 段逐位一致。</li>
+</ul>
+<p>链路本身零实现误差。但全链跑完的结果（判据 0.045 rad）：</p>
+<table>
+<tr><th>样本</th><th class="num">PL 链 MAE</th><th class="num">fp32 自身重采样底</th><th class="num">超判据</th></tr>
+<tr><td>000</td><td class="num">0.2993 rad</td><td class="num">0.0457 rad</td><td class="num">6.6 倍</td></tr>
+<tr><td>001</td><td class="num">0.2108 rad</td><td class="num">0.0439 rad</td><td class="num">4.7 倍</td></tr>
+</table>
+<figure class="chart">
+<h4>四种量化变体的端到端误差 vs 判据（样本 000，单位 rad）</h4>
+<p class="how">怎么看：上面四根条子（0.29–0.30）不管怎么改校准、怎么放注意力浮点，都挤在一起——说明误差不来自这些地方；它们是底下判据（0.045）的 6.5 倍以上。悬停看每个变体改了什么。</p>
+<svg viewBox="0 0 680 262" role="img" aria-label="端到端关节角误差（样本 000，单位 rad）" style="width:100%;height:auto;display:block"><line x1="175" y1="10" x2="175" y2="232" stroke="#e1e0d9" stroke-width="1"/><text x="175" y="248" text-anchor="middle" font-size="11" fill="#898781">0</text><line x1="272.05882352941177" y1="10" x2="272.05882352941177" y2="232" stroke="#e1e0d9" stroke-width="1"/><text x="272.05882352941177" y="248" text-anchor="middle" font-size="11" fill="#898781">0.1</text><line x1="369.11764705882354" y1="10" x2="369.11764705882354" y2="232" stroke="#e1e0d9" stroke-width="1"/><text x="369.11764705882354" y="248" text-anchor="middle" font-size="11" fill="#898781">0.2</text><line x1="466.17647058823525" y1="10" x2="466.17647058823525" y2="232" stroke="#e1e0d9" stroke-width="1"/><text x="466.17647058823525" y="248" text-anchor="middle" font-size="11" fill="#898781">0.3</text><line x1="175" y1="10" x2="175" y2="232" stroke="#c3c2b7" stroke-width="1"/><path d="M175,14 L463.14705882352933,14 A4,4 0 0 1 467.14705882352933,18 L467.14705882352933,28 A4,4 0 0 1 463.14705882352933,32 L175,32 Z" fill="#2a78d6" data-tip="INT4 只换 BERT 权重：0.3010 rad，比 W8 基线 +0.57%；14 个关节 12 个逐位不差——BERT 不敏感在真实链上坐实"/><text x="165" y="27.5" text-anchor="end" font-size="12.5" fill="#52514e">W4-BERT 全链</text><text x="475.14705882352933" y="27.5" font-size="12.5" font-weight="600" fill="#0b0b0b">0.3010</text><path d="M175,50 L461.4970588235294,50 A4,4 0 0 1 465.4970588235294,54 L465.4970588235294,64 A4,4 0 0 1 461.4970588235294,68 L175,68 Z" fill="#2a78d6" data-tip="per-tensor W8A8 全深度量化：样本 000 MAE 0.2993 rad（样本 001 为 0.2108）——超判据 5～7 倍"/><text x="165" y="63.5" text-anchor="end" font-size="12.5" fill="#52514e">W8A8 全链（基线）</text><text x="473.4970588235294" y="63.5" font-size="12.5" font-weight="600" fill="#0b0b0b">0.2993</text><path d="M175,86 L459.0705882352941,86 A4,4 0 0 1 463.0705882352941,90 L463.0705882352941,100 A4,4 0 0 1 459.0705882352941,104 L175,104 Z" fill="#2a78d6" data-tip="按本样本各层实际 absmax 重造校准表（192/438 层被放大）再跑：13/14 关节逐位不变——校准失配不是主因"/><text x="165" y="99.5" text-anchor="end" font-size="12.5" fill="#52514e">理想校准表重跑</text><text x="471.0705882352941" y="99.5" font-size="12.5" font-weight="600" fill="#0b0b0b">0.2968</text><path d="M175,122 L456.54705882352937,122 A4,4 0 0 1 460.54705882352937,126 L460.54705882352937,136 A4,4 0 0 1 456.54705882352937,140 L175,140 Z" fill="#2a78d6" data-tip="注意力全走浮点：0.2942 rad，与全链几乎一样——几乎全部误差来自 GEMM 量化链"/><text x="165" y="135.5" text-anchor="end" font-size="12.5" fill="#52514e">只量化 GEMM（注意力全 fp）</text><text x="468.54705882352937" y="135.5" font-size="12.5" font-weight="600" fill="#0b0b0b">0.2942</text><path d="M175,158 L215.35588235294117,158 A4,4 0 0 1 219.35588235294117,162 L219.35588235294117,172 A4,4 0 0 1 215.35588235294117,176 L175,176 Z" fill="#2a78d6" data-tip="fp32 输出重采样的噪声底：0.0457（样本 001 为 0.0439）——判据就定在这个量级"/><text x="165" y="171.5" text-anchor="end" font-size="12.5" fill="#52514e">fp32 自身重采样底</text><text x="227.35588235294117" y="171.5" font-size="12.5" font-weight="600" fill="#0b0b0b">0.0457</text><path d="M175,194 L214.67647058823528,194 A4,4 0 0 1 218.67647058823528,198 L218.67647058823528,208 A4,4 0 0 1 214.67647058823528,212 L175,212 Z" fill="#2a78d6" data-tip="判据 0.045 rad。上面四根条子是它的 6.5～6.7 倍"/><text x="165" y="207.5" text-anchor="end" font-size="12.5" fill="#52514e">端到端判据</text><text x="226.67647058823528" y="207.5" font-size="12.5" font-weight="600" fill="#0b0b0b">0.045</text></svg>
+</figure>
+</div>
+
+<h2>二、五步定界：为什么断定是方案、不是 bug</h2>
+<div class="entry">
+<ol>
+<li><b>看输出形态</b>：fp 输出里动态变化的 4 个关节（8/9/10/13）在量化链下方差几乎归零；joint1 恒 0.669（fp 是恒 0）、左夹爪恒 0.5——正好是先验中心。<b>输出在 64 步时间维上坍缩成常数，动作头退化成输出先验。</b></li>
+<li><b>换理想校准表</b>：按本样本各层实际 absmax 重造校准表（192/438 层被放大，说明分布失配是全网性的）重跑——MAE 0.2968，13/14 个关节<b>逐位不变</b>。校准失配不是主因。</li>
+<li><b>拆单层误差</b>：第一层 0.1755 的相对误差里 0.1640 来自激活和权重的 int8 本身，requant 和输出量化只加 0.011。且段链实测与量化理论仿真<b>精确相等</b>——链路忠实执行了量化语义。</li>
+<li><b>类别二分</b>：只量化 GEMM、注意力全走浮点——MAE 0.2942，和全链几乎一样。<b>GEMM 量化链单独就足以造成全部超差。</b></li>
+<li><b>排除 BERT mask</b>：本样本 21 个 token 全有效无 padding，mask 缺失影响为零。</li>
+</ol>
+</div>
+
+<h2>三、为什么软件量化门是绿灯、硬件链是红灯</h2>
+<div class="entry">
+<p>08-30 的软件量化门实验给过 W8A8 绿灯（动作 MAE 0.0110）。两个结论不矛盾，差别在<b>量化深度</b>：</p>
+<table>
+<tr><th></th><th>软件量化门（08-30）</th><th>硬件全链（本轮）</th></tr>
+<tr><td>量化位置</td><td>模块边界 fake-quant，算子内部走浮点</td><td>每条 GEMM 的输入和输出都压 INT8</td></tr>
+<tr><td>残差流</td><td>保持浮点</td><td>住 INT8 的 CTX，也被量化</td></tr>
+<tr><td>结论</td><td>单点量化无害 → 绿灯</td><td>20 多层逐层累积把特征磨到信噪比 1:1 → 红灯</td></tr>
+</table>
+<p>这和 SwiftVLA 那次"激活 INT8 掉 12pp、权重 INT8 无损"是同一个根：<b>激活量化是主要风险源</b>。软件门的绿灯口径不能外推到部署口径——这条已写进研究记忆，以后量化门一律要补全深度口径。</p>
+<div class="warn"><p style="margin:4px 0"><b>D6 待拍板——过判据要换方案，选项四个：</b>①逐 token/逐通道动态激活量化（要 RTL 加 absmax 归约，和 AE_ACTV 引擎同族）；②W8A16（激活保 16 位，数据通路改宽最贵）；③action_head 前特征通路混合精度（误差 73% 集中在 action_head，对症）；④<b>先用 fast_interp 做纯软件扫档（推荐，一天级成本）</b>——快档引擎已证与黄金解释器逐位一致，能把①②③各档在软件里跑一遍，选过了判据且 RTL 代价最小的再落硬件。</p></div>
+</div>
+
+<h2>四、INT4：调研三档 + 真实链落地 <span class="date">调研 11:27 / 端到端 A/B 15:05</span></h2>
+<div class="entry">
+<p>调研结论（07_int4/）：占字节 53% 的 BERT 恰好最不敏感；逐层贪心不可靠（伤害是累积+混沌放大，必须组合实测）；W8 基线跨进程漂移 10%，对比必须同进程。三档方案：</p>
+<figure class="chart">
+<h4>INT4 三档的权重要多少字节（打包后口径）</h4>
+<p class="how">怎么看：推荐档省 35.6% 字节、精度还在 W8 噪声带里；激进档（42–49%，真实坏例 0.056–0.065 rad 超红线）不建议，图中不画。</p>
+<svg viewBox="0 0 680 154" role="img" aria-label="INT4 三档的权重要多少字节（打包后口径）" style="width:100%;height:auto;display:block"><line x1="175" y1="10" x2="175" y2="124" stroke="#e1e0d9" stroke-width="1"/><text x="175" y="140" text-anchor="middle" font-size="11" fill="#898781">0 MB</text><line x1="272.05882352941177" y1="10" x2="272.05882352941177" y2="124" stroke="#e1e0d9" stroke-width="1"/><text x="272.05882352941177" y="140" text-anchor="middle" font-size="11" fill="#898781">50 MB</text><line x1="369.11764705882354" y1="10" x2="369.11764705882354" y2="124" stroke="#e1e0d9" stroke-width="1"/><text x="369.11764705882354" y="140" text-anchor="middle" font-size="11" fill="#898781">100 MB</text><line x1="466.1764705882353" y1="10" x2="466.1764705882353" y2="124" stroke="#e1e0d9" stroke-width="1"/><text x="466.1764705882353" y="140" text-anchor="middle" font-size="11" fill="#898781">150 MB</text><line x1="175" y1="10" x2="175" y2="124" stroke="#c3c2b7" stroke-width="1"/><path d="M175,14 L480.61764705882354,14 A4,4 0 0 1 484.61764705882354,18 L484.61764705882354,28 A4,4 0 0 1 480.61764705882354,32 L175,32 Z" fill="#2a78d6" data-tip="当前部署：全部权重 INT8，导出 159.5MB"/><text x="165" y="27.5" text-anchor="end" font-size="12.5" fill="#52514e">W8 基线（全部 INT8）</text><text x="492.61764705882354" y="27.5" font-size="12.5" font-weight="600" fill="#0b0b0b">159.5 MB</text><path d="M175,50 L398.11764705882354,50 A4,4 0 0 1 402.11764705882354,54 L402.11764705882354,64 A4,4 0 0 1 398.11764705882354,68 L175,68 Z" fill="#2a78d6" data-tip="只换 BERT 常数表。仿真精度 0.0187，端到端实测 +0.57%（无感）。注意：int4 值装在 int8 容器里不打包则字节为 0 节省，−26.7% 是 nibble 打包后的口径"/><text x="165" y="63.5" text-anchor="end" font-size="12.5" fill="#52514e">零改动档（BERT INT4）</text><text x="410.11764705882354" y="63.5" font-size="12.5" font-weight="600" fill="#0b0b0b">117.0 MB · −26.7%</text><path d="M175,86 L370.1647058823529,86 A4,4 0 0 1 374.1647058823529,90 L374.1647058823529,100 A4,4 0 0 1 370.1647058823529,104 L175,104 Z" fill="#2a78d6" data-tip="0.0231 rad（真实最差 0.0315），与 W8 同噪声带，低于 0.04 红线。代价：组 scale 要在累加时反量化（RTL 项）"/><text x="165" y="99.5" text-anchor="end" font-size="12.5" fill="#52514e">推荐档（BERT+Swin g128+neck）</text><text x="382.1647058823529" y="99.5" font-size="12.5" font-weight="600" fill="#0b0b0b">102.6 MB · −35.6%</text></svg>
+</figure>
+<figure class="chart">
+<h4>按模块拆：INT4 动哪里、留哪里</h4>
+<p class="how">怎么看：text（BERT）和 vision_2d（Swin）是能动的两块；fusion、action_head、vision_3d 保持 INT8——尤其 action_head 是误差集中地，不要再压。</p>
+<svg viewBox="0 0 680 262" role="img" aria-label="六个模块各占多少权重字节，哪些降到 INT4（总 159.5 MB）" style="width:100%;height:auto;display:block"><line x1="175" y1="10" x2="175" y2="232" stroke="#e1e0d9" stroke-width="1"/><text x="175" y="248" text-anchor="middle" font-size="11" fill="#898781">0</text><line x1="250" y1="10" x2="250" y2="232" stroke="#e1e0d9" stroke-width="1"/><text x="250" y="248" text-anchor="middle" font-size="11" fill="#898781">25</text><line x1="325" y1="10" x2="325" y2="232" stroke="#e1e0d9" stroke-width="1"/><text x="325" y="248" text-anchor="middle" font-size="11" fill="#898781">50</text><line x1="400" y1="10" x2="400" y2="232" stroke="#e1e0d9" stroke-width="1"/><text x="400" y="248" text-anchor="middle" font-size="11" fill="#898781">75</text><line x1="475" y1="10" x2="475" y2="232" stroke="#e1e0d9" stroke-width="1"/><text x="475" y="248" text-anchor="middle" font-size="11" fill="#898781">100</text><line x1="175" y1="10" x2="175" y2="232" stroke="#c3c2b7" stroke-width="1"/><path d="M175,14 L425.70000000000005,14 A4,4 0 0 1 429.70000000000005,18 L429.70000000000005,28 A4,4 0 0 1 425.70000000000005,32 L175,32 Z" fill="#2a78d6" data-tip="占 53% 字节的模块恰恰最不敏感：per-tensor INT4 偏差 0.0187 rad，还低于 W8 基线 0.0259（同一噪声带，不是更准，是不可区分）。85M 参数的大块权重分布平整，小模型 W4 必须分组的普遍规律里它是例外"/><text x="165" y="27.5" text-anchor="end" font-size="12.5" fill="#52514e">text_encoder（BERT）</text><text x="437.70000000000005" y="27.5" font-size="12.5" font-weight="600" fill="#0b0b0b">84.9 · 降 INT4</text><path d="M175,50 L253.2,50 A4,4 0 0 1 257.2,54 L257.2,64 A4,4 0 0 1 253.2,68 L175,68 Z" fill="#2a78d6" data-tip="per-tensor 会掉到 0.049（真实样本 0.075+），必须组内 scale（g=128）。g=64 与 g=128 实测等效，组宽可按硬件方便选。注意：QoQ 式装载时解包回 INT8 的零 RTL 路线在这里不行，组 scale 折进 per-tensor 网格后真实样本最差 0.079"/><text x="165" y="63.5" text-anchor="end" font-size="12.5" fill="#52514e">vision_2d（Swin RGB）</text><text x="265.2" y="63.5" font-size="12.5" font-weight="600" fill="#0b0b0b">27.4 · 降 INT4 g128</text><path d="M175,86 L240.9,86 A4,4 0 0 1 244.9,90 L244.9,100 A4,4 0 0 1 240.9,104 L175,104 Z" fill="#2a78d6" data-tip="g=128 也要 0.0382，离红线太近，不动"/><text x="165" y="99.5" text-anchor="end" font-size="12.5" fill="#52514e">fusion</text><text x="252.9" y="99.5" font-size="12.5" font-weight="600" fill="#0b0b0b">23.3 · 保持 W8</text><path d="M175,122 L233.1,122 A4,4 0 0 1 237.1,126 L237.1,136 A4,4 0 0 1 233.1,140 L175,140 Z" fill="#2a78d6" data-tip="单独 g=128 是 0.0354 尚可，但激进档（42% 节省）合成 0.037–0.047、真实出现 0.056–0.065 坏例，超 0.04 红线。想拉它进来优先 GPTQ/HQQ，且标定集必须覆盖全部去噪 timestep"/><text x="165" y="135.5" text-anchor="end" font-size="12.5" fill="#52514e">action_head</text><text x="245.1" y="135.5" font-size="12.5" font-weight="600" fill="#0b0b0b">20.7 · 保持 W8</text><path d="M175,158 L178.15,158 A3.1500000000000004,3.1500000000000004 0 0 1 181.3,161.15 L181.3,172.85 A3.1500000000000004,3.1500000000000004 0 0 1 178.15,176 L175,176 Z" fill="#2a78d6" data-tip="per-tensor 0.0226，免费"/><text x="165" y="171.5" text-anchor="end" font-size="12.5" fill="#52514e">neck_convs</text><text x="189.3" y="171.5" font-size="12.5" font-weight="600" fill="#0b0b0b">2.1 · 降 INT4</text><path d="M175,194 L176.35,194 A1.35,1.35 0 0 1 177.7,195.35 L177.7,210.65 A1.35,1.35 0 0 1 176.35,212 L175,212 Z" fill="#2a78d6" data-tip="只占 0.6% 字节，真实样本 s2 会崩到 0.067——不值得冒险"/><text x="165" y="207.5" text-anchor="end" font-size="12.5" fill="#52514e">vision_3d</text><text x="185.7" y="207.5" font-size="12.5" font-weight="600" fill="#0b0b0b">0.9 · 保持 W8</text></svg>
+</figure>
+<p><b>真实链落地（零改动档，BERT 换 INT4）</b>：编译产物与 W8 对照结构完全一致（3118 段、260,797 描述符），差异恰好 36 段、全部含 text_encoder 权重、无误伤；requant 常数按新尺度重算，有效乘子精确放大 127/7=18.14 倍。端到端 A/B（服务器快档，3118 段跑满）：</p>
+<table>
+<tr><th></th><th class="num">MAE</th><th class="num">差</th><th>逐关节</th></tr>
+<tr><td>W8 对照</td><td class="num">0.2993 rad</td><td class="num">—</td><td>与已发布基线逐位复现（同机同日 A/B 干净）</td></tr>
+<tr><td>W4-BERT</td><td class="num">0.3010 rad</td><td class="num">+0.57%</td><td>14 个关节 12 个逐位不差（仅 joint4 自身 +19.6%、joint13 +1.7%）</td></tr>
+</table>
+<p><b>一个如实更正</b>：之前说"零改动档 −26.7% 字节"，落地时发现只换常数和权重值的话字节节省是 <b>0%</b>——INT4 网格值装在 INT8 容器里，搬运量和 W8 逐字节相同。−26.6% 字节属于 nibble 打包（半字节压缩，w4_packed/ 目录已备好），折合 LOAD_W 拍数 −9.07%、全链 est 拍数 <b>−2.13%</b>（626.9M→613.5M，3158.2→3090.9ms）。全链只有 2.1% 是因为 LOAD_W 只占总拍 23.5%，BERT 又只占 LOAD_W 的 17.5%。</p>
+</div>
+
+<h2>五、数据集与视角：RoboTwin 维持原判 <span class="date">2026-08-31 12:53 答疑页</span></h2>
+<div class="entry">
+<p>三个原因维持 RoboTwin：LIBERO 后训权重未开源（自训要 V100 数天）；HB-GD 必须喂深度而两边用的都是仿真器深度（RoboTwin 用真实内外参+桌面平面合成，是四个输入模态里唯一合成项）；官方小子集 55MB 当天离线跑通。视角区别就是工作量：相机间无交叉注意力，乘加随相机数线性涨——4 相机（149.8G 档）约是 LIBERO 2 视角（73.7G 档）的两倍。想拿 LIBERO 档硬件数字，跑双视角对照（D1，一天）即可，不用换数据集；要 LIBERO benchmark 成功率是算法线的事。完整论证在答疑页。</p>
+</div>
+
+
+<footer>
+<p>数据来源：03_compiler/NOTES.txt 与 build_s000_v3 / build_s001_v3 / build_s000_ideal / build_s000_w4（端到端各变体，服务器 /tmp/ae_v3、/tmp/ae_w4）；07_int4/（三档调研）；02_quant（08-30 软件量化门）；04_dataset/DATASET_NOTES.txt。</p>
+<p>生成时刻：<b>2026-08-31 16:24:00</b>。上一份总结：《2026-08-31 架构/硬件/软件工作记录》（08_report/）。compute-bound 改造代理仍在跑，结果出来后另出页，不在本份总结里。</p>
+</footer>
+
+</div>
+
+<script>
+(function(){
+  var tip = document.getElementById('tip');
+  document.querySelectorAll('[data-tip]').forEach(function(el){
+    el.addEventListener('mousemove', function(e){
+      tip.textContent = el.getAttribute('data-tip');
+      tip.style.opacity = 1;
+      var x = Math.min(e.clientX + 14, window.innerWidth - 300);
+      tip.style.left = x + 'px';
+      tip.style.top = (e.clientY + 18) + 'px';
+    });
+    el.addEventListener('mouseleave', function(){ tip.style.opacity = 0; });
+  });
+})();
+</script>
+
+</body>
+</html>

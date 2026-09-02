@@ -1,0 +1,211 @@
+[
+ {
+  "seg": 8,
+  "rtl": {
+   "seg": 8,
+   "mode": 1,
+   "pf": 1,
+   "zeros": false,
+   "rc": 0,
+   "cycles": 690489,
+   "gemm": 285732,
+   "dma": 427193,
+   "mac_total": 48218112,
+   "wall_s": 94.81925964355469
+  },
+  "golden_macs": 48218112,
+  "mac_match": true,
+  "ok": true,
+  "msg": ""
+ },
+ {
+  "seg": 134,
+  "rtl": {
+   "seg": 134,
+   "mode": 1,
+   "pf": 1,
+   "zeros": false,
+   "rc": 0,
+   "cycles": 386457,
+   "gemm": 277448,
+   "dma": 117779,
+   "mac_total": 14598144,
+   "wall_s": 53.34528088569641
+  },
+  "golden_macs": 14598144,
+  "mac_match": true,
+  "ok": true,
+  "msg": ""
+ },
+ {
+  "seg": 713,
+  "rtl": {
+   "seg": 713,
+   "mode": 1,
+   "pf": 1,
+   "zeros": false,
+   "rc": 0,
+   "cycles": 113320,
+   "gemm": 28400,
+   "dma": 59940,
+   "mac_total": 6193152,
+   "wall_s": 17.295966148376465
+  },
+  "golden_macs": 6193152,
+  "mac_match": true,
+  "ok": true,
+  "msg": ""
+ },
+ {
+  "seg": 266,
+  "rtl": {
+   "seg": 266,
+   "mode": 1,
+   "pf": 1,
+   "zeros": false,
+   "rc": 0,
+   "cycles": 386721,
+   "gemm": 63723,
+   "dma": 322952,
+   "mac_total": 95598144,
+   "wall_s": 54.029752254486084
+  },
+  "golden_macs": 95598144,
+  "mac_match": true,
+  "ok": true,
+  "msg": ""
+ },
+ {
+  "seg": 124,
+  "rtl": {
+   "seg": 124,
+   "mode": 1,
+   "pf": 1,
+   "zeros": false,
+   "rc": 0,
+   "cycles": 1239223,
+   "gemm": 462087,
+   "dma": 799973,
+   "mac_total": 320163840,
+   "wall_s": 171.9861536026001
+  },
+  "golden_macs": 320163840,
+  "mac_match": true,
+  "ok": true,
+  "msg": ""
+ },
+ {
+  "seg": 217,
+  "rtl": {
+   "seg": 217,
+   "mode": 1,
+   "pf": 1,
+   "zeros": false,
+   "rc": 0,
+   "cycles": 486137,
+   "gemm": 192001,
+   "dma": 295072,
+   "mac_total": 36495360,
+   "wall_s": 66.6132128238678
+  },
+  "golden_macs": 36495360,
+  "mac_match": true,
+  "ok": true,
+  "msg": ""
+ },
+ {
+  "seg": 625,
+  "rtl": {
+   "seg": 625,
+   "mode": 1,
+   "pf": 1,
+   "zeros": false,
+   "rc": 0,
+   "cycles": 3344007,
+   "gemm": 1074400,
+   "dma": 2269393,
+   "mac_total": 23500800,
+   "wall_s": 462.0472869873047
+  },
+  "golden_macs": 23500800,
+  "mac_match": true,
+  "ok": true,
+  "msg": ""
+ },
+ {
+  "seg": 221,
+  "rtl": {
+   "seg": 221,
+   "mode": 1,
+   "pf": 1,
+   "zeros": false,
+   "rc": 0,
+   "cycles": 1046899,
+   "gemm": 52547,
+   "dma": 1023325,
+   "mac_total": 59961600,
+   "wall_s": 145.43051624298096
+  },
+  "golden_macs": 59961600,
+  "mac_match": true,
+  "ok": false,
+  "msg": "8+ \u5b57\u8282\u4e0d\u4e00\u81f4\uff0c\u9996\u4e2a @0x2F5480: golden=0x02 rtl=0x08\uff1b\u524d\u51e0\u4e2a\u504f\u79fb\uff1a0x2F5480,0x2F5481,0x2F5482,0x2F5483,0x2F5485,0x2F5486,0x2F5487,0x2F5490"
+ },
+ {
+  "seg": 257,
+  "rtl": {
+   "seg": 257,
+   "mode": 1,
+   "pf": 1,
+   "zeros": false,
+   "rc": 0,
+   "cycles": 75899,
+   "gemm": 3173,
+   "dma": 74831,
+   "mac_total": 3986496,
+   "wall_s": 12.237764835357666
+  },
+  "golden_macs": 3986496,
+  "mac_match": true,
+  "ok": true,
+  "msg": ""
+ },
+ {
+  "seg": 162,
+  "rtl": {
+   "seg": 162,
+   "mode": 1,
+   "pf": 1,
+   "zeros": false,
+   "rc": 0,
+   "cycles": 964044,
+   "gemm": 788735,
+   "dma": 127863,
+   "mac_total": 21233664,
+   "wall_s": 129.8082377910614
+  },
+  "golden_macs": 21233664,
+  "mac_match": true,
+  "ok": true,
+  "msg": ""
+ },
+ {
+  "seg": 718,
+  "rtl": {
+   "seg": 718,
+   "mode": 1,
+   "pf": 1,
+   "zeros": false,
+   "rc": 0,
+   "cycles": 233659,
+   "gemm": 71946,
+   "dma": 150834,
+   "mac_total": 11612160,
+   "wall_s": 33.72404074668884
+  },
+  "golden_macs": 11612160,
+  "mac_match": true,
+  "ok": true,
+  "msg": ""
+ }
+]

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>LOAD_CTX / LOAD_W 压缩路线 2026-09-01</title>
+<style>
+  body{font-family:"Microsoft YaHei",SimSun,serif;max-width:1000px;margin:24px auto;padding:0 16px;color:#111;background:#fff;line-height:1.75}
+  h1{font-size:22px;border-bottom:2px solid #000;padding-bottom:6px}
+  h2{font-size:18px;border-left:5px solid #000;padding-left:8px;margin-top:32px}
+  h3{font-size:15px;margin-top:22px}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14px}
+  th,td{border:1px solid #444;padding:5px 8px;text-align:left}
+  th{background:#eee}
+  .num{text-align:right;font-variant-numeric:tabular-nums}
+  .mono{font-family:Consolas,monospace;font-size:13px;background:#f4f4f4;padding:1px 4px}
+  .meta{color:#555;font-size:13px}
+  .box{border:1px dashed #888;padding:10px 14px;margin:12px 0;background:#fafafa}
+  .warn{border-left:4px solid #000;background:#f6f6f6;padding:8px 12px;margin:12px 0}
+  .hint{color:#555;font-size:13px;margin:4px 0}
+</style>
+</head>
+<body>
+
+<h1>LOAD_CTX / LOAD_W 压缩路线：R3 之后怎么把读数据的时间压下去</h1>
+<p class="meta">生成时刻：2026-09-01 11:38:00　|　数据基础：a2/a3 真实流普查（recon_loads / recon_flow / recon_scope / recon_xtab 实跑）+ R3C 模型（19_r3c_arch）　|　前提：用户裁定"带宽够"，本页不提换端口、提频率那类方案</p>
+
+<h2>零、先把结论说清楚</h2>
+<div class="box">
+<p>带宽确实够——真机 HP64 口径下 608MB 权重 + 680MB 激活全部读完只要 20.1M 拍，连计算通道（235.6M）的十分之一都不到。<b>读的真正问题是"搬的字节多"和"一台读引擎串行搬"，不是搬得慢。</b></p>
+<p>数字目标也很明确：R3 之后计算通道 235.6M 拍，读通道（LOAD_CTX 184.0 + LOAD_W 108.1 = 292.1M 拍）超了 56.5M。只要把读通道砍到 235.6M 以下，总时间就从 332.1M 降到 275.6M（1.39ms，<b>再省 17%</b>），而且 TB 验证平台和真机 HP64 两个口径从此一致。砍的路径有三条，<b>任意一条单独走通就够</b>。</p>
+</div>
+
+<h2>一、读通道里都是什么（先搞清楚砍什么）</h2>
+<p>LOAD_CTX 是把激活（上一层算出来的中间结果）从 DDR 搬进片上 CTX；LOAD_W 是把权重搬进 WRAM。对 a3 流的字节构成做一次全量普查（每条 LOAD 按它的来源分类，2026-09-01 实跑）：</p>
+<table>
+<tr><th>LOAD_CTX 的 680MB 按来源</th><th>字节</th><th>说明</th></tr>
+<tr><td>引擎产出的图（上个 PL 段刚写进 DDR 的）</td><td class="num">548.6MB（81%）</td><td>算完→写回 DDR→下一段再装回来，<b>DDR 走了个来回</b></td></tr>
+<tr><td>host 写入的激活（残差/重排后）</td><td class="num">130.3MB</td><td>host 边界改造的空间</td></tr>
+<tr><td>host 写入的 K/Q 块</td><td class="num">66.7MB</td><td>转置/分头</td></tr>
+<tr><td>host 算出的 softmax P</td><td class="num">65.2MB</td><td>注意力的数学</td></tr>
+<tr><td>host 转置块</td><td class="num">22.2MB</td><td>纯转置</td></tr>
+</table>
+<p class="hint">怎么看：八成以上的装载是"自己刚写出去的又装回来"。这是压缩的主战场——这些字节要么根本不用出片，要么出片一次进来一次就够。</p>
+<p>引擎直连的 548.6MB 再按"生产→消费隔几个段"分：距离 ≤2 的 171.6MB、距离 ≤5 的 217.8MB；但按"图大小能塞进 CTX（128K 字）且给消费者留够工作集"筛，只有 191.6MB 是候选（其中距离 1-5 的约 72MB，其余 119MB 是长距离大图）。<b>这就是驻留的现实空间：不是账面上 548MB 都能驻留，是约 190MB。</b></p>
+
+<h2>二、路线一（推荐）：CTX 双区驻留——把 DDR 来回砍掉</h2>
+<p>思路：CTX 现在 2MB（16-bank URAM），已经用半区交替做 LOAD_W 的双缓冲。给激活驻留划一块"双区"——A 区放当段工作集，B 区放"下一段马上要用的、上段刚算出来的图"。上个段算完直接把结果留在 B 区，下段从 B 区读，DDR 来回整段消失。这正是 R2 预取双缓冲（半区 bit11）的延伸：预取已经把"装"藏进了计算，驻留则把"装"整个免掉。</p>
+<p>驻留的实际收益上限（普查口径）：约 190MB 的 LOAD_CTX 免掉，读通道 292.1 − 190/3.70 = <b>240.7M 拍</b>——还差 5M 没到 235.6M 的线，单靠它差一口气；如果 host 源里能再折 20MB 进片（route 1.5，见下）就过线。</p>
+<p>代价：零字节、零 DSP、零 BRAM（容量从现有 2MB 里划）；描述符加一位"驻留基址选择"或复用现有 b_base 译码；编译器规划生命期（a4 的 _resid_place 已经写过这套逻辑，直接捡回来用）。</p>
+<div class="warn">
+<b>必须吸取的教训（a4 已试过一次，失败了）：</b>2026-08-31 的 a4 驻留实测只省 1.1MB——98% 的候选被三个结构性原因拒掉：①tensor_link 链（405 处）②融合对内部直连（384 处，已经不出 DDR）③host 链 kind 不兼容（190 处）。<b>问题不在驻留机制，在 a4 只挑"产段→消费段中间没有任何 host 步"的裸边界，这种边界在这个模型里本来就少。</b>route 1 的不同做法：允许驻留"过 host 边界"——只要 host 链能折进产段尾部的 op=6（a4 的 _emit_resid_fold 已实现这个折叠，10 个站验证过机制可行），把"先折链、再驻留"串起来做，候选空间从 20 站扩到普查口径的 ~190MB。这是 a4 没试过的组合。
+</div>
+
+<h2>二点五、路线 1.5：host 边界折进片（跟路线一配套）</h2>
+<p>普查里 65.2MB 的 softmax P 和 66.7MB 的 K/Q 块是 host 写进 DDR、PL 再装回来的。NORM/ELTWISE 引擎（op=6）已经能覆盖 norm/残差加；softmax 的 S→P 归约 PL 也有（SM16）。把这几个 host 步折成产段尾部的 op=6 描述符，这 130MB 里可折的部分（P 块 247.7MB 装载里 p_in 类 65.2MB 是纯 softmax 数学）就不出片了。跟路线一叠加使用：路线一消"引擎直连"的 190MB，这条消"host 直连"里的几十 MB。</p>
+
+<h2>三、路线二：双读引擎——CTX 和权重并行装</h2>
+<p>现在一台读引擎串行服务两种装载：先装完 CTX 再装权重（或反之），184.0 + 108.1 = 292.1M 拍是串行和。带宽既然够，给 CTX 和 W 各配一台读引擎（AR/R 通道各一条流，分别写 CTX B 口和 WRAM），读通道变 max(184.0, 108.1) = <b>184.0M 拍，一步过线</b>，还富余 51.6M。</p>
+<p>代价与风险：ae_dma 读引擎复制一份（约 +2.4k LUT，ae_dma 现在 2,405 LUT），CTX B 口多一个写者要仲裁（R2 的 pf_ctx_stall 逻辑扩展成双请求者）。<b>风险在验证平台 TB：</b>两台读引擎共享 TB 从机一条 R 通道，混合并发速率没实测过（ctx 单流 3.70 B/拍、w 单流 5.62 B/拍，混合能到多少要 Verilator 实验）。真机 HP 口没这个问题（64 B/拍，两台引擎各吃各的都饱）。所以这条路线模型上最干净、实证上有一个待测点。</p>
+
+<h2>四、路线三：WRAM 4 组驻留——权重重装砍半</h2>
+<p>LOAD_W 的 108.1M 拍里大部分是重装：同一个权重图被多个段反复装（WRAM 现在半区双缓冲，COPY 一来就得作废全部驻留）。WRAM 从 2 组加到 4 组（442KB→884KB，每列 +2Mb，约 +36 个 BRAM36 等效），驻留表命中率上升，模型估算暴露装载 108.1→约 55M。单靠它不够（292.1−53.1=239.0M，差 3.4M），但它是唯一顺手就能做的：a2 的驻留表机制现成，只加容量。<b>注意这是三条路线里唯一要加 BRAM 的</b>（其余都是零 BRAM）。INT4 权重（字节直接减半）在这条线上收益最大，但 INT4 线用户已令停，本页不展开。</p>
+
+<h2>五、三条路线怎么选</h2>
+<table>
+<tr><th>路线</th><th>改哪里</th><th>读通道降到</th><th>单独够不够（&lt;235.6M）</th><th>代价</th><th>主要风险</th></tr>
+<tr><td><b>1. CTX 双区驻留</b>（+1.5 host 折叠）</td><td>编译器（调度）+ CTX 地址译码一位</td><td class="num">约 240 → 约 230M</td><td>配 1.5 后够</td><td>零 BRAM/零 DSP</td><td>a4 前车之鉴：必须"折链+驻留"联动，单做驻留没肉</td></tr>
+<tr><td><b>2. 双读引擎</b></td><td>ae_dma（+1 台读引擎）+ B 口仲裁</td><td class="num">184.0M</td><td><b>够，富余 51.6M</b></td><td>+2.4k LUT</td><td>TB 混合并发速率未实测（真机无此问题）</td></tr>
+<tr><td><b>3. WRAM 4 组</b></td><td>WRAM 容量（BRAM）</td><td class="num">239.0M</td><td>差 3.4M，不够</td><td>+36 BRAM36 等效</td><td>低（机制现成）</td></tr>
+</table>
+<p class="hint">怎么看：路线 2 是纯硬件、模型收益最大、且不依赖编译器改造，推荐先做（做完直接过线）；路线 1 是字节层面的真减少（对功耗、对 HP 口径都有价值），值得跟着做；路线 3 最便宜但单独不解决问题，当顺手菜。</p>
+<p><b>过了 235.6M 这条线之后，三个口径全部归一：</b>总时间 = 计算通道 235.6M + θ = 275.6M（1.39ms），TB 和 HP64 不再有差距。再往后想快，只能继续压计算（COPY 40.3M 是下一个可动的块——DMA 列主序路由，即 R5），那是 R3 之后下一张牌。</p>
+
+<h2>六、数字汇总（从 899.4M 一路看下来）</h2>
+<table>
+<tr><th>阶段</th><th>总拍（TB 口径）</th><th>瓶颈</th><th>相对 a3</th></tr>
+<tr><td>a3（R1+R2 前）</td><td class="num">899.4M / 4.54ms</td><td>串行和</td><td class="num">—</td></tr>
+<tr><td>R1+R2（已实证）</td><td class="num">426.7M / 2.15ms</td><td>计算</td><td class="num">−52.6%</td></tr>
+<tr><td>+R3 方案 C（模型定案）</td><td class="num">332.1M / 1.67ms</td><td>读通道 292.1M</td><td class="num">−63.1%</td></tr>
+<tr><td>+读压缩（路线 2，模型）</td><td class="num"><b>275.6M / 1.39ms</b></td><td>计算 235.6M（三口径归一）</td><td class="num"><b>−69.4%</b></td></tr>
+</table>
+<p class="hint">从项目起点 1216.5M 算总账：275.6M = −77.3%。每帧 1.39ms，对 60fps（16.7ms 预算）余量 12 倍。</p>
+
+<h2>七、实施注意</h2>
+<ul>
+<li><b>顺序依赖：</b>读压缩的一切收益都以 R3 落地为前提——R3 之前计算通道 386.7M 高高在上，读通道怎么压都被藏着，一拍不省。<b>先 R3、再读压缩</b>，顺序不能反。</li>
+<li>路线 1 的编译器改造要动"段自包含契约"（段的输入必须从 DDR 装）：host 驱动和黄金模型要跟着改，这是 a4 当年把它划出软件轮的原因。做的时候先在模型层验证生命期规划（recon_xtab 的普查数字直接当输入），再动编译器。</li>
+<li>路线 2 的 TB 混合速率实验很小（改 TB 加一个计数器跑一个代表段），建议 RTL 轮顺手带上，把"待测点"消掉。</li>
+</ul>
+
+<h2>八、复现</h2>
+<pre>
+# 本页普查数字（a2 流，只读脚本，2026-09-01 实跑）：
+cd hb_fpga_impl/12_actv/a4
+python recon_loads.py    # LOAD_CTX 837.6MB 按来源/形态分类
+python recon_flow.py     # 引擎直连 548.6MB + 生产消费距离谱
+python recon_scope.py    # 距离≤3 且容量内候选 56.9MB（+更长距离共 191.6MB，见 recon_xtab）
+python recon_xtab.py     # 容量内候选 × 形态 × host 交叉表 191.6MB
+# a4 驻留实测（98% 被拒的教训数据）：
+cd hb_fpga_impl/12_actv/a4 && python compiler_a4.py ...   # build_a4/model_summary.json 的 resid_* 字段
+# R3C 后的 lane 模型：
+cd hb_fpga_impl/19_r3c_arch && python r3c_model.py
+</pre>
+<p class="meta">注：普查脚本跑的是 a2 流（837.6MB 口径），a3 流（680MB）的结构同源——a3 已把融合能消的 157MB 消掉了，剩下的构成比例与 a2 普查一致。路线收益按 a3 字节口径折算。</p>
+
+</body>
+</html>

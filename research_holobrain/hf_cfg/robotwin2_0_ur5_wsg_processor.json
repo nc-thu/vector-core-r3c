@@ -1,0 +1,220 @@
+{
+    "__config_type__": "robo_orchard_lab.models.holobrain.processor:HoloBrainProcessorCfg",
+    "class_type": "robo_orchard_lab.models.holobrain.processor:HoloBrainProcessor",
+    "load_image": true,
+    "load_depth": true,
+    "cam_names": [
+        "left_camera",
+        "right_camera",
+        "head_camera"
+    ],
+    "valid_action_step": null,
+    "transforms": [
+        {
+            "type": "robo_orchard_lab.dataset.robotwin.transforms:AddItems",
+            "T_base2world": [
+                [
+                    1,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0,
+                    -0.65
+                ],
+                [
+                    0,
+                    0,
+                    1,
+                    0.65
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            ],
+            "joint_mask": [
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false
+            ]
+        },
+        {
+            "type": "robo_orchard_lab.dataset.robotwin.transforms:SimpleStateSampling",
+            "hist_steps": 1,
+            "pred_steps": 64
+        },
+        {
+            "type": "robo_orchard_lab.dataset.robotwin.transforms:Resize",
+            "dst_wh": [
+                320,
+                256
+            ]
+        },
+        {
+            "type": "robo_orchard_lab.dataset.robotwin.transforms:ImageChannelFlip",
+            "output_channel": [
+                2,
+                1,
+                0
+            ]
+        },
+        {
+            "type": "robo_orchard_lab.dataset.robotwin.transforms:ToTensor"
+        },
+        {
+            "type": "robo_orchard_lab.dataset.robotwin.transforms:MoveEgoToCam"
+        },
+        {
+            "type": "robo_orchard_lab.dataset.robotwin.transforms:GetProjectionMat",
+            "target_coordinate": "ego"
+        },
+        {
+            "type": "robo_orchard_lab.dataset.robotwin.transforms:AddScaleShift",
+            "scale_shift": [
+                [
+                    2.400281548500061,
+                    -0.1310516595840454
+                ],
+                [
+                    1.445511817932129,
+                    -1.445511817932129
+                ],
+                [
+                    2.16847026348114,
+                    -0.23492777347564697
+                ],
+                [
+                    1.7424615025520325,
+                    -0.007538259029388428
+                ],
+                [
+                    2.8101450204849243,
+                    0.15472495555877686
+                ],
+                [
+                    2.9653799533843994,
+                    0.02583003044128418
+                ],
+                [
+                    0.5,
+                    0.5
+                ],
+                [
+                    2.400281548500061,
+                    -0.1310516595840454
+                ],
+                [
+                    1.445511817932129,
+                    -1.445511817932129
+                ],
+                [
+                    2.16847026348114,
+                    -0.23492777347564697
+                ],
+                [
+                    1.7424615025520325,
+                    -0.007538259029388428
+                ],
+                [
+                    2.8101450204849243,
+                    0.15472495555877686
+                ],
+                [
+                    2.9653799533843994,
+                    0.02583003044128418
+                ],
+                [
+                    0.5,
+                    0.5
+                ]
+            ]
+        },
+        {
+            "type": "robo_orchard_lab.dataset.robotwin.transforms:ConvertDataType",
+            "convert_map": {
+                "imgs": "float32",
+                "depths": "float32",
+                "image_wh": "float32",
+                "projection_mat": "float32",
+                "embodiedment_mat": "float32"
+            }
+        },
+        {
+            "type": "robo_orchard_lab.dataset.robotwin.transforms:DualArmKinematics",
+            "urdf": "./urdf/robotwin2_dual_arm_ur5_wsg.urdf",
+            "left_arm_link_keys": [
+                "left_shoulder_link",
+                "left_upper_arm_link",
+                "left_forearm_link",
+                "left_wrist_1_link",
+                "left_wrist_2_link",
+                "left_wrist_3_link"
+            ],
+            "left_finger_keys": [
+                "left_finger_left"
+            ],
+            "right_arm_link_keys": [
+                "right_shoulder_link",
+                "right_upper_arm_link",
+                "right_forearm_link",
+                "right_wrist_1_link",
+                "right_wrist_2_link",
+                "right_wrist_3_link"
+            ],
+            "right_finger_keys": [
+                "right_finger_left"
+            ],
+            "left_arm_joint_id": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "right_arm_joint_id": [
+                8,
+                9,
+                10,
+                11,
+                12,
+                13
+            ]
+        },
+        {
+            "type": "robo_orchard_lab.dataset.robotwin.transforms:ItemSelection",
+            "keys": [
+                "imgs",
+                "depths",
+                "image_wh",
+                "projection_mat",
+                "embodiedment_mat",
+                "hist_robot_state",
+                "joint_scale_shift",
+                "kinematics",
+                "text",
+                "joint_mask"
+            ]
+        },
+        {
+            "type": "robo_orchard_lab.dataset.robotwin.transforms:UnsqueezeBatch"
+        }
+    ]
+}

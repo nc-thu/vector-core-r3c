@@ -1,0 +1,36 @@
+[gold] 8 用例生成完毕（CTX 1280 字）
+  case0: A1 pad-row  m=18 n=20  tbl_base=64 k=0
+  case1: A2 2 full  m=32 n=5   tbl_base=320 k=0
+  case2: A3 1grp    m=7  n=33  tbl_base=576 k=0
+  case3: B1 k=n     m=18 n=20  tbl_base=832 k=20
+  case4: B2 ktail   m=33 n=17  tbl_base=836 k=17
+  case5: B3 neg-m   m=5  n=40  tbl_base=840 k=40
+  case6: B4 sat     m=16 n=8   tbl_base=846 k=8
+  case7: A4 square  m=16 n=16  tbl_base=848 k=0
+../rtl/ae_actv.sv:123: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:123: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:123: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:123: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:123: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:123: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:123: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:123: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:123: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:123: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:123: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:123: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:123: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:123: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:123: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_actv.sv:123: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+[tb] case0 done，用时 306 拍（sub=0 m=18 n=20 k=0 y=0 tbl=64）
+[tb] case1 done，用时 276 拍（sub=0 m=32 n=5 k=0 y=80 tbl=320）
+[tb] case2 done，用时 296 拍（sub=0 m=7 n=33 k=0 y=112 tbl=576）
+[tb] case3 done，用时 75 拍（sub=1 m=18 n=20 k=20 y=0 tbl=832）
+[tb] case4 done，用时 86 拍（sub=1 m=33 n=17 k=17 y=48 tbl=836）
+[tb] case5 done，用时 96 拍（sub=1 m=5 n=40 k=40 y=100 tbl=840）
+[tb] case6 done，用时 24 拍（sub=1 m=16 n=8 k=8 y=140 tbl=846）
+[tb] case7 done，用时 279 拍（sub=0 m=16 n=16 k=0 y=148 tbl=848）
+[tb] dump 完成（actv_ctx_out.mem，20480 字节）
+tb_ae_actv.sv:108: $finish called at 14715000 (1ps)
+[check] PASS — 20480 字节全部位精确（8 用例）

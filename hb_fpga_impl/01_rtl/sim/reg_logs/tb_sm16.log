@@ -1,0 +1,23 @@
+../rtl/ae_softmax.sv:99: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/ae_softmax.sv:99: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+WARNING: tb_sm16.sv:73: $readmemh(sm16_ctrl.mem): Not enough words in the file for the requested range [0:255].
+WARNING: tb_sm16.sv:74: $readmemh(sm16_s.mem): Not enough words in the file for the requested range [0:262143].
+WARNING: tb_sm16.sv:75: $readmemh(sm16_gold.mem): Not enough words in the file for the requested range [0:262143].
+[tb] t=0 done=1 guard=197 st=0 mem[sb]=001a00131225001203020068006c7c7f
+[tb] t=1 done=1 guard=189 st=0 mem[sb]=000000000115000e0050001100040000
+[tb] t=2 done=1 guard=97 st=0 mem[sb]=000511005000030000051c0055077e7f
+[tb] t=3 done=1 guard=64 st=0 mem[sb]=0000000000000000000000000076777f
+[tb] t=4 done=1 guard=48 st=0 mem[sb]=0000000000000000000000000000007f
+[tb] t=5 done=1 guard=220 st=0 mem[sb]=0000000035000011001e00290a000134
+[tb] t=6 done=1 guard=253 st=0 mem[sb]=0100001b0400111300000100000b467f
+[tb] t=7 done=1 guard=195 st=0 mem[sb]=01000000262100002d250000000a0000
+[tb] t=8 done=1 guard=311 st=0 mem[sb]=2a000a00004706000400000000697b7f
+[tb] t=9 done=1 guard=101 st=0 mem[sb]=000000000000000000000000000b0002
+[tb] t=10 done=1 guard=201 st=0 mem[sb]=00000000001f002b0100360e4000217f
+[tb] t=11 done=1 guard=281 st=0 mem[sb]=520000583300000019080000691c007f
+[tb] t=12 done=1 guard=53 st=0 mem[sb]=00000000000000000000000000000f07
+[tb] t=13 done=1 guard=48 st=0 mem[sb]=7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f
+[tb] t=14 done=1 guard=249 st=0 mem[sb]=000400031a0000000207615373107e7f
+[tb] t=15 done=1 guard=146 st=0 mem[sb]=00000000000000000000000000000b01
+[tb_sm16] 16 用例 5711 元素全部位精确一致 PASS
+tb_sm16.sv:83: $finish called at 27170000 (1ps)

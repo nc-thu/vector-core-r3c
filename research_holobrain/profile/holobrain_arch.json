@@ -1,0 +1,961 @@
+{
+ "meta": {
+  "cols": 108,
+  "f_syn": 198500000.0,
+  "bw64": 7.08,
+  "mac_cyc": 1728,
+  "question": "喂数据+搬权重全流水(II=1)能省多少？",
+  "formula_feed_gemm": "compute += 4 + ceil(m/16)*(k+2)  # 每列组一次；合计 ×ceil(n/108)×count×mul  (route_study.hw_gemm_w L43)",
+  "formula_feed_attn": "QK^T: ceil(lk/108)*(4+ceil(lq/16)*(dhead+2)); PV: (4+ceil(lq/16)*(lk+2)); ×heads×count (swiftvla_hw.hw_attn L61-68)",
+  "formula_conc": "conc = max(compute+drain, sm, copy, w, elem) + act (+drain)  (swiftvla_hw.models L164) ← 已是各引擎完美并行的全流水口径",
+  "anchors": {
+   "M0": 54.2138,
+   "W64": 49.323513,
+   "sm": 18.59718,
+   "copy": 8.56272,
+   "elem16": 7.933376,
+   "conc108": 54.309228,
+   "gmacs": 73661456384.0,
+   "ref216_128": 34.829874
+  }
+ },
+ "formula_verification": [
+  {
+   "item": "Fusion/img/img_ffn_fc2",
+   "m": 1700,
+   "n": 256,
+   "k": 2048,
+   "count": 12,
+   "my_cycles": 7896744,
+   "hw_cycles": 7896744
+  },
+  {
+   "item": "Swin2D/s4/qkv",
+   "m": 196,
+   "n": 2304,
+   "k": 768,
+   "count": 4,
+   "my_cycles": 881232,
+   "hw_cycles": 881232
+  },
+  {
+   "item": "ActionHead/step/temp_kv",
+   "m": 136,
+   "n": 512,
+   "k": 256,
+   "count": 60,
+   "my_cycles": 697800,
+   "hw_cycles": 697800
+  },
+  {
+   "item": "PSE/pts_fc(3->128)",
+   "m": 217600,
+   "n": 128,
+   "k": 3,
+   "count": 2,
+   "my_cycles": 272016,
+   "hw_cycles": 272016
+  }
+ ],
+ "machines": {
+  "M0_mcyc": 54.213798,
+  "M1_mcyc": 42.62815762962963,
+  "gap_mcyc": 11.585640370370372,
+  "M2d_mcyc": {
+   "BW64": 54.309228,
+   "BW128": 54.309228
+  },
+  "full_pipeline_saving_mcyc": -0.09543,
+  "w64_mcyc": 49.323513,
+  "act_mcyc": 0.09543,
+  "gmacs": 73661456384.0,
+  "sm_mcyc": 18.59718,
+  "copy_mcyc": 8.56272,
+  "elem_mcyc": 7.933376
+ },
+ "gap_decomposition": [
+  {
+   "cause": "n 列组取整 ceil(n/108)−n/108",
+   "mcyc": 9.9403,
+   "pct_of_gap": 85.8,
+   "attn_share_pct": 37.33,
+   "top_items": [
+    {
+     "item": "ActionHead/step/img_attn_qk+pv[PV]",
+     "mcyc": 2.1672
+    },
+    {
+     "item": "Fusion/img/img_ffn_fc2",
+     "mcyc": 1.6457
+    },
+    {
+     "item": "ActionHead/step/ffn_fc2",
+     "mcyc": 0.6196
+    }
+   ]
+  },
+  {
+   "cause": "m 批取整 ceil(m/16)−m/16",
+   "mcyc": 0.6852,
+   "pct_of_gap": 5.91,
+   "attn_share_pct": 19.29,
+   "top_items": [
+    {
+     "item": "ActionHead/step/adarm_proj(256->1536)",
+     "mcyc": 0.2064
+    },
+    {
+     "item": "Swin2D/s4/qkv",
+     "mcyc": 0.0493
+    },
+    {
+     "item": "Fusion/img/img_ffn_fc1",
+     "mcyc": 0.044
+    }
+   ]
+  },
+  {
+   "cause": "两者交叉",
+   "mcyc": 0.4521,
+   "pct_of_gap": 3.9,
+   "attn_share_pct": 87.55,
+   "top_items": [
+    {
+     "item": "Swin3D/s1/win_attn[PV]",
+     "mcyc": 0.0884
+    },
+    {
+     "item": "Swin2D/s1/win_attn[PV]",
+     "mcyc": 0.0485
+    },
+    {
+     "item": "Swin3D/s2/win_attn[PV]",
+     "mcyc": 0.0442
+    }
+   ]
+  },
+  {
+   "cause": "固定开销(每列组+4、每批+2 拍流水边)",
+   "mcyc": 0.508,
+   "pct_of_gap": 4.38,
+   "attn_share_pct": 35.17,
+   "top_items": [
+    {
+     "item": "ActionHead/step/img_attn_qk+pv[QK^T]",
+     "mcyc": 0.0722
+    },
+    {
+     "item": "PSE/pts_fc(3->128)",
+     "mcyc": 0.0645
+    },
+    {
+     "item": "Fusion/img/img_ffn_fc1",
+     "mcyc": 0.0493
+    }
+   ]
+  }
+ ],
+ "matrix": [
+  {
+   "model": "M0",
+   "model_desc": "现行",
+   "lever": "none",
+   "lever_desc": "无",
+   "bw": "BW64",
+   "feed_mcyc": 54.2138,
+   "w_mcyc": 49.3235,
+   "wall_mcyc": 54.3092,
+   "wall_sec": 0.2736,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M0",
+   "model_desc": "现行",
+   "lever": "none",
+   "lever_desc": "无",
+   "bw": "BW128",
+   "feed_mcyc": 54.2138,
+   "w_mcyc": 24.6618,
+   "wall_mcyc": 54.3092,
+   "wall_sec": 0.2736,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M0",
+   "model_desc": "现行",
+   "lever": "bert",
+   "lever_desc": "+BERT缓存(删Text段)",
+   "bw": "BW64",
+   "feed_mcyc": 53.3547,
+   "w_mcyc": 37.4566,
+   "wall_mcyc": 53.4502,
+   "wall_sec": 0.2693,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M0",
+   "model_desc": "现行",
+   "lever": "bert",
+   "lever_desc": "+BERT缓存(删Text段)",
+   "bw": "BW128",
+   "feed_mcyc": 53.3547,
+   "w_mcyc": 18.7283,
+   "wall_mcyc": 53.4502,
+   "wall_sec": 0.2693,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M0",
+   "model_desc": "现行",
+   "lever": "hoist",
+   "lever_desc": "+K/V hoist",
+   "bw": "BW64",
+   "feed_mcyc": 50.3233,
+   "w_mcyc": 46.1984,
+   "wall_mcyc": 50.4187,
+   "wall_sec": 0.254,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M0",
+   "model_desc": "现行",
+   "lever": "hoist",
+   "lever_desc": "+K/V hoist",
+   "bw": "BW128",
+   "feed_mcyc": 50.3233,
+   "w_mcyc": 23.0992,
+   "wall_mcyc": 50.4187,
+   "wall_sec": 0.254,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M0",
+   "model_desc": "现行",
+   "lever": "both",
+   "lever_desc": "两者都上",
+   "bw": "BW64",
+   "feed_mcyc": 49.4643,
+   "w_mcyc": 34.3315,
+   "wall_mcyc": 49.5597,
+   "wall_sec": 0.2497,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M0",
+   "model_desc": "现行",
+   "lever": "both",
+   "lever_desc": "两者都上",
+   "bw": "BW128",
+   "feed_mcyc": 49.4643,
+   "w_mcyc": 17.1658,
+   "wall_mcyc": 49.5597,
+   "wall_sec": 0.2497,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M1",
+   "model_desc": "屋顶线",
+   "lever": "none",
+   "lever_desc": "无",
+   "bw": "BW64",
+   "feed_mcyc": 42.6282,
+   "w_mcyc": 49.3235,
+   "wall_mcyc": 49.4189,
+   "wall_sec": 0.249,
+   "wall_engine": "W"
+  },
+  {
+   "model": "M1",
+   "model_desc": "屋顶线",
+   "lever": "none",
+   "lever_desc": "无",
+   "bw": "BW128",
+   "feed_mcyc": 42.6282,
+   "w_mcyc": 24.6618,
+   "wall_mcyc": 42.7236,
+   "wall_sec": 0.2152,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M1",
+   "model_desc": "屋顶线",
+   "lever": "bert",
+   "lever_desc": "+BERT缓存(删Text段)",
+   "bw": "BW64",
+   "feed_mcyc": 41.8372,
+   "w_mcyc": 37.4566,
+   "wall_mcyc": 41.9326,
+   "wall_sec": 0.2112,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M1",
+   "model_desc": "屋顶线",
+   "lever": "bert",
+   "lever_desc": "+BERT缓存(删Text段)",
+   "bw": "BW128",
+   "feed_mcyc": 41.8372,
+   "w_mcyc": 18.7283,
+   "wall_mcyc": 41.9326,
+   "wall_sec": 0.2112,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M1",
+   "model_desc": "屋顶线",
+   "lever": "hoist",
+   "lever_desc": "+K/V hoist",
+   "bw": "BW64",
+   "feed_mcyc": 39.0237,
+   "w_mcyc": 46.1984,
+   "wall_mcyc": 46.2939,
+   "wall_sec": 0.2332,
+   "wall_engine": "W"
+  },
+  {
+   "model": "M1",
+   "model_desc": "屋顶线",
+   "lever": "hoist",
+   "lever_desc": "+K/V hoist",
+   "bw": "BW128",
+   "feed_mcyc": 39.0237,
+   "w_mcyc": 23.0992,
+   "wall_mcyc": 39.1191,
+   "wall_sec": 0.1971,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M1",
+   "model_desc": "屋顶线",
+   "lever": "both",
+   "lever_desc": "两者都上",
+   "bw": "BW64",
+   "feed_mcyc": 38.2327,
+   "w_mcyc": 34.3315,
+   "wall_mcyc": 38.3281,
+   "wall_sec": 0.1931,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M1",
+   "model_desc": "屋顶线",
+   "lever": "both",
+   "lever_desc": "两者都上",
+   "bw": "BW128",
+   "feed_mcyc": 38.2327,
+   "w_mcyc": 17.1658,
+   "wall_mcyc": 38.3281,
+   "wall_sec": 0.1931,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2a",
+   "model_desc": "拼批(上界)",
+   "lever": "none",
+   "lever_desc": "无",
+   "bw": "BW64",
+   "feed_mcyc": 53.4672,
+   "w_mcyc": 49.3235,
+   "wall_mcyc": 53.5626,
+   "wall_sec": 0.2698,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2a",
+   "model_desc": "拼批(上界)",
+   "lever": "none",
+   "lever_desc": "无",
+   "bw": "BW128",
+   "feed_mcyc": 53.4672,
+   "w_mcyc": 24.6618,
+   "wall_mcyc": 53.5626,
+   "wall_sec": 0.2698,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2a",
+   "model_desc": "拼批(上界)",
+   "lever": "bert",
+   "lever_desc": "+BERT缓存(删Text段)",
+   "bw": "BW64",
+   "feed_mcyc": 52.6082,
+   "w_mcyc": 37.4566,
+   "wall_mcyc": 52.7036,
+   "wall_sec": 0.2655,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2a",
+   "model_desc": "拼批(上界)",
+   "lever": "bert",
+   "lever_desc": "+BERT缓存(删Text段)",
+   "bw": "BW128",
+   "feed_mcyc": 52.6082,
+   "w_mcyc": 18.7283,
+   "wall_mcyc": 52.7036,
+   "wall_sec": 0.2655,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2a",
+   "model_desc": "拼批(上界)",
+   "lever": "hoist",
+   "lever_desc": "+K/V hoist",
+   "bw": "BW64",
+   "feed_mcyc": 49.5767,
+   "w_mcyc": 46.1984,
+   "wall_mcyc": 49.6722,
+   "wall_sec": 0.2502,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2a",
+   "model_desc": "拼批(上界)",
+   "lever": "hoist",
+   "lever_desc": "+K/V hoist",
+   "bw": "BW128",
+   "feed_mcyc": 49.5767,
+   "w_mcyc": 23.0992,
+   "wall_mcyc": 49.6722,
+   "wall_sec": 0.2502,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2a",
+   "model_desc": "拼批(上界)",
+   "lever": "both",
+   "lever_desc": "两者都上",
+   "bw": "BW64",
+   "feed_mcyc": 48.7177,
+   "w_mcyc": 34.3315,
+   "wall_mcyc": 48.8131,
+   "wall_sec": 0.2459,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2a",
+   "model_desc": "拼批(上界)",
+   "lever": "both",
+   "lever_desc": "两者都上",
+   "bw": "BW128",
+   "feed_mcyc": 48.7177,
+   "w_mcyc": 17.1658,
+   "wall_mcyc": 48.8131,
+   "wall_sec": 0.2459,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2b",
+   "model_desc": "列多租户",
+   "lever": "none",
+   "lever_desc": "无",
+   "bw": "BW64",
+   "feed_mcyc": 43.7673,
+   "w_mcyc": 49.3235,
+   "wall_mcyc": 49.4189,
+   "wall_sec": 0.249,
+   "wall_engine": "W"
+  },
+  {
+   "model": "M2b",
+   "model_desc": "列多租户",
+   "lever": "none",
+   "lever_desc": "无",
+   "bw": "BW128",
+   "feed_mcyc": 43.7673,
+   "w_mcyc": 24.6618,
+   "wall_mcyc": 43.8628,
+   "wall_sec": 0.221,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2b",
+   "model_desc": "列多租户",
+   "lever": "bert",
+   "lever_desc": "+BERT缓存(删Text段)",
+   "bw": "BW64",
+   "feed_mcyc": 42.9711,
+   "w_mcyc": 37.4566,
+   "wall_mcyc": 43.0665,
+   "wall_sec": 0.217,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2b",
+   "model_desc": "列多租户",
+   "lever": "bert",
+   "lever_desc": "+BERT缓存(删Text段)",
+   "bw": "BW128",
+   "feed_mcyc": 42.9711,
+   "w_mcyc": 18.7283,
+   "wall_mcyc": 43.0665,
+   "wall_sec": 0.217,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2b",
+   "model_desc": "列多租户",
+   "lever": "hoist",
+   "lever_desc": "+K/V hoist",
+   "bw": "BW64",
+   "feed_mcyc": 40.1316,
+   "w_mcyc": 46.1984,
+   "wall_mcyc": 46.2939,
+   "wall_sec": 0.2332,
+   "wall_engine": "W"
+  },
+  {
+   "model": "M2b",
+   "model_desc": "列多租户",
+   "lever": "hoist",
+   "lever_desc": "+K/V hoist",
+   "bw": "BW128",
+   "feed_mcyc": 40.1316,
+   "w_mcyc": 23.0992,
+   "wall_mcyc": 40.227,
+   "wall_sec": 0.2027,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2b",
+   "model_desc": "列多租户",
+   "lever": "both",
+   "lever_desc": "两者都上",
+   "bw": "BW64",
+   "feed_mcyc": 39.3354,
+   "w_mcyc": 34.3315,
+   "wall_mcyc": 39.4308,
+   "wall_sec": 0.1986,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2b",
+   "model_desc": "列多租户",
+   "lever": "both",
+   "lever_desc": "两者都上",
+   "bw": "BW128",
+   "feed_mcyc": 39.3354,
+   "w_mcyc": 17.1658,
+   "wall_mcyc": 39.4308,
+   "wall_sec": 0.1986,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2c",
+   "model_desc": "视角拼批",
+   "lever": "none",
+   "lever_desc": "无",
+   "bw": "BW64",
+   "feed_mcyc": 54.0422,
+   "w_mcyc": 43.5689,
+   "wall_mcyc": 54.1376,
+   "wall_sec": 0.2727,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2c",
+   "model_desc": "视角拼批",
+   "lever": "none",
+   "lever_desc": "无",
+   "bw": "BW128",
+   "feed_mcyc": 54.0422,
+   "w_mcyc": 21.7844,
+   "wall_mcyc": 54.1376,
+   "wall_sec": 0.2727,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2c",
+   "model_desc": "视角拼批",
+   "lever": "bert",
+   "lever_desc": "+BERT缓存(删Text段)",
+   "bw": "BW64",
+   "feed_mcyc": 53.1832,
+   "w_mcyc": 31.702,
+   "wall_mcyc": 53.2786,
+   "wall_sec": 0.2684,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2c",
+   "model_desc": "视角拼批",
+   "lever": "bert",
+   "lever_desc": "+BERT缓存(删Text段)",
+   "bw": "BW128",
+   "feed_mcyc": 53.1832,
+   "w_mcyc": 15.851,
+   "wall_mcyc": 53.2786,
+   "wall_sec": 0.2684,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2c",
+   "model_desc": "视角拼批",
+   "lever": "hoist",
+   "lever_desc": "+K/V hoist",
+   "bw": "BW64",
+   "feed_mcyc": 50.1517,
+   "w_mcyc": 40.4438,
+   "wall_mcyc": 50.2471,
+   "wall_sec": 0.2531,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2c",
+   "model_desc": "视角拼批",
+   "lever": "hoist",
+   "lever_desc": "+K/V hoist",
+   "bw": "BW128",
+   "feed_mcyc": 50.1517,
+   "w_mcyc": 20.2219,
+   "wall_mcyc": 50.2471,
+   "wall_sec": 0.2531,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2c",
+   "model_desc": "视角拼批",
+   "lever": "both",
+   "lever_desc": "两者都上",
+   "bw": "BW64",
+   "feed_mcyc": 49.2927,
+   "w_mcyc": 28.5769,
+   "wall_mcyc": 49.3881,
+   "wall_sec": 0.2488,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2c",
+   "model_desc": "视角拼批",
+   "lever": "both",
+   "lever_desc": "两者都上",
+   "bw": "BW128",
+   "feed_mcyc": 49.2927,
+   "w_mcyc": 14.2885,
+   "wall_mcyc": 49.3881,
+   "wall_sec": 0.2488,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2d",
+   "model_desc": "全流水",
+   "lever": "none",
+   "lever_desc": "无",
+   "bw": "BW64",
+   "feed_mcyc": 54.2138,
+   "w_mcyc": 49.3235,
+   "wall_mcyc": 54.3092,
+   "wall_sec": 0.2736,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2d",
+   "model_desc": "全流水",
+   "lever": "none",
+   "lever_desc": "无",
+   "bw": "BW128",
+   "feed_mcyc": 54.2138,
+   "w_mcyc": 24.6618,
+   "wall_mcyc": 54.3092,
+   "wall_sec": 0.2736,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2d",
+   "model_desc": "全流水",
+   "lever": "bert",
+   "lever_desc": "+BERT缓存(删Text段)",
+   "bw": "BW64",
+   "feed_mcyc": 53.3547,
+   "w_mcyc": 37.4566,
+   "wall_mcyc": 53.4502,
+   "wall_sec": 0.2693,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2d",
+   "model_desc": "全流水",
+   "lever": "bert",
+   "lever_desc": "+BERT缓存(删Text段)",
+   "bw": "BW128",
+   "feed_mcyc": 53.3547,
+   "w_mcyc": 18.7283,
+   "wall_mcyc": 53.4502,
+   "wall_sec": 0.2693,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2d",
+   "model_desc": "全流水",
+   "lever": "hoist",
+   "lever_desc": "+K/V hoist",
+   "bw": "BW64",
+   "feed_mcyc": 50.3233,
+   "w_mcyc": 46.1984,
+   "wall_mcyc": 50.4187,
+   "wall_sec": 0.254,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2d",
+   "model_desc": "全流水",
+   "lever": "hoist",
+   "lever_desc": "+K/V hoist",
+   "bw": "BW128",
+   "feed_mcyc": 50.3233,
+   "w_mcyc": 23.0992,
+   "wall_mcyc": 50.4187,
+   "wall_sec": 0.254,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2d",
+   "model_desc": "全流水",
+   "lever": "both",
+   "lever_desc": "两者都上",
+   "bw": "BW64",
+   "feed_mcyc": 49.4643,
+   "w_mcyc": 34.3315,
+   "wall_mcyc": 49.5597,
+   "wall_sec": 0.2497,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "M2d",
+   "model_desc": "全流水",
+   "lever": "both",
+   "lever_desc": "两者都上",
+   "bw": "BW128",
+   "feed_mcyc": 49.4643,
+   "w_mcyc": 17.1658,
+   "wall_mcyc": 49.5597,
+   "wall_sec": 0.2497,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "best",
+   "model_desc": "b+a+杠杆",
+   "lever": "none",
+   "lever_desc": "无",
+   "bw": "BW64",
+   "feed_mcyc": 43.4704,
+   "w_mcyc": 43.5689,
+   "wall_mcyc": 43.6643,
+   "wall_sec": 0.22,
+   "wall_engine": "W"
+  },
+  {
+   "model": "best",
+   "model_desc": "b+a+杠杆",
+   "lever": "none",
+   "lever_desc": "无",
+   "bw": "BW128",
+   "feed_mcyc": 43.4704,
+   "w_mcyc": 21.7844,
+   "wall_mcyc": 43.5658,
+   "wall_sec": 0.2195,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "best",
+   "model_desc": "b+a+杠杆",
+   "lever": "bert",
+   "lever_desc": "+BERT缓存(删Text段)",
+   "bw": "BW64",
+   "feed_mcyc": 42.6741,
+   "w_mcyc": 31.702,
+   "wall_mcyc": 42.7696,
+   "wall_sec": 0.2155,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "best",
+   "model_desc": "b+a+杠杆",
+   "lever": "bert",
+   "lever_desc": "+BERT缓存(删Text段)",
+   "bw": "BW128",
+   "feed_mcyc": 42.6741,
+   "w_mcyc": 15.851,
+   "wall_mcyc": 42.7696,
+   "wall_sec": 0.2155,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "best",
+   "model_desc": "b+a+杠杆",
+   "lever": "hoist",
+   "lever_desc": "+K/V hoist",
+   "bw": "BW64",
+   "feed_mcyc": 39.8347,
+   "w_mcyc": 40.4438,
+   "wall_mcyc": 40.5392,
+   "wall_sec": 0.2042,
+   "wall_engine": "W"
+  },
+  {
+   "model": "best",
+   "model_desc": "b+a+杠杆",
+   "lever": "hoist",
+   "lever_desc": "+K/V hoist",
+   "bw": "BW128",
+   "feed_mcyc": 39.8347,
+   "w_mcyc": 20.2219,
+   "wall_mcyc": 39.9301,
+   "wall_sec": 0.2012,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "best",
+   "model_desc": "b+a+杠杆",
+   "lever": "both",
+   "lever_desc": "两者都上",
+   "bw": "BW64",
+   "feed_mcyc": 39.0384,
+   "w_mcyc": 28.5769,
+   "wall_mcyc": 39.1339,
+   "wall_sec": 0.1971,
+   "wall_engine": "feed(阵列喂数)"
+  },
+  {
+   "model": "best",
+   "model_desc": "b+a+杠杆",
+   "lever": "both",
+   "lever_desc": "两者都上",
+   "bw": "BW128",
+   "feed_mcyc": 39.0384,
+   "w_mcyc": 14.2885,
+   "wall_mcyc": 39.1339,
+   "wall_sec": 0.1971,
+   "wall_engine": "feed(阵列喂数)"
+  }
+ ],
+ "vs_216": {
+  "best108_both_bw64_mcyc": 39.1339,
+  "best108_both_bw128_mcyc": 39.1339,
+  "cols216_bw128_mcyc": 34.829874,
+  "cols216_bw128_both_levers_mcyc": 32.032,
+  "ratio_pct": 112.4,
+  "ratio_vs216_fair_pct": 122.2,
+  "widening_gain_recovered_pct": 77.9,
+  "best_engine_bw64": "feed(阵列喂数)",
+  "best_engine_bw128": "feed(阵列喂数)"
+ },
+ "m2": {
+  "M2a_upper_mcyc": 53.467204,
+  "M2a_strict_mcyc": 54.042202,
+  "M2a_note": "上界含异 W 独立实例(temp_av 8 头 bmm、win_attn 窗口×视角)；合法档(同 W 跨视角) feed 只省 0.172 M",
+  "M2b_mcyc": 43.76732977777777,
+  "M2b_note": "列组取整改分数(列多租户硬件上界)；恰好回收 n_round+cross",
+  "M2c_feed_mcyc": 54.042202,
+  "M2c_w64_mcyc": 43.568872,
+  "M2c_note": "视角拼批对 feed 收益极小，W 装载减半才是收益",
+  "best_feed_mcyc": 43.470378185185176,
+  "residual_to_roofline_mcyc": 0.8422205555555522
+ },
+ "w_bytes": {
+  "port_mb": 349.21047204,
+  "true_mb": 333.530368,
+  "padding_pct": 4.5,
+  "note": "列多租户下小 n 条目可按真实字节装载，W 再省 ~4.7%"
+ },
+ "conclusions": [
+  "账本 CONC 口径本来就是全流水（max(各引擎)+act），M2d=54.31M ≥ M0=54.21M：把喂数据/搬权重做成 II=1 一拍也省不下来，墙是阵列喂数本身（feed 比 W@BW64 49.3M、sm 18.6M 都高）。",
+  "M0 与屋顶线 M1=42.63M 之间 gap=11.59M，成因：n 列组取整 9.94M（占 86%，主导）、m 批取整 0.69M、交叉 0.45M、固定开销 0.51M。",
+  "回收机制排序：M2b 列多租户 43.77M（省 10.45M，正好吃掉 n_round+cross）≫ M2c/M2a feed 0.172M（合法拼批只有跨视角，m 都是 16 倍数或大 m，行取整本来就小）。",
+  "M2c 真正的价值在 W：视角共享条目装载减半 49.3→43.6M，只在 W 成墙的档位（M2b 后 BW64）起作用。",
+  "best = M2b+M2a+双软件杠杆：108 列 BW128 39.1M（0.197s），是 216 列 BW128 无杠杆 34.8M 的 112%、同杠杆 32.0M 的 122%；吃回加宽收益的 78%。BW64 档 39.1M 墙是 feed(阵列喂数)。"
+ ],
+ "asserts": [
+  {
+   "name": "公式核实 Fusion/img/img_ffn_fc2",
+   "passed": true,
+   "detail": "7896744 == 7896744"
+  },
+  {
+   "name": "公式核实 Swin2D/s4/qkv",
+   "passed": true,
+   "detail": "881232 == 881232"
+  },
+  {
+   "name": "公式核实 ActionHead/step/temp_kv",
+   "passed": true,
+   "detail": "697800 == 697800"
+  },
+  {
+   "name": "公式核实 PSE/pts_fc(3->128)",
+   "passed": true,
+   "detail": "272016 == 272016"
+  },
+  {
+   "name": "M0 = 54.2138 ±0.01",
+   "passed": true,
+   "detail": "54.213798"
+  },
+  {
+   "name": "Σ feed 与 HW.account 逐拍一致",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "总 GMAC = 73.66G",
+   "passed": true,
+   "detail": "73.6615 GMAC"
+  },
+  {
+   "name": "W@BW64 = 49.3235 ±0.01",
+   "passed": true,
+   "detail": "49.323513"
+  },
+  {
+   "name": "sm = 18.5972 ±0.01",
+   "passed": true,
+   "detail": "18.597180"
+  },
+  {
+   "name": "copy = 8.5627 ±0.01",
+   "passed": true,
+   "detail": "8.562720"
+  },
+  {
+   "name": "elem16 = 7.9334 ±0.01",
+   "passed": true,
+   "detail": "7.933376"
+  },
+  {
+   "name": "M2d(BW64) == CONC 54.3092 ±0.01",
+   "passed": true,
+   "detail": "54.309228"
+  },
+  {
+   "name": "分解合计 == M0",
+   "passed": true,
+   "detail": "54.213798"
+  },
+  {
+   "name": "ideal 合计 == M1",
+   "passed": true,
+   "detail": "42.628158"
+  },
+  {
+   "name": "M2a_strict == M2c feed（合法拼批只剩视角）",
+   "passed": true,
+   "detail": "54.0422"
+  },
+  {
+   "name": "feed ≥ 屋顶线（各档）",
+   "passed": true,
+   "detail": ""
+  },
+  {
+   "name": "hoist 只删 GEMM：sm/copy 不变",
+   "passed": true,
+   "detail": "sm 18.5972 copy 8.5627"
+  },
+  {
+   "name": "elem 不随 hoist 变",
+   "passed": true,
+   "detail": ""
+  }
+ ],
+ "asserts_all_passed": true
+}

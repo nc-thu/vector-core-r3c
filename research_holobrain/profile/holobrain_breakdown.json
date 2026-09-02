@@ -1,0 +1,915 @@
+{
+ "per_stage": {
+  "Vision2D": {
+   "gmacs": 17259282432.0,
+   "gmacs_g": 17.259282432,
+   "feed_mcyc": 12.07154,
+   "w_cyc_mcyc": 8.418378,
+   "w_gb_port": 0.05960211624,
+   "w_mb_spec": 59.08992,
+   "sm_mcyc": 2.79936,
+   "copy_mcyc": 2.61888,
+   "n_exec": 8518
+  },
+  "Vision3D+PSE": {
+   "gmacs": 5202419712.0,
+   "gmacs_g": 5.202419712,
+   "feed_mcyc": 4.708596,
+   "w_cyc_mcyc": 0.748636,
+   "w_gb_port": 0.0053003428799999995,
+   "w_mb_spec": 4.498688,
+   "sm_mcyc": 2.916,
+   "copy_mcyc": 0.84976,
+   "n_exec": 8252
+  },
+  "Text": {
+   "gmacs": 1366818816.0,
+   "gmacs_g": 1.366818816,
+   "feed_mcyc": 0.85905,
+   "w_cyc_mcyc": 11.866881,
+   "w_gb_port": 0.08401751748,
+   "w_mb_spec": 85.131264,
+   "sm_mcyc": 0.015282,
+   "copy_mcyc": 0.055872,
+   "n_exec": 1095
+  },
+  "Fusion": {
+   "gmacs": 26422542336.0,
+   "gmacs_g": 26.422542336,
+   "feed_mcyc": 18.105504,
+   "w_cyc_mcyc": 4.437192,
+   "w_gb_port": 0.03141531936,
+   "w_mb_spec": 29.73696,
+   "sm_mcyc": 0.00891,
+   "copy_mcyc": 0.046272,
+   "n_exec": 960
+  },
+  "ActionHead/step": {
+   "gmacs": 23332126720.0,
+   "gmacs_g": 23.33212672,
+   "feed_mcyc": 18.38252,
+   "w_cyc_mcyc": 22.93025,
+   "w_gb_port": 0.16234617,
+   "w_mb_spec": 148.97664,
+   "sm_mcyc": 12.85644,
+   "copy_mcyc": 4.9872,
+   "n_exec": 10590
+  },
+  "ActionHead/once": {
+   "gmacs": 78266368.0,
+   "gmacs_g": 0.078266368,
+   "feed_mcyc": 0.086588,
+   "w_cyc_mcyc": 0.922176,
+   "w_gb_port": 0.00652900608,
+   "w_mb_spec": 6.096896,
+   "sm_mcyc": 0.001188,
+   "copy_mcyc": 0.004736,
+   "n_exec": 238
+  },
+  "ActionHead合计": {
+   "gmacs_g": 23.410393088,
+   "feed_mcyc": 18.469108,
+   "w_cyc_mcyc": 23.852426,
+   "w_gb_port": 0.16887517608000002,
+   "w_mb_spec": 155.073536,
+   "sm_mcyc": 12.857628,
+   "copy_mcyc": 4.991936,
+   "n_exec": 10828
+  }
+ },
+ "top_items": [
+  {
+   "stage": "Fusion/img",
+   "name": "img_ffn_fc2",
+   "kind": "gemm",
+   "m": 1700,
+   "n": 256,
+   "k": 2048,
+   "count": 12,
+   "mul": 1,
+   "gmacs_g": 10.6954752,
+   "feed_mcyc": 7.896744,
+   "w_mcyc": 1.040148,
+   "w_gb_port": 0.00736424784,
+   "sm_mcyc": 0.0,
+   "copy_mcyc": 0.0,
+   "feed_share": 0.14565930245285527
+  },
+  {
+   "stage": "Fusion/img",
+   "name": "img_ffn_fc1",
+   "kind": "gemm",
+   "m": 1700,
+   "n": 2048,
+   "k": 256,
+   "count": 12,
+   "mul": 1,
+   "gmacs_g": 10.6954752,
+   "feed_mcyc": 6.29508,
+   "w_mcyc": 0.824676,
+   "w_gb_port": 0.0058387060800000005,
+   "sm_mcyc": 0.0,
+   "copy_mcyc": 0.0,
+   "feed_share": 0.11611582719218454
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "img_attn_qk+pv",
+   "kind": "attn",
+   "m": "128x800",
+   "n": 800,
+   "k": 256,
+   "count": 6,
+   "mul": 10,
+   "gmacs_g": 3.145728,
+   "feed_mcyc": 4.14144,
+   "w_mcyc": 0.0,
+   "w_gb_port": 0.0,
+   "sm_mcyc": 12.44934,
+   "copy_mcyc": 4.89312,
+   "feed_share": 0.07639088484448184
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "img_kv",
+   "kind": "gemm",
+   "m": 800,
+   "n": 512,
+   "k": 256,
+   "count": 6,
+   "mul": 10,
+   "gmacs_g": 6.291456,
+   "feed_mcyc": 3.8712,
+   "w_mcyc": 1.0851,
+   "w_gb_port": 0.007682508,
+   "sm_mcyc": 0.0,
+   "copy_mcyc": 0.0,
+   "feed_share": 0.07140617597018382
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "ffn_fc2",
+   "kind": "gemm",
+   "m": 128,
+   "n": 256,
+   "k": 2048,
+   "count": 6,
+   "mul": 10,
+   "gmacs_g": 4.02653184,
+   "feed_mcyc": 2.95272,
+   "w_mcyc": 5.20074,
+   "w_gb_port": 0.0368212392,
+   "sm_mcyc": 0.0,
+   "copy_mcyc": 0.0,
+   "feed_share": 0.05446436348178373
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "ffn_fc1",
+   "kind": "gemm",
+   "m": 128,
+   "n": 2048,
+   "k": 256,
+   "count": 6,
+   "mul": 10,
+   "gmacs_g": 4.02653184,
+   "feed_mcyc": 2.35752,
+   "w_mcyc": 4.12338,
+   "w_gb_port": 0.029193530399999997,
+   "sm_mcyc": 0.0,
+   "copy_mcyc": 0.0,
+   "feed_share": 0.04348560858990178
+  },
+  {
+   "stage": "Swin2D/s3",
+   "name": "ffn_fc2",
+   "kind": "gemm",
+   "m": 320,
+   "n": 384,
+   "k": 1536,
+   "count": 12,
+   "mul": 1,
+   "gmacs_g": 2.26492416,
+   "feed_mcyc": 1.476672,
+   "w_mcyc": 1.040208,
+   "w_gb_port": 0.007364672639999999,
+   "sm_mcyc": 0.0,
+   "copy_mcyc": 0.0,
+   "feed_share": 0.027237936733375514
+  },
+  {
+   "stage": "Swin2D/s3",
+   "name": "qkv",
+   "kind": "gemm",
+   "m": 441,
+   "n": 1152,
+   "k": 384,
+   "count": 12,
+   "mul": 1,
+   "gmacs_g": 2.341011456,
+   "feed_mcyc": 1.427184,
+   "w_mcyc": 0.715836,
+   "w_gb_port": 0.00506811888,
+   "sm_mcyc": 0.0,
+   "copy_mcyc": 0.0,
+   "feed_share": 0.02632510638712307
+  },
+  {
+   "stage": "Swin2D/s3",
+   "name": "ffn_fc1",
+   "kind": "gemm",
+   "m": 320,
+   "n": 1536,
+   "k": 384,
+   "count": 12,
+   "mul": 1,
+   "gmacs_g": 2.26492416,
+   "feed_mcyc": 1.39032,
+   "w_mcyc": 0.97614,
+   "w_gb_port": 0.0069110712000000005,
+   "sm_mcyc": 0.0,
+   "copy_mcyc": 0.0,
+   "feed_share": 0.025645131890593607
+  },
+  {
+   "stage": "PSE",
+   "name": "fusion_fc1",
+   "kind": "gemm",
+   "m": 1700,
+   "n": 1024,
+   "k": 512,
+   "count": 2,
+   "mul": 1,
+   "gmacs_g": 1.7825792,
+   "feed_mcyc": 1.10004,
+   "w_mcyc": 0.14454,
+   "w_gb_port": 0.0010233432,
+   "sm_mcyc": 0.0,
+   "copy_mcyc": 0.0,
+   "feed_share": 0.0202907754221536
+  },
+  {
+   "stage": "PSE",
+   "name": "fusion_fc2",
+   "kind": "gemm",
+   "m": 1700,
+   "n": 512,
+   "k": 1024,
+   "count": 2,
+   "mul": 1,
+   "gmacs_g": 1.7825792,
+   "feed_mcyc": 1.09786,
+   "w_mcyc": 0.14449,
+   "w_gb_port": 0.0010229892,
+   "sm_mcyc": 0.0,
+   "copy_mcyc": 0.0,
+   "feed_share": 0.020250564256722985
+  },
+  {
+   "stage": "Fusion/img",
+   "name": "def_sampling_offsets",
+   "kind": "gemm",
+   "m": 1700,
+   "n": 256,
+   "k": 256,
+   "count": 12,
+   "mul": 1,
+   "gmacs_g": 1.3369344,
+   "feed_mcyc": 0.99396,
+   "w_mcyc": 0.130212,
+   "w_gb_port": 0.00092190096,
+   "sm_mcyc": 0.0,
+   "copy_mcyc": 0.0,
+   "feed_share": 0.01833407797771335
+  },
+  {
+   "stage": "Fusion/img",
+   "name": "def_value_proj",
+   "kind": "gemm",
+   "m": 1700,
+   "n": 256,
+   "k": 256,
+   "count": 12,
+   "mul": 1,
+   "gmacs_g": 1.3369344,
+   "feed_mcyc": 0.99396,
+   "w_mcyc": 0.130212,
+   "w_gb_port": 0.00092190096,
+   "sm_mcyc": 0.0,
+   "copy_mcyc": 0.0,
+   "feed_share": 0.01833407797771335
+  },
+  {
+   "stage": "Fusion/img",
+   "name": "def_output_proj",
+   "kind": "gemm",
+   "m": 1700,
+   "n": 256,
+   "k": 256,
+   "count": 12,
+   "mul": 1,
+   "gmacs_g": 1.3369344,
+   "feed_mcyc": 0.99396,
+   "w_mcyc": 0.130212,
+   "w_gb_port": 0.00092190096,
+   "sm_mcyc": 0.0,
+   "copy_mcyc": 0.0,
+   "feed_share": 0.01833407797771335
+  },
+  {
+   "stage": "Swin2D/s4",
+   "name": "qkv",
+   "kind": "gemm",
+   "m": 196,
+   "n": 2304,
+   "k": 768,
+   "count": 4,
+   "mul": 1,
+   "gmacs_g": 1.387266048,
+   "feed_mcyc": 0.881232,
+   "w_mcyc": 0.953832,
+   "w_gb_port": 0.006753130560000001,
+   "sm_mcyc": 0.0,
+   "copy_mcyc": 0.0,
+   "feed_share": 0.01625475492419845
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "temp_kv",
+   "kind": "gemm",
+   "m": 136,
+   "n": 512,
+   "k": 256,
+   "count": 6,
+   "mul": 10,
+   "gmacs_g": 1.06954752,
+   "feed_mcyc": 0.6978,
+   "w_mcyc": 1.0851,
+   "w_gb_port": 0.007682508,
+   "sm_mcyc": 0.0,
+   "copy_mcyc": 0.0,
+   "feed_share": 0.012871262035543054
+  },
+  {
+   "stage": "Fusion/img",
+   "name": "def_attn_weights",
+   "kind": "gemm",
+   "m": 1700,
+   "n": 128,
+   "k": 256,
+   "count": 12,
+   "mul": 1,
+   "gmacs_g": 0.6684672,
+   "feed_mcyc": 0.66264,
+   "w_mcyc": 0.086808,
+   "w_gb_port": 0.00061460064,
+   "sm_mcyc": 0.0,
+   "copy_mcyc": 0.0,
+   "feed_share": 0.012222718651808899
+  },
+  {
+   "stage": "ActionHead/step",
+   "name": "temp_av",
+   "kind": "gemm",
+   "m": 128,
+   "n": 32,
+   "k": 136,
+   "count": 48,
+   "mul": 10,
+   "gmacs_g": 0.26738688,
+   "feed_mcyc": 0.53184,
+   "w_mcyc": 0.924,
+   "w_gb_port": 0.00654192,
+   "sm_mcyc": 0.0,
+   "copy_mcyc": 0.0,
+   "feed_share": 0.009810048725971939
+  },
+  {
+   "stage": "Swin2D/s3",
+   "name": "proj",
+   "kind": "gemm",
+   "m": 441,
+   "n": 384,
+   "k": 384,
+   "count": 12,
+   "mul": 1,
+   "gmacs_g": 0.780337152,
+   "feed_mcyc": 0.518976,
+   "w_mcyc": 0.260304,
+   "w_gb_port": 0.0018429523200000002,
+   "sm_mcyc": 0.0,
+   "copy_mcyc": 0.0,
+   "feed_share": 0.009572765958953844
+  },
+  {
+   "stage": "Swin2D/s1",
+   "name": "ffn_fc1",
+   "kind": "gemm",
+   "m": 5120,
+   "n": 384,
+   "k": 96,
+   "count": 4,
+   "mul": 1,
+   "gmacs_g": 0.75497472,
+   "feed_mcyc": 0.501824,
+   "w_mcyc": 0.021776,
+   "w_gb_port": 0.00015417407999999998,
+   "sm_mcyc": 0.0,
+   "copy_mcyc": 0.0,
+   "feed_share": 0.009256388936263052
+  }
+ ],
+ "feed_composition": {
+  "feed_wall_mcyc": 54.213798,
+  "by_stage": {
+   "Vision2D": {
+    "feed_mcyc": 12.07154,
+    "share": 0.222665455019403
+   },
+   "Vision3D+PSE": {
+    "feed_mcyc": 4.708596,
+    "share": 0.08685235445042976
+   },
+   "Text": {
+    "feed_mcyc": 0.85905,
+    "share": 0.015845597093197567
+   },
+   "Fusion": {
+    "feed_mcyc": 18.105504,
+    "share": 0.33396486997645874
+   },
+   "ActionHead/step": {
+    "feed_mcyc": 18.38252,
+    "share": 0.33907456548238885
+   },
+   "ActionHead/once": {
+    "feed_mcyc": 0.086588,
+    "share": 0.001597157978122101
+   }
+  },
+  "by_m_bucket": {
+   "微m≤16 (t_embed1/NJ8/BERT16)": {
+    "feed_mcyc": 1.355822,
+    "feed_share": 0.025008799420398475,
+    "gmacs_share": 0.02332260550272207,
+    "n_exec": 2953,
+    "m_values": [
+     1,
+     8,
+     16
+    ]
+   },
+   "m=20 (lvl4/bi-attn)": {
+    "feed_mcyc": 0.09224,
+    "feed_share": 0.0017014118804220284,
+    "gmacs_share": 0.0010409395057338973,
+    "n_exec": 10,
+    "m_values": [
+     20
+    ]
+   },
+   "m=49 (Swin窗口attn)": {
+    "feed_mcyc": 2.29824,
+    "feed_share": 0.0423921600180087,
+    "gmacs_share": 0.009345657197045734,
+    "n_exec": 15680,
+    "m_values": [
+     49
+    ]
+   },
+   "小m17-127 (bi40/dist64)": {
+    "feed_mcyc": 1.68878,
+    "feed_share": 0.031150372456842077,
+    "gmacs_share": 0.03412146318282601,
+    "n_exec": 770,
+    "m_values": [
+     40,
+     64,
+     80
+    ]
+   },
+   "m=128 (动作token)": {
+    "feed_mcyc": 12.67692,
+    "feed_share": 0.2338319849865527,
+    "gmacs_share": 0.20220917167794888,
+    "n_exec": 8310,
+    "m_values": [
+     128
+    ]
+   },
+   "中m129-512 (kv136/s4qkv196/head512)": {
+    "feed_mcyc": 7.543192,
+    "feed_share": 0.13913786302151346,
+    "gmacs_share": 0.15637135605836244,
+    "n_exec": 1016,
+    "m_values": [
+     136,
+     196,
+     256,
+     320,
+     441,
+     512
+    ]
+   },
+   "大m≥800 (img_kv/Swin s1 s2/PSE/Fusion)": {
+    "feed_mcyc": 28.558604,
+    "feed_share": 0.5267774082162626,
+    "gmacs_share": 0.573588806875361,
+    "n_exec": 914,
+    "m_values": [
+     800,
+     1280,
+     1470,
+     1700,
+     5120,
+     5880,
+     217600
+    ]
+   }
+  },
+  "per_denoise_step": {
+   "feed_mcyc": 1.838252,
+   "share": 0.33907456548238885,
+   "gmacs_g": 2.333212672
+  }
+ },
+ "w_composition": {
+  "w_wall_mcyc": 49.323513,
+  "w_gb_port": 0.34921047204,
+  "by_stage": [
+   {
+    "stage": "Vision2D",
+    "w_cyc_mcyc": 8.418378,
+    "share": 0.17067677235398865,
+    "w_mb_port": 59.60211624,
+    "w_mb_spec": 59.08992,
+    "cache_note": "每 chunk 重装（视觉必须重跑）；59MB >> WRAM 442KB，跨 chunk 驻留不现实"
+   },
+   {
+    "stage": "Vision3D+PSE",
+    "w_cyc_mcyc": 0.748636,
+    "share": 0.015178075414052522,
+    "w_mb_port": 5.30034288,
+    "w_mb_spec": 4.498688,
+    "cache_note": "同上（depth 分支每 chunk 一次）"
+   },
+   {
+    "stage": "Text",
+    "w_cyc_mcyc": 11.866881,
+    "share": 0.240592777728545,
+    "w_mb_port": 84.01751748000001,
+    "w_mb_spec": 85.131264,
+    "cache_note": "指令跨 chunk 不变 → BERT 输出可整条缓存，W/feed/sm 全免（杠杆+BERT缓存）"
+   },
+   {
+    "stage": "Fusion",
+    "w_cyc_mcyc": 4.437192,
+    "share": 0.08996098878845066,
+    "w_mb_port": 31.415319359999998,
+    "w_mb_spec": 29.73696,
+    "cache_note": "每 chunk 一次；权重 29.7MB 无法驻留"
+   },
+   {
+    "stage": "ActionHead/step",
+    "w_cyc_mcyc": 22.93025,
+    "share": 0.4648949072220383,
+    "w_mb_port": 162.34617,
+    "w_mb_spec": 148.97664,
+    "cache_note": "同一套权重每步重装 ×10（忠实上游）→ 驻留可省 9/10，但每步 GEMM 权重 ~15.5MB >> WRAM 442KB → 只能挑大项（=K/V hoist）"
+   },
+   {
+    "stage": "ActionHead/once",
+    "w_cyc_mcyc": 0.922176,
+    "share": 0.018696478492924867,
+    "w_mb_port": 6.52900608,
+    "w_mb_spec": 6.096896,
+    "cache_note": "每 chunk 一次，量小"
+   }
+  ],
+  "cacheables": {
+   "bert_text": {
+    "w_mcyc": 11.866881,
+    "note": "指令不变场景整阶段免跑：W/feed/sm 全免"
+   },
+   "action_step_reload": {
+    "w_mcyc": 22.93025,
+    "saveable_9of10_mcyc": 20.637225,
+    "note": "每步同一套权重重装 ×10；全驻留需 ~15.5MB/步 >> WRAM 442KB，hoist 挑 img_kv/txt_kv/dist 大项"
+   }
+  }
+ },
+ "engine_occupancy": {
+  "conc_mcyc": 54.309228,
+  "engines": {
+   "compute/feed(阵列喂数)": {
+    "mcyc": 54.213798,
+    "pct": 99.82428400565738
+   },
+   "W 装载流@BW64": {
+    "mcyc": 49.323513,
+    "pct": 90.81976455272022
+   },
+   "sm÷16": {
+    "mcyc": 18.59718,
+    "pct": 34.243130835886674
+   },
+   "copy(Kᵀ/Vᵀ重排)": {
+    "mcyc": 8.56272,
+    "pct": 15.766602316644974
+   },
+   "elem÷16": {
+    "mcyc": 7.933376,
+    "pct": 14.607786359990241
+   },
+   "act(边界激活DMA)": {
+    "mcyc": 0.09543,
+    "pct": 0.17571599434261892
+   }
+  },
+  "note": "CONC = max(compute, sm, copy, W, elem) + act（swiftvla_hw.py:164）；各引擎 % 之和 >100% 属预期——报的是占用率，不是加和分解。基线不含 drain52（hw_main 108 CONC 行同口径）。"
+ },
+ "levers": [
+  {
+   "name": "baseline SM16 BW64（现行硅片，忠实上游）",
+   "mcyc": 54.309228,
+   "sec_1985": 0.2735981259445844,
+   "util": 0.7849155511772259,
+   "delta_mcyc": 0.0,
+   "delta_pct": 0.0,
+   "wall": "feed",
+   "walls": {
+    "feed": 54.213798,
+    "sm": 18.59718,
+    "copy": 8.56272,
+    "W": 49.323513,
+    "elem": 7.933376
+   },
+   "note": "K/V 每步重算 + 动作专家权重每步重装 ×10（hw 账本 reference 档）"
+  },
+  {
+   "name": "+BERT缓存（Text 阶段整条免跑）",
+   "mcyc": 53.450178,
+   "sec_1985": 0.26927041813602015,
+   "util": 0.7827321832028047,
+   "delta_mcyc": 0.85905,
+   "delta_pct": 1.5817753844705729,
+   "wall": "feed",
+   "walls": {
+    "feed": 53.354748,
+    "sm": 18.581898,
+    "copy": 8.506848,
+    "W": 37.456632,
+    "elem": 7.877312
+   },
+   "note": "指令跨 chunk 不变 → 缓存 BERT 文本特征；1.37 GMAC / 12.4M拍W / Text sm 全免"
+  },
+  {
+   "name": "+K/V hoist（spec_opt 档）",
+   "mcyc": 50.418744,
+   "sec_1985": 0.2539987103274559,
+   "util": 0.7739914669359798,
+   "delta_mcyc": 3.890484,
+   "delta_pct": 7.1635781675998045,
+   "wall": "feed",
+   "walls": {
+    "feed": 50.323314,
+    "sm": 18.59718,
+    "copy": 8.56272,
+    "W": 46.198425,
+    "elem": 7.933376
+   },
+   "note": "img_kv/txt_kv/temp_joint_dist 提出去噪循环，×10→×1（数学等价，纯软件）"
+  },
+  {
+   "name": "+BW128（W 引擎口加宽）",
+   "mcyc": 54.309228,
+   "sec_1985": 0.2735981259445844,
+   "util": 0.7849155511772259,
+   "delta_mcyc": 0.0,
+   "delta_pct": 0.0,
+   "wall": "feed",
+   "walls": {
+    "feed": 54.213798,
+    "sm": 18.59718,
+    "copy": 8.56272,
+    "W": 24.6617565,
+    "elem": 7.933376
+   },
+   "note": "W 墙 49.3→24.7M，但 feed 54.2M 仍是墙 → CONC 不动"
+  },
+  {
+   "name": "+SM32（softmax 并行×2）",
+   "mcyc": 54.309228,
+   "sec_1985": 0.2735981259445844,
+   "util": 0.7849155511772259,
+   "delta_mcyc": 0.0,
+   "delta_pct": 0.0,
+   "wall": "feed",
+   "walls": {
+    "feed": 54.213798,
+    "sm": 9.29859,
+    "copy": 8.56272,
+    "W": 49.323513,
+    "elem": 7.933376
+   },
+   "note": "sm 18.6→9.3M，远低于 feed → CONC 不动"
+  },
+  {
+   "name": "组合A: BERT缓存 + hoist（零硬件改动）",
+   "mcyc": 49.559694,
+   "sec_1985": 0.24967100251889168,
+   "util": 0.7714473482931213,
+   "delta_mcyc": 4.749534,
+   "delta_pct": 8.745353552070377,
+   "wall": "feed",
+   "walls": {
+    "feed": 49.464264,
+    "sm": 18.581898,
+    "copy": 8.506848,
+    "W": 34.331544,
+    "elem": 7.877312
+   },
+   "note": "两个软件杠杆全上：feed 与 W 同步缩"
+  },
+  {
+   "name": "组合B: A + BW128（DMA 加宽）",
+   "mcyc": 49.559694,
+   "sec_1985": 0.24967100251889168,
+   "util": 0.7714473482931213,
+   "delta_mcyc": 4.749534,
+   "delta_pct": 8.745353552070377,
+   "wall": "feed",
+   "walls": {
+    "feed": 49.464264,
+    "sm": 18.581898,
+    "copy": 8.506848,
+    "W": 17.165772,
+    "elem": 7.877312
+   },
+   "note": "W 墙再减半；feed 是否仍为墙见 walls"
+  },
+  {
+   "name": "组合C: B + SM32",
+   "mcyc": 49.559694,
+   "sec_1985": 0.24967100251889168,
+   "util": 0.7714473482931213,
+   "delta_mcyc": 4.749534,
+   "delta_pct": 8.745353552070377,
+   "wall": "feed",
+   "walls": {
+    "feed": 49.464264,
+    "sm": 9.290949,
+    "copy": 8.506848,
+    "W": 17.165772,
+    "elem": 7.877312
+   },
+   "note": "硬件三件套全上（108 列内）"
+  }
+ ],
+ "configs_ref": [
+  {
+   "name": "cols=216 SM16 BW64（R3 packed）CONC",
+   "mcyc": 54.917854,
+   "sec_1985": 0.27666425188916877,
+   "util": 0.38810837027271344,
+   "w_gb": 0.38814276192
+  },
+  {
+   "name": "cols=216 SM16 BW128 CONC",
+   "mcyc": 34.829874,
+   "sec_1985": 0.17546536020151132,
+   "util": 0.6119482032813215,
+   "w_gb": 0.38814276192
+  },
+  {
+   "name": "cols=216 SM32 BW128 CONC",
+   "mcyc": 34.829874,
+   "sec_1985": 0.17546536020151132,
+   "util": 0.6119482032813215,
+   "w_gb": 0.38814276192
+  },
+  {
+   "name": "cols=216 SM32 BW128 CONC +drain52",
+   "mcyc": 35.346754,
+   "sec_1985": 0.17806928967254407,
+   "util": 0.6029996082473319,
+   "w_gb": 0.38814276192
+  },
+  {
+   "name": "cols=216 SM32 BW256 CONC",
+   "mcyc": 34.829874,
+   "sec_1985": 0.17546536020151132,
+   "util": 0.6119482032813215,
+   "w_gb": 0.38814276192
+  }
+ ],
+ "gates": [
+  {
+   "name": "CONC 108 SM16 BW64 (M拍)",
+   "got": 54.309228,
+   "want": 54.309228,
+   "rtol": 0.005,
+   "pass_": true
+  },
+  {
+   "name": "LWreal 108 (M拍)",
+   "got": 89.402504,
+   "want": 89.402504,
+   "rtol": 0.005,
+   "pass_": true
+  },
+  {
+   "name": "W 流 (GB, 端口口径 w64×BW64)",
+   "got": 0.34921047204,
+   "want": 0.34921047204,
+   "rtol": 0.005,
+   "pass_": true
+  },
+  {
+   "name": "per_stage feed 加总 = account.compute (M拍)",
+   "got": 54.213798,
+   "want": 54.213798,
+   "rtol": 0.001,
+   "pass_": true
+  },
+  {
+   "name": "per_stage sm 加总 = account.sm (M拍)",
+   "got": 18.59718,
+   "want": 18.59718,
+   "rtol": 0.001,
+   "pass_": true
+  },
+  {
+   "name": "per_stage copy 加总 = account.copy (M拍)",
+   "got": 8.56272,
+   "want": 8.56272,
+   "rtol": 0.001,
+   "pass_": true
+  },
+  {
+   "name": "per_stage n_exec 加总 = account n_gemm+n_exec",
+   "got": 29653,
+   "want": 29653,
+   "rtol": 0.001,
+   "pass_": true
+  },
+  {
+   "name": "per_stage gmacs Vision2D (GMAC)",
+   "got": 17.259282432,
+   "want": 17.259282432,
+   "rtol": 0.005,
+   "pass_": true
+  },
+  {
+   "name": "per_stage gmacs Vision3D+PSE (GMAC)",
+   "got": 5.202419712,
+   "want": 5.202419712,
+   "rtol": 0.005,
+   "pass_": true
+  },
+  {
+   "name": "per_stage gmacs Text (GMAC)",
+   "got": 1.366818816,
+   "want": 1.366818816,
+   "rtol": 0.005,
+   "pass_": true
+  },
+  {
+   "name": "per_stage gmacs Fusion (GMAC)",
+   "got": 26.422542336,
+   "want": 26.422542336,
+   "rtol": 0.005,
+   "pass_": true
+  },
+  {
+   "name": "per_stage gmacs ActionHead(step+once) (GMAC)",
+   "got": 23.410393088,
+   "want": 23.410393088,
+   "rtol": 0.005,
+   "pass_": true
+  },
+  {
+   "name": "per_stage gmacs 总计 (GMAC)",
+   "got": 73.661456384,
+   "want": 73.661456384,
+   "rtol": 0.005,
+   "pass_": true
+  },
+  {
+   "name": "+BW128 的 W 墙 = 基线 W 墙/2 (M拍)",
+   "got": 24.6617565,
+   "want": 24.6617565,
+   "rtol": 0.02,
+   "pass_": true
+  }
+ ],
+ "meta": {
+  "cols": 108,
+  "sm_par": 16,
+  "bw": 7.08,
+  "f_syn": 198500000.0,
+  "drain52": false,
+  "n_items": 117,
+  "denoise_steps": 10
+ }
+}

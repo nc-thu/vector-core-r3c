@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>一颗 DSP48E2 怎么算 int8×int8 2026-09-01</title>
+<style>
+  body{font-family:"Microsoft YaHei",SimSun,serif;max-width:1000px;margin:24px auto;padding:0 16px;color:#111;background:#fff;line-height:1.75}
+  h1{font-size:22px;border-bottom:2px solid #000;padding-bottom:6px}
+  h2{font-size:18px;border-left:5px solid #000;padding-left:8px;margin-top:32px}
+  h3{font-size:15px;margin-top:22px}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14px}
+  th,td{border:1px solid #444;padding:5px 8px;text-align:left}
+  th{background:#eee}
+  .num{text-align:right;font-variant-numeric:tabular-nums}
+  .mono{font-family:Consolas,monospace;font-size:13px;background:#f4f4f4;padding:1px 4px}
+  .meta{color:#555;font-size:13px}
+  .box{border:1px dashed #888;padding:10px 14px;margin:12px 0;background:#fafafa}
+  .hint{color:#555;font-size:13px;margin:4px 0}
+  svg text{font-family:"Microsoft YaHei",SimSun,serif}
+</style>
+</head>
+<body>
+
+<h1>一颗 DSP48E2 是怎么算两个 int8 相乘的：从补码到 48 位累加器</h1>
+<p class="meta">生成时刻：2026-09-01 14:29:11　|　RTL：ae_pe.sv（每个 PE 一颗 DSP，乘加一体）　|　器件：XCZU7EV（ZCU104），DSP48E2 共 1728 颗　|　参考：UG579（UltraScale DSP Slice 用户指南）</p>
+
+<h2>零、先建立一个图景</h2>
+<p>我们的脉动阵列有 16×96 = 1536 个 PE（处理单元）。每个 PE 里面其实就一颗硬核：<b>DSP48E2</b>。它每个时钟周期干一件事：<b>把两个 8 位有符号数（int8）相乘，把积加到上一拍留下的结果上，再把新结果存回自己肚子里</b>。一行代码就是 <span class="mono">acc_r &lt;= acc_r + a_in * b_in</span>（[ae_pe.sv:33](../14_rtl_r1r2/rtl/ae_pe.sv)）。</p>
+<p>DSP48E2 是 FPGA 芯片出厂时就焊死在硅片上的乘法器阵列，不用白不用：用普通逻辑（LUT）搭一个 8×8 乘法要几十个 LUT，而且跑不了多快；DSP 一拍一个乘加，流水打通后能跑到 400 MHz 以上。整颗 XCZU7EV 有 1728 颗 DSP48E2，我们的阵列用掉 1536 颗（88.9%），每颗一帧大约承担 9820 万次乘加（全帧 150.8 G 次乘加 ÷ 1536）。</p>
+<p>这一页就把这颗 DSP 从头到尾拆开：两个 int8 怎么乘、怎么累加、为什么一拍能算一对、以及它和我们的 RTL 是怎么对应起来的。</p>
+
+<h2>一、DSP48E2 的肚子里有什么</h2>
+<p>一颗 DSP48E2 的核心是三段，像一条三节小流水线：</p>
+<svg width="900" height="300" viewBox="0 0 900 300">
+  <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#111"/></marker></defs>
+  <!-- A/B 输入 -->
+  <rect x="20" y="40" width="130" height="46" fill="#fff" stroke="#111" stroke-width="1.5"/>
+  <text x="85" y="58" text-anchor="middle" font-size="13">A 输入寄存器</text>
+  <text x="85" y="76" text-anchor="middle" font-size="12" fill="#555">30 位（乘法用 27 位）</text>
+  <rect x="20" y="150" width="130" height="46" fill="#fff" stroke="#111" stroke-width="1.5"/>
+  <text x="85" y="168" text-anchor="middle" font-size="13">B 输入寄存器</text>
+  <text x="85" y="186" text-anchor="middle" font-size="12" fill="#555">18 位</text>
+  <!-- 乘法器 -->
+  <rect x="220" y="75" width="180" height="86" fill="#fff" stroke="#111" stroke-width="1.5"/>
+  <text x="310" y="105" text-anchor="middle" font-size="14">乘法器</text>
+  <text x="310" y="125" text-anchor="middle" font-size="13" fill="#555">27 位 × 18 位（有符号）</text>
+  <text x="310" y="145" text-anchor="middle" font-size="12" fill="#555">int8 只用到角落里的 8×8</text>
+  <!-- M 寄存器 -->
+  <rect x="470" y="90" width="120" height="56" fill="#fff" stroke="#111" stroke-width="1.5"/>
+  <text x="530" y="112" text-anchor="middle" font-size="13">M 寄存器</text>
+  <text x="530" y="130" text-anchor="middle" font-size="12" fill="#555">48 位（积先落这）</text>
+  <!-- ALU+P -->
+  <rect x="650" y="70" width="220" height="96" fill="#fff" stroke="#111" stroke-width="1.5"/>
+  <text x="760" y="98" text-anchor="middle" font-size="14">加法器 + P 寄存器</text>
+  <text x="760" y="118" text-anchor="middle" font-size="12" fill="#555">48 位；新积 + 旧结果，存回 P</text>
+  <text x="760" y="138" text-anchor="middle" font-size="12" fill="#555">我们的 acc_r 就驻留在这</text>
+  <!-- 箭头 -->
+  <line x1="150" y1="63" x2="215" y2="95" stroke="#111" stroke-width="1.5" marker-end="url(#ar)"/>
+  <line x1="150" y1="173" x2="215" y2="140" stroke="#111" stroke-width="1.5" marker-end="url(#ar)"/>
+  <line x1="400" y1="118" x2="465" y2="118" stroke="#111" stroke-width="1.5" marker-end="url(#ar)"/>
+  <line x1="590" y1="118" x2="645" y2="118" stroke="#111" stroke-width="1.5" marker-end="url(#ar)"/>
+  <!-- 反馈环 -->
+  <path d="M760 166 L760 210 L760 210" stroke="#111" stroke-width="1.5" fill="none"/>
+  <path d="M760 166 C760 230 400 230 400 150" stroke="#555" stroke-width="1.2" fill="none" stroke-dasharray="5,4" marker-end="url(#ar)"/>
+  <text x="470" y="248" font-size="12" fill="#555">反馈：旧 P 一直回送到加法器输入，所以能连加（点积）</text>
+  <!-- 输入标注 -->
+  <text x="20" y="30" font-size="12" fill="#555">a_in（int8，符号扩展成 27 位进来）</text>
+  <text x="20" y="220" font-size="12" fill="#555">b_in（int8，符号扩展成 18 位进来）</text>
+  <!-- 输出 -->
+  <text x="660" y="55" font-size="12" fill="#555">P → 读出侧（R3C 之前直接等排空，R3C 之后抄进 27 位快照）</text>
+</svg>
+<p class="hint">怎么看这张图：左边进两个操作数，中间乘，右边加。关键是那个虚线反馈环——旧结果从 P 绕回加法器，所以每拍的新积都累上去，这就是"乘加一体"。我们的 RTL 里写的 <span class="mono">acc_r</span>，综合后就是 P 寄存器本身。</p>
+<div class="box"><p><b>一句话总结这颗 DSP 的分工：</b>乘法器算 int8×int8（只用 27×18 里的 8×8 角落），P 寄存器负责"记住半成品"。所以我们一直说"结果驻留在 DSP 里"——读结果、清零都绕不开它，R3C 要加 27 位快照寄存器，根源就在这。</p></div>
+
+<h2>二、两个 int8 怎么相乘：补码、符号扩展、手算一遍</h2>
+<h3>2.1 先明确 int8 是什么</h3>
+<p>int8 就是用 8 位二进制补码表示的有符号整数，范围 −128 到 +127。最高位是符号位。我们的权重和激活值都是这个格式（量化后的结果）。</p>
+<h3>2.2 关键一步：符号扩展</h3>
+<p>DSP 的乘法器是 27 位 × 18 位的。两个 8 位数进这么宽的口，必须先"符号扩展"：把 8 位数的高位全部填成它的符号位。</p>
+<p>为什么要填？因为补码的规则就是这样——一个负数往高位补符号位，数值不变。如果偷懒补 0，负数立刻变成一个大正数，结果就全错了。举个能看见的例子：</p>
+<table>
+<tr><th>操作</th><th>二进制</th><th class="num">按十进制算</th><th>结果对不对</th></tr>
+<tr><td>a = −5，b = 100，正确算法</td><td class="mono">11111011 × 01100100</td><td class="num">−5 × 100 = −500</td><td>✓</td></tr>
+<tr><td>a 不做符号扩展（当无符号 251 算）</td><td class="mono">11111011 当成 251</td><td class="num">251 × 100 = 25100</td><td>✗ 错了 50 倍</td></tr>
+</table>
+<p>硬件里这一步不用写代码：两个操作数都声明成 <span class="mono">logic signed [7:0]</span>（[ae_pe.sv:12-13](../14_rtl_r1r2/rtl/ae_pe.sv)），SystemVerilog 会按有符号语义自动做符号扩展。而且我们的表达式 <span class="mono">acc_r + a_in * b_in</span> 里 acc_r 是 32 位，a_in、b_in 会先被扩到 32 位再相乘，宽度天然够。</p>
+<h3>2.3 手算一遍 −5 × 100</h3>
+<p>拿一个小例子完整走一遍（DSP 里是同样的电路）：</p>
+<p>−5 的 8 位补码是 <span class="mono">11111011</span>（256 − 5 = 251，251 的二进制）。100 的二进制是 <span class="mono">01100100</span>。乘法器实际算的是 <b>两步合一</b>：因为 a 是负数，硬件按"部分积取反加一"的补码乘法规则处理符号位，最终一次得出有符号积。结果是 −500，写成 16 位补码是 <span class="mono">1111_1110_0000_1100</span>。</p>
+<h3>2.4 结果有多大</h3>
+<p>两个 int8 的积，最坏是 (−128)×(−128) = 16384，最好情形 127×127 = 16129。也就是说<b>一个积最多 16 位有符号数</b>——离 27×18 乘法器的 45 位能力差得远，这颗 DSP 算 int8 是大材小用（第六节说这个浪费能不能省）。</p>
+
+<h2>三、累加：为什么 48 位绰绰有余，27 位就够</h2>
+<p>PE 算的不是一次乘法，是<b>一整条点积</b>：k 个积连加。P 寄存器有 48 位，那实际会用掉多少？列表算一下最坏情况：</p>
+<table>
+<tr><th>项</th><th class="num">数值</th><th>说明</th></tr>
+<tr><td>单个积上界 |a×b|</td><td class="num">127 × 127 = 16 129</td><td>int8 最坏情形</td></tr>
+<tr><td>模型最长 k（规约长度）</td><td class="num">2 049</td><td>注意力隐层维 2048 + 1</td></tr>
+<tr><td>整条点积最坏 |acc|</td><td class="num">16 129 × 2 049 ≈ 3 306 万</td><td>2 的 25 次方（3 355 万）以内</td></tr>
+<tr><td>27 位有符号能表示</td><td class="num">±6 711 万</td><td>2 的 26 次方</td></tr>
+<tr><td>P 寄存器本身</td><td class="num">48 位</td><td>用了零头</td></tr>
+</table>
+<p>结论：<b>27 位有符号就无损装下所有合法 k 的累加结果</b>。两个用途：一是 R3C 的快照寄存器定 27 位就够（每 PE 省 5 个触发器 × 1536 个）；二是说明 48 位的 P 给未来留了巨大余量（比如升 INT16 或 fp16 路线都不用动这颗 DSP 的骨架）。</p>
+
+<h2>四、为什么能一拍一对：三级流水</h2>
+<p>DSP 内部有可选的流水寄存器：A/B 输入寄存器 → M（积）寄存器 → P（和）寄存器。各级都在时钟沿锁存，各级之间只干一小段活，所以整条路径很短，198.5 MHz 对它来说很轻松（DSP48E2 本身能跑 400~500 MHz，我们的时序瓶颈从来不在 DSP 里，而在阵列外的长线网上）。</p>
+<p>对上我们的 RTL：波前有效信号 <span class="mono">av_in & bv_in</span> 同时为真的那些拍，P 才更新；其余拍 P 保持原值不动（[ae_pe.sv:33](../14_rtl_r1r2/rtl/ae_pe.sv)）。这就是为什么"喂数"结束、结果已经全在 P 里——中间不需要任何停顿。</p>
+
+<h2>五、RTL 与 DSP 的逐行对应</h2>
+<p>PE 的核心代码（[ae_pe.sv:20-34](../14_rtl_r1r2/rtl/ae_pe.sv)，R3C 改造前的版本）：</p>
+<pre class="mono">logic signed [7:0]  a_r, b_r;                 // A/B 输入寄存器
+(* use_dsp = "yes" *) logic signed [31:0] acc_r;   // P 寄存器（乘加结果驻留）
+
+always_ff @(posedge clk or negedge rst_n) begin
+  ...
+  a_r &lt;= a_in;  b_r &lt;= b_in;                 // 波前沿脉动链各延 1 拍
+  if (clr)              acc_r &lt;= '0;           // 行组开始：清零
+  else if (av_in & bv_in) acc_r &lt;= acc_r + a_in * b_in;  // 一拍一次乘加
+end</pre>
+<table>
+<tr><th>RTL 写法</th><th>落在 DSP48E2 的哪里</th><th>备注</th></tr>
+<tr><td class="mono">a_in, b_in（int8）</td><td>A 口 27 位 / B 口 18 位</td><td>符号扩展由 signed 语义自动完成</td></tr>
+<tr><td class="mono">a_in * b_in</td><td>27×18 乘法器 + M 寄存器</td><td>只用 8×8 角落，积 16 位</td></tr>
+<tr><td class="mono">acc_r</td><td>P 寄存器（48 位）</td><td>结果驻留地；R3C 后每拍抄进 27 位快照</td></tr>
+<tr><td class="mono">clr</td><td>P 输入侧的选择逻辑</td><td>选 0 还是选"旧值+新积"</td></tr>
+<tr><td class="mono">a_r/b_r 延 1 拍</td><td>可映射进 DSP 的 A/B 前寄存器</td><td>同时承担脉动阵列的波前传递</td></tr>
+</table>
+<h3>5.1 use_dsp 属性的坑（踩过的实录）</h3>
+<p><span class="mono">(* use_dsp = "yes" *)</span> 这个属性必须写。Vivado 2021.2 的推断规则里，8×8 这种"窄乘法"不一定会绑到 DSP——它可能<b>静默地用 LUT 实现</b>。我们实测过：不加属性时 1728 个 PE 全部挤进 LUT，LUT 占用直接 125% 超载，设计直接不可布线。加了属性才强制一 PE 一 DSP。这是 UG901 综合属性文档推荐的做法，但对窄乘法是"必须"而不是"建议"。</p>
+
+<h2>六、一颗 DSP 一拍到底能算几对 int8</h2>
+<p>既然 27×18 只用了 8×8 的角落，能不能一拍塞两对独立的 int8 乘法，把 DSP 效率翻倍？<b>答案：不能，至少 DSP48E2 上不能。</b></p>
+<p>原因是"打包乘法"的交叉项污染。把两对操作数拼起来乘：</p>
+<pre class="mono">A = a1 + 2^8·a2,   B = b1 + 2^8·b2
+A×B = a1b1 + 2^8(a1b2 + a2b1) + 2^16·a2b2</pre>
+<p>中间的交叉项 <span class="mono">a1b2 + a2b1</span> 混进了结果。有意思的是它混的位置：它落在两个真积<b>中间</b>的比特段上（上式里 2^8 的位置），两个真积一个在低位、一个在高位，互不接触。所以能不能用，取决于"两个真积 + 中间这段垃圾"总共多宽：</p>
+<ul>
+<li><b>int8 塞不下：</b>两个真积各 16 位，加上隔离用的交叉项区，总共要 16+16+16 = 48 位起步，而 27×18 乘法器的积只有 45 位——物理上放不下，所以 int8 一颗 DSP 一拍只能算一对。</li>
+<li><b>int4 塞得下：</b>两个真积各 8 位（4 位×4 位最大 64），加上留足余量的隔离区，总宽不到 45 位的一半，低位切一刀、高位切一刀，一拍拿到两对独立结果。这就是 INT4 nibble 打包路线的算力红利来源。</li>
+</ul>
+<table>
+<tr><th>方案</th><th>一拍几对</th><th>原因</th></tr>
+<tr><td>int8 × int8（现状）</td><td class="num">1 对</td><td>两个 16 位积加隔离区 ≥ 48 位，超出 27×18 乘法器的 45 位</td></tr>
+<tr><td>int4 × int4（nibble 打包）</td><td class="num">2 对</td><td>两个 8 位积加隔离区共 32 位，位切割可分离（INT4 实验的算力红利来源）</td></tr>
+</table>
+<p>所以 int8 路线下，吞吐的物理上限就是 <b>PE 数 × 频率</b>：1536 × 198.5 MHz ≈ 3 049 亿次乘加/秒。R3C 之后全帧实际要算 150.8 G 次，阵列口径利用率约 53%——剩下的时间花在读出、写回和行组切换上，这正是 R3 行组流水在收窄的缺口。</p>
+
+<h2>七、为什么 R3C 非动这颗 DSP 不可</h2>
+<p>顺带把 R3C 的动机说透（呼应当前 RTL 轮）：半成品的点积<b>只能</b>驻留在 P 寄存器里。旧的读出流程要先把整列的 P 排空（量化、写回），期间阵列没法给下一行组喂数——因为一喂数，新积就会加进还没读走的旧结果里，数据直接错。</p>
+<p>R3C 的解法：在每个 PE 里另放一份 27 位快照。最后一个 k 切片过阵列时发一个"末脉冲"，脉冲传到哪个 PE，哪个 PE 就把 P 抄进快照、把 P 清零——下一行组马上可以喂数。读出（量化+写回）全部改从快照侧走，与喂数并行。结果就是行组周期从"喂数+排空+读出"串行相加，变成 max(喂数, 读出链)。</p>
+
+<h2>八、DSP 资源账（本页收尾对总账）</h2>
+<table>
+<tr><th>配置</th><th class="num">PE 数（=DSP 数）</th><th class="num">XCZU7EV 占用</th><th class="num">余量</th><th>说明</th></tr>
+<tr><td>改造前（16×108）</td><td class="num">1 728</td><td class="num">100%</td><td class="num">0</td><td>占满，任何新功能都放不进</td></tr>
+<tr><td><b>定案（16×96）</b></td><td class="num"><b>1 536</b></td><td class="num"><b>88.9%</b></td><td class="num"><b>192</b></td><td>GEMM 拍数 185.2M，与 108 固定流 185.3M 持平（见 19_r3c_arch/pe_sizing.py）</td></tr>
+</table>
+<p>省下的 192 颗 DSP 是留给未来的：INT4 打包、融合算子、或者换更小器件的余地。96 列的结构红利：组边界永远落在 16 位 lane 组上（转置写回不跨组）、每 k 行恰好 12 个 8 字节节拍（B 装载无残拍）。</p>
+
+<h2>九、复现命令</h2>
+<pre class="mono">:: 看 PE 原始代码（R3C 改造前）
+type hb_fpga_impl\14_rtl_r1r2\rtl\ae_pe.sv
+
+:: PE 选型模型（1536 的依据）
+cd hb_fpga_impl\19_r3c_arch &amp;&amp; python pe_sizing.py
+
+:: 综合后核对 DSP 数量 = 1536（R3C 轮次工作区）
+e:\ae_syn\r3c_c96\out\utilization.rpt   （搜 DSP48E2）</pre>
+<p class="meta">本页数据来源：pe_sizing.py（2026-09-01 14:27 重算，150.8 G MAC/帧）、UG579/UG901、14_rtl_r1r2 RTL。R3C 后的 ae_pe.sv 快照版以 22_r3c_rtl 轮次为准。</p>
+
+</body>
+</html>

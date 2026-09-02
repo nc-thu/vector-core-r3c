@@ -1,0 +1,89 @@
+hw_calib requant 常数表补丁（26 条占位警告的来源与补法）
+========================================================
+2026-08-31，服务器 nc23 / GPU1（V100），脚本 hw_calib_patch.py，产物
+hw_calib_patch.json + hw_calib_table_v2.json。
+
+一、26 条占位警告实际上是 8 个唯一 key
+------------------------------------------
+build_full/host_plan.json 的 warnings 里 26 条"无校准占位 requant"，
+按编译器统计口径是 26 个 GEMM 实例，去重后只有 8 个校准 key：
+
+  10 x decoder.head.convs.0          （10 步 rollout 每步都执行）
+  10 x decoder.head.convs.1
+   6 x feature_enhancer.text_attn_blocks.{0..5}.self_attn.attn.in_proj_weight
+       （文本侧 6 个注意力块，每块只在 trace 里出现 1 次）
+
+校准 hooks 每样本实际调用次数与这个构成吻合：两个 conv 各 80 次
+（8 样本 x 10 步），6 个 in_proj 各 8 次（8 样本 x 1 次）。
+
+二、为什么上轮校准漏了它们
+--------------------------
+上轮 calibrate()（hw_calib.py）只给 nn.Linear 和 nn.Conv2d 挂钩子：
+
+  1. decoder.head.convs.0/1 是 nn.Conv1d，从来没有被统计过 sa/so。
+  2. in_proj 是 nn.MultiheadAttention 内部的融合权重 in_proj_weight
+     [768,256]，不是独立子模块（out_proj 是独立 Linear，所以 out_proj
+     在表里、in_proj 不在）。命名上它也不带 .weight 后缀（是
+     _weight），编译器查表 key 为全名 ...attn.in_proj_weight。
+
+三、补法
+--------
+hw_calib_patch.py 复用 hw_calib.py 的全部常数逻辑（v1_encode、
+C_CANDIDATES、r=(sa*sw)/so 缩小方向、K+1 增广口径），只补这 8 个 key：
+
+  - 样本：与上轮完全相同的 8 个扰动样本（perturbed_batch，seed
+    4000+i），fp32 模型 + force_mha_slow_path。
+  - conv1d：直接挂 pre/post 钩子统计输入/输出 absmax，k=in_ch*ks。
+  - in_proj：钩 MultiheadAttention 的输入（kwargs.query，自注意力
+    q=k=v=x），在钩子里用 fp 权重手算 qkv = x @ W^T + b 取 absmax，
+    对应硬件那次 k=256/n=768 的 GEMM 输出。
+  - 输出条目字段与 hw_calib_table.json 完全同构（sa/sw/so/m_requant/
+    s_shift/bias_aug_c/w_bias_int8/bias_fp_fallback/gemm_k/gemm_n 等），
+    编译器用 --calib hw_calib_table_v2.json 直接消费。
+
+四、8 个 key 的结果
+-------------------
+bias 分支全部走 K+1 增广（无 fp_fallback，比同层的 out_proj 还干净，
+out_proj 上轮就是 fp fallback）。无任何异常标志。
+
+  key（简写）                          m_requant  s  r_star    bias   acc_est
+  decoder.head.convs.0                     20628 23 2.46e-03  c=4    51645
+  decoder.head.convs.1                     25810 23 3.08e-03  c=4    41277
+  tb.0.self_attn.attn.in_proj_weight       29790 24 1.78e-03  c=32   71524
+  tb.1.                                      32268 25 9.62e-04  c=16  132065
+  tb.2.                                      17704 23 2.11e-03  c=8    60177
+  tb.3.                                      30345 24 1.81e-03  c=8    70216
+  tb.4.                                      19042 23 2.27e-03  c=8    55948
+  tb.5.                                      31893 24 1.90e-03  c=8    66807
+  （tb.N = feature_enhancer.text_attn_blocks.N）
+
+  - w_bias_int8 长度与 n 一致（128/64/768），max|w_bias| 71..117 <= 127。
+  - acc_absmax_est 最大 132,065，离 27b 上限 2^26 = 67,108,864 还有
+    约 500 倍裕量；无爆表。
+  - r 落在上轮全表范围 1.55e-4..1.56e-2 之内；s 全在 [23,25]，
+    硬件范围 [8,47] 内，m 全部 15 位精度（>=16384 一档，除 tb.2/tb.4
+    略低但仍 >17000）。
+
+五、hw_calib_table_v2.json 校验（脚本内自动执行）
+-------------------------------------------------
+  1. 条目数 431 + 8 = 439，无重复 key（新旧交集为空已 assert）。
+  2. 新条目字段齐全（sa/sw/so/m_requant/s_shift/bias_aug_c/
+     w_bias_int8/bias_fp_fallback）。
+  3. m ∈ [1,32767]、s ∈ [8,47] 全部满足。
+  4. |m/2^s - (sa*sw/so)| <= 0.5/2^s（取整误差内）全部满足，
+     最大偏差 4.8e-08。
+  5. 无 m_v1_underflow / acc_over_xw27 / patch_flags。
+
+六、服务器现场
+--------------
+/home 当前 100% 满（连 1KB 数据都写不进），所以本次全程在
+/tmp/hwcalib_patch/ 跑（根盘 111G 空闲），模型和上轮校准表只读
+/home。跑完 /tmp/hwcalib_patch/ 已删除，GPU 无残留进程，02_quant/
+目录没有新写服务器文件。如果下次还要在服务器落 /home 文件，得先清
+出空间。完整运行日志在本地 hw_calib_patch.log（9 秒，8 样本）。
+
+七、下一步（主会话/编译器代理）
+------------------------------
+编译时把 --calib 指到 hw_calib_table_v2.json 即可；预期
+model_summary 的 gemm_no_calib 从 26 变 0、host_plan warnings 清空。
+03_compiler/ 本次未动。

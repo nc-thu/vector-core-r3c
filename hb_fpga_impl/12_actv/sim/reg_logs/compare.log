@@ -1,0 +1,5 @@
+[cmp] CTX REF: PASS (16384 字节一致)
+[cmp] DDR REF: PASS (65536 字节一致)
+[cmp] CTX PRIM: PASS (16384 字节一致)
+[cmp] DDR PRIM: PASS (65536 字节一致)
+[cmp] ==> 全部位精确一致 ✔

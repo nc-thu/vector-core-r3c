@@ -1,0 +1,44 @@
+{
+  "cols": 12,
+  "ctx_words": 1024,
+  "w_words": 64,
+  "seq_len": 34,
+  "params": {
+    "mq": 18,
+    "mc": 16,
+    "dk": 20,
+    "dv": 8,
+    "steps": 2,
+    "frames": 2,
+    "case": "default",
+    "seed": 20260826
+  },
+  "perf_ref": {
+    "macs": 86016,
+    "skip_stages": 0,
+    "skip_macs": 0,
+    "n_exec": 58
+  },
+  "perf_ref_f2": {
+    "macs": 86016,
+    "skip_stages": 0,
+    "skip_macs": 0,
+    "n_exec": 58
+  },
+  "perf_prim": {
+    "macs": 82944,
+    "skip_stages": 2,
+    "skip_macs": 2048,
+    "n_exec": 58
+  },
+  "perf_prim_f2": {
+    "macs": 82944,
+    "skip_stages": 2,
+    "skip_macs": 2048,
+    "n_exec": 58
+  },
+  "eq_ctx_f2": true,
+  "eq_ddr_f2": true,
+  "eq_ctx": true,
+  "eq_ddr": true
+}

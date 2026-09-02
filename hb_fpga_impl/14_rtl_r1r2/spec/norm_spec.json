@@ -1,0 +1,136 @@
+{
+  "meta": {
+    "name": "AE_ACTV submode=2 NORM（LayerNorm/RMSNorm + AdaRMS）与 submode=3 ELTWISE（双输入残差加）",
+    "version": "1.2",
+    "date": "2026-08-31",
+    "status": "契约冻结（编译器代理按本文件生成表映像；RTL 与 norm_gold.py 逐位实现本语义）",
+    "role": "把 host 上的 norm / 残差加算子搬进 PL：GEMM 段的 Y 留在 CTX 原地变换或双流合并，消掉段界 DDR 往返"
+  },
+
+  "descriptor": {
+    "comment": "op=6（AE_ACTV）描述符 256b 布局不变，启用两个子模式。位切片与 gen_vectors.py desc6 / ae_core 接线同位。",
+    "op":            {"bits": "252..254", "value": 6},
+    "submode":       {"bits": "246..248", "comment": "0=ACTV 1=BIAS 2=NORM 3=ELTWISE"},
+    "m":             {"bits": "228..243", "comment": "有效行数（尾组不满按 lane 掩码跳写）"},
+    "n":             {"bits": "212..227", "comment": "NORM：列数 = 行 stride = 归一化宽度，1 ≤ n ≤ 3072；ELTWISE：两输入共同的列数与 stride"},
+    "k":             {"bits": "196..211", "comment": "NORM 时必须等于 n；ELTWISE 不用"},
+    "b_base":        {"bits": "156..175", "comment": "NORM：表映像 CTX 基址；ELTWISE：x2（第二输入）CTX 基址"},
+    "a_base_y_base": {"bits": "136..155", "comment": "张量 CTX 基址：NORM 原地变换；ELTWISE = x1（原地输出）"},
+    "rq_m2":         {"bits": "135..120", "comment": "ELTWISE 第二乘子 m2（16b 有符号）；其余子模式恒 0（原保留位，v1.2 起启用）"},
+    "rq_m":          {"bits": "104..119", "comment": "NORM 不用；ELTWISE = 第一乘子 m1；BIAS = 乘子"},
+    "rq_s":          {"bits": "96..103",  "comment": "NORM 不用（out_shift 在常数区）；ELTWISE = 输出右移 s"},
+    "inv":           {"bits": "92..95",   "value": "0xF"}
+  },
+
+  "table_image": {
+    "units": "CTX 128b 字，字内字节 B0=bit7:0（与 DMA TAG_CTX 字节路由 lane=b%16 一致）",
+    "word0_constant": {
+      "addr": "b_base + 0",
+      "fields": {
+        "invn":    {"bits": "23:0",  "type": "u24", "comment": "min(floor(2^24 / n), 2^24-1)——n=1 时 floor 恰 25b，钳到 u24 域（n≥2 不受影响）"},
+        "eps_q24": {"bits": "71:24", "type": "u48", "comment": "round(eps / sa_in^2 * 2^24)，见 compile_formulas；必须 ≥ 2^13"},
+        "g_shift": {"bits": "77:72", "type": "u6",  "comment": "w 收窄移位，只允许 0..7（S=44-g_shift ∈ [37,44]，桶移 3 级；超 7 编译器非法）"},
+        "out_shift": {"bits": "81:78", "type": "u4", "comment": "输出右移，0..15"},
+        "flags":   {"bits": "82",    "type": "u1",  "comment": "1=LayerNorm（减均值）0=RMSNorm（不减）"},
+        "ada":     {"bits": "83",    "type": "u1",  "comment": "1=AdaRMS/AdaLN：t 区存在，pass2 每行乘 t6（v1.2 新增）"},
+        "rsvd":    {"bits": "127:84", "value": 0}
+      }
+    },
+    "g_table": {
+      "comment": "g_j（每列乘子）沿用 BIAS 的 lo/hi 装载方案",
+      "lo": "字 b_base+1 + j/16 的 lane j%16 字节 = g_j 低 8 位",
+      "hi": "字 b_base+1 + NLO + j/16 的 lane j%16 字节 = g_j 高 8 位",
+      "NLO": "ceil(n/16) 字（两区各 NLO 字，16B 对齐）"
+    },
+    "b_table": {
+      "comment": "b_j（每列加数）同构，接在 g 表后",
+      "lo": "字 b_base+1+2*NLO + j/16 的 lane j%16 = b_j 低 8 位",
+      "hi": "字 b_base+1+3*NLO + j/16 的 lane j%16 = b_j 高 8 位"
+    },
+    "t_table_ada": {
+      "comment": "AdaRMS 逐行缩放区（ada=1 时存在），接在 b 表后；字内 lane L = 行 16*组号+L",
+      "words": "ceil(m/16) 字，字 b_base+1+4*NLO + r/16 的 lane r%16 字节 = t6[r]",
+      "t6": "t6 = clamp(round(t_r * 64), -128, 127)（int8）——t_r 为该行的 token 缩放（量纲与 γ 同层：y = z·γ·t + β）",
+      "non_ada_identity": "ada=0 时引擎 t8v 恒 64，(64·x+32)>>>6 == x 对一切整数 x 成立——非 ada 路径与 v1.1 逐位相同，回归安全"
+    },
+    "total_words": "NORM：1 + 4*ceil(n/16)（+ ceil(m/16) 当 ada=1），n=3072 时 769 字（12304 B）；ELTWISE：无表"
+  },
+
+  "numeric_pipeline": {
+    "comment": "全部整数运算；golden(norm_gold.py) 与 RTL 逐位一致。>>> 为算术右移（向负无穷取整），sat{N} 为对称饱和到 [-2^(N-1), 2^(N-1)-1]。pass2 为 5 级流水（吞吐 1 列/拍）：S1 乘减 → S2 桶移 sat9 → S3 9×16 乘 → S4 t 乘+β → S5 out_shift+sat8 写口。",
+    "pass1_exact_accumulate": {
+      "S1": "每 lane（行）S1 = Σ x_j，x 为 int8；S1 按 24b 有符号容器（n≤4096 时最大 520192，不溢出）",
+      "S2": "S2 = Σ x_j^2，30b 容器（最大 66,064,384，不溢出）"
+    },
+    "statistics_q24": {
+      "mu_q24":  "μ = S1 * invn（精确整数积，值域 ≤ 2^31，32b 有符号容器）",
+      "ms_q24":  "ms = S2 * invn（值域 ≤ 16129*2^24 ≈ 2^38，48b 容器）",
+      "var_q24": "LayerNorm: var = max(0, ms − (μ*μ >>> 24))；RMSNorm: var = ms",
+      "v":       "v = var + eps_q24；再 v_eff = max(v, 2^13)（引擎保护：eps 配置过小时不让 rsqrt 域塌掉）"
+    },
+    "rsqrt_shared_unit": {
+      "comment": "16 lane 串行复用一个共享单元，逐位定义如下（自测实测最大相对误差 0.015% < 2^-11）",
+      "step1_lod": "E = MSB(v_eff) 向下取偶（E ∈ {12,14,...,38}），f = E/2",
+      "step2_mantissa": "m_q11 = v_eff >>> (E-11)，13b，值域 [2048, 8192) 即 m = m_q11/2^11 ∈ [1,4)",
+      "step3_lut": "idx = (m_q11 − 2048) >>> 4（0..383，表深 512）；r0 = round(2^14 / sqrt((2048 + 16*idx + 8)/2^11))，15b 无符号",
+      "step4_newton": "r1 = (r0 * (3*2^39 − m_q11*r0*r0)) >>> 40，15b（全部中间量为精确整数，负值按有符号移位）",
+      "step5_finalize": "invstat_q20 = sat27(r1 <<< (18 − f))；sat27 饱和到 [1, 2^27−1]。物理值 = invstat_q20 / 2^20 ≈ 1/sqrt(var_x + eps_units)",
+      "storage": "每 lane 存 μ(32b) 与 invstat_q20(27b)，统计级共 16 组"
+    },
+    "pass2_normalize_and_output": {
+      "u":       "u = (x <<< 24) − μ（34b 有符号容器，精确；RMSNorm 时 μ 恒 0）",
+      "prod":    "prod = u * invstat_q20（等价 x*(invstat_q20<<<24) − μ*invstat_q20，59b 有符号，精确；prod = u_norm * 2^44）",
+      "w":       "S = 44 − g_shift；w = sat9((prod + 2^(S-1)) >>> S)（round-half-up，9b 有符号，饱和到 [-256, 255]）",
+      "gmul":    "t17 = (w * g_j + 128) >>> 8（g_j 16b 有符号，t17 17b，round-half-up）",
+      "t_scale": "AdaRMS：ta = (t17 * t6 + 32) >>> 6（t6 逐行取 t 区；非 ada 恒等）；ta 19b",
+      "bias":    "tb = ta + b_j（b_j 16b 有符号，tb 19b 有符号）",
+      "output":  "out_shift>0: y = sat8((tb + 2^(out_shift-1)) >>> out_shift)；=0: y = sat8(tb)。原地写回列 j、lane = 行%16",
+      "pad_rows": "尾组不满 16 行按 lane 掩码跳写（pad 行不写、值不变）"
+    },
+    "eltwise_dual_input": {
+      "comment": "submode=3：双输入残差加（v1.2 新增），无表装载、无统计，每列 2 拍交替读（CTX 单读口）",
+      "semantics": "y = sat8(((x1·m1 + x2·m2) + 2^(s-1)) >>> s)；s=0 时 y = sat8(x1·m1 + x2·m2)",
+      "x1": "y_base（原地输出，读改写同地址）",
+      "x2": "b_base（只读；行组基址 = b_base + 组号*n，与 x1 同 stride 同形）",
+      "m1": "rq_m（16b 有符号）；m2 = desc[135:120]（16b 有符号）；s = rq_s（0..15）",
+      "read_schedule": "发址奇偶交替：偶拍读 x1 存寄存，奇拍读 x2 与上一拍 x1 合并写回——吞吐 1 列/2 拍"
+    }
+  },
+
+  "compile_formulas": {
+    "comment": "编译器从模型权重与校准表生成表映像的参考公式；norm_gold.py 的 build_image()/eltwise_params() 是唯一参考实现。量纲：LN 输出 = z（无量纲 z 分数）*γ（*t AdaRMS）+ β，量化只除 sa_out；sa_in 只进 eps 换算。v1.1（2026-08-31 真实张量门返修）：g_shift 改 floor、新增 sa_out 下限。v1.2：新增 AdaRMS t6 与 ELTWISE m1/m2/s 公式。",
+    "inputs": ["gamma_j (fp32, 模型权重)", "beta_j (fp32, RMSNorm 无仿射时为 0)", "eps (fp32, 模型)", "sa_in (生产段 so)", "sa_out (下游消费段 sa，受下限约束)", "z_max (站点校准量，实测 max|z| 的 1.05 倍左右，缺省 8)", "t_r (fp32, AdaRMS 逐 token 缩放，缺省 1)"],
+    "eps_q24": "round(eps / (sa_in^2) * 2^24)，且钳到 ≥ 2^13",
+    "G_j": "gamma_j / sa_out（z 分数 → 输出 int8 的每列乘子）",
+    "B_j": "beta_j / sa_out",
+    "t6_r": "clamp(round(t_r * 64), -128, 127)——t6 分辨率 1/64 ≈ 1.6%；t=1 时恒 64（恒等）",
+    "sa_out 下限": "sa_out = max(下游 gemm sa, z_max·γ_max/512)——w 粒度 Δy ≈ G_max·2^-(g_shift+1)，gs=floor(log2(256/z_max)) 时 2^(gs+1) ≈ 512/z_max，该下限保证 Δy ≤ 1 LSB；γ 动态范围大的站点靠抬 sa_out 保精度，下游 gemm 的 m_requant 吸收尺度差",
+    "g_shift 选择": "只由 w 动态范围定：g_shift = clamp(floor(log2(256 / z_max)), 0, 7)，保证 z_max·2^gs ≤ 256（w 域不饱和优先；ceil 对小 z_max 会过冲 2 倍导致 w 大面积饱和）",
+    "out_shift 选择": "在 g_j、b_j 都不出 16b 的约束下取最大（os 越大分辨率越高）：os = clamp(min(floor(7 + g_shift − log2(G_max)), floor(15 − log2(max(B_max,1)))), 0, 7)",
+    "g_j": "round(G_j * 2^(8+out_shift−g_shift))，必须落在 [-32768, 32767]",
+    "b_j": "round(B_j * 2^out_shift)，必须落在 [-32768, 32767]",
+    "w_saturation_contract": "w 饱和只在 y 本来就要饱和时无害的前提是 256*G_min > 127（即 G_min > 0.5）；编译器须校验，违反则该站点不适合 NORM 模式或需调 sa_out",
+    "eltwise_m1_m2_s": "y_fp32 = x1·sa1 + x2·sa2 → 量化到 sa_out：m_i = round(sa_i/sa_out·2^s)，s 在两乘子都不溢 int16 的约束下取最大（缺省 8 = Q8.8，分辨率 1/256）；sa 比 > 32768 的站点不适合 ELTWISE",
+    "ref_quantization": "host fp32 参考路径的重量化用 sat8 = clip[-128,127]（与部署/GEMM y 量化同约定，负轨含 -128）——不是对称 ±127"
+  },
+
+  "fsm_cycles": {
+    "comment": "拍数公式（上报口径，NORM 与 ELTWISE 分开计）；装载为串行（CTX A 口被一遍扫描占用，ae_ctx_ram B 口只写，无法重叠——如实计费）。v1.2.2（2026-08-31）：统计级 8→11 拍/lane（var/LOD/查表三段拆拍修时序），每组 +32 拍，上界 2n+152→2n+184；表映像与数值语义（编译器契约区）不变",
+    "norm_load_const": 5,
+    "norm_load_tables": "2 * ceil(n/16) * 20（g/b 两表，逐组 20 拍，同 BIAS）",
+    "norm_per_row_group": "pass1 = n + 2；统计 = 16 lane × 11 拍 + 2 ≈ 164（v1.2.2 拆拍）；pass2 = n + 5（5 级流水，1 列/拍；ada 与非 ada 同拍数——t 字读藏在统计级 c9 空闲拍，零额外开销）；实测每行组 ≈ 2n + 182，公式上界取 2n + 184",
+    "norm_total": "T_NORM = 5 + 2*ceil(n/16)*20 + ceil(m/16) * (2n + 184)（ada 同式，实测 N4 n=3072 m=17 为 20344 拍、N1 n=1 m=5 为 202 拍、N7 ada n=96 m=20 为 1000 拍）",
+    "eltwise_per_row_group": "2n + 5（每列 2 拍交替读 + 读延迟/排空；无表装载）",
+    "eltwise_total": "T_ELT = 2 + ceil(m/16) * (2n + 5)（实测 E3 n=64 m=16 为 133 拍、E1 n=40 m=18 为 169 拍、E4 n=1 m=5 为 7 拍）",
+    "model_budget_note": "norm 全模型 423 次调用按 a2 站点实测 m/n 分布估算 ≈ 16.0M 拍 + 装载 ≈ 0.83M 拍（v1.2.2 统计级拆拍后每行组 +32 拍，全模型 +0.5M），仍在 07_onchip_ops §2.1 预算量级内；ELTWISE 每站点 ≈ ceil(m/16)(2n+5) 拍，比 NORM 便宜一个量级"
+  },
+
+  "gates": {
+    "micro_bitexact": "12_actv/sim/actv_gold.py：21 用例（8 旧 ACTV/BIAS + 6 NORM + N7/N8 AdaRMS + N9 条纹 + E1..E4 ELTWISE）与 numpy 黄金逐字节一致，≥ 20000 字节——PASS：221184/221184 字节（2026-08-31 v1.2 与 v1.2.2 各验一遍）",
+    "regression": "全芯片 12 项位精确回归不回退（ACTV/BIAS/NORM 原样通过）——PASS：12/12（2026-08-31 v1.2 / v1.2.2 均过）",
+    "real_tensor_norm": "a2 流 ≥50 个真实 norm 站点：host fp32 vs 本定点语义，max|Δ| ≤ 2 LSB 且 |mean| < 0.2 LSB——PASS：148/148（最差 max|Δ|=2.00、|mean|=0.020；norm_real_gate_result.json，2026-08-31）；AdaRMS 语义由 norm_gold.py 自测（ada RMS / ada LN t∈[0.05,2] 用例 max|Δ| ≤ 2.00、|mean| < 0.2）+ 微观 N7/N8 位精确覆盖",
+    "real_tensor_eltwise": "≥50 个真实残差站点（同宽度两张不同段实跑的真实激活图当 x1/x2，真实 sa1/sa2/sa_out）：host fp64（x1·sa1+x2·sa2 → /sa_out → 四舍六入五成双 → sat8）vs 引擎定点，max|Δ| ≤ 1 LSB 且 |mean| < 0.2 LSB——PASS：148/148（146 站 max|Δ|=1、2 站 =0，最差 |mean|=0.036；eltwise_real_gate_result.json，2026-08-31）",
+    "inplace_stripe": "N9 用例：每组数据块后 8 个常数条纹字在变换后逐字节不变（全 CTX 221184 字节比对天然覆盖越界写检查）——PASS（2026-08-31 v1.2）",
+    "ppa_ooc": "OOC 综合引擎增量 ≤ 10000 LUT、DSP = 0（基线 5147 LUT，目标总数 ≤ 15147）——DSP=0 与 WNS −0.653（对照旧 −0.229 同量级）达标；LUT 未达标：v1.2.2 实测 24782（消融定论：16 lane 乘法阵列 12.76k 超全部增量预算，联合约束无解，三档工作点见 12_actv/NOTES_rtl.txt 第九节）"
+  }
+}

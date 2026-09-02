@@ -1,0 +1,219 @@
+==========================================================================
+07_int4 -- 一部分权重量化到 INT4：调研 + 假量化精度实验（2026-08-31）
+==========================================================================
+本轮纯软件：不改 RTL、不改 compiler、不动 W8A8 主线产物。
+问题：挑不敏感的层把权重从 INT8 降到 INT4（权重字节减半 -> DDR 装载
+带宽和 WRAM 容量压力下降），策略偏差控制在 0.04 rad 以内。
+
+--------------------------------------------------------------------------
+一、结论（先看这里）
+--------------------------------------------------------------------------
+推荐方案 FINAL_E（cfgs/FINAL_E.json，共 128 层 W4）：
+  - text_encoder（BERT，72 层，含 qkv）：per-tensor 对称 INT4
+    （sw4 = absmax/7，16 个电平，1 个 fp32 scale/层）
+  - backbone（Swin RGB 塔，52 层）：group-wise 对称 INT4，g=128
+    （fp16 group scale；g=64 实测等效，见 E_g64）
+  - neck（4 个 Conv2d）：per-tensor INT4
+  - 其余全部保持 W8：vision_3d、fusion、action_head、
+    spatial_enhancer.pts_prob_fc.layers.1（本来就 fp）
+  权重字节：159.5 MB -> 102.6 MB，省 35.6%（目标 30-50% 达标）
+  精度（均为 jpos MAE，rad，vs 同 seed fp32 参考）：
+    合成批次 3 种子均值：0.0231（W8 基线 0.0259，门控原值 0.0288）
+    真实样本 3 条：0.0291 / 0.0315 / 0.0177（W8：0.0187/0.0272/0.0200）
+    指令变体 7 条（文本塔压力测试）：0.020-0.033，最差 0.0334 < 0.04
+    动作 vs 真值：0.037/0.060/0.064（W8：0.044/0.056/0.063，同级）
+  解释：偏差与 W8 基线的差别在 ±0.01 rad 的混沌噪声带内，
+  即本轮样本量下与 W8A8 不可区分，全部 < 0.04 bar，也远小于
+  fp32 自身 vs 真值的 0.044-0.064 标尺。
+
+分档结论：
+  - 只要零 RTL 改动：text_bert 单独 per-tensor W4 = 省 26.7%，
+    syn 0.0187，真实样本与 W8 持平（A_bert_pt）。per-tensor W4 对现有
+    数据通路完全透明（常数表 sw->absmax/7、requant r 重算即可）。
+  - 要 35%：加 vision_2d @g128（需要每组 scale 参与反量化，RTL 增加
+    一点乘法/移位，属下一轮设计项）。
+  - 42-49%（action_head 或全模型 @g128）：syn 0.037-0.047，超 0.04
+    bar，真实样本出现 0.056-0.065 的坏例，不推荐。
+  - QoQ 式"装载时解包回 per-tensor INT8"在 vision_2d 上不行：
+    real 最差 0.079（E_qoq），组 scale 折进 per-tensor INT8 网格
+    损失太大。BERT 本来就是 per-tensor，不受影响。
+
+--------------------------------------------------------------------------
+二、调研笔记（2024-2026 低比特权重量化，结合本项目约束）
+--------------------------------------------------------------------------
+约束画像（决定方法取舍）：模型仅 0.2B；激活已冻结为 INT8 per-tensor
+静态（硬件常数）；每个 GEMM 只有一组 (m, 2^-s) requant；目标是权重
+字节而不是算力。=> 只能选"只动权重、不动激活量化"的方法。
+
+方法速判（详细出处见下）：
+  GPTQ     只改权重（标定 Hessian 逐列补偿）-> 兼容。工程代价中：
+           需要标定集（建议覆盖全部去噪 timestep，TFMQ-DM 的教训），
+           0.2B 模型上计算量分钟级。作为 W4 精度不够时的第一备选。
+  HQQ      只改权重、免标定（半二次优化解 scale/zero），5 分钟级，
+           完全兼容。GPTQ 的低成本替身。
+  AWQ      需要把 per-channel 缩放迁到激活侧/上一层 -> 与冻结的
+           per-tensor sa 冲突，不兼容（其分组部分思想已被 g128 吸收）。
+  SmoothQuant 本质就是重标定激活 -> 不兼容（02_quant gate_results 里
+           已有 outlier 扫描：fusion 的 text_attn ffn 有 1e9 级
+           outlier ratio，但激活路径冻结，动不了）。
+  QuIP/QuIP# 旋转矩阵要折进相邻层 -> 改变激活分布，破坏冻结 scale；
+           码本查找对 FPGA 数据通路也是负担。>=2B 才见长，放弃。
+  SpQR     离群权重单独稀疏高精度存储，FPGA 解码代价高，放弃。
+  QoQ/QServe  W4A8 的"解包回 INT8"两级方案，scale 不进累加路径，
+           数据通路零改动 -- 思路对，但实测（E_qoq）说明它只在
+           "组内动态范围不大"的层上等效；vision_2d 上掉精度。
+  QAT(SQIL/BitVLA) 兜底路线，重训练，超本轮范围。
+
+关键文献数字（出处）：
+  - GPTQ [Frantar+ ICLR'23 arxiv:2210.17323]：OPT-125M 上 3-bit 无分组
+    ppl 27.65->64+，加 g128 才拉回 => 小模型必须分组，per-tensor 危险。
+  - QServe/QoQ [Lin+ MLSys'25 arxiv:2405.04532]：W4A8 vs W4A16 在
+    Llama-2-7B 上只差 0.07 ppl（前提 per-token 动态激活+旋转）；
+    g128 相对 per-channel：RTN 9.50->7.25（-24%），AWQ -12%。
+    存储元数据：QoQ 每 128 权重 8b scale + 4b zero = +2.3%；
+    GPTQ DQ 后 ~0.13 bit/参数；AWQ g128 fp16 scale+zero = +6.25%。
+  - SLMQuant [Wang+ 2025 arxiv:2511.13023]：0.5B 级 W4A8 最好也掉
+    9-14%（相对），小模型 W4 红灯与我们整模型 W4 红灯一致；且指出
+    LLM 的激活离群假设在小模型不成立。
+  - SQIL [Park+ 2025 arxiv:2505.15304]：OpenVLA-7B W4 PTQ 73.8->70.7，
+    QAT 拉回 73.2；ViT 塔单独 W4 只掉 0.6 点、LLM 塔掉 2.7 点 =>
+    敏感性集中在部分模块，支持混合精度（与我们 action_head 73% MAC
+    最敏感的画像一致）。
+  - TFMQ-DM [Huang+ CVPR'24 arxiv:2311.16503] / Q-Diffusion [CVPR'23]：
+    diffusion 头的量化标定必须覆盖全部去噪 timestep，否则被单一
+    时刻分布带偏。下一轮做 GPTQ 时照此办。
+  - RepQ-ViT [ICCV'23 arxiv:2212.08254]：宽标定窄推理的折叠思路，
+    但折进权重会扰动激活分布，冻结激活场景先小规模验证再用。
+
+对本项目的落点：0.2B + 激活冻结 + 混合精度下，RTN + group scale
+（g=64/128）已经够用（本轮实测）；若下一轮想再压（比如把 action_head
+也拉进 W4），优先试 GPTQ/HQQ（覆盖 timestep 的标定集），而不是
+AWQ/SmoothQuant/QuIP# 这类要动激活路径的方法。
+
+--------------------------------------------------------------------------
+三、实验设计（数值语义，全部 fp64 精确模拟）
+--------------------------------------------------------------------------
+基线 = hw_calib.py mode B_v1 的逐位复现：sa/so/sw 用 hw_calib_table_v2.json
+（8 条扰动合成样本标定），W 取整为 int8、激活 per-tensor 取整 int8、
+fp64 精确整数累加、K+1 增广 bias、requant y=sat8((acc*m)>>>s) 纯 floor、
+输出 y*so；in_proj 保持 fp（与 0.0288 那次完全一致）。
+W4 变体（激活与 requant 结构不动）：
+  w4pt  纯整数累加 acc=sum(xq*wq4int)，r=(sa*sw4)/so，sw4=absmax/7。
+        与现有硬件逐位等价（只换常数），零 RTL 改动。
+  w4gN  acc=sum(xq*wq4int*sg)：组 scale 在累加时反量化，requant 单乘数
+        r=sa/so（实测 sa/so in [0.029,12.9] -> v1 编码 s in [11,20]，
+        m 15-bit 精度，全部可编码）。组 scale 乘法是下一轮 RTL 项。
+  w4qN  QoQ 式：装载时解包回 per-tensor INT8（w_int8=round(wq4*sg/
+        sw_eff)，sw_eff=max sg=absmax/7），整数累加，r=(sa*sw_eff)/so。
+        零 RTL 改动的另一实现路线（实测在 vision_2d 上掉精度）。
+  bias：同一 c-loop K+1 增广，分母 pt 用 sa*sw4、gN 用 sa；本轮
+        0 层溢出到 fp 回退。
+评价口径：与 02_quant 相同的 act_metrics（jpos MAE rad）。
+  真实样本：04_dataset sample_000/001/002 从 RoboTwin HDF5 按原路径
+    重建（prep 校验与 fp32_ref_000.npz 逐位一致，max|d|=0），
+    3 条 x 3 个去噪种子（20260830/0901/0902）；真实样本噪声地板
+    （换种子）jpos 0.0019 rad。
+  合成样本：bringup 批次，seeds 1000/1100/1200 -> 与 0.0288 直接可比。
+
+--------------------------------------------------------------------------
+四、实验结果
+--------------------------------------------------------------------------
+1) scope 级锚点（该模块整体 W4、其余 W8；syn jpos / W8 基线 0.0259）：
+     w4g128: text_bert 0.0215 | neck 0.0226 | vision_2d 0.0244
+             action_head 0.0354 | fusion 0.0382 | vision_3d 0.0398(real s2 0.0666!)
+     w4pt:   text_bert 0.0187 | neck 0.0262 | vision_3d 0.0390(real 反而好)
+             fusion 0.0483 | vision_2d 0.0492(real 0.075-0.095 坏) | action_head 0.0720
+   字节分布（W8 共 159.5MB）：bert 84.9 | vision_2d 27.4 | fusion 23.3
+     | action_head 20.7 | neck 2.1 | vision_3d 0.9
+2) 逐层扫描（876 条 = 438 层 x {g128, pt}，其余全 W8，真实样本 000）：
+   单层边际代价中位数仅 +0.0003~+0.002 rad；各模块最差的少数层
+   （action_head pt 3 层、fusion 5 层、bert 2 层、vision_2d 2 层超过
+   +0.005）。**重要**：逐层边际之和与组合实测严重不符（混沌放大/
+   抵消），逐层 djpos 只能当粗筛，组合必须实测（见坑 5）。
+   全表在 dump/scan_table.csv、汇总 dump/module_rollup.csv。
+3) 组合阶梯（详表 config_comparison.csv）：
+     W8_ref      0%   syn 0.0259  real .019/.027/.020
+     A_bert_pt  26.7%  syn 0.0187  real .020/.029/.020   <- 零RTL档
+     FINAL_E    35.6%  syn 0.0231  real .029/.032/.018   <- 推荐
+     E_g64      35.4%  syn 0.0211  real .023/.033/.020   <- g64 等效
+     I(全g128)  34.8%  syn 0.0239  real .026/.030/.019   <- 单一格式档
+     F(+v3d pt) 35.9%  syn 0.0356  real .013/.025/.018   <- 勉强过线
+     C(+ah g128)42.2%  syn 0.0370  real .042/.029/.056   <- 超 bar
+     D(all g128)49.3%  syn 0.0468  real .044/.033/.057   <- 超 bar
+     E_qoq      35.7%  syn 0.0403  real .022/.062/.079   <- QoQ解包不行
+4) FINAL_E 稳健性（指令变体 7 条，真实观测+不同指令措辞）：
+     E vs fp：0.0068-0.0146（jpos 0.020-0.033，最差 0.0334）
+     W8 vs fp：0.018-0.030 同量级 => 文本塔 26.7% 字节全降 W4 后，
+     对指令措辞变化没有出现额外敏感。
+5) 硬件侧数字：requant 乘数 r=sa/so in [0.029,12.9]，v1 编码
+   s in [11,20]，无溢出层；w4pt 的整数累加上界比 W8 更松
+   （127*7*K < 127*127*K）；scale 元数据开销：g128 fp16 = +3.1%，
+   若换 QoQ 式 8b+4b = +1.2%（下一轮可选项）。
+   参照：全模型 fp32 权重 735MB（safetensors，含 embedding/norm 等
+   CPU 侧部分），加速器装载的 GEMM 权重 W8=159.5MB -> FINAL_E 102.6MB。
+
+--------------------------------------------------------------------------
+五、坑（按踩中顺序）
+--------------------------------------------------------------------------
+1. refs 必须在 patch 之前算。dispatcher 把所有层默认设成 W8，如果
+   先 patch 再建 fp 参考缓存，参考会被 W8 语义污染且不自知。
+   （batches_and_refs() 必须先于 patch_all()，已在脚本里固定顺序。）
+2. Conv2d 的 bias fp 回退分支 reshape 要 view(-1,1,1)，Conv1d 是
+   view(-1,1)。第一版抄混了，Swin patch-embed 直接 shape 报错。
+3. W8 基线跨进程不可复现到最后一位：本进程 syn 0.02593 vs 门控
+   0.02881（差 10%）。原因：fp32 参考（attention/conv）在同一架构
+   不同进程/GPU 状态下有非确定性选核。同进程内两次运行逐位一致
+   （已验证）。=> 所有对比都必须用同进程基线，0.0288 只当锚点。
+4. 逐层单种子边际不可加：thr002 贪心组合的"预估总代价"与实测差
+   一个量级，且 syn/real 方向能相反（vision_3d：g128 real s2 0.0666
+   但 pt 0.0169，syn 却同为 0.039）。扩散头对初值敏感，换量化配置
+   = 换轨迹。=> 用 scope 锚点定大方向，组合必须实测，样本>=3 条
+   x 3 种子再下结论。
+5. "看起来免费"的层组合起来不一定免费（bert 单独免费 + v2d 单独
+   免费 + v3d 单独坏 => B_bvn real 0.050/0.065）。拆分定位到
+   vision_3d@g128 才救回 E 组合。
+6. varinstr 第一版把"fp 参考"算成了 W8（CFG 清空默认就是 W8），
+   打印 W8 偏差恒为 0 才发现。教训：dispatcher 脚本里 fp 模式要
+   显式设全部 key 为 "fp"。
+7. evalcfg 的 config 文件名和服务器循环变量对不上（config_$t.json
+   vs $t.json），白跑一轮。ssh 包装命令超时不影响 nohup 任务本身，
+   但要另开连接看日志确认。
+8. /tmp 可能被重启清空（上轮 ae_cycles 就没了），所以本轮所有脚本、
+   标定表、结果都同步回了本地 07_int4/。
+
+--------------------------------------------------------------------------
+六、复现命令（服务器 nc23@101.6.64.77）
+--------------------------------------------------------------------------
+  # 环境：/home 100% 满，只能写 /tmp；GPU 挑空闲卡（本轮用 2 号）
+  mkdir -p /tmp/int4_hb && cd /tmp/int4_hb
+  scp int4_scan.py hw_calib_table_v2.json（来自本地 02_quant/）
+  P=/home/nc23/.conda/envs/holobrain/bin/python
+  CUDA_VISIBLE_DEVICES=2 HF_ENDPOINT=https://hf-mirror.com TMPDIR=/tmp \
+      $P int4_scan.py prep        # 建 batch+fp参考+逐位校验
+      $P int4_scan.py w8base      # W8 基线（real+syn 回归）
+      $P int4_scan.py anchor --modes w4g128,w4pt
+      $P int4_scan.py scan --sample 0 --modes w4g128,w4pt   # ~12 min
+      $P int4_scan.py bytes
+      $P int4_scan.py evalcfg --cfg FINAL_E.json --tag FINAL_E
+      $P varinstr_check.py FINAL_E.json FINAL_E             # 指令变体
+  本地：python select_layers.py dump（选层分析、生成阶梯 config）
+
+--------------------------------------------------------------------------
+七、文件清单（hb_fpga_impl/07_int4/）
+--------------------------------------------------------------------------
+  NOTES.txt                 本文件
+  int4_scan.py              服务器主脚本（prep/w8base/anchor/scan/evalcfg/bytes）
+  varinstr_check.py         指令变体稳健性检查
+  select_layers.py          本地选层分析
+  cfgs/*.json               各候选组合（FINAL_E = 推荐方案）
+  final_module_bytes.csv    FINAL_E 各模块字节账
+  final_w4_layers.csv       FINAL_E 的 128 层清单（层名/类型/mode/组宽/格式）
+  config_comparison.csv     全部组合对比（字节节省 + 各口径偏差）
+  dump/scan_table.csv       逐层扫描全表（876 行）
+  dump/module_rollup.csv    模块级扫描汇总
+  dump/cfg_*.json           各组合完整指标（含 per-seed）
+  dump/varinstr_FINAL_E.json 指令变体结果
+  dump/{w8base,anchors,bytes,scan_s0}.json 原始数据
+  （dump/ 里 config_thr*.json 是第一版贪心组合，已被第二轮淘汰，
+   留作"逐层贪心不可靠"的证据）
+==========================================================================

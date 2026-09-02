@@ -1,0 +1,51 @@
+== gen_vectors
+   [golden] REF==PRIM 帧一 ctx:True ddr:True
+   [golden] 写出 seq.mem (34 条) / ddr_init.mem / expected_* (frames=2)
+== sim_ae
+   [tb] 三遍 dump 完成（compare.py 比 REF/PRIM；prim2 vs prim 逐位 diff）
+   tb_ae.sv:274: $finish called at 247326000 (1ps)
+== compare
+   [cmp] DDR PRIM: PASS (65536 字节一致)
+   [cmp] ==> 全部位精确一致 ✔
+== tb_rq
+   TB_RQ PASS (exact variants bit-identical to v1)
+   tb_rq.sv:257: $finish called at 1200180000 (1ps)
+== tb_sm16
+   [tb_sm16] 16 用例 5711 元素全部位精确一致 PASS
+   tb_sm16.sv:83: $finish called at 27170000 (1ps)
+== tb_pe_pack
+   TB_PE_PACK PASS (2216 tiles bit-identical to 2x ae_pe)
+   tb_pe_pack.sv:146: $finish called at 6455680000 (1ps)
+== tb_pe_pack_dsp
+   TB_PE_PACK_DSP PASS (2216 tiles bit-identical to 2x ae_pe)
+   tb_pe_pack_dsp.sv:149: $finish called at 6455680000 (1ps)
+== gem_cycles
+   注：总周期只作参考——TB 的 wall-clock 里 softmax/copy 与 GEMM 并行重叠，
+       与本模型串行求和口径不可直接比（perf 投影用串行口径=保守上界）。
+== gen_actv
+   [golden] REF==PRIM 帧一 ctx:True ddr:True
+   [golden] 写出 seq.mem (40 条) / ddr_init.mem / expected_* (frames=1)
+== sim_ae_actv
+   [tb] 三遍 dump 完成（compare.py 比 REF/PRIM；prim2 vs prim 逐位 diff）
+   tb_ae.sv:274: $finish called at 344926000 (1ps)
+== compare_actv
+   [cmp] DDR PRIM: PASS (65536 字节一致)
+   [cmp] ==> 全部位精确一致 ✔
+== tb_ae_actv
+   tb_ae_actv.sv:118: $finish called at 375785000 (1ps)
+   [check] PASS — 221184 字节全部位精确（21 用例）
+
+================ 回归汇总 ================
+  PASS  gen_vectors
+  PASS  sim_ae
+  PASS  compare
+  PASS  tb_rq
+  PASS  tb_sm16
+  PASS  tb_pe_pack
+  PASS  tb_pe_pack_dsp
+  PASS  gem_cycles
+  PASS  gen_actv
+  PASS  sim_ae_actv
+  PASS  compare_actv
+  PASS  tb_ae_actv
+结果: ALL PASS (12 项)

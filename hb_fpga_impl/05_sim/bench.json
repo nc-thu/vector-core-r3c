@@ -1,0 +1,35 @@
+{
+  "meta": {
+    "date": "2026-08-31",
+    "rtl": "新版（调度器双发射权重预取 pf + rq_ms T_MAX=39；/tmp/aers，md5 与本地 01_rtl/rtl 一致）",
+    "verilator": "Verilator 5.050 2026-07-01 rev conda-forge build 0（--binary --timing，单线程）",
+    "iverilog": "Icarus Verilog 12.0 (stable)（conda env vsim）",
+    "machine": "64 核，负载 ~5.3-6.0（他组常驻进程）",
+    "note": "全部为实测墙钟（不含编译，含进程启动与 readmemh 文本解析）；测量命令见 NOTES.txt"
+  },
+  "smoke_col12": {
+    "desc": "COLS=12 冒烟档，default 用例，三遍 REF/PRIM-pf0/PRIM-pf1",
+    "iverilog": {"tb": "tb_ae.sv 一次 vvp 三遍连跑", "wall_s": 60.299, "cycles": [8405, 8149, 8149], "total_cycles": 24703, "cycles_per_s": 409.7},
+    "verilator": {"tb": "tb_ae_v.sv 三个独立进程", "wall_s": 0.189, "cycles": [8405, 8141, 8141], "total_cycles": 24687, "cycles_per_s": 131007.7},
+    "cycles_match": "REF 跨工具严格一致（8405）；PRIM Δ=+8（tb_ae.sv 同进程连跑的 LFSR 停顿相位残留，属 TB 残留非工具差异，dump 数据逐字节一致）",
+    "speedup": 320
+  },
+  "full_col108_smoke_load": {
+    "desc": "COLS=108 全参数档，冒烟负载（gen_vectors_108，28 条指令，frames=1）",
+    "iverilog": {"measured": false, "note": "未重测：单遍 REF（16447 拍）在当前负载下 9300s 未完成（旧验收链已废弃）。先期低负载实测口径约 10-30 cyc/s，即本档 54M 拍要 21-63 天"},
+    "verilator": {"tb": "tb_ae_v.sv 两进程（+MODE=0/1）", "wall_s": 10.616, "cycles": [16447, 15999], "total_cycles": 32446, "cycles_per_s": 3056.5, "per_mode_wall_s": [5.292, 5.324], "note": "每进程约 2.9s 花在 8MB ddr_init.mem 的 readmemh 文本解析上（进程固定开销，段并行时每段都要付一次）"}
+  },
+  "big_col108_gemm_dense": {
+    "desc": "COLS=108 全参数档，GEMM 密集大负载（emit_big.py：8xLOAD_CTX + 10x[LOAD_W+GEMM m=1024,k=1024,n=108] + 1xSTORE）",
+    "workload_est_cycles": 1285577,
+    "verilator": {"tb": "tb_ae_v.sv +MODE=0 单进程", "wall_s": 217.934, "cycles": [1491295], "total_cycles": 1491295, "cycles_per_s": 6844.7, "verilator_speed_print": "68.476 us/s, cpu 217.776s on 1 threads, 19MB alloc", "rerun_check": "最终版 TB 复跑（resync_run2）222.78s → 6693 cyc/s，同负载下逐次差异约 ±2%"}
+  },
+  "pf_effect": {
+    "default_case": {"prim_pf0": 8149, "prim_pf1": 8149, "delta": 0, "note": "该负载无可后台预取的权重装载，pf 无收益（结构性零漂移也由此得证）"},
+    "pf_rqs_case": {"prim_pf0": 8409, "prim_pf1": 8001, "delta": -408, "note": "权重预取实测省 408 拍（~4.9%），dump 与 pf0 逐字节一致"}
+  },
+  "extrapolate_54M_cycles": {
+    "verilator": {"rate_kcycles_per_s": 6.8, "basis": "sim_big 大负载档实测（6844.7 cyc/s）", "hours_54M": 2.19, "hours_313M": 12.71},
+    "iverilog": {"rate_cycles_per_s_range": [10, 30], "basis": "先期低负载下全参数档实测口径；本轮未重测（旧链废弃）。54M 拍 ≈ 21-63 天——结论：全模型仿真只能用 Verilator"}
+  }
+}

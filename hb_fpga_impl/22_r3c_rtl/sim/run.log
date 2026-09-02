@@ -1,0 +1,17 @@
+[tblprobe] addr=0 lut_we=0 lut_wa=255 lut_wd=dfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdf
+[tblprobe] tbl0[0..7]:453ba6cd0aacc5e978599e2f1c1701182fa48ae45a27a4f3808bd6a42b1d2d0d3dd0c2a97f8084807f6f8080807faa80807f80807f7f808080807f80807f807f937f8080808080807f7f807f7f7f7f807f807f80dbbcaedbc7bd500341adb5b613b7dd3c8f4846b36562f386180de137b67a89d1303bb2c5ca6f6ea238ac600d2026f029ec394e939cdb633f0fc519dd28e6044aff3f81594d5100e4aab6fd243d363869fdd045c240efa0b9ab8ce3bd3a2ee297eed8d773b6dc5b037884440c3013b6989a01b1f6b7631903fc9a8694b2d630ebedc4fb1e24970f9592814cf74fe94ed6509bd92d41d8483ccaf371318ecd0f95df88d6c39418f0dc3bc1dadf
+ 45 3b a6 cd 0a ac c5 e9  tbl0[248..255]: 94 18 f0 dc 3b c1 da df
+[tblprobe] addr=1 lut_we=0 lut_wa=255 lut_wd=dfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdf
+[tblprobe] tbl0[0..7]: 45 3b a6 cd 0a ac c5 e9  tbl0[248..255]: 94 18 f0 dc 3b c1 da df
+[tblprobe] addr=2 lut_we=0 lut_wa=255 lut_wd=dfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdf
+[tblprobe] tbl0[0..7]: 45 3b a6 cd 0a ac c5 e9  tbl0[248..255]: 94 18 f0 dc 3b c1 da df
+[tb] case0 done，用时 306 拍（sub=0 m=18 n=20 k=0 y=0 tbl=64）
+[tb] case1 done，用时 276 拍（sub=0 m=32 n=5 k=0 y=80 tbl=320）
+[tb] case2 done，用时 296 拍（sub=0 m=7 n=33 k=0 y=112 tbl=576）
+[tb] case3 done，用时 75 拍（sub=1 m=18 n=20 k=20 y=0 tbl=832）
+[tb] case4 done，用时 86 拍（sub=1 m=33 n=17 k=17 y=48 tbl=836）
+[tb] case5 done，用时 96 拍（sub=1 m=5 n=40 k=40 y=100 tbl=840）
+[tb] case6 done，用时 24 拍（sub=1 m=16 n=8 k=8 y=140 tbl=846）
+[tb] case7 done，用时 279 拍（sub=0 m=16 n=16 k=0 y=148 tbl=848）
+[tb] dump 完成（actv_ctx_out.mem，20480 字节）
+tb_ae_actv.sv:123: $finish called at 14715000 (1ps)
