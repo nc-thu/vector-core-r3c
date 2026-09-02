@@ -547,3 +547,7 @@ u_gemm 模块 LUT 76176→65452（−14.1%）、FF 105657→137097（+29.8%）�
 ## 2026-09-01 20:05:16　R3C 交接包
 
 `handoff_r3c/`（仓库根）：README（一天上手+目录地图+环境+硬规矩）、STATUS（当前权威形态 1536 DSP/12 项全绿/五轮演进/下一步优先级）、ARCHITECTURE（模块地图+R1/R2/R3C 三代优化+口径体系）、FLOW（验证矩阵+Verilator 快路径+综合流程+改 COLS 清单）、PITFALLS（15 条，含本轮 5 条新坑）。取代旧 handoff/（08-30 版，保留作历史）。
+
+## 2026-09-02　R3C 交接包同步 GitHub
+
+仓库 github.com/nc-thu/vector-core-r3c（private），main=23c20e4。按用户裁决只推核心：仿真器/算法/RTL 代码+核心结果（3653 文件，最大单文件 4.6MB）；数据块全部不入库（权重 blob 188MB、segments 的 ctx/w/ddr mem、t7_*.npy、04_dataset npz、fixture.pt、第三方 robo_orchard_lab），segments/*/seq.mem 保留供 r3c_model/pe_sizing 复算。白名单式 .gitignore 落在仓库根。坑两条：①aux.json 是 Windows 保留设备名，git 打不开，gitignore 掉（measure.py 可重新生成）；②校园网到 github.com:443 时通时断，推送需趁连接窗口抢推重试。

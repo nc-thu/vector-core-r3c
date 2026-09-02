@@ -17,7 +17,7 @@
 # ============================================================================
 set -euo pipefail
 cd "$(dirname "$0")"
-H=nc23@101.6.64.77
+H=<SERVER>
 A=${A:-/tmp/aers}
 L_RTL=../01_rtl/rtl
 L_SIM=../01_rtl/sim
@@ -25,7 +25,7 @@ L_SIM=../01_rtl/sim
 # --- 服务器侧运行树（/home 满，树放 /tmp；rtl 从旧快照实拷贝再覆盖） ---
 ssh $H "mkdir -p $A/sim $A/sim108 $A/sim_big && \
   [ -d $A/rtl ] || cp -rL /tmp/aerun/rtl $A/rtl 2>/dev/null || \
-    cp -r /home/nc23/workspace/holobrain/ae_sim/rtl $A/rtl"
+    cp -r ~/workspace/holobrain/ae_sim/rtl $A/rtl"
 
 # --- 上传 ---
 scp $L_RTL/*.sv $H:$A/rtl/
@@ -37,7 +37,7 @@ scp tb_ae_v.sv emit_big.py $H:$A/sim_big/
 scp tb_ae_v.sv $H:$A/sim_big/tb_ae_v.sv
 ssh $H "[ -f $A/sim108/gen_vectors_108.py ] || \
   cp /tmp/aerun/sim108/gen_vectors_108.py $A/sim108/ 2>/dev/null || \
-  cp /home/nc23/workspace/holobrain/ae_sim/sim108/gen_vectors_108.py $A/sim108/"
+  cp ~/workspace/holobrain/ae_sim/sim108/gen_vectors_108.py $A/sim108/"
 # compare.py / exp2_lut.mem：emit 对拍与 LUT 装载要用，旧版未动直接复用
 ssh $H "[ -f $A/sim/compare.py ] || cp /tmp/aerun/sim/compare.py $A/sim/; \
   [ -f $A/sim/exp2_lut.mem ] || cp /tmp/aerun/sim/exp2_lut.mem $A/sim/"

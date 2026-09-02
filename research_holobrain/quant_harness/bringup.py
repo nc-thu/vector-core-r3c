@@ -9,8 +9,8 @@ Runs the full inference path of HorizonRobotics/HoloBrain_v0.0_GD
   4. save fixture (inputs + outputs) and module inventory (Linear/Conv2d)
 
 Run on server:
-  cd /home/nc23/workspace/holobrain
-  CUDA_VISIBLE_DEVICES=2 /home/nc23/.conda/envs/holobrain/bin/python bringup.py
+  cd ~/workspace/holobrain
+  CUDA_VISIBLE_DEVICES=2 ~/.conda/envs/holobrain/bin/python bringup.py
 """
 
 import json
@@ -18,10 +18,10 @@ import os
 import sys
 import time
 
-SHIMS = "/home/nc23/workspace/holobrain/shims"
-REPO = "/home/nc23/workspace/holobrain/robo_orchard_lab"
-CKPT = "/home/nc23/workspace/holobrain/ckpt/HoloBrain_v0.0_GD"
-OUT = "/home/nc23/workspace/holobrain/out"
+SHIMS = "~/workspace/holobrain/shims"
+REPO = "~/workspace/holobrain/robo_orchard_lab"
+CKPT = "~/workspace/holobrain/ckpt/HoloBrain_v0.0_GD"
+OUT = "~/workspace/holobrain/out"
 MODEL_DIR = os.path.join(CKPT, "post_training_robotwin")
 PROCESSOR_JSON = "robotwin2_0_processor.json"
 SEED = 20260830

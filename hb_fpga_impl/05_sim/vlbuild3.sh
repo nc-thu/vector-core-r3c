@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # vlbuild3.sh — vlbuild.sh + OPT_FAST/OPT_GLOBAL=-O3（NOTES.txt 提的零风险提速项）
 # 用法与 vlbuild.sh 相同：bash vlbuild3.sh <verilator 额外参数...>
-V=/home/nc23/.conda/envs/vsim/bin
+V=~/.conda/envs/vsim/bin
 set -e
 $V/verilator --binary --timing -j 0 -Wno-fatal "$@" > /tmp/vlbuild3.log 2>&1 || true
 if [ ! -f obj_dir/Vtb_ae_v.mk ]; then

@@ -36,8 +36,8 @@ INT8 脉动阵列加速器（跑 HoloBrain-0.2B 推理的 GEMM 主线），R3C �
 
 - **Vivado 2021.2**：`D:\software\Vivado\2021.2\`。综合必须在无空格路径跑（仓库路径含 "GPU ARCH"），工作区模式 `E:\ae_syn\<轮次名>\`。
 - **iverilog**：`C:\iverilog`（regression.sh 自己加 PATH）。只用于回归和秒级冒烟。
-- **Verilator（推荐）**：在服务器 nc23@101.6.64.77，`/home/nc23/.conda/envs/vsim/bin`，工作区 `/tmp/ae_vgate`，模板 `14_rtl_r1r2/sim/vlbuild_vgate.sh`。比 iverilog 快一个量级，日常验证首选。
-- **python**：本机 `/d/ana/python`（numpy）；服务器 `/home/nc23/.conda/envs/holobrain/bin/python`。注意服务器 `/home` 满，只写 `/tmp`。
+- **Verilator（推荐）**：在服务器 <SERVER>，`~/.conda/envs/vsim/bin`，工作区 `/tmp/ae_vgate`，模板 `14_rtl_r1r2/sim/vlbuild_vgate.sh`。比 iverilog 快一个量级，日常验证首选。
+- **python**：本机 `/d/ana/python`（numpy）；服务器 `~/.conda/envs/holobrain/bin/python`。注意服务器 `/home` 满，只写 `/tmp`。
 
 ## 硬规矩（用户裁决，写进 CLAUDE.md 第 9 节）
 

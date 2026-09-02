@@ -182,12 +182,12 @@ W4 变体（激活与 requant 结构不动）：
    标定表、结果都同步回了本地 07_int4/。
 
 --------------------------------------------------------------------------
-六、复现命令（服务器 nc23@101.6.64.77）
+六、复现命令（服务器 <SERVER>）
 --------------------------------------------------------------------------
   # 环境：/home 100% 满，只能写 /tmp；GPU 挑空闲卡（本轮用 2 号）
   mkdir -p /tmp/int4_hb && cd /tmp/int4_hb
   scp int4_scan.py hw_calib_table_v2.json（来自本地 02_quant/）
-  P=/home/nc23/.conda/envs/holobrain/bin/python
+  P=~/.conda/envs/holobrain/bin/python
   CUDA_VISIBLE_DEVICES=2 HF_ENDPOINT=https://hf-mirror.com TMPDIR=/tmp \
       $P int4_scan.py prep        # 建 batch+fp参考+逐位校验
       $P int4_scan.py w8base      # W8 基线（real+syn 回归）

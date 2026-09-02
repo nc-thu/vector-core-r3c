@@ -1,6 +1,6 @@
 {
  "meta": {
-  "ckpt": "/home/nc23/workspace/holobrain/ckpt/HoloBrain_v0.0_GD/post_training_robotwin/model.safetensors",
+  "ckpt": "~/workspace/holobrain/ckpt/HoloBrain_v0.0_GD/post_training_robotwin/model.safetensors",
   "n_tensors": 431,
   "n_missing": 0,
   "defs": {

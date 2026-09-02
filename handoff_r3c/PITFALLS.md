@@ -23,7 +23,7 @@
 ## 流程规矩
 
 12. **每轮工作新文件夹新 HTML，不改旧文件**：hb_fpga_impl/ 下 NN_topic/ 递增编号；文件名、页头、正文条目时间戳到时分秒；量化结论必须写「提升了 xx%」。
-13. **服务器纪律**：nc23@101.6.64.77 的 /home 是满的，只写 /tmp；python 用 /home/nc23/.conda/envs/holobrain/bin/python，Verilator 用 /home/nc23/.conda/envs/vsim/bin；跑完不留后台进程。
+13. **服务器纪律**：<SERVER> 的 /home 是满的，只写 /tmp；python 用 ~/.conda/envs/holobrain/bin/python，Verilator 用 ~/.conda/envs/vsim/bin；跑完不留后台进程。
 14. **每轮实验 ≤10 分钟**：超时缩范围（抽代表段、降规模），不干等。周期预测准确率 ≥95% 就够，不追求逐段实测。
 15. **WRAM 路由按 COLS**：描述符流的 b_spad 布局和 COLS 绑死，改 COLS 必须重跑编译器（12_actv/a3/compiler_a3.py），不重跑就吃窄尾组浪费。
 

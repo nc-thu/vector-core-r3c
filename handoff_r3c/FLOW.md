@@ -34,13 +34,13 @@ bash regression.sh          # 日志逐项存 reg_logs/<步骤名>.log
 
 ```bash
 # 本机同步 RTL 到服务器（首次）
-scp -r "hb_fpga_impl/22_r3c_rtl/rtl" nc23@101.6.64.77:/tmp/ae_vgate/rtl_r3c
-scp "hb_fpga_impl/14_rtl_r1r2/sim/tb_ae_v.sv" nc23@101.6.64.77:/tmp/ae_vgate/
+scp -r "hb_fpga_impl/22_r3c_rtl/rtl" <SERVER>:/tmp/ae_vgate/rtl_r3c
+scp "hb_fpga_impl/14_rtl_r1r2/sim/tb_ae_v.sv" <SERVER>:/tmp/ae_vgate/
 
 # 服务器上（模板：14_rtl_r1r2/sim/vlbuild_vgate.sh）
-ssh nc23@101.6.64.77
+ssh <SERVER>
 cd /tmp/ae_vgate
-/home/nc23/.conda/envs/vsim/bin/verilator --binary --timing -j 0 -Wno-fatal \
+~/.conda/envs/vsim/bin/verilator --binary --timing -j 0 -Wno-fatal \
   --top-module tb_ae_v -DV_COLS=96 -DV_CTX_WORDS=131072 -DV_W_WORDS=4096 \
   -DV_SEQ_N=2048 -DV_DDR_BYTES=524288 -DV_WDG_CYC=20000000 \
   rtl_r3c/ae_*.sv rtl_r3c/rq_*.sv tb_ae_v.sv

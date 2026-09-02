@@ -2,9 +2,9 @@ import json
 import torch
 from safetensors import safe_open
 
-CKPT = "/home/nc23/workspace/holobrain/ckpt/HoloBrain_v0.0_GD/post_training_robotwin/model.safetensors"
-INV = "/home/nc23/workspace/holobrain/module_inventory.json"
-OUT = "/home/nc23/workspace/holobrain/weight_stats.json"
+CKPT = "~/workspace/holobrain/ckpt/HoloBrain_v0.0_GD/post_training_robotwin/model.safetensors"
+INV = "~/workspace/holobrain/module_inventory.json"
+OUT = "~/workspace/holobrain/weight_stats.json"
 
 G4 = 128
 Q8, Q4 = 127.0, 7.0

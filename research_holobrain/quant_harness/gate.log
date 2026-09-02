@@ -1,9 +1,9 @@
-/home/nc23/.conda/envs/holobrain/lib/python3.10/site-packages/datasets/utils/experimental.py:37: UserWarning: 'register_feature' is experimental and might be subject to breaking changes in the future.
+~/.conda/envs/holobrain/lib/python3.10/site-packages/datasets/utils/experimental.py:37: UserWarning: 'register_feature' is experimental and might be subject to breaking changes in the future.
   warnings.warn(
 Use default teacher_forcing_mean_steps: 16
 [mha ] forced eager path on 6 nn.MultiheadAttention (text self-attn): out_proj now really quantized
 [load] model 183.7M params on cuda:0
-/home/nc23/.conda/envs/holobrain/lib/python3.10/site-packages/torch/functional.py:539: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at /pytorch/aten/src/ATen/native/TensorShape.cpp:3637.)
+~/.conda/envs/holobrain/lib/python3.10/site-packages/torch/functional.py:539: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at /pytorch/aten/src/ATen/native/TensorShape.cpp:3637.)
   return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
 [det ] same-seed fp32 max_abs diff = 0.000e+00
 [flor] 1000 vs 2000: mae_all=0.01220 max=0.20725 jointpos_mae=0.01057
@@ -46,5 +46,5 @@ Use default teacher_forcing_mean_steps: 16
           51.3  text_encoder.language_backbone.body.model.encoder.layer.8.intermediate text_bert   max=  68.595 med= 1.3365 x1
           48.4  backbone.stages.2.blocks.4.ffn.layers.1                                vision_2d   max=  16.740 med= 0.3460 x1
           38.4  text_encoder.language_backbone.body.model.encoder.layer.3.intermediate text_bert   max=  52.988 med= 1.3794 x1
-[save] /home/nc23/workspace/holobrain/gate_results.json (146 kB)
+[save] ~/workspace/holobrain/gate_results.json (146 kB)
 [done] total 24s

@@ -1,9 +1,9 @@
-/home/nc23/.conda/envs/holobrain/lib/python3.10/site-packages/datasets/utils/experimental.py:37: UserWarning: 'register_feature' is experimental and might be subject to breaking changes in the future.
+~/.conda/envs/holobrain/lib/python3.10/site-packages/datasets/utils/experimental.py:37: UserWarning: 'register_feature' is experimental and might be subject to breaking changes in the future.
   warnings.warn(
 [self] fp64 core == pure-integer reference (linear x4 shifts + conv + encodings) OK
 Use default teacher_forcing_mean_steps: 16
 [load] model up; forced eager path on 6 MHA modules
-/home/nc23/.conda/envs/holobrain/lib/python3.10/site-packages/torch/functional.py:539: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at /pytorch/aten/src/ATen/native/TensorShape.cpp:3637.)
+~/.conda/envs/holobrain/lib/python3.10/site-packages/torch/functional.py:539: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at /pytorch/aten/src/ATen/native/TensorShape.cpp:3637.)
   return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
 [fp  ] references at seeds [1000, 1100, 1200] (5s)
 [cache] fp outputs cached for 431 modules (1.8 GiB CPU)
@@ -34,6 +34,6 @@ Use default teacher_forcing_mean_steps: 16
         0.6283  backbone.stages.3.blocks.0.ffn.layers.1                                  vision_2d   abs=0.31900
         0.5777  feature_enhancer.img_attn_blocks.1.ffn.layers.1                          fusion      abs=2.19339
 [B_v1] mean jpos=0.02881 (gate 0.03/0.06 -> green) | 0.7s/fwd
-[save] /home/nc23/workspace/holobrain/hw_calib/hw_calib_results.json (69 kB)
-[save] /home/nc23/workspace/holobrain/hw_calib/hw_calib_table.json (1870 kB)
+[save] ~/workspace/holobrain/hw_calib/hw_calib_results.json (69 kB)
+[save] ~/workspace/holobrain/hw_calib/hw_calib_table.json (1870 kB)
 [done] gate=green total 21s

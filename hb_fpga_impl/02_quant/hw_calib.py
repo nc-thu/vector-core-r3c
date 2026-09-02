@@ -54,8 +54,8 @@
 # including the fp references.
 #
 # Run (server):
-#   cd /home/nc23/workspace/holobrain
-#   CUDA_VISIBLE_DEVICES=1 /home/nc23/.conda/envs/holobrain/bin/python \
+#   cd ~/workspace/holobrain
+#   CUDA_VISIBLE_DEVICES=1 ~/.conda/envs/holobrain/bin/python \
 #       hw_calib/hw_calib.py smoke|full
 
 import argparse
@@ -66,7 +66,7 @@ import sys
 import time
 import types
 
-HB = "/home/nc23/workspace/holobrain"
+HB = "~/workspace/holobrain"
 sys.path.insert(0, HB)
 sys.path.insert(0, os.path.join(HB, "quant"))
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # vlbuild_vgate.sh — Verilator 构建 R1+R2 RTL（DDR=512KB，快速 dump）
 # 用法：在 /tmp/ae_vgate/ 里跑
-V=/home/nc23/.conda/envs/vsim/bin
+V=~/.conda/envs/vsim/bin
 cd /tmp/ae_vgate
 $V/verilator --binary --timing -j 0 -Wno-fatal --top-module tb_ae_v \
   -DV_COLS=108 -DV_CTX_WORDS=131072 -DV_W_WORDS=4096 -DV_SEQ_N=2048 \

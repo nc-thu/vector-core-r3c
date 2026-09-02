@@ -46,7 +46,7 @@ def cap_one(binpath, out_dir, contrib, tid, seg):
                 break
     t1 = time.time()
     cr = subprocess.run(
-        ['/home/nc23/.conda/envs/vsim/bin/python',
+        ['~/.conda/envs/vsim/bin/python',
          os.path.join(HERE, 'vcd2saif.py'), vcd, saif,
          '--re-root', 'tb_ae_v.dut', '--wrap', 'tb_ae_v.dut.u_core',
          '--t-start', str(t_start)], capture_output=True, text=True)

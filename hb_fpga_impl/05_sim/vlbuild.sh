@@ -6,7 +6,7 @@
 # 做法：照常 verilator --binary 生成 obj_dir（其内嵌 make 失败没关系），然后用
 #   系统 g++ 9.4 在 make 命令行覆盖 CXX 重跑链接，产物 obj_dir/tb_ae_v。
 # 用法：bash vlbuild.sh <verilator 额外参数...>   （在含 tb_ae_v.sv 的目录里跑）
-V=/home/nc23/.conda/envs/vsim/bin
+V=~/.conda/envs/vsim/bin
 set -e
 $V/verilator --binary --timing -j 0 -Wno-fatal "$@" > /tmp/vlbuild.log 2>&1 || true
 if [ ! -f obj_dir/Vtb_ae_v.mk ]; then

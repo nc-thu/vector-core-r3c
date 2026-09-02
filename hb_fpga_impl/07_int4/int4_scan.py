@@ -36,7 +36,7 @@
 #
 # Run (server, /tmp because /home is full):
 #   cd /tmp/int4_hb && CUDA_VISIBLE_DEVICES=2 \
-#     /home/nc23/.conda/envs/holobrain/bin/python int4_scan.py <cmd> ...
+#     ~/.conda/envs/holobrain/bin/python int4_scan.py <cmd> ...
 # cmds: prep | w8base | anchor | scan | evalcfg | bytes
 
 import argparse
@@ -47,7 +47,7 @@ import sys
 import time
 import types
 
-HB = "/home/nc23/workspace/holobrain"
+HB = "~/workspace/holobrain"
 sys.path.insert(0, HB)
 sys.path.insert(0, os.path.join(HB, "quant"))
 sys.path.insert(0, "/tmp/int4_hb")  # hw_calib_table_v2.json lives here
@@ -487,7 +487,7 @@ def cmd_prep():
     fm = mean_of_dicts(R["noise_pairs_real0"])
     print(f"[flor] real0 noise floor mae_all={fm['mae_all']:.5f} "
           f"jpos={fm['mae_jointpos']:.5f}", flush=True)
-    ref = np.load("/home/nc23/workspace/holobrain/robotwin_subset/samples/"
+    ref = np.load("~/workspace/holobrain/robotwin_subset/samples/"
                   "fp32_ref_000.npz")
     torch.manual_seed(20260830)
     with torch.no_grad():
@@ -496,7 +496,7 @@ def cmd_prep():
     d_ref = float(np.abs(pa - ref["pred_actions_raw"]).max())
     action = processor.post_process(outs, B["real"][0]).action.cpu().numpy()
     d_act = float(np.abs(action - ref["action"]).max())
-    truth = np.load("/home/nc23/workspace/holobrain/robotwin_subset/samples/"
+    truth = np.load("~/workspace/holobrain/robotwin_subset/samples/"
                     "truth_000.npz")["future_actions"]
     mae = float(np.abs(action - truth).mean())
     print(f"[vrfy] vs fp32_ref_000: pred max|d|={d_ref:.3e} "
@@ -705,7 +705,7 @@ def cmd_evalcfg(cfg_path, tag):
         action = processor.post_process(
             outs, B["real"][k]).action.cpu().numpy()
         truth = np.load(
-            "/home/nc23/workspace/holobrain/robotwin_subset/samples/"
+            "~/workspace/holobrain/robotwin_subset/samples/"
             f"truth_{k:03d}.npz")["future_actions"]
         pol.append({
             "sample": k,

@@ -17,7 +17,7 @@
 #      + 与基线 b 逐字节互比 + cycles 三方一致
 #
 # 大负载吞吐基准另见 bench.py（依赖本脚本先跑完）。
-# 用法：cd ae_sim && bash run_gates.sh   （环境：/home/nc23/.conda/envs/vsim）
+# 用法：cd ae_sim && bash run_gates.sh   （环境：~/.conda/envs/vsim）
 #
 # 2026-08-30 cycles 竞态根因（VCD 对拍定位，两处都修在 TB、RTL 零改动）：
 #   TB 在 posedge 后用阻塞赋值改 start / rst_n，与 DUT 的 always_ff 同拍竞争，
@@ -31,7 +31,7 @@
 # ============================================================================
 set -euo pipefail
 cd "$(dirname "$0")"
-V=/home/nc23/.conda/envs/vsim/bin
+V=~/.conda/envs/vsim/bin
 RTL="ae_pkg.sv ae_dpram.sv ae_ctx_ram.sv ae_pe.sv ae_sysarr.sv ae_requant.sv rq_v2.sv rq_ms.sv ae_exp_lut.sv ae_gemm.sv ae_softmax.sv ae_copy.sv ae_dma.sv ae_sched.sv ae_core.sv"
 RTLFILES=""
 for f in $RTL; do RTLFILES="$RTLFILES ../rtl/$f"; done

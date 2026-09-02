@@ -18,7 +18,7 @@
 # ============================================================================
 set -uo pipefail
 cd "$(dirname "$0")"
-V=/home/nc23/.conda/envs/vsim/bin
+V=~/.conda/envs/vsim/bin
 RTL="ae_pkg.sv ae_dpram.sv ae_ctx_ram.sv ae_pe.sv ae_sysarr.sv ae_requant.sv rq_v2.sv rq_ms.sv ae_exp_lut.sv ae_gemm.sv ae_softmax.sv ae_copy.sv ae_dma.sv ae_sched.sv ae_core.sv"
 RTLFILES=""
 for f in $RTL; do RTLFILES="$RTLFILES ../rtl/$f"; done

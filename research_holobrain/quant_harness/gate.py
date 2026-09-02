@@ -12,15 +12,15 @@
 #   5. SmoothQuant recon: per-Linear per-channel input absmax on an fp32
 #      forward; outlier ratio = max_channel / median_channel; top-20
 #
-# Run: cd /home/nc23/workspace/holobrain && CUDA_VISIBLE_DEVICES=2 \
-#        /home/nc23/.conda/envs/holobrain/bin/python quant/gate.py
+# Run: cd ~/workspace/holobrain && CUDA_VISIBLE_DEVICES=2 \
+#        ~/.conda/envs/holobrain/bin/python quant/gate.py
 
 import json
 import os
 import sys
 import time
 
-HB = "/home/nc23/workspace/holobrain"
+HB = "~/workspace/holobrain"
 sys.path.insert(0, HB)  # for bringup.py
 sys.path.insert(0, os.path.join(HB, "quant"))
 

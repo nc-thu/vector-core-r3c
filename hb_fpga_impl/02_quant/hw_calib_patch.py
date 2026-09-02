@@ -25,7 +25,7 @@
 #   cp hw_calib_patch.py /tmp/hwcalib_patch/
 #   cd /tmp/hwcalib_patch
 #   CUDA_VISIBLE_DEVICES=1 TMPDIR=/tmp \
-#       /home/nc23/.conda/envs/holobrain/bin/python hw_calib_patch.py
+#       ~/.conda/envs/holobrain/bin/python hw_calib_patch.py
 
 import json
 import os
@@ -37,7 +37,7 @@ import torch
 import torch.nn as nn
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-HW_CAL = "/home/nc23/workspace/holobrain/hw_calib"   # read-only source
+HW_CAL = "~/workspace/holobrain/hw_calib"   # read-only source
 sys.path.insert(0, HW_CAL)
 
 import hw_calib as HC              # reuses bringup/gate path setup + encoders
