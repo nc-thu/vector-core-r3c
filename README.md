@@ -23,4 +23,4 @@
 - 第三方库：`research_holobrain/robo_orchard_lab`（HoloBrain 上游代码，从上游自行克隆）
 - 历史重轮：`03_compiler`（5.6 万文件）、`09_cbound`、`09_int4_impl`、`12_actv/a4`、`a3/tmp_*`，以及 `hw_zcu104` 旧硬件线、Evo-1/SwiftVLA 调研目录
 
-**注意**：`handoff_r3c/FLOW.md` 等文档里含内网服务器地址（Verilator 验证用），本仓库保持 private。
+**说明**：文档里的服务器地址已替换为 `<SERVER>` 占位符（内部同事从内部渠道获取）；Verilator/ssh 命令中的 `~` 即该服务器用户 home。
