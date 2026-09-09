@@ -787,3 +787,8 @@ github.com/nc-thu/vector-core-r3c 转 PUBLIC（用户裁决）。转公开前全
   - 杠杆按解锁顺序：①停顿吸收 −14.5%（→0.777s，调度重拍不动数据通路）→ ②COPY 消除（①后再 −7.3%，被写墙封顶）→ ③R5 写压缩（②后再 −15.2% → 0.611s 三牌全兑现地板，−32.8%，零 DSP）→ ④requant 加倍远期（真机终段 0.565s；TB 被读墙拦在 0.607s）。
   - **R5 裁决细化**：从"不进 H3"改为"条件启动"（现在做零收益维持原判，计算腿杠杆落地后它是唯一解锁牌，进 H4 候选）；GEMM 利用率 26.5% vs MAC 地板 49.1M 拍（3.8×）为结构性地板。
   - 建议路线：H3 系统集成（全帧实测校准模型+验证①）+ 编译器 COPY 分解并行（决定②值不值得动 RTL）。
+
+## 2026-09-09 10:52:00 — 三线结构 + hw v4/v5 + arch v5/v6 + 算法线 24~26 推 GitHub
+
+- 提交 70b9635（296 文件，6.2MB）推 github.com/nc-thu/vector-core-r3c main：三线目录（LINES.md/hw/arch/algo/compiler/plans + 四份 CHANGELOG）、hw v4（B8×R3C H1 门）+ v5（H2 收敛/R2 双读/eng64 采点定版 B8-48 + 0948 重写版）、arch v5/v6（b8_scan/b8_final + 0952 架构分析页）、hb_fpga_impl 24~26（pcW/RTN RTL+软硬联合、算法校准/头排/平滑量化/去噪归因）、README 改三线结构说明。
+- 公开前清理沿用 0902 约定：24~26 目录与 WORKLOG 中的内网 IP/登录串/服务器家目录路径占位符化（<SERVER>/~）；.mem 回归转储（44MB）、r2 段级 DDR dump、arch/figures（Visio 产物）、.vvp/.pyc 不推；token/密钥扫描零命中；Vivado 报告头裸主机名按 0902 裁决保留（31 个 .rpt，非 .rpt 文件零命中）。
