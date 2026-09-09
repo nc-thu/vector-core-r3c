@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>B8-48 定版后的架构分析：时间账与下一步优化方向 2026-09-09</title>
+<style>
+  body{font-family:"Microsoft YaHei",SimSun,serif;max-width:1000px;margin:24px auto;padding:0 16px;color:#111;background:#fff;line-height:1.75}
+  h1{font-size:22px;border-bottom:2px solid #000;padding-bottom:6px}
+  h2{font-size:18px;border-left:5px solid #000;padding-left:8px;margin-top:32px}
+  h3{font-size:15px;margin-top:22px}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14px}
+  th,td{border:1px solid #444;padding:5px 8px;text-align:left}
+  th{background:#eee}
+  .num{text-align:right;font-variant-numeric:tabular-nums}
+  .mono{font-family:Consolas,monospace;font-size:13px;background:#f4f4f4;padding:1px 4px}
+  .meta{color:#555;font-size:13px}
+  .box{border:1px dashed #888;padding:10px 14px;margin:12px 0;background:#fafafa}
+  .hint{color:#555;font-size:13px;margin:4px 0}
+  svg text{font-family:"Microsoft YaHei",SimSun,serif}
+</style>
+</head>
+<body>
+<h1>B8-48 定版之后：一帧的时间都花在哪、下一堵墙在哪、还剩哪些牌</h1>
+<p class="meta">生成时刻：2026-09-09 09:52:42　|　arch v6 分析页（数据来源：arch/v5 b8_scan.json + arch/v6 b8_final.json + hw/v5 综合实测，全部数字从 JSON/报告原文核对）　|　承接 2026-09-08 的定版结论</p>
+
+<div class="box">三句话总结：<br>
+① 定版 B8-48 一帧 0.909 秒（真机口径），实时预算 2.13 秒，<b>余量 2.3 倍</b>——已经过线，现在的问题是"还要不要更快、往哪快"。<br>
+② 装上双读引擎（R2）之后，验证平台和真机两个口径的墙<b>归一到同一个地方：计算腿 235.5M 拍</b>。再往下拆，墙会按"计算 → 写（218.4M）→ 读（184.0M）"的顺序依次露出来。<br>
+③ 剩下的牌按解锁顺序是：<b>停顿吸收（−14.5%）→ COPY 消除（再 −7%）→ 写侧压缩 R5（再 −15%）</b>，全兑现的地板 0.611 秒。三张牌都不用加 DSP。</div>
+
+<h2>第零节　先对齐口径：这页的数字怎么来的</h2>
+<p>这个项目在 FPGA（ZCU104 板）上跑一个 20 亿参数的机器人模型，全部 INT8。一帧的实时预算是 <b>2.13 秒</b>（64 个去噪步 × 33 毫秒，对应 30Hz 控制）。硬件引擎每拍 3.298 纳秒（303.215MHz），所以下面"M 拍"除以 303.215 就是秒。</p>
+<p>帧时间模型的结构很简单，后面所有分析都建立在它上面：</p>
+<div class="box" style="background:#fff"><b>一帧拍数 = max(计算腿, 读腿, 写腿) + 停顿 40M</b><br>
+三条腿是并行的（谁最慢谁决定帧时间），停顿是段间切换、等数据到位等零碎空转，按全帧 40M 拍记账。<br>
+B8-48 的三条腿：计算 235.5M（矩阵乘 185.2 + COPY 搬运 40.3 + 激活 10.0）、读 301.0M、写 218.4M。</p></div>
+<p>两个口径要分清：<b>TB</b> 是验证平台口径（仿真内存一拍送 8 字节，读很挤）；<b>HP64</b> 是真机口径（板上 DMA 一拍最多 64 字节，读很宽裕）。真机的读腿只有 20.1M 拍。装了双读引擎（R2）之后，TB 的读腿也从 301.0M 压到 184.0M——本页所有推演都以"R2 已合入"为起点。</p>
+<p class="hint">图的看法：本页所有图黑白灰。深灰=计算相关，中灰=读/写搬运，斜线纹=还没拿到的收益。每张图下面有一句"怎么看"。</p>
+
+<h2>第一节　全景：三档配置的账，定版为什么是 B8-48</h2>
+<svg width="920" height="230" viewBox="0 0 920 230">
+  <text x="10" y="20" font-size="13">一帧时间（真机 HP64 口径，秒）— 越短越好</text>
+  <!-- bars: x=190 start, 300px per second -->
+  <text x="180" y="49" font-size="13" text-anchor="end">R3C-96（现部署）</text>
+  <rect x="190" y="36" width="416" height="26" fill="#999"/>
+  <text x="612" y="55" font-size="13">1.388 s</text>
+  <text x="180" y="89" font-size="13" text-anchor="end">B8-48（定版）</text>
+  <rect x="190" y="76" width="273" height="26" fill="#444"/>
+  <text x="469" y="95" font-size="13" font-weight="bold">0.909 s（快 34.5%）</text>
+  <text x="180" y="129" font-size="13" text-anchor="end">B8-64 模型值</text>
+  <rect x="190" y="116" width="240" height="26" fill="none" stroke="#444" stroke-dasharray="5,3"/>
+  <text x="436" y="135" font-size="13">0.801 s（需要 303MHz，布线到不了）</text>
+  <text x="180" y="169" font-size="13" text-anchor="end">B8-64 实际可用</text>
+  <rect x="190" y="156" width="291" height="26" fill="#bbb"/>
+  <text x="487" y="175" font-size="13">0.970 s（降频 250.4MHz，反而更慢）</text>
+  <!-- budget line -->
+  <line x1="829" y1="26" x2="829" y2="196" stroke="#000" stroke-width="1.5" stroke-dasharray="7,4"/>
+  <text x="829" y="212" font-size="13" text-anchor="middle">实时预算 2.13 s</text>
+  <!-- axis -->
+  <line x1="190" y1="192" x2="790" y2="192" stroke="#888"/>
+  <text x="190" y="208" font-size="11" text-anchor="middle">0</text>
+  <text x="340" y="208" font-size="11" text-anchor="middle">0.5</text>
+  <text x="490" y="208" font-size="11" text-anchor="middle">1.0</text>
+  <text x="640" y="208" font-size="11" text-anchor="middle">1.5</text>
+  <text x="790" y="208" font-size="11" text-anchor="middle">2.0</text>
+</svg>
+<p class="hint">怎么看：B8-64 的 0.801 秒是"布线能上 303MHz"前提下的模型值，实测布线只到 250MHz，实际 0.970 秒反而输给 B8-48 的 0.909 秒——这就是昨天定版裁决的核心逻辑。</p>
+<table>
+<caption class="hint">怎么看：面积/功耗是 Vivado 综合布线实测（OOC 口径），帧时间是模型值。</caption>
+<tr><th>指标</th><th class="num">R3C-96</th><th class="num">B8-48</th><th class="num">B8-64</th></tr>
+<tr><td>DSP（硬件乘法器）</td><td class="num">1,536（88.9%）</td><td class="num">768（44.4%）</td><td class="num">1,024（59.3%）</td></tr>
+<tr><td>芯片 LUT（逻辑）</td><td class="num">120,616（52.4%）</td><td class="num">143,356（62.2%）</td><td class="num">180,629（78.4%）</td></tr>
+<tr><td>布线时序 @303.2MHz</td><td class="num">上一代 −1.363</td><td class="num"><b>+0.009 收敛</b></td><td class="num">−0.696 不过</td></tr>
+<tr><td>一帧（真机口径）</td><td class="num">1.388 s</td><td class="num">0.909 s</td><td class="num">0.970 s（实际）</td></tr>
+<tr><td>功耗（vectorless）</td><td class="num">4,018 mW</td><td class="num">8,321 mW</td><td class="num">10,709 mW（不过线）</td></tr>
+</table>
+<p><b>余量 2.3 倍意味着什么</b>（定性展望，不是结论）：算法线如果为了精度把部分层加宽到 INT16——计算量翻倍，一帧也还在 1.5 秒量级、预算之内；或者说，这块板子将来支持更高帧率、更重模型都有余地。性能线的数字已经"够用"，往下挖的意义主要是给算法后备留空间、降功耗、留工程安全边际。</p>
+
+<h2>第二节　一帧的时间都花在哪：三口径四条腿</h2>
+<svg width="920" height="360" viewBox="0 0 920 360">
+  <defs>
+    <pattern id="hatch" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+      <rect width="6" height="6" fill="#eee"/><line x1="0" y1="0" x2="0" y2="6" stroke="#888" stroke-width="2"/>
+    </pattern>
+  </defs>
+  <text x="10" y="18" font-size="13">三条腿并行，谁最长谁是墙；一帧 = 墙 + 停顿 40M（拍）</text>
+  <!-- legend -->
+  <rect x="640" y="8" width="14" height="12" fill="#444"/><text x="658" y="18" font-size="12">计算</text>
+  <rect x="700" y="8" width="14" height="12" fill="#999"/><text x="718" y="18" font-size="12">读</text>
+  <rect x="748" y="8" width="14" height="12" fill="#ccc"/><text x="766" y="18" font-size="12">写</text>
+  <!-- Group 1: TB 现状 -->
+  <text x="160" y="44" font-size="13" text-anchor="end" font-weight="bold">TB 现状</text>
+  <rect x="170" y="32" width="432" height="18" fill="#444"/><text x="610" y="46" font-size="12">计算 235.5</text>
+  <rect x="170" y="56" width="552" height="18" fill="#999"/><text x="730" y="70" font-size="12" font-weight="bold">读 301.0 ← 墙</text>
+  <rect x="170" y="80" width="400" height="18" fill="#ccc"/><text x="578" y="94" font-size="12">写 218.4</text>
+  <line x1="795" y1="28" x2="795" y2="106" stroke="#000" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="795" y="120" font-size="12" text-anchor="end">一帧 341.0M = 1.125 s</text>
+  <!-- Group 2: TB + R2 -->
+  <text x="160" y="164" font-size="13" text-anchor="end" font-weight="bold">TB 装双读引擎后</text>
+  <rect x="170" y="152" width="432" height="18" fill="#444"/><text x="610" y="166" font-size="12" font-weight="bold">计算 235.5 ← 墙</text>
+  <rect x="170" y="176" width="337" height="18" fill="#999"/><text x="515" y="190" font-size="12">读 184.0</text>
+  <rect x="170" y="200" width="400" height="18" fill="#ccc"/><text x="578" y="214" font-size="12">写 218.4（潜伏的第二墙）</text>
+  <line x1="675" y1="148" x2="675" y2="226" stroke="#000" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="675" y="240" font-size="12" text-anchor="end">一帧 275.5M = 0.909 s</text>
+  <!-- Group 3: HP64 -->
+  <text x="160" y="284" font-size="13" text-anchor="end" font-weight="bold">真机 HP64</text>
+  <rect x="170" y="272" width="432" height="18" fill="#444"/><text x="610" y="286" font-size="12" font-weight="bold">计算 235.5 ← 墙</text>
+  <rect x="170" y="296" width="37" height="18" fill="#999"/><text x="215" y="310" font-size="12">读 20.1（真机读很宽裕）</text>
+  <rect x="170" y="320" width="400" height="18" fill="#ccc"/><text x="578" y="334" font-size="12">写 218.4（潜伏的第二墙）</text>
+  <line x1="675" y1="268" x2="675" y2="346" stroke="#000" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="675" y="358" font-size="12" text-anchor="end">一帧 275.5M = 0.909 s</text>
+  <!-- axis -->
+  <line x1="170" y1="348" x2="720" y2="348" stroke="#888" opacity="0.3"/>
+  <text x="170" y="344" font-size="10" text-anchor="middle" fill="#777">0</text>
+  <text x="537" y="344" font-size="10" text-anchor="middle" fill="#777">200M 拍</text>
+</svg>
+<p class="hint">怎么看：横条越长这条腿越慢。三组分别是"现在的验证平台账"、"装了双读引擎后"、"真机账"。虚线是一帧总拍数（墙 + 停顿 40M）。</p>
+<p>三个事实直接从这张图读出来：</p>
+<p><b>① 现在的墙是读，装完 R2 后两个口径的墙都变成计算。</b>真机口径下读从来就不是问题（20.1M 拍），所以"墙全在喂数"这个说法只对验证平台成立；真机的墙一直在计算。</p>
+<p><b>② 写腿 218.4M 是潜伏的第二墙。</b>它只比计算腿 235.5M 矮一点点。任何把计算压到 218.4M 以下的优化，都会先撞上它——这是上一版 H3 清单没算到的地方（见第五节的修正）。</p>
+<p><b>③ 停顿 40M 是"白给"的一档。</b>它是加在墙之上的固定开销，不管谁当墙都要付。消掉它不需要动任何数据通路，只需要调度重排。</p>
+
+<h2>第三节　解剖新瓶颈：计算腿 235.5M 拍里面是什么</h2>
+<svg width="920" height="200" viewBox="0 0 920 200">
+  <text x="10" y="20" font-size="13">一帧 275.5M 拍（0.909 s）的构成</text>
+  <!-- stacked bar: 60..780, 2.613px/M -->
+  <rect x="60" y="40" width="484" height="44" fill="#444"/>
+  <rect x="544" y="40" width="105" height="44" fill="#777"/>
+  <rect x="649" y="40" width="26" height="44" fill="#999"/>
+  <rect x="675" y="40" width="105" height="44" fill="#bbb"/>
+  <text x="302" y="66" font-size="13" fill="#fff" text-anchor="middle">矩阵乘 GEMM 185.2M（67.2%）</text>
+  <text x="596" y="66" font-size="12" text-anchor="middle">COPY</text>
+  <text x="596" y="102" font-size="12" text-anchor="middle">40.3M（14.6%）</text>
+  <text x="662" y="102" font-size="12" text-anchor="middle">激活 10.0M</text>
+  <text x="662" y="118" font-size="12" text-anchor="middle">（3.6%）</text>
+  <text x="727" y="102" font-size="12" text-anchor="middle">停顿 40.0M</text>
+  <text x="727" y="118" font-size="12" text-anchor="middle">（14.5%）</text>
+  <!-- floor bar -->
+  <text x="10" y="152" font-size="13">全部杠杆兑现后的地板（只剩 GEMM）：</text>
+  <rect x="60" y="160" width="484" height="30" fill="#888"/>
+  <text x="302" y="180" font-size="13" fill="#fff" text-anchor="middle">185.2M = 0.611 s（−32.8%，理论值，实际会被写腿拦住，见第五节）</text>
+</svg>
+<p class="hint">怎么看：深色段是真正算乘法的时间，三段浅色是"不算乘法也要花的时间"——搬运（COPY）、激活函数、调度空转，加起来占 32.8%。这一段就是不用加 DSP 就能抠出来的空间。</p>
+
+<h3>矩阵乘本身还有多少水分：利用率 26.5%</h3>
+<svg width="920" height="160" viewBox="0 0 920 160">
+  <text x="10" y="20" font-size="13">GEMM 185.2M 拍 vs 理论下限 49.1M 拍</text>
+  <text x="160" y="49" font-size="13" text-anchor="end">理论下限</text>
+  <rect x="170" y="36" width="162" height="26" fill="#bbb"/>
+  <text x="340" y="55" font-size="13">49.1M 拍 = 0.162 s（利用率 100%）</text>
+  <text x="160" y="99" font-size="13" text-anchor="end">实际 GEMM</text>
+  <rect x="170" y="86" width="611" height="26" fill="#444"/>
+  <text x="600" y="105" font-size="13" fill="#fff">185.2M 拍（利用率 26.5%）</text>
+  <line x1="332" y1="82" x2="332" y2="120" stroke="#000" stroke-dasharray="4,3"/>
+  <text x="560" y="130" font-size="12">← 差的 136.1M 拍 = 行组读出 + 行组间隔</text>
+</svg>
+<p class="hint">怎么看：理论上 150.8G 次乘法 ÷ 峰值 931.5 GMAC/s = 49.1M 拍就能算完；实际花了 3.8 倍。原因是行组节奏：每算完 16 行要停下来花 64 拍把结果读出去重标定，矩阵的行组越小、读出占比越大。这是结构性地板，上一轮已验证 24 套 requant 轮用是当前面积下的最优解。</p>
+<p>要从 GEMM 本身抠时间，已量化的牌只有一张：<b>requant 套数加倍</b>（24→48 套），读出走读从 64 拍压到 32 拍，GEMM 185.2→171.3M 拍（−7.5%），代价约 +13k LUT（估算，未综合）且 requant 入口的时序会更紧——刚在昨天花了一轮才收掉的路径。所以这张牌排在最后，见第五节。</p>
+
+<h2>第四节　已经排除的方向：别再走一遍（负结果清单）</h2>
+<table>
+<caption class="hint">怎么看：这些方向都有明确判据和数据，重走之前先看这张表。排除有时效——器件/工艺变了要重新评估的是前两条。</caption>
+<tr><th>方向</th><th>判据 / 数据</th><th>结论（依据轮次）</th></tr>
+<tr><td>B8-64（128 逻辑列）</td><td>布线 −0.696 不过、功耗 10.71W 不过；降频 250.4MHz 用反而 0.970s &gt; 0.909s</td><td>关死（2026-09-08 实测）</td></tr>
+<tr><td>B8-96（192 逻辑列）</td><td>芯片 LUT 261.3k = 全片 113.4%，物理放不下</td><td>关死（模型外推）</td></tr>
+<tr><td>requant 套数不足</td><td>若 12 套（读出 128 拍）：GEMM +16%、一帧 +10.8%</td><td>已用 24 套躲开（实测验证）</td></tr>
+<tr><td>双时钟域</td><td>B8-48 映射下第二相乘法闲置，不需要</td><td>取消（2026-09-08 下午）</td></tr>
+<tr><td>读出走读 +1 拍的代价</td><td>帧级 ≤ +0.27%（0.909→0.910s）</td><td>接受，关闭（实测）</td></tr>
+<tr><td>R1 数据驻留（为帧时间）</td><td>读腿已低于计算腿，帧时间不变</td><td>出局；只剩省电价值（上下文流量 −31%），可选</td></tr>
+</table>
+
+<h2>第五节　还剩哪些牌：按解锁顺序排（含一处对上版的修正）</h2>
+<p><b>先修正上一版的一个账。</b>H3 清单里写过"COPY 全消理论地板 0.909→0.744s（−18%）"——那个数只做了计算腿的减法（275.5−50.3=225.2M），没有套帧模型里的 max()。<b>写腿 218.4M 会先拦住：COPY 全消后一帧是 max(195.2, 184.0, 218.4)+40 = 258.4M = 0.852s，只降 6.3%，不是 18%。</b>本页以下全部按正确的 max() 口径重算。</p>
+<svg width="920" height="330" viewBox="0 0 920 330">
+  <defs>
+    <pattern id="h2" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+      <rect width="6" height="6" fill="#f4f4f4"/><line x1="0" y1="0" x2="0" y2="6" stroke="#777" stroke-width="1.5"/>
+    </pattern>
+  </defs>
+  <text x="10" y="20" font-size="13">解锁顺序推演（模型值，TB 口径；真机口径同直到最后一步）</text>
+  <!-- base 0.909 -> 803px -->
+  <text x="52" y="51" font-size="13" text-anchor="end">现在（R2 后）</text>
+  <rect x="60" y="38" width="803" height="28" fill="#444"/>
+  <text x="480" y="58" font-size="13" fill="#fff" text-anchor="middle">0.909 s（275.5M 拍，计算墙）</text>
+  <!-- stall step: 0.7768 -> 687px; bar from 747..863 -->
+  <text x="52" y="101" font-size="13" text-anchor="end">① 停顿吸收</text>
+  <rect x="747" y="88" width="116" height="28" fill="url(#h2)" stroke="#777"/>
+  <text x="700" y="108" font-size="13" text-anchor="end">−40M 拍（调度重排，不动数据通路）</text>
+  <!-- copy step: 0.7204 -> 637px; bar 697..747 -->
+  <text x="52" y="151" font-size="13" text-anchor="end">② COPY 消除</text>
+  <rect x="697" y="138" width="50" height="28" fill="url(#h2)" stroke="#777"/>
+  <text x="690" y="158" font-size="13" text-anchor="end">−40.3M（注意：被写墙封顶，见下）</text>
+  <!-- r5 step: 0.6108 -> 540px; bar 600..697 -->
+  <text x="52" y="201" font-size="13" text-anchor="end">③ 写侧压缩 R5</text>
+  <rect x="600" y="188" width="97" height="28" fill="url(#h2)" stroke="#777"/>
+  <text x="593" y="208" font-size="13" text-anchor="end">写 218.4 → 计算地板</text>
+  <!-- floor -->
+  <text x="52" y="251" font-size="13" text-anchor="end">三张牌全兑现</text>
+  <rect x="60" y="238" width="540" height="28" fill="#777"/>
+  <text x="330" y="258" font-size="13" fill="#fff" text-anchor="middle">0.611 s（185.2M 拍，−32.8%）</text>
+  <!-- guides -->
+  <line x1="747" y1="34" x2="747" y2="240" stroke="#aaa" stroke-dasharray="3,3"/>
+  <line x1="697" y1="84" x2="697" y2="190" stroke="#aaa" stroke-dasharray="3,3"/>
+  <line x1="600" y1="134" x2="600" y2="240" stroke="#aaa" stroke-dasharray="3,3"/>
+  <text x="60" y="292" font-size="12" fill="#555">再往下（requant 加倍，GEMM 185.2→171.3M）：验证平台口径被读腿 184.0M 拦住（0.607s 就到底）；真机口径无读墙，可到 0.565s。远期，暂不排。</text>
+</svg>
+<p class="hint">怎么看：斜线纹是还没拿到的收益，每一步的宽度就是它能省的秒数。注意 ② 的宽度比"COPY 40.3M 拍"应有的窄——因为 ① 之后写墙（218.4M）已经在计算腿（195.2M）上方，COPY 消掉的部分只兑现到写墙为止。要继续往下必须先拆写墙（③）。</p>
+
+<h3>牌桌明细（全部模型值，兑现条件各不相同）</h3>
+<table>
+<tr><th>牌</th><th class="num">单独打（现在）</th><th class="num">按解锁顺序</th><th>代价 / 风险</th><th>什么时候打</th></tr>
+<tr><td><b>① 停顿吸收</b>（全帧调度重排）</td><td class="num">−14.5%（→0.777s）</td><td class="num">−14.5%</td><td>编译器调度 + fire-and-forget 延伸；40M 是模型记账，能吸收多少要实测</td><td>H3 系统集成顺带验证</td></tr>
+<tr><td><b>② COPY 消除</b>（编译器分解先行）</td><td class="num">−6.3%（→0.852s，被写墙封顶）</td><td class="num">再 −7.3%（①之后 →0.720s）</td><td>先分解每类 COPY 段的可消除上限，再决定动不动 RTL；不一定全消得掉</td><td>分解可立即并行做</td></tr>
+<tr><td><b>③ 写侧压缩 R5</b>（写通路整形加宽）</td><td class="num">0%（现在写不是墙）</td><td class="num">再 −15.2%（②之后 →0.611s）</td><td>写通路 RTL 改造；单独做白做，必须跟在 ② 后面</td><td>H4 候选，条件启动</td></tr>
+<tr><td>④ requant 加倍（读出 2× 宽）</td><td class="num">−5.1%（→0.863s）</td><td class="num">真机口径终段 −7.4%（0.611→0.565s）；TB 口径几乎为 0</td><td>+13k LUT（估）+ requant 入口时序再紧（昨天刚收好的路径）</td><td>远期，想要再快才评估</td></tr>
+<tr><td>⑤ R1 数据驻留</td><td class="num">帧时间 0</td><td class="num">0</td><td>上下文流量 −31%（680→469MB），省电/省 DDR，不省时间</td><td>功耗有压力时可选</td></tr>
+</table>
+<p>三张主牌（①②③）的共同点：<b>一张 DSP 都不用加，面积基本不动</b>。全部兑现的 0.611 秒意味着预算余量从 2.3 倍拉到 3.5 倍——但要说清楚，这是把每张牌都打到理论值的推演，实际每张都会打折（R2 的教训：模型 −19.1%，段级实测 −7.4%）。</p>
+
+<h2>第六节　建议路线：下一轮怎么打</h2>
+<ol>
+<li><b>H3 系统集成（下一轮主体，工程必经）</b>：B8-48 引擎 + R2 双读引擎 + fire-and-forget 调度器合流到同一底本，跑通全帧。它不只是工程收尾——牌 ① 只有在完整系统里才能实测，而且当前所有帧级数字（0.909s 等）都是模型，全帧实测是校准整个模型的第一手数据。</li>
+<li><b>编译器 COPY 分解（与 H3 并行）</b>：把 40.3M 拍的 COPY 段逐类标出来——哪些是零拷贝可以消除的、哪些必须搬、哪些能合并。产出是"可消除上限"这个数，它直接决定牌 ② 值不值得动 RTL。</li>
+<li><b>H3 之后按数据决策</b>：看两个数——全帧实测帧时间 vs 模型 0.909s 的偏差、COPY 可消除上限。够好了就收（余量已 2.3 倍）；还要快，按 ③（写压缩）→ ④（requant 加倍）的顺序排队。</li>
+</ol>
+<div class="box"><b>本页对既有结论的两处更新：</b><br>
+① 修正："COPY 全消地板 0.744s（−18%）"（H3 清单）没套写腿 max()，帧级正确值 0.852s（−6.3%）——COPY 的真实价值要和写压缩捆绑看。<br>
+② R5 写压缩从"不进 H3"细化为"条件启动"：现在做是零收益（维持原裁决），但计算腿杠杆落地后它是唯一的解锁牌，进 H4 候选队列。</div>
+
+<h2>第七节　诚实边界</h2>
+<ul>
+<li><b>实测</b>：三档的 LUT/时序/功耗（Vivado 综合布线，OOC 口径）；R2 段级 −7.4%（4 个负载段，服务器 Verilator）；H2 拍数代价。功率为 vectorless（横向可比、绝对值分档）。</li>
+<li><b>模型</b>：0.909s 及所有四腿拍数、全部杠杆收益（build_a3 负载账本：2,580 段 / 49,569 个矩阵乘 / 150.8G MAC）。停顿 40M 是模型记账，构成未细分——H3 全帧实测能拆开它。</li>
+<li><b>推演假设</b>：第五节的解锁顺序假设各牌独立叠加（比如"COPY 消掉后停顿仍是 40M"），叠加值偏乐观；R2 的先例是模型 −19.1% 对实测 −7.4%，每张牌都要打这个折扣预期。</li>
+<li><b>未验证</b>：requant 加倍的 +13k LUT 是按 R3C 实测 133.5 LUT/列外推，未综合；写压缩 R5 的实现代价未做 RTL 预研；真机口径依赖"一拍 64 字节"的 DMA 带宽假设。</li>
+</ul>
+
+<h2>第八节　复现命令</h2>
+<p class="mono"># 面积/定版模型（实测锚点版）<br>
+cd arch/v6_2026-09-08_2000_h1anchor_r2_b64_final && python b8_final.py　# 输出 b8_final.json<br>
+# 四腿/读压缩全模型（本页第二、三、五节的腿数据来源）<br>
+cd ../v5_2026-09-08_1414_b8_sizing_read_compress && python b8_scan.py　# 约 2s，输出 b8_scan.json<br>
+# 综合实测数（LUT/WNS/功耗）<br>
+hw/v5_2026-09-08_2000_h2_r2_b64_pwr/results/{eng48,eng64}/route/<br>
+# R2 段级对拍原始输出<br>
+hw/v5_2026-09-08_2000_h2_r2_b64_pwr/r2/results/seg_compare_2026-09-08_2036.txt</p>
+
+<script>/* 生成工具留痕：本页由 Claude Code 生成，风格遵循 html-report / shuo-renhua skill */</script>
+</body>
+</html>

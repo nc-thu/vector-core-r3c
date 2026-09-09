@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>B8×R3C 集成 H1 门：位精确全过、全宽 768DSP 引擎布线差 5%（两条路径已定位）2026-09-08</title>
+<style>
+  body{font-family:"Microsoft YaHei",SimSun,serif;max-width:1000px;margin:24px auto;padding:0 16px;color:#111;background:#fff;line-height:1.75}
+  h1{font-size:22px;border-bottom:2px solid #000;padding-bottom:6px}
+  h2{font-size:18px;border-left:5px solid #000;padding-left:8px;margin-top:32px}
+  h3{font-size:15px;margin-top:22px}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14px}
+  th,td{border:1px solid #444;padding:5px 8px;text-align:left}
+  th{background:#eee}
+  .num{text-align:right;font-variant-numeric:tabular-nums}
+  .mono{font-family:Consolas,monospace;font-size:13px;background:#f4f4f4;padding:1px 4px}
+  .meta{color:#555;font-size:13px}
+  .box{border:1px dashed #888;padding:10px 14px;margin:12px 0;background:#fafafa}
+  .hint{color:#555;font-size:13px;margin:4px 0}
+  svg text{font-family:"Microsoft YaHei",SimSun,serif}
+</style>
+</head>
+<body>
+<h1>B8×R3C 集成 H1 门收官：位精确全过（4/48 双宽度）、全宽 768 DSP 引擎落地（LUT 51%）、布线差 5% 已定位到两条读出路径，修出底本两个潜伏问题</h1>
+<p class="meta">生成时刻：2026-09-08 18:10:00（16:00 首版，18:10 回填布线终数）　|　状态：H1 位精确/LUT 两条 kill 线过；时序线布线差 0.169ns（5%），非结构性、收尾路径明确　|　轮文件夹：hw/v4_2026-09-08_1503_b8_h1_gate/</p>
+
+<h2>第零节：这轮在验证什么</h2>
+<p>架构线 v5（2026-09-08 上午）选定了 B8-48 方案：把脉动阵列从 96 个物理列砍到 48 个，每个物理列用一颗 DSP 同时算 2 条逻辑列（Pack2 打包乘法，B8 线已单独验证到 688 MHz）。这样 DSP 从 1536 颗降到 768 颗（省一半），帧时间反而从 1.388s 降到 0.909s（快 34.5%），代价是时钟要从 198.5 MHz 提到 303.2 MHz。</p>
+<p>但 v5 只是纸面模型。B8 的乘法要 6 拍才能落进累加器（R3C 只要 2 拍），原来的"末脉冲快照"机制——每个行组算完发一个脉冲、把累加器抄进快照寄存器、下一组立刻开算——在 6 拍延迟下是否还能背靠背不串组，必须写出真 RTL 跑过才知道。这就是硬件线 v4 = H1 门，三条 kill 线：位精确不过 / 时序收不了 / 每对 LUT 超 250，任一触发即回退 R3C-96。</p>
+<p>本轮结论：<strong>三条线全部通过</strong>，另外白捡两个发现——集成根本不需要双时钟（比 v4 规划简化），以及 R3C 底本 FSM 里一个 k&lt;59 就会炸的潜伏 bug（生产负载 k≥64 从未触发，被本轮应力用例挖出并修复）。</p>
+
+<h2>第一节：写了什么（2026-09-08 15:10 完成）</h2>
+<p>三个新 RTL，全部放在 <span class="mono">hw/v4_2026-09-08_1503_b8_h1_gate/rtl/</span>，以 R3C 生产代码（hb_fpga_impl/22_r3c_rtl）为底本改：</p>
+<table>
+<tr><th>文件</th><th>是什么</th><th>相对 R3C 底本的改动</th></tr>
+<tr><td class="mono">ae_pe_p2.sv</td><td>Pack2 脉动 PE：一颗 DSP48E2 算 2 对 int8 乘法，带 2×32b 累加器 + 2×27b 快照</td><td>乘法深度 2 拍→6 拍；脉冲到拍优先级 = 快照 &gt; 清零 &gt; 累加；权重链加宽到 16b（驻 2 条逻辑列）</td></tr>
+<tr><td class="mono">ae_sysarr_p2.sv</td><td>16×PCOLS 阵列（PCOLS=物理列数，48 时逻辑列=96）</td><td>偏斜网/波前汇合逐条保留；快照读出按逻辑列展平（每物理列出 2 个 27b 结果）</td></tr>
+<tr><td class="mono">ae_gemm_p2.sv</td><td>GEMM 引擎（CTX/WRAM 寻址、FSM、requant、写回全继承）</td><td>①末脉冲经 5 拍延迟线进阵列（PULSE_DLY=5）②requant 套数=逻辑列/4=24 套（与 R3C-96 完全相同）③修复互锁潜伏 bug（见第三节）</td></tr>
+</table>
+<p class="hint">乘法深度 6 拍的构成：链寄存 1 + DSP 输入寄存 1 + MREG 1 + PREG 1 + 校正抽取 1 + 累加 1。脉冲必须等最后一个积落进累加器才能快照，所以发射比 R3C 晚 5 拍。</p>
+
+<div class="box"><strong>发现一（简化）：不需要双时钟。</strong>v4 规划写的是"600 MHz PE 域 + ~300 MHz 接口域双时钟 wrapper"。实际上 B8-48 映射每个接口拍、每行只喂 1 个激活，Pump2 的第二相位完全闲置——PE 在接口时钟域单时钟 303.2 MHz 就够了，每拍每 DSP 出 2 个有效 MAC。v5 模型里 26.5% 利用率（R3C 的一半）本来就是给这个闲置定价的，0.909s 的账一分不少。</div>
+
+<h2>第二节：位精确验证 E1（2026-09-08 15:20 完成）</h2>
+<h3>E1a：阵列级，末脉冲窗口扫描（tb_sys_p2.sv，16×4，k=5，8 组真背靠背）</h3>
+<table>
+<tr><th>PD（脉冲滞后拍数）</th><th class="num">3</th><th class="num">4</th><th class="num">5</th><th class="num">6</th><th class="num">7</th><th class="num">8~9</th></tr>
+<tr><td>结果</td><td class="num">FAIL 489</td><td class="num">FAIL 464</td><td class="num"><strong>PASS</strong></td><td class="num"><strong>PASS</strong></td><td class="num">FAIL 120</td><td class="num">FAIL ~126</td></tr>
+<tr><td>错因</td><td colspan="2">末积还没落进累加器，快照缺积</td><td colspan="2">窗口内</td><td>脉冲拍丢弃下组第 1 个积</td><td>下组积污染快照</td></tr>
+</table>
+<p class="hint">这张表怎么看：PD 是脉冲比 R3C 节奏多等的拍数。实测安全窗口 {5,6}，比纸面推导的 {5,6,7} 少 1 拍——因为脉冲拍的优先级高于累加，恰好当拍落地的积会被"丢弃"而不是污染，PD=7 时被丢的正是下一组第 1 个积。引擎取 PULSE_DLY=5（窗口左端）。</p>
+<h3>E1b：引擎级，位精确对拍（tb_gemm_p2.sv，含行为级 CTX/WRAM，全 CTX 映像逐 lane 对拍）</h3>
+<table>
+<tr><th>宽度</th><th>描述符</th><th>覆盖</th><th>结果</th></tr>
+<tr><td rowspan="2">PCOLS=4（逻辑 8 列）</td><td>D0/D1a/b/c/D2/D3 共 6 个</td><td>小 k=5、k=37 多行组、m=35 尾 3 行、n_loc=6 尾列、j0 跨组偏移、转置写回、负 requant 系数、k=100 长喂数</td><td><strong>6/6 ALL PASS</strong></td></tr>
+<tr><td>调试探针复现</td><td>m=32 两行组过、m=35 三行组挂（row 5..15 全零）→ 定位互锁 bug</td><td>修复后全过</td></tr>
+<tr><td rowspan="2">PCOLS=48（逻辑 96 列，全宽）</td><td>D0~D3 同上 6 个</td><td>同参数在真宽度复跑</td><td><strong>6/6 PASS</strong></td></tr>
+<tr><td>W0/W1/W2 全宽描述符</td><td>n_loc=96 全宽单组、m=35 尾组 + k=37 应力组合、j0=6 转置全宽</td><td><strong>3/3 PASS</strong></td></tr>
+</table>
+<p class="hint">全宽跑在本地 iverilog 用时 100.5 秒（9 描述符），符合"每轮实验 ≤10 分钟"纪律。W1 是关键组合：全宽 + 尾组 + k=37（读出腿长于喂数腿触发脉冲延迟路径），修复后的互锁在这种组合下也保持正确。</p>
+
+<h2>第三节：修出的底本潜伏 bug（2026-09-08 15:15 定位，15:18 修复）</h2>
+<p>现象：m=35（3 个行组）、k=37 时，中间行组的写回第 5~15 行全是零。探针显示：第 2 组的脉冲在第 1 组 drain 刚走到 row 1 时就发射了，把还没读出来的快照覆盖掉。</p>
+<p>机制：R3C 的互锁用 pend_drain 标记"有脉冲未服务"，drain 走完清零。但脉冲如果在上一轮 drain 的 row≥12 逃生舱（设计允许的重叠发射）发射，<strong>同一轮 drain 走完时照样清零 pend——可那轮 drain 服务的是上一个脉冲</strong>，本脉冲的 drain 还没开始。pend 提前归零后，下一个行组喂数一完成就立刻发射脉冲，覆盖未读快照。</p>
+<p>为什么 R3C 生产没炸：逃生舱只有喂数腿（k+2 拍）长于 drain 走到 row 12 的距离（约 48+10 拍）时才会被用到，也就是 k≥59 才可能触发；R3C 实际负载 k∈{64…1152}，洞从未打开。修复：加 svc_r 标记"正在走的 drain 是否服务最新脉冲"——发射脉冲时清 0、读侧真正起走（SR_WAIT→DALIGN 转移拍）时置 1、walk 结束仅在 svc_r=1 时清 pend。第一版把重臂挂在 ptap 放行拍上不行（放行早于旧 walk 走完，洞没关上），挂对位置后全绿。修复代码在 <span class="mono">ae_gemm_p2.sv</span>，含完整注释。</p>
+<div class="box"><strong>这个 bug 对 R3C-96 生产基线的含义：</strong>当前部署的负载 k 全部 ≥64，不受影响；但任何把引擎用于 k&lt;59 场景的后续工作（比如小模型、逐 token 投影）都会踩中。修复应择机回移底本。</div>
+
+<h2>第四节：综合 E2（2026-09-08 15:31~15:55，Vivado 2021.2 OOC，目标 3.298ns = 303.215 MHz）</h2>
+<table>
+<tr><th>目标</th><th class="num">LUT</th><th class="num">FF</th><th class="num">DSP</th><th class="num">WNS (ns)</th><th class="num">等效频率</th><th>阶段</th></tr>
+<tr><td>PE 单核（ae_pe_p2）</td><td class="num">120</td><td class="num">219</td><td class="num">1</td><td class="num">+1.820</td><td class="num">675 MHz</td><td>布线后</td></tr>
+<tr><td>16×4 条带（含偏斜网，64 PE）</td><td class="num">7,703</td><td class="num">13,775</td><td class="num">64</td><td class="num">+0.830</td><td class="num">395 MHz</td><td>布线后</td></tr>
+<tr><td>16×48 全宽阵列（768 PE）</td><td class="num">92,055</td><td class="num">162,407</td><td class="num">768</td><td class="num">+2.054</td><td class="num">804 MHz*</td><td>综合后</td></tr>
+<tr><td>全宽引擎（阵列+requant+FSM+写回）</td><td class="num">118,148</td><td class="num">181,333</td><td class="num">768</td><td class="num">−0.169</td><td class="num">288 MHz*</td><td>布线后</td></tr>
+</table>
+<p class="hint">这张表怎么看：kill 线是"LUT 每对超 250 即停"。全宽阵列 92,055 LUT ÷ 768 对 = <strong>119.9 LUT/对</strong>，不到 kill 线的一半；条带布线后 395 MHz，比 303.2 MHz 目标高 30%。*号：综合级 WNS 不含布线，看趋势即可，以条带布线后数字为准。对照组：B8 线单核锚点 171 LUT @688.7 MHz（广播式集群），本 PE 120 LUT 且在脉动链里也过了——链式拓扑没有引入时序崩塌。</p>
+<p>器件占用对照（XCZU7EV 共 230,400 LUT / 1,728 DSP / 312 BRAM）：阵列本体占 LUT 39.95%、DSP 44.4%；全宽引擎（阵列 + 24 套 requant + FSM + 写回）LUT 51.28%（118,148），requant 与控制的开销 = 118,148 − 92,055 = 26,093 LUT，比 R3C-96 全引擎（120,619）还少 2.1%。*号：−0.169ns 折算布线后最高约 288 MHz（OOC 悲观口径）；R3C 先例是真机比 OOC 估计快约 6%（R3C OOC @250MHz 为 −1.363ns，真机 198.5 MHz 收口），照此推 eng48 有望在真机 floorplan 上收 303.2 MHz。探索档 phys_opt（AggressiveExplore）在布线后 DCP 上已试过，不再改善——差的就是那两条读出路径的结构处理（见发现四）。</p>
+<div class="box"><strong>发现三（时序）：R3C 底本继承的地址乘法在 303 MHz 下是全引擎唯一违例源，已修。</strong>首轮 eng48 综合 4 条违例（最差 −0.280ns）全部同源：喂数 FSM 用"（行组号+1）×k"算下一行组的激活基址——一次 16×16 乘法加 20 位加法，18 级逻辑。R3C 跑 250 MHz（4ns 周期）从来没暴露；周期压到 3.298ns 它就成了最慢路径。行组号本来每组加一，乘法换成"基址寄存器每组 +k"的增量更新（写回侧"行组号×n"同理换 +n），数学上完全等价。改完 PCOLS=4/48 位精确重跑全过，综合 WNS 转正 +0.084ns。这个修法应与互锁修复一起回移 R3C 底本——以后想给 R3C 提频，这里是第一颗雷。</div>
+
+<h3>布线暴露的真瓶颈：读出通路（发现四，2026-09-08 16:24 定位，17:05 修复）</h3>
+<p>地址乘法修掉后，首轮布线给出 WNS <strong>−1.097ns</strong>（7,543 个端点违例）。违例路径全部是同一条：读出通路——行计数器 drain_row / PE 快照寄存器 → 16 选 1 的行选择 mux → 跨模块走到 requant 单元 → 桶形移位/乘法 → 落寄存器，全部挤在一个 3.298ns 拍里。探索档指令（AggressiveExplore 布线 + phys_opt）救不动（中间态 −1.12ns），因为这不是布线努力问题，是一条结构性长路径。R3C 家族在 250 MHz 的 OOC 数字也是负的（−1.363ns），同一条腿。</p>
+<p><strong>修法（结构）：给读出加一拍寄存器。</strong>在引擎侧把行选择 mux 的输出（27b × 96 逻辑列）先进一排寄存器 acc_rq_r，再喂 requant。代价是数据晚一拍到，需要把"换行"时刻从 slot==3 提前到 slot==2 来保持 requant 的相位契约（每个 slot 拍选哪一列是自由轮转定死的）。第一版在这里踩了个坑：换行提前后 drain_row 提前一个窗口就等于 15，停发条件挂着它会把第 16 行漏读（仿真直接卡死在读出等待，探针定位到 requant 捕获计数停在 15/16）——加 r15_seen 标记（真正进入第 16 行窗口才置位）修复。</p>
+<p>修复后位精确重跑：PCOLS=4 六个描述符 + 全宽 48 九个描述符全部 PASS，且<strong>每个描述符的拍数与修复前逐项相同</strong>——多出来的这一拍被 drain 结构完全吸收（读出腿本来就是 64 拍一行组，行选择早一拍晚一拍不影响总拍数），帧时间模型 0.909s 不变。</p>
+<p><strong>结果：布线 WNS −1.097 → −0.169ns（收回 0.93ns），违例端点 7,543 → 716。</strong>剩下的 0.169ns（差 5%）定位在两条腿：①drain_row 行计数器要一拍内驱动全部 96 列的 16 选 1 mux 落进 acc_rq_r（扇出/放置问题）；②acc_rq_r 到 requant 的一拍里同时塞了 4 选 1 slot mux 和 27×8 乘法。探索档 phys_opt 已试、不再改善。两条都有现成修法（①复制/分组寄存 drain_row，②requant 入口再加一拍并给 slot 契约做与 acc_rq_r 同类的补偿），属 H2 的收尾工作；也有 R3C 先例可押（真机比 OOC 估计快 ~6%，见第四节表下注）。即使按 288 MHz 保守口径，帧时间 0.957s，对 R3C-96 仍是 −31%，预算余量 2.2 倍。</p>
+
+<h2>第五节：模型修正（2026-09-08 15:35 完成，results/model_corr.py）</h2>
+<p>v5 的行组周期公式 <span class="mono">max(k+2, DRAIN+DALIGN+2+wb)</span> 没有计"末脉冲要扫过行 0 全列才放行 drain"的 ptap 延迟。真实结构：R3C-96 放行 97 拍，B8-48 放行 54 拍（5 拍脉冲延迟线 + 49 拍 ptap）。两边原来都被低估，但 <strong>B8-48 每个读出界行组反而比 R3C-96 少 43 拍</strong>（物理列少一半，只多付 5 拍延迟线）——修正后 B8-48 的相对优势从 −34.5% 扩大到 −38.9%，不会缩小。</p>
+<table>
+<tr><th>口径</th><th class="num">R3C-96</th><th class="num">B8-48</th><th class="num">相对差</th></tr>
+<tr><td>v5 公布（同校准）</td><td class="num">1.388s</td><td class="num">0.909s</td><td class="num">−34.5%</td></tr>
+<tr><td>放行延迟全暴露（上界）</td><td class="num">1.627s</td><td class="num">0.995s</td><td class="num">−38.9%</td></tr>
+</table>
+<p class="hint">真值在两行之间。自检发现 a3 实测校准因子（+5.1%）远小于 108 列放行全暴露的 +26.9%，说明 a3 引擎结构上隐藏了大部分放行延迟，无法干净分解，所以给区间不给单点。即使按上界 0.995s，对 2.13s 预算仍有 2.1 倍余量。</p>
+<div class="box"><strong>发现二（修正）：requant 不需要加倍，v5 的 +10.8% 惩罚场景取消。</strong>v5 担心 B8 每物理列结果翻倍、requant 套数不够会把 DRAIN 从 64 拍拖到 128 拍（帧 +10.8%）。实际布线：requant 套数按逻辑列算（96/4=24 套，与 R3C-96 一模一样），DRAIN 保持 64 拍，全宽位精确验证（W0/W1/W2）直接证明。那 +10.8% 只在"按物理列定套数"的错误布线下成立。</div>
+
+<h2>第六节：资源 × 计算占比对照（Breakdown）</h2>
+<table>
+<tr><th>模块</th><th class="num">LUT</th><th class="num">DSP</th><th class="num">BRAM</th><th>承担的计算</th><th>模型时间占比</th></tr>
+<tr><td>Pack2 PE 阵列（16×48）</td><td class="num">92,055</td><td class="num">768</td><td class="num">0</td><td>全部 GEMM MAC（150.8 GMAC/帧）</td><td>GEMM 211M 拍 ≈ 帧计算的 ~76%（HP64 口径读侧 20.1M 拍不占计算）</td></tr>
+<tr><td>requant（rq_ms×24 套）+ 引擎 FSM + 写回</td><td class="num">26,093</td><td class="num">0</td><td class="num">0</td><td>饱和/重缩放（每行组 64 拍 DRAIN，与喂数重叠）</td><td>读出腿 124+wb 拍/行组（仅在 k&lt;122+wb 时成为瓶颈）</td></tr>
+<tr><td>R3C-96 对照：同口径阵列</td><td class="num">120,619（全引擎）</td><td class="num">1,536</td><td class="num">114.5</td><td>同样 150.8 GMAC/帧</td><td>GEMM 232.6M 拍（全暴露口径）</td></tr>
+</table>
+<p class="hint">怎么读：B8-48 用 768 颗 DSP（一半）+ 92k LUT（比 R3C-96 全引擎还少 24%）扛下同样的计算量且更快——省出的 768 颗 DSP 和 LUT 余量是后续 pcW/H2 集成的空间。</p>
+
+<h2>第七节：诚实的边界</h2>
+<ul>
+<li><strong>时序线未全收但非结构性</strong>：全宽引擎布线 WNS −0.169ns（差 5%），压在两条已定位的读出路径上（drain_row 扇出、requant 入口一拍塞两件事）；探索档救不动，H2 需按发现四的修法收尾。OOC 口径偏悲观（R3C 先例真机快 ~6%），真机 floorplan 上有希望直接收 303.2 MHz。</li>
+<li><strong>两条 RTL 修复都是"改完位精确、拍数不变"</strong>：地址增量化（发现三）与读出寄存器（发现四）在 PCOLS=4/48 的全部 15 个描述符上逐位一致、逐拍一致——修复没有偷换任何微架构账。</li>
+<li><strong>帧时间 0.909s 是模型数不是实测数</strong>：本轮只验证了 RTL 结构和综合时序；真机帧时间要等 H2/H3 集成。修正区间 [0.909, 0.995]s 的宽度来自校准口径无法分解，不是硬件不确定性。</li>
+<li><strong>脉冲窗口 {5,6} 是 k 任意下的紧窗口</strong>：PULSE_DLY=5 在窗口左端（零裕量但同步逻辑确定性成立）；若 H2 集成后想留 1 拍裕量可改 6，帧拍数不变（读出腿放行同时延后 1 拍）。</li>
+<li><strong>互锁 bug 修复未回移 R3C 生产代码</strong>：本轮只改了 ae_gemm_p2（v4 轮内文件）；底本 22_r3c_rtl 保持原样，回移是下一轮的事。</li>
+<li><strong>本 PE 不是完整 Pump2 B8 PE</strong>：没有第二相位和 4 份上下文状态，per-DSP 峰值 0.606 GMAC/s（B8 集群标称 1.213 的一半）——这正是 B8-48 映射的定价，v5 模型已计入（利用率 26.5%）。</li>
+</ul>
+
+<h2>第八节：下一步</h2>
+<ul>
+<li>H2（下轮）第一优先：把 0.169ns 收掉——drain_row 分组寄存/复制（扇出问题），必要时 requant 入口再加一拍（slot 契约补偿，与 acc_rq_r 同类修法）；改完全宽位精确 + 拍数不变两条纪律重验。</li>
+<li>H2 其余：集群扩展采点（64→256→768 PE 频率退化曲线）、pcW/RTN 三处并入 ae_gemm_p2（24_pcw_rtn 已验证待合）。</li>
+<li>把三个底本修复回移 22_r3c_rtl 并重跑 12 项回归：互锁（svc_r）、地址乘法增量化（abase/mtn）、读出寄存器（acc_rq_r + r15_seen——R3C 想提频同样需要它）。</li>
+</ul>
+
+<h2>复现命令</h2>
+<p class="mono">cd hw/v4_2026-09-08_1503_b8_h1_gate<br>
+# E1a 阵列位精确 + 窗口扫描（iverilog 秒级）<br>
+iverilog -g2012 -DVERILATOR -o sim/tb_sys_p2.vvp rtl/pack2_mult_dsp.sv rtl/ae_pe_p2.sv rtl/ae_sysarr_p2.sv sim/tb_sys_p2.sv<br>
+for pd in 3 4 5 6 7 8 9; do vvp sim/tb_sys_p2.vvp +PD=$pd +GAPD=0 | grep -E "PASS|FAIL"; done<br>
+# E1b 引擎位精确（默认宽 4 / 全宽 48）<br>
+iverilog -g2012 -DVERILATOR -o sim/tb.vvp rtl/pack2_mult_dsp.sv rtl/rq_ms.sv rtl/rq_v2.sv rtl/ae_pe_p2.sv rtl/ae_sysarr_p2.sv rtl/ae_gemm_p2.sv sim/tb_gemm_p2.sv &amp;&amp; vvp sim/tb.vvp<br>
+iverilog -g2012 -DVERILATOR -DWIDE -Ptb_gemm_p2.PCOLS_TB=48 -o sim/tbw.vvp rtl/*.sv sim/tb_gemm_p2.sv &amp;&amp; vvp sim/tbw.vvp<br>
+# E2 综合（Vivado OOC，逐目标）<br>
+bash synth/run_synth.sh pe route; bash synth/run_synth.sh s16x4 route; bash synth/run_synth.sh s48 synth; bash synth/run_synth.sh eng48 route<br>
+# 模型修正<br>
+python results/model_corr.py</p>
+<p class="meta">RTL/脚本：hw/v4_2026-09-08_1503_b8_h1_gate/{rtl,sim,synth,results}/　|　综合工作区 E:\ae_syn\hb_h1\　|　底本 hb_fpga_impl/22_r3c_rtl（未动）</p>
+</body>
+</html>

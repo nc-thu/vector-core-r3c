@@ -1,0 +1,1333 @@
+Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
+----------------------------------------------------------------------------------------------------
+| Tool Version      : Vivado v.2021.2 (win64) Build 3367213 Tue Oct 19 02:48:09 MDT 2021
+| Date              : Tue Sep  8 17:11:52 2026
+| Host              : nc23 running 64-bit major release  (build 9200)
+| Command           : report_timing -max_paths 20 -file E:/ae_syn/hb_h1/runs/eng48/synth/timing.rpt
+| Design            : top_eng48
+| Device            : xczu7ev-ffvc1156
+| Speed File        : -2  PRODUCTION 1.29 08-03-2020
+| Temperature Grade : E
+----------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (MET) :             0.071ns  (required time - arrival time)
+  Source:                 u_eng/cgr_lo_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            u_eng/wb_addr_r_reg[19]/D
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        3.217ns  (logic 1.113ns (34.597%)  route 2.104ns (65.403%))
+  Logic Levels:           14  (CARRY8=6 LUT2=1 LUT3=1 LUT4=1 LUT5=1 LUT6=4)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=187756, unset)       0.000     0.000    u_eng/clk
+                         FDRE                                         r  u_eng/cgr_lo_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+                         FDRE (Prop_FDRE_C_Q)         0.077     0.077 r  u_eng/cgr_lo_reg[0]/Q
+                         net (fo=7, unplaced)         0.162     0.239    u_eng/cgr_lo[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     0.277 r  u_eng/wb_addr_r[7]_i_40/O
+                         net (fo=1, unplaced)         0.020     0.297    u_eng/wb_addr_r[7]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_CO[7])
+                                                      0.199     0.496 r  u_eng/wb_addr_r_reg[7]_i_35/CO[7]
+                         net (fo=1, unplaced)         0.005     0.501    u_eng/wb_addr_r_reg[7]_i_35_n_0
+                         CARRY8 (Prop_CARRY8_CI_O[1])
+                                                      0.076     0.577 r  u_eng/wb_lanes_r_reg[15]_i_24/O[1]
+                         net (fo=78, unplaced)        0.263     0.840    u_eng/wb_lanes_r4[9]
+                         LUT4 (Prop_LUT4_I3_O)        0.070     0.910 r  u_eng/wb_addr_r[19]_i_99/O
+                         net (fo=1, unplaced)         0.260     1.170    u_eng/wb_addr_r[19]_i_99_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_O[2])
+                                                      0.109     1.279 r  u_eng/wb_addr_r_reg[19]_i_54/O[2]
+                         net (fo=4, unplaced)         0.197     1.476    u_eng/wb_addr_r_reg[19]_i_54_n_13
+                         LUT3 (Prop_LUT3_I0_O)        0.068     1.544 r  u_eng/wb_addr_r[19]_i_110/O
+                         net (fo=1, unplaced)         0.245     1.789    u_eng/wb_addr_r[19]_i_110_n_0
+                         CARRY8 (Prop_CARRY8_DI[2]_O[4])
+                                                      0.150     1.939 r  u_eng/wb_addr_r_reg[19]_i_59/O[4]
+                         net (fo=1, unplaced)         0.183     2.122    u_eng/wb_addr_r_reg[19]_i_59_n_11
+                         LUT6 (Prop_LUT6_I2_O)        0.038     2.160 r  u_eng/wb_addr_r[19]_i_108/O
+                         net (fo=1, unplaced)         0.185     2.345    u_eng/wb_addr_r[19]_i_108_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     2.383 r  u_eng/wb_addr_r[19]_i_58/O
+                         net (fo=1, unplaced)         0.185     2.568    u_eng/wb_addr_r[19]_i_58_n_0
+                         LUT6 (Prop_LUT6_I2_O)        0.037     2.605 r  u_eng/wb_addr_r[19]_i_26/O
+                         net (fo=1, unplaced)         0.021     2.626    u_eng/wb_addr_r[19]_i_26_n_0
+                         CARRY8 (Prop_CARRY8_S[4]_O[4])
+                                                      0.063     2.689 r  u_eng/wb_addr_r_reg[19]_i_10/O[4]
+                         net (fo=1, unplaced)         0.183     2.872    u_eng/cgrm16[19]
+                         LUT5 (Prop_LUT5_I4_O)        0.038     2.910 r  u_eng/wb_addr_r[19]_i_16/O
+                         net (fo=1, unplaced)         0.137     3.047    u_eng/wb_addr_r[19]_i_16_n_0
+                         LUT6 (Prop_LUT6_I1_O)        0.051     3.098 r  u_eng/wb_addr_r[19]_i_6/O
+                         net (fo=1, unplaced)         0.032     3.130    u_eng/wb_addr_r[19]_i_6_n_0
+                         CARRY8 (Prop_CARRY8_S[3]_O[3])
+                                                      0.061     3.191 r  u_eng/wb_addr_r_reg[19]_i_2/O[3]
+                         net (fo=1, unplaced)         0.026     3.217    u_eng/wb_addr_r_reg[19]_i_2_n_12
+                         FDRE                                         r  u_eng/wb_addr_r_reg[19]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=187756, unset)       0.000     3.298    u_eng/clk
+                         FDRE                                         r  u_eng/wb_addr_r_reg[19]/C
+                         clock pessimism              0.000     3.298    
+                         clock uncertainty           -0.035     3.263    
+                         FDRE (Setup_FDRE_C_D)        0.025     3.288    u_eng/wb_addr_r_reg[19]
+  -------------------------------------------------------------------
+                         required time                          3.288    
+                         arrival time                          -3.217    
+  -------------------------------------------------------------------
+                         slack                                  0.071    
+
+Slack (MET) :             0.106ns  (required time - arrival time)
+  Source:                 u_eng/cgr_lo_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            u_eng/wb_addr_r_reg[18]/D
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        3.182ns  (logic 1.137ns (35.732%)  route 2.045ns (64.268%))
+  Logic Levels:           15  (CARRY8=6 LUT2=1 LUT3=3 LUT4=1 LUT5=3 LUT6=1)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=187756, unset)       0.000     0.000    u_eng/clk
+                         FDRE                                         r  u_eng/cgr_lo_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+                         FDRE (Prop_FDRE_C_Q)         0.077     0.077 r  u_eng/cgr_lo_reg[0]/Q
+                         net (fo=7, unplaced)         0.162     0.239    u_eng/cgr_lo[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     0.277 r  u_eng/wb_addr_r[7]_i_40/O
+                         net (fo=1, unplaced)         0.020     0.297    u_eng/wb_addr_r[7]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_O[5])
+                                                      0.240     0.537 r  u_eng/wb_addr_r_reg[7]_i_35/O[5]
+                         net (fo=88, unplaced)        0.224     0.761    u_eng/wb_lanes_r4[5]
+                         LUT4 (Prop_LUT4_I0_O)        0.105     0.866 r  u_eng/wb_addr_r[15]_i_39/O
+                         net (fo=1, unplaced)         0.238     1.104    u_eng/wb_addr_r[15]_i_39_n_0
+                         CARRY8 (Prop_CARRY8_DI[5]_CO[7])
+                                                      0.097     1.201 r  u_eng/wb_addr_r_reg[15]_i_34/CO[7]
+                         net (fo=1, unplaced)         0.005     1.206    u_eng/wb_addr_r_reg[15]_i_34_n_0
+                         CARRY8 (Prop_CARRY8_CI_O[1])
+                                                      0.076     1.282 r  u_eng/wb_addr_r_reg[19]_i_54/O[1]
+                         net (fo=2, unplaced)         0.183     1.465    u_eng/wb_addr_r_reg[19]_i_54_n_14
+                         LUT3 (Prop_LUT3_I0_O)        0.038     1.503 r  u_eng/wb_addr_r[19]_i_116/O
+                         net (fo=1, unplaced)         0.020     1.523    u_eng/wb_addr_r[19]_i_116_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_O[0])
+                                                      0.065     1.588 r  u_eng/wb_addr_r_reg[19]_i_59/O[0]
+                         net (fo=3, unplaced)         0.191     1.779    u_eng/wb_addr_r_reg[19]_i_59_n_15
+                         LUT3 (Prop_LUT3_I2_O)        0.038     1.817 f  u_eng/wb_addr_r[19]_i_53/O
+                         net (fo=1, unplaced)         0.185     2.002    u_eng/wb_addr_r[19]_i_53_n_0
+                         LUT5 (Prop_LUT5_I1_O)        0.038     2.040 r  u_eng/wb_addr_r[19]_i_24/O
+                         net (fo=2, unplaced)         0.185     2.225    u_eng/wb_addr_r[19]_i_24_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.037     2.262 r  u_eng/wb_addr_r[19]_i_29/O
+                         net (fo=1, unplaced)         0.023     2.285    u_eng/wb_addr_r[19]_i_29_n_0
+                         CARRY8 (Prop_CARRY8_S[1]_O[2])
+                                                      0.117     2.402 r  u_eng/wb_addr_r_reg[19]_i_10/O[2]
+                         net (fo=2, unplaced)         0.185     2.587    u_eng/cgrm16[17]
+                         LUT5 (Prop_LUT5_I0_O)        0.038     2.625 r  u_eng/wb_addr_r[19]_i_11/O
+                         net (fo=2, unplaced)         0.185     2.810    u_eng/wb_addr_r[19]_i_11_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     2.848 r  u_eng/wb_addr_r[19]_i_3/O
+                         net (fo=2, unplaced)         0.185     3.033    u_eng/wb_addr_r[19]_i_3_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.037     3.070 r  u_eng/wb_addr_r[19]_i_7/O
+                         net (fo=1, unplaced)         0.028     3.098    u_eng/wb_addr_r[19]_i_7_n_0
+                         CARRY8 (Prop_CARRY8_S[2]_O[2])
+                                                      0.058     3.156 r  u_eng/wb_addr_r_reg[19]_i_2/O[2]
+                         net (fo=1, unplaced)         0.026     3.182    u_eng/wb_addr_r_reg[19]_i_2_n_13
+                         FDRE                                         r  u_eng/wb_addr_r_reg[18]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=187756, unset)       0.000     3.298    u_eng/clk
+                         FDRE                                         r  u_eng/wb_addr_r_reg[18]/C
+                         clock pessimism              0.000     3.298    
+                         clock uncertainty           -0.035     3.263    
+                         FDRE (Setup_FDRE_C_D)        0.025     3.288    u_eng/wb_addr_r_reg[18]
+  -------------------------------------------------------------------
+                         required time                          3.288    
+                         arrival time                          -3.182    
+  -------------------------------------------------------------------
+                         slack                                  0.106    
+
+Slack (MET) :             0.330ns  (required time - arrival time)
+  Source:                 u_eng/cgr_lo_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            u_eng/wb_addr_r_reg[17]/D
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.958ns  (logic 1.149ns (38.844%)  route 1.809ns (61.156%))
+  Logic Levels:           14  (CARRY8=6 LUT2=1 LUT3=3 LUT4=1 LUT5=3)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=187756, unset)       0.000     0.000    u_eng/clk
+                         FDRE                                         r  u_eng/cgr_lo_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+                         FDRE (Prop_FDRE_C_Q)         0.077     0.077 r  u_eng/cgr_lo_reg[0]/Q
+                         net (fo=7, unplaced)         0.162     0.239    u_eng/cgr_lo[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     0.277 r  u_eng/wb_addr_r[7]_i_40/O
+                         net (fo=1, unplaced)         0.020     0.297    u_eng/wb_addr_r[7]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_O[5])
+                                                      0.240     0.537 r  u_eng/wb_addr_r_reg[7]_i_35/O[5]
+                         net (fo=88, unplaced)        0.224     0.761    u_eng/wb_lanes_r4[5]
+                         LUT4 (Prop_LUT4_I0_O)        0.105     0.866 r  u_eng/wb_addr_r[15]_i_39/O
+                         net (fo=1, unplaced)         0.238     1.104    u_eng/wb_addr_r[15]_i_39_n_0
+                         CARRY8 (Prop_CARRY8_DI[5]_CO[7])
+                                                      0.097     1.201 r  u_eng/wb_addr_r_reg[15]_i_34/CO[7]
+                         net (fo=1, unplaced)         0.005     1.206    u_eng/wb_addr_r_reg[15]_i_34_n_0
+                         CARRY8 (Prop_CARRY8_CI_O[1])
+                                                      0.076     1.282 r  u_eng/wb_addr_r_reg[19]_i_54/O[1]
+                         net (fo=2, unplaced)         0.183     1.465    u_eng/wb_addr_r_reg[19]_i_54_n_14
+                         LUT3 (Prop_LUT3_I0_O)        0.038     1.503 r  u_eng/wb_addr_r[19]_i_116/O
+                         net (fo=1, unplaced)         0.020     1.523    u_eng/wb_addr_r[19]_i_116_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_O[0])
+                                                      0.065     1.588 r  u_eng/wb_addr_r_reg[19]_i_59/O[0]
+                         net (fo=3, unplaced)         0.191     1.779    u_eng/wb_addr_r_reg[19]_i_59_n_15
+                         LUT3 (Prop_LUT3_I2_O)        0.038     1.817 f  u_eng/wb_addr_r[19]_i_53/O
+                         net (fo=1, unplaced)         0.185     2.002    u_eng/wb_addr_r[19]_i_53_n_0
+                         LUT5 (Prop_LUT5_I1_O)        0.038     2.040 r  u_eng/wb_addr_r[19]_i_24/O
+                         net (fo=2, unplaced)         0.185     2.225    u_eng/wb_addr_r[19]_i_24_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.037     2.262 r  u_eng/wb_addr_r[19]_i_29/O
+                         net (fo=1, unplaced)         0.023     2.285    u_eng/wb_addr_r[19]_i_29_n_0
+                         CARRY8 (Prop_CARRY8_S[1]_O[2])
+                                                      0.117     2.402 r  u_eng/wb_addr_r_reg[19]_i_10/O[2]
+                         net (fo=2, unplaced)         0.185     2.587    u_eng/cgrm16[17]
+                         LUT5 (Prop_LUT5_I0_O)        0.038     2.625 r  u_eng/wb_addr_r[19]_i_11/O
+                         net (fo=2, unplaced)         0.140     2.765    u_eng/wb_addr_r[19]_i_11_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.089     2.854 r  u_eng/wb_addr_r[19]_i_8/O
+                         net (fo=1, unplaced)         0.023     2.877    u_eng/wb_addr_r[19]_i_8_n_0
+                         CARRY8 (Prop_CARRY8_S[1]_O[1])
+                                                      0.056     2.933 r  u_eng/wb_addr_r_reg[19]_i_2/O[1]
+                         net (fo=1, unplaced)         0.025     2.958    u_eng/wb_addr_r_reg[19]_i_2_n_14
+                         FDRE                                         r  u_eng/wb_addr_r_reg[17]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=187756, unset)       0.000     3.298    u_eng/clk
+                         FDRE                                         r  u_eng/wb_addr_r_reg[17]/C
+                         clock pessimism              0.000     3.298    
+                         clock uncertainty           -0.035     3.263    
+                         FDRE (Setup_FDRE_C_D)        0.025     3.288    u_eng/wb_addr_r_reg[17]
+  -------------------------------------------------------------------
+                         required time                          3.288    
+                         arrival time                          -2.958    
+  -------------------------------------------------------------------
+                         slack                                  0.330    
+
+Slack (MET) :             0.374ns  (required time - arrival time)
+  Source:                 u_eng/cgr_lo_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            u_eng/wb_addr_r_reg[16]/D
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.914ns  (logic 1.098ns (37.680%)  route 1.816ns (62.320%))
+  Logic Levels:           14  (CARRY8=6 LUT2=1 LUT3=3 LUT4=1 LUT5=3)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=187756, unset)       0.000     0.000    u_eng/clk
+                         FDRE                                         r  u_eng/cgr_lo_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+                         FDRE (Prop_FDRE_C_Q)         0.077     0.077 r  u_eng/cgr_lo_reg[0]/Q
+                         net (fo=7, unplaced)         0.162     0.239    u_eng/cgr_lo[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     0.277 r  u_eng/wb_addr_r[7]_i_40/O
+                         net (fo=1, unplaced)         0.020     0.297    u_eng/wb_addr_r[7]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_O[5])
+                                                      0.240     0.537 r  u_eng/wb_addr_r_reg[7]_i_35/O[5]
+                         net (fo=88, unplaced)        0.224     0.761    u_eng/wb_lanes_r4[5]
+                         LUT4 (Prop_LUT4_I0_O)        0.105     0.866 r  u_eng/wb_addr_r[15]_i_39/O
+                         net (fo=1, unplaced)         0.238     1.104    u_eng/wb_addr_r[15]_i_39_n_0
+                         CARRY8 (Prop_CARRY8_DI[5]_CO[7])
+                                                      0.097     1.201 r  u_eng/wb_addr_r_reg[15]_i_34/CO[7]
+                         net (fo=1, unplaced)         0.005     1.206    u_eng/wb_addr_r_reg[15]_i_34_n_0
+                         CARRY8 (Prop_CARRY8_CI_O[1])
+                                                      0.076     1.282 r  u_eng/wb_addr_r_reg[19]_i_54/O[1]
+                         net (fo=2, unplaced)         0.183     1.465    u_eng/wb_addr_r_reg[19]_i_54_n_14
+                         LUT3 (Prop_LUT3_I0_O)        0.038     1.503 r  u_eng/wb_addr_r[19]_i_116/O
+                         net (fo=1, unplaced)         0.020     1.523    u_eng/wb_addr_r[19]_i_116_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_O[0])
+                                                      0.065     1.588 r  u_eng/wb_addr_r_reg[19]_i_59/O[0]
+                         net (fo=3, unplaced)         0.191     1.779    u_eng/wb_addr_r_reg[19]_i_59_n_15
+                         LUT3 (Prop_LUT3_I2_O)        0.038     1.817 f  u_eng/wb_addr_r[19]_i_53/O
+                         net (fo=1, unplaced)         0.185     2.002    u_eng/wb_addr_r[19]_i_53_n_0
+                         LUT5 (Prop_LUT5_I1_O)        0.038     2.040 r  u_eng/wb_addr_r[19]_i_24/O
+                         net (fo=2, unplaced)         0.185     2.225    u_eng/wb_addr_r[19]_i_24_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.037     2.262 r  u_eng/wb_addr_r[19]_i_29/O
+                         net (fo=1, unplaced)         0.023     2.285    u_eng/wb_addr_r[19]_i_29_n_0
+                         CARRY8 (Prop_CARRY8_S[1]_O[1])
+                                                      0.056     2.341 r  u_eng/wb_addr_r_reg[19]_i_10/O[1]
+                         net (fo=4, unplaced)         0.195     2.536    u_eng/cgrm16[16]
+                         LUT5 (Prop_LUT5_I0_O)        0.038     2.574 r  u_eng/wb_addr_r[19]_i_20/O
+                         net (fo=1, unplaced)         0.140     2.714    u_eng/wb_addr_r[19]_i_20_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.090     2.804 r  u_eng/wb_addr_r[19]_i_9/O
+                         net (fo=1, unplaced)         0.020     2.824    u_eng/wb_addr_r[19]_i_9_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_O[0])
+                                                      0.065     2.889 r  u_eng/wb_addr_r_reg[19]_i_2/O[0]
+                         net (fo=1, unplaced)         0.025     2.914    u_eng/wb_addr_r_reg[19]_i_2_n_15
+                         FDRE                                         r  u_eng/wb_addr_r_reg[16]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=187756, unset)       0.000     3.298    u_eng/clk
+                         FDRE                                         r  u_eng/wb_addr_r_reg[16]/C
+                         clock pessimism              0.000     3.298    
+                         clock uncertainty           -0.035     3.263    
+                         FDRE (Setup_FDRE_C_D)        0.025     3.288    u_eng/wb_addr_r_reg[16]
+  -------------------------------------------------------------------
+                         required time                          3.288    
+                         arrival time                          -2.914    
+  -------------------------------------------------------------------
+                         slack                                  0.374    
+
+Slack (MET) :             0.539ns  (required time - arrival time)
+  Source:                 u_eng/cgr_lo_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            u_eng/wb_addr_r_reg[15]/D
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.749ns  (logic 0.963ns (35.031%)  route 1.786ns (64.969%))
+  Logic Levels:           12  (CARRY8=4 LUT2=2 LUT3=1 LUT4=1 LUT6=4)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=187756, unset)       0.000     0.000    u_eng/clk
+                         FDRE                                         r  u_eng/cgr_lo_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+                         FDRE (Prop_FDRE_C_Q)         0.077     0.077 r  u_eng/cgr_lo_reg[0]/Q
+                         net (fo=7, unplaced)         0.162     0.239    u_eng/cgr_lo[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     0.277 r  u_eng/wb_addr_r[7]_i_40/O
+                         net (fo=1, unplaced)         0.020     0.297    u_eng/wb_addr_r[7]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_O[2])
+                                                      0.134     0.431 r  u_eng/wb_addr_r_reg[7]_i_35/O[2]
+                         net (fo=91, unplaced)        0.219     0.650    u_eng/wb_lanes_r4[2]
+                         LUT4 (Prop_LUT4_I0_O)        0.100     0.750 r  u_eng/wb_addr_r[15]_i_44/O
+                         net (fo=1, unplaced)         0.260     1.010    u_eng/wb_addr_r[15]_i_44_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_O[7])
+                                                      0.211     1.221 r  u_eng/wb_addr_r_reg[15]_i_34/O[7]
+                         net (fo=2, unplaced)         0.138     1.359    u_eng/wb_addr_r_reg[15]_i_34_n_8
+                         LUT6 (Prop_LUT6_I5_O)        0.038     1.397 r  u_eng/wb_addr_r[19]_i_65/O
+                         net (fo=2, unplaced)         0.185     1.582    u_eng/wb_addr_r[19]_i_65_n_0
+                         LUT6 (Prop_LUT6_I4_O)        0.038     1.620 r  u_eng/wb_addr_r[19]_i_32/O
+                         net (fo=2, unplaced)         0.185     1.805    u_eng/wb_addr_r[19]_i_32_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.037     1.842 r  u_eng/wb_addr_r[19]_i_40/O
+                         net (fo=1, unplaced)         0.023     1.865    u_eng/wb_addr_r[19]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_S[6]_O[6])
+                                                      0.056     1.921 r  u_eng/wb_addr_r_reg[19]_i_21/O[6]
+                         net (fo=2, unplaced)         0.138     2.059    u_eng/cgrm16[13]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     2.097 r  u_eng/wb_addr_r[15]_i_21/O
+                         net (fo=2, unplaced)         0.185     2.282    u_eng/wb_addr_r[15]_i_21_n_0
+                         LUT2 (Prop_LUT2_I1_O)        0.074     2.356 r  u_eng/wb_addr_r[15]_i_3/O
+                         net (fo=2, unplaced)         0.222     2.578    u_eng/wb_addr_r[15]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.037     2.615 r  u_eng/wb_addr_r[15]_i_11/O
+                         net (fo=1, unplaced)         0.023     2.638    u_eng/wb_addr_r[15]_i_11_n_0
+                         CARRY8 (Prop_CARRY8_S[6]_O[7])
+                                                      0.085     2.723 r  u_eng/wb_addr_r_reg[15]_i_1/O[7]
+                         net (fo=1, unplaced)         0.026     2.749    u_eng/wb_addr_r_reg[15]_i_1_n_8
+                         FDRE                                         r  u_eng/wb_addr_r_reg[15]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=187756, unset)       0.000     3.298    u_eng/clk
+                         FDRE                                         r  u_eng/wb_addr_r_reg[15]/C
+                         clock pessimism              0.000     3.298    
+                         clock uncertainty           -0.035     3.263    
+                         FDRE (Setup_FDRE_C_D)        0.025     3.288    u_eng/wb_addr_r_reg[15]
+  -------------------------------------------------------------------
+                         required time                          3.288    
+                         arrival time                          -2.749    
+  -------------------------------------------------------------------
+                         slack                                  0.539    
+
+Slack (MET) :             0.568ns  (required time - arrival time)
+  Source:                 u_eng/cgr_lo_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            u_eng/wb_addr_r_reg[14]/D
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.720ns  (logic 0.934ns (34.338%)  route 1.786ns (65.662%))
+  Logic Levels:           12  (CARRY8=4 LUT2=2 LUT3=1 LUT4=1 LUT6=4)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=187756, unset)       0.000     0.000    u_eng/clk
+                         FDRE                                         r  u_eng/cgr_lo_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+                         FDRE (Prop_FDRE_C_Q)         0.077     0.077 r  u_eng/cgr_lo_reg[0]/Q
+                         net (fo=7, unplaced)         0.162     0.239    u_eng/cgr_lo[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     0.277 r  u_eng/wb_addr_r[7]_i_40/O
+                         net (fo=1, unplaced)         0.020     0.297    u_eng/wb_addr_r[7]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_O[2])
+                                                      0.134     0.431 r  u_eng/wb_addr_r_reg[7]_i_35/O[2]
+                         net (fo=91, unplaced)        0.219     0.650    u_eng/wb_lanes_r4[2]
+                         LUT4 (Prop_LUT4_I0_O)        0.100     0.750 r  u_eng/wb_addr_r[15]_i_44/O
+                         net (fo=1, unplaced)         0.260     1.010    u_eng/wb_addr_r[15]_i_44_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_O[7])
+                                                      0.211     1.221 r  u_eng/wb_addr_r_reg[15]_i_34/O[7]
+                         net (fo=2, unplaced)         0.138     1.359    u_eng/wb_addr_r_reg[15]_i_34_n_8
+                         LUT6 (Prop_LUT6_I5_O)        0.038     1.397 r  u_eng/wb_addr_r[19]_i_65/O
+                         net (fo=2, unplaced)         0.185     1.582    u_eng/wb_addr_r[19]_i_65_n_0
+                         LUT6 (Prop_LUT6_I4_O)        0.038     1.620 r  u_eng/wb_addr_r[19]_i_32/O
+                         net (fo=2, unplaced)         0.185     1.805    u_eng/wb_addr_r[19]_i_32_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.037     1.842 r  u_eng/wb_addr_r[19]_i_40/O
+                         net (fo=1, unplaced)         0.023     1.865    u_eng/wb_addr_r[19]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_S[6]_O[6])
+                                                      0.056     1.921 r  u_eng/wb_addr_r_reg[19]_i_21/O[6]
+                         net (fo=2, unplaced)         0.138     2.059    u_eng/cgrm16[13]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     2.097 r  u_eng/wb_addr_r[15]_i_21/O
+                         net (fo=2, unplaced)         0.185     2.282    u_eng/wb_addr_r[15]_i_21_n_0
+                         LUT2 (Prop_LUT2_I1_O)        0.074     2.356 r  u_eng/wb_addr_r[15]_i_3/O
+                         net (fo=2, unplaced)         0.222     2.578    u_eng/wb_addr_r[15]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.037     2.615 r  u_eng/wb_addr_r[15]_i_11/O
+                         net (fo=1, unplaced)         0.023     2.638    u_eng/wb_addr_r[15]_i_11_n_0
+                         CARRY8 (Prop_CARRY8_S[6]_O[6])
+                                                      0.056     2.694 r  u_eng/wb_addr_r_reg[15]_i_1/O[6]
+                         net (fo=1, unplaced)         0.026     2.720    u_eng/wb_addr_r_reg[15]_i_1_n_9
+                         FDRE                                         r  u_eng/wb_addr_r_reg[14]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=187756, unset)       0.000     3.298    u_eng/clk
+                         FDRE                                         r  u_eng/wb_addr_r_reg[14]/C
+                         clock pessimism              0.000     3.298    
+                         clock uncertainty           -0.035     3.263    
+                         FDRE (Setup_FDRE_C_D)        0.025     3.288    u_eng/wb_addr_r_reg[14]
+  -------------------------------------------------------------------
+                         required time                          3.288    
+                         arrival time                          -2.720    
+  -------------------------------------------------------------------
+                         slack                                  0.568    
+
+Slack (MET) :             0.696ns  (required time - arrival time)
+  Source:                 u_eng/cgr_lo_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            u_eng/wb_addr_r_reg[13]/D
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.592ns  (logic 0.973ns (37.539%)  route 1.619ns (62.461%))
+  Logic Levels:           11  (CARRY8=4 LUT2=2 LUT3=2 LUT4=2 LUT6=1)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=187756, unset)       0.000     0.000    u_eng/clk
+                         FDRE                                         r  u_eng/cgr_lo_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+                         FDRE (Prop_FDRE_C_Q)         0.077     0.077 r  u_eng/cgr_lo_reg[0]/Q
+                         net (fo=7, unplaced)         0.162     0.239    u_eng/cgr_lo[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     0.277 r  u_eng/wb_addr_r[7]_i_40/O
+                         net (fo=1, unplaced)         0.020     0.297    u_eng/wb_addr_r[7]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_O[2])
+                                                      0.134     0.431 r  u_eng/wb_addr_r_reg[7]_i_35/O[2]
+                         net (fo=91, unplaced)        0.219     0.650    u_eng/wb_lanes_r4[2]
+                         LUT4 (Prop_LUT4_I0_O)        0.100     0.750 r  u_eng/wb_addr_r[15]_i_44/O
+                         net (fo=1, unplaced)         0.260     1.010    u_eng/wb_addr_r[15]_i_44_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_O[4])
+                                                      0.178     1.188 r  u_eng/wb_addr_r_reg[15]_i_34/O[4]
+                         net (fo=2, unplaced)         0.183     1.371    u_eng/wb_addr_r_reg[15]_i_34_n_11
+                         LUT3 (Prop_LUT3_I0_O)        0.110     1.481 r  u_eng/wb_addr_r[19]_i_34/O
+                         net (fo=2, unplaced)         0.170     1.651    u_eng/wb_addr_r[19]_i_34_n_0
+                         LUT4 (Prop_LUT4_I0_O)        0.037     1.688 r  u_eng/wb_addr_r[19]_i_42/O
+                         net (fo=1, unplaced)         0.021     1.709    u_eng/wb_addr_r[19]_i_42_n_0
+                         CARRY8 (Prop_CARRY8_S[4]_O[4])
+                                                      0.063     1.772 r  u_eng/wb_addr_r_reg[19]_i_21/O[4]
+                         net (fo=2, unplaced)         0.183     1.955    u_eng/cgrm16[11]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     1.993 r  u_eng/wb_addr_r[15]_i_25/O
+                         net (fo=2, unplaced)         0.185     2.178    u_eng/wb_addr_r[15]_i_25_n_0
+                         LUT2 (Prop_LUT2_I1_O)        0.066     2.244 r  u_eng/wb_addr_r[15]_i_5/O
+                         net (fo=2, unplaced)         0.170     2.414    u_eng/wb_addr_r[15]_i_5_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.037     2.451 r  u_eng/wb_addr_r[15]_i_13/O
+                         net (fo=1, unplaced)         0.021     2.472    u_eng/wb_addr_r[15]_i_13_n_0
+                         CARRY8 (Prop_CARRY8_S[4]_O[5])
+                                                      0.095     2.567 r  u_eng/wb_addr_r_reg[15]_i_1/O[5]
+                         net (fo=1, unplaced)         0.025     2.592    u_eng/wb_addr_r_reg[15]_i_1_n_10
+                         FDRE                                         r  u_eng/wb_addr_r_reg[13]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=187756, unset)       0.000     3.298    u_eng/clk
+                         FDRE                                         r  u_eng/wb_addr_r_reg[13]/C
+                         clock pessimism              0.000     3.298    
+                         clock uncertainty           -0.035     3.263    
+                         FDRE (Setup_FDRE_C_D)        0.025     3.288    u_eng/wb_addr_r_reg[13]
+  -------------------------------------------------------------------
+                         required time                          3.288    
+                         arrival time                          -2.592    
+  -------------------------------------------------------------------
+                         slack                                  0.696    
+
+Slack (MET) :             0.728ns  (required time - arrival time)
+  Source:                 u_eng/cgr_lo_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            u_eng/wb_addr_r_reg[12]/D
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.560ns  (logic 0.941ns (36.758%)  route 1.619ns (63.242%))
+  Logic Levels:           11  (CARRY8=4 LUT2=2 LUT3=2 LUT4=2 LUT6=1)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=187756, unset)       0.000     0.000    u_eng/clk
+                         FDRE                                         r  u_eng/cgr_lo_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+                         FDRE (Prop_FDRE_C_Q)         0.077     0.077 r  u_eng/cgr_lo_reg[0]/Q
+                         net (fo=7, unplaced)         0.162     0.239    u_eng/cgr_lo[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     0.277 r  u_eng/wb_addr_r[7]_i_40/O
+                         net (fo=1, unplaced)         0.020     0.297    u_eng/wb_addr_r[7]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_O[2])
+                                                      0.134     0.431 r  u_eng/wb_addr_r_reg[7]_i_35/O[2]
+                         net (fo=91, unplaced)        0.219     0.650    u_eng/wb_lanes_r4[2]
+                         LUT4 (Prop_LUT4_I0_O)        0.100     0.750 r  u_eng/wb_addr_r[15]_i_44/O
+                         net (fo=1, unplaced)         0.260     1.010    u_eng/wb_addr_r[15]_i_44_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_O[4])
+                                                      0.178     1.188 r  u_eng/wb_addr_r_reg[15]_i_34/O[4]
+                         net (fo=2, unplaced)         0.183     1.371    u_eng/wb_addr_r_reg[15]_i_34_n_11
+                         LUT3 (Prop_LUT3_I0_O)        0.110     1.481 r  u_eng/wb_addr_r[19]_i_34/O
+                         net (fo=2, unplaced)         0.170     1.651    u_eng/wb_addr_r[19]_i_34_n_0
+                         LUT4 (Prop_LUT4_I0_O)        0.037     1.688 r  u_eng/wb_addr_r[19]_i_42/O
+                         net (fo=1, unplaced)         0.021     1.709    u_eng/wb_addr_r[19]_i_42_n_0
+                         CARRY8 (Prop_CARRY8_S[4]_O[4])
+                                                      0.063     1.772 r  u_eng/wb_addr_r_reg[19]_i_21/O[4]
+                         net (fo=2, unplaced)         0.183     1.955    u_eng/cgrm16[11]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     1.993 r  u_eng/wb_addr_r[15]_i_25/O
+                         net (fo=2, unplaced)         0.185     2.178    u_eng/wb_addr_r[15]_i_25_n_0
+                         LUT2 (Prop_LUT2_I1_O)        0.066     2.244 r  u_eng/wb_addr_r[15]_i_5/O
+                         net (fo=2, unplaced)         0.170     2.414    u_eng/wb_addr_r[15]_i_5_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.037     2.451 r  u_eng/wb_addr_r[15]_i_13/O
+                         net (fo=1, unplaced)         0.021     2.472    u_eng/wb_addr_r[15]_i_13_n_0
+                         CARRY8 (Prop_CARRY8_S[4]_O[4])
+                                                      0.063     2.535 r  u_eng/wb_addr_r_reg[15]_i_1/O[4]
+                         net (fo=1, unplaced)         0.025     2.560    u_eng/wb_addr_r_reg[15]_i_1_n_11
+                         FDRE                                         r  u_eng/wb_addr_r_reg[12]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=187756, unset)       0.000     3.298    u_eng/clk
+                         FDRE                                         r  u_eng/wb_addr_r_reg[12]/C
+                         clock pessimism              0.000     3.298    
+                         clock uncertainty           -0.035     3.263    
+                         FDRE (Setup_FDRE_C_D)        0.025     3.288    u_eng/wb_addr_r_reg[12]
+  -------------------------------------------------------------------
+                         required time                          3.288    
+                         arrival time                          -2.560    
+  -------------------------------------------------------------------
+                         slack                                  0.728    
+
+Slack (MET) :             0.811ns  (required time - arrival time)
+  Source:                 u_eng/cgr_lo_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            u_eng/wb_addr_r_reg[11]/D
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.477ns  (logic 0.860ns (34.719%)  route 1.617ns (65.281%))
+  Logic Levels:           10  (CARRY8=4 LUT2=3 LUT4=2 LUT6=1)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=187756, unset)       0.000     0.000    u_eng/clk
+                         FDRE                                         r  u_eng/cgr_lo_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+                         FDRE (Prop_FDRE_C_Q)         0.077     0.077 r  u_eng/cgr_lo_reg[0]/Q
+                         net (fo=7, unplaced)         0.162     0.239    u_eng/cgr_lo[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     0.277 r  u_eng/wb_addr_r[7]_i_40/O
+                         net (fo=1, unplaced)         0.020     0.297    u_eng/wb_addr_r[7]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_O[2])
+                                                      0.134     0.431 r  u_eng/wb_addr_r_reg[7]_i_35/O[2]
+                         net (fo=91, unplaced)        0.219     0.650    u_eng/wb_lanes_r4[2]
+                         LUT4 (Prop_LUT4_I0_O)        0.100     0.750 r  u_eng/wb_addr_r[15]_i_44/O
+                         net (fo=1, unplaced)         0.260     1.010    u_eng/wb_addr_r[15]_i_44_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_O[2])
+                                                      0.109     1.119 r  u_eng/wb_addr_r_reg[15]_i_34/O[2]
+                         net (fo=2, unplaced)         0.136     1.255    u_eng/wb_addr_r_reg[15]_i_34_n_13
+                         LUT2 (Prop_LUT2_I0_O)        0.103     1.358 r  u_eng/wb_addr_r[19]_i_36/O
+                         net (fo=2, unplaced)         0.167     1.525    u_eng/wb_addr_r[19]_i_36_n_0
+                         LUT4 (Prop_LUT4_I3_O)        0.037     1.562 r  u_eng/wb_addr_r[19]_i_44/O
+                         net (fo=1, unplaced)         0.028     1.590    u_eng/wb_addr_r[19]_i_44_n_0
+                         CARRY8 (Prop_CARRY8_S[2]_O[2])
+                                                      0.058     1.648 r  u_eng/wb_addr_r_reg[19]_i_21/O[2]
+                         net (fo=2, unplaced)         0.185     1.833    u_eng/cgrm16[9]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     1.871 r  u_eng/wb_addr_r[15]_i_29/O
+                         net (fo=2, unplaced)         0.185     2.056    u_eng/wb_addr_r[15]_i_29_n_0
+                         LUT2 (Prop_LUT2_I1_O)        0.072     2.128 r  u_eng/wb_addr_r[15]_i_7/O
+                         net (fo=2, unplaced)         0.229     2.357    u_eng/wb_addr_r[15]_i_7_n_0
+                         CARRY8 (Prop_CARRY8_DI[2]_O[3])
+                                                      0.094     2.451 r  u_eng/wb_addr_r_reg[15]_i_1/O[3]
+                         net (fo=1, unplaced)         0.026     2.477    u_eng/wb_addr_r_reg[15]_i_1_n_12
+                         FDRE                                         r  u_eng/wb_addr_r_reg[11]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=187756, unset)       0.000     3.298    u_eng/clk
+                         FDRE                                         r  u_eng/wb_addr_r_reg[11]/C
+                         clock pessimism              0.000     3.298    
+                         clock uncertainty           -0.035     3.263    
+                         FDRE (Setup_FDRE_C_D)        0.025     3.288    u_eng/wb_addr_r_reg[11]
+  -------------------------------------------------------------------
+                         required time                          3.288    
+                         arrival time                          -2.477    
+  -------------------------------------------------------------------
+                         slack                                  0.811    
+
+Slack (MET) :             0.844ns  (required time - arrival time)
+  Source:                 u_eng/cgr_lo_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            u_eng/wb_addr_r_reg[10]/D
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.444ns  (logic 0.861ns (35.229%)  route 1.583ns (64.771%))
+  Logic Levels:           11  (CARRY8=4 LUT2=3 LUT3=1 LUT4=2 LUT6=1)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=187756, unset)       0.000     0.000    u_eng/clk
+                         FDRE                                         r  u_eng/cgr_lo_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+                         FDRE (Prop_FDRE_C_Q)         0.077     0.077 r  u_eng/cgr_lo_reg[0]/Q
+                         net (fo=7, unplaced)         0.162     0.239    u_eng/cgr_lo[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     0.277 r  u_eng/wb_addr_r[7]_i_40/O
+                         net (fo=1, unplaced)         0.020     0.297    u_eng/wb_addr_r[7]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_O[2])
+                                                      0.134     0.431 r  u_eng/wb_addr_r_reg[7]_i_35/O[2]
+                         net (fo=91, unplaced)        0.219     0.650    u_eng/wb_lanes_r4[2]
+                         LUT4 (Prop_LUT4_I0_O)        0.100     0.750 r  u_eng/wb_addr_r[15]_i_44/O
+                         net (fo=1, unplaced)         0.260     1.010    u_eng/wb_addr_r[15]_i_44_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_O[2])
+                                                      0.109     1.119 r  u_eng/wb_addr_r_reg[15]_i_34/O[2]
+                         net (fo=2, unplaced)         0.136     1.255    u_eng/wb_addr_r_reg[15]_i_34_n_13
+                         LUT2 (Prop_LUT2_I0_O)        0.103     1.358 r  u_eng/wb_addr_r[19]_i_36/O
+                         net (fo=2, unplaced)         0.167     1.525    u_eng/wb_addr_r[19]_i_36_n_0
+                         LUT4 (Prop_LUT4_I3_O)        0.037     1.562 r  u_eng/wb_addr_r[19]_i_44/O
+                         net (fo=1, unplaced)         0.028     1.590    u_eng/wb_addr_r[19]_i_44_n_0
+                         CARRY8 (Prop_CARRY8_S[2]_O[2])
+                                                      0.058     1.648 r  u_eng/wb_addr_r_reg[19]_i_21/O[2]
+                         net (fo=2, unplaced)         0.185     1.833    u_eng/cgrm16[9]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     1.871 r  u_eng/wb_addr_r[15]_i_29/O
+                         net (fo=2, unplaced)         0.185     2.056    u_eng/wb_addr_r[15]_i_29_n_0
+                         LUT2 (Prop_LUT2_I1_O)        0.072     2.128 r  u_eng/wb_addr_r[15]_i_7/O
+                         net (fo=2, unplaced)         0.167     2.295    u_eng/wb_addr_r[15]_i_7_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.037     2.332 r  u_eng/wb_addr_r[15]_i_15/O
+                         net (fo=1, unplaced)         0.028     2.360    u_eng/wb_addr_r[15]_i_15_n_0
+                         CARRY8 (Prop_CARRY8_S[2]_O[2])
+                                                      0.058     2.418 r  u_eng/wb_addr_r_reg[15]_i_1/O[2]
+                         net (fo=1, unplaced)         0.026     2.444    u_eng/wb_addr_r_reg[15]_i_1_n_13
+                         FDRE                                         r  u_eng/wb_addr_r_reg[10]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=187756, unset)       0.000     3.298    u_eng/clk
+                         FDRE                                         r  u_eng/wb_addr_r_reg[10]/C
+                         clock pessimism              0.000     3.298    
+                         clock uncertainty           -0.035     3.263    
+                         FDRE (Setup_FDRE_C_D)        0.025     3.288    u_eng/wb_addr_r_reg[10]
+  -------------------------------------------------------------------
+                         required time                          3.288    
+                         arrival time                          -2.444    
+  -------------------------------------------------------------------
+                         slack                                  0.844    
+
+Slack (MET) :             0.967ns  (required time - arrival time)
+  Source:                 u_eng/cgr_lo_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            u_eng/wb_addr_r_reg[9]/D
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.321ns  (logic 0.815ns (35.114%)  route 1.506ns (64.886%))
+  Logic Levels:           10  (CARRY8=4 LUT2=2 LUT3=1 LUT4=2 LUT6=1)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=187756, unset)       0.000     0.000    u_eng/clk
+                         FDRE                                         r  u_eng/cgr_lo_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+                         FDRE (Prop_FDRE_C_Q)         0.077     0.077 r  u_eng/cgr_lo_reg[0]/Q
+                         net (fo=7, unplaced)         0.162     0.239    u_eng/cgr_lo[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     0.277 r  u_eng/wb_addr_r[7]_i_40/O
+                         net (fo=1, unplaced)         0.020     0.297    u_eng/wb_addr_r[7]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_O[2])
+                                                      0.134     0.431 r  u_eng/wb_addr_r_reg[7]_i_35/O[2]
+                         net (fo=91, unplaced)        0.219     0.650    u_eng/wb_lanes_r4[2]
+                         LUT4 (Prop_LUT4_I0_O)        0.100     0.750 r  u_eng/wb_addr_r[15]_i_44/O
+                         net (fo=1, unplaced)         0.260     1.010    u_eng/wb_addr_r[15]_i_44_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_O[2])
+                                                      0.109     1.119 r  u_eng/wb_addr_r_reg[15]_i_34/O[2]
+                         net (fo=2, unplaced)         0.187     1.306    u_eng/wb_addr_r_reg[15]_i_34_n_13
+                         LUT4 (Prop_LUT4_I0_O)        0.100     1.406 r  u_eng/wb_addr_r[19]_i_45/O
+                         net (fo=1, unplaced)         0.023     1.429    u_eng/wb_addr_r[19]_i_45_n_0
+                         CARRY8 (Prop_CARRY8_S[1]_O[1])
+                                                      0.056     1.485 r  u_eng/wb_addr_r_reg[19]_i_21/O[1]
+                         net (fo=2, unplaced)         0.183     1.668    u_eng/cgrm16[8]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     1.706 r  u_eng/wb_addr_r[15]_i_31/O
+                         net (fo=2, unplaced)         0.185     1.891    u_eng/wb_addr_r[15]_i_31_n_0
+                         LUT2 (Prop_LUT2_I1_O)        0.070     1.961 r  u_eng/wb_addr_r[15]_i_8/O
+                         net (fo=2, unplaced)         0.219     2.180    u_eng/wb_addr_r[15]_i_8_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.037     2.217 r  u_eng/wb_addr_r[15]_i_16/O
+                         net (fo=1, unplaced)         0.023     2.240    u_eng/wb_addr_r[15]_i_16_n_0
+                         CARRY8 (Prop_CARRY8_S[1]_O[1])
+                                                      0.056     2.296 r  u_eng/wb_addr_r_reg[15]_i_1/O[1]
+                         net (fo=1, unplaced)         0.025     2.321    u_eng/wb_addr_r_reg[15]_i_1_n_14
+                         FDRE                                         r  u_eng/wb_addr_r_reg[9]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=187756, unset)       0.000     3.298    u_eng/clk
+                         FDRE                                         r  u_eng/wb_addr_r_reg[9]/C
+                         clock pessimism              0.000     3.298    
+                         clock uncertainty           -0.035     3.263    
+                         FDRE (Setup_FDRE_C_D)        0.025     3.288    u_eng/wb_addr_r_reg[9]
+  -------------------------------------------------------------------
+                         required time                          3.288    
+                         arrival time                          -2.321    
+  -------------------------------------------------------------------
+                         slack                                  0.967    
+
+Slack (MET) :             1.106ns  (required time - arrival time)
+  Source:                 u_eng/cgr_lo_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            u_eng/wb_addr_r_reg[8]/D
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.182ns  (logic 0.712ns (32.631%)  route 1.470ns (67.369%))
+  Logic Levels:           10  (CARRY8=4 LUT2=1 LUT3=1 LUT4=2 LUT5=1 LUT6=1)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=187756, unset)       0.000     0.000    u_eng/clk
+                         FDRE                                         r  u_eng/cgr_lo_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+                         FDRE (Prop_FDRE_C_Q)         0.077     0.077 r  u_eng/cgr_lo_reg[0]/Q
+                         net (fo=7, unplaced)         0.162     0.239    u_eng/cgr_lo[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     0.277 r  u_eng/wb_addr_r[7]_i_40/O
+                         net (fo=1, unplaced)         0.020     0.297    u_eng/wb_addr_r[7]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_O[2])
+                                                      0.134     0.431 r  u_eng/wb_addr_r_reg[7]_i_35/O[2]
+                         net (fo=91, unplaced)        0.219     0.650    u_eng/wb_lanes_r4[2]
+                         LUT4 (Prop_LUT4_I0_O)        0.100     0.750 r  u_eng/wb_addr_r[15]_i_44/O
+                         net (fo=1, unplaced)         0.260     1.010    u_eng/wb_addr_r[15]_i_44_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_O[1])
+                                                      0.081     1.091 r  u_eng/wb_addr_r_reg[15]_i_34/O[1]
+                         net (fo=3, unplaced)         0.189     1.280    u_eng/wb_addr_r_reg[15]_i_34_n_14
+                         LUT4 (Prop_LUT4_I3_O)        0.038     1.318 r  u_eng/wb_addr_r[19]_i_46/O
+                         net (fo=1, unplaced)         0.020     1.338    u_eng/wb_addr_r[19]_i_46_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_O[0])
+                                                      0.065     1.403 r  u_eng/wb_addr_r_reg[19]_i_21/O[0]
+                         net (fo=2, unplaced)         0.185     1.588    u_eng/cgrm16[7]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     1.626 r  u_eng/wb_addr_r[15]_i_32/O
+                         net (fo=2, unplaced)         0.185     1.811    u_eng/wb_addr_r[15]_i_32_n_0
+                         LUT5 (Prop_LUT5_I0_O)        0.038     1.849 r  u_eng/wb_addr_r[15]_i_9/O
+                         net (fo=2, unplaced)         0.185     2.034    u_eng/wb_addr_r[15]_i_9_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.038     2.072 r  u_eng/wb_addr_r[15]_i_17/O
+                         net (fo=1, unplaced)         0.020     2.092    u_eng/wb_addr_r[15]_i_17_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_O[0])
+                                                      0.065     2.157 r  u_eng/wb_addr_r_reg[15]_i_1/O[0]
+                         net (fo=1, unplaced)         0.025     2.182    u_eng/wb_addr_r_reg[15]_i_1_n_15
+                         FDRE                                         r  u_eng/wb_addr_r_reg[8]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=187756, unset)       0.000     3.298    u_eng/clk
+                         FDRE                                         r  u_eng/wb_addr_r_reg[8]/C
+                         clock pessimism              0.000     3.298    
+                         clock uncertainty           -0.035     3.263    
+                         FDRE (Setup_FDRE_C_D)        0.025     3.288    u_eng/wb_addr_r_reg[8]
+  -------------------------------------------------------------------
+                         required time                          3.288    
+                         arrival time                          -2.182    
+  -------------------------------------------------------------------
+                         slack                                  1.106    
+
+Slack (MET) :             1.121ns  (required time - arrival time)
+  Source:                 u_eng/cgr_lo_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            u_eng/wb_data_r_reg[0]/CE
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.081ns  (logic 0.761ns (36.569%)  route 1.320ns (63.431%))
+  Logic Levels:           8  (CARRY8=3 LUT2=2 LUT3=1 LUT4=1 LUT6=1)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=187756, unset)       0.000     0.000    u_eng/clk
+                         FDRE                                         r  u_eng/cgr_lo_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+                         FDRE (Prop_FDRE_C_Q)         0.077     0.077 r  u_eng/cgr_lo_reg[0]/Q
+                         net (fo=7, unplaced)         0.162     0.239    u_eng/cgr_lo[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     0.277 r  u_eng/wb_addr_r[7]_i_40/O
+                         net (fo=1, unplaced)         0.020     0.297    u_eng/wb_addr_r[7]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_O[7])
+                                                      0.241     0.538 f  u_eng/wb_addr_r_reg[7]_i_35/O[7]
+                         net (fo=82, unplaced)        0.172     0.710    u_eng/wb_lanes_r4[7]
+                         LUT4 (Prop_LUT4_I0_O)        0.142     0.852 r  u_eng/wb_lanes_r[0]_i_44/O
+                         net (fo=1, unplaced)         0.238     1.090    u_eng/wb_lanes_r[0]_i_44_n_0
+                         CARRY8 (Prop_CARRY8_DI[5]_CO[7])
+                                                      0.097     1.187 r  u_eng/wb_lanes_r_reg[0]_i_9/CO[7]
+                         net (fo=1, unplaced)         0.005     1.192    u_eng/wb_lanes_r_reg[0]_i_9_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052     1.244 r  u_eng/wb_lanes_r_reg[0]_i_4/CO[0]
+                         net (fo=2, unplaced)         0.185     1.429    u_eng/wb_lanes_r146_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038     1.467 r  u_eng/wb_data_r[7]_i_6/O
+                         net (fo=1, unplaced)         0.185     1.652    u_eng/wb_lanes_r0
+                         LUT6 (Prop_LUT6_I4_O)        0.038     1.690 r  u_eng/wb_data_r[7]_i_3/O
+                         net (fo=1, unplaced)         0.185     1.875    u_eng/wb_data_r[7]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.038     1.913 r  u_eng/wb_data_r[7]_i_1/O
+                         net (fo=8, unplaced)         0.168     2.081    u_eng/wb_data_r[7]_i_1_n_0
+                         FDRE                                         r  u_eng/wb_data_r_reg[0]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=187756, unset)       0.000     3.298    u_eng/clk
+                         FDRE                                         r  u_eng/wb_data_r_reg[0]/C
+                         clock pessimism              0.000     3.298    
+                         clock uncertainty           -0.035     3.263    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     3.202    u_eng/wb_data_r_reg[0]
+  -------------------------------------------------------------------
+                         required time                          3.202    
+                         arrival time                          -2.081    
+  -------------------------------------------------------------------
+                         slack                                  1.121    
+
+Slack (MET) :             1.121ns  (required time - arrival time)
+  Source:                 u_eng/cgr_lo_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            u_eng/wb_data_r_reg[100]/CE
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.081ns  (logic 0.761ns (36.569%)  route 1.320ns (63.431%))
+  Logic Levels:           8  (CARRY8=3 LUT2=2 LUT3=1 LUT4=1 LUT6=1)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=187756, unset)       0.000     0.000    u_eng/clk
+                         FDRE                                         r  u_eng/cgr_lo_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+                         FDRE (Prop_FDRE_C_Q)         0.077     0.077 r  u_eng/cgr_lo_reg[0]/Q
+                         net (fo=7, unplaced)         0.162     0.239    u_eng/cgr_lo[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     0.277 r  u_eng/wb_addr_r[7]_i_40/O
+                         net (fo=1, unplaced)         0.020     0.297    u_eng/wb_addr_r[7]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_O[7])
+                                                      0.241     0.538 f  u_eng/wb_addr_r_reg[7]_i_35/O[7]
+                         net (fo=82, unplaced)        0.172     0.710    u_eng/wb_lanes_r4[7]
+                         LUT4 (Prop_LUT4_I0_O)        0.142     0.852 r  u_eng/wb_lanes_r[12]_i_40/O
+                         net (fo=1, unplaced)         0.238     1.090    u_eng/wb_lanes_r[12]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_DI[5]_CO[7])
+                                                      0.097     1.187 r  u_eng/wb_lanes_r_reg[12]_i_10/CO[7]
+                         net (fo=1, unplaced)         0.005     1.192    u_eng/wb_lanes_r_reg[12]_i_10_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052     1.244 r  u_eng/wb_lanes_r_reg[12]_i_4/CO[0]
+                         net (fo=2, unplaced)         0.185     1.429    u_eng/wb_lanes_r237_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038     1.467 r  u_eng/wb_data_r[103]_i_8/O
+                         net (fo=1, unplaced)         0.185     1.652    u_eng/wb_lanes_r139_out
+                         LUT6 (Prop_LUT6_I4_O)        0.038     1.690 r  u_eng/wb_data_r[103]_i_3/O
+                         net (fo=1, unplaced)         0.185     1.875    u_eng/wb_data_r[103]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.038     1.913 r  u_eng/wb_data_r[103]_i_1/O
+                         net (fo=8, unplaced)         0.168     2.081    u_eng/wb_data_r[103]_i_1_n_0
+                         FDRE                                         r  u_eng/wb_data_r_reg[100]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=187756, unset)       0.000     3.298    u_eng/clk
+                         FDRE                                         r  u_eng/wb_data_r_reg[100]/C
+                         clock pessimism              0.000     3.298    
+                         clock uncertainty           -0.035     3.263    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     3.202    u_eng/wb_data_r_reg[100]
+  -------------------------------------------------------------------
+                         required time                          3.202    
+                         arrival time                          -2.081    
+  -------------------------------------------------------------------
+                         slack                                  1.121    
+
+Slack (MET) :             1.121ns  (required time - arrival time)
+  Source:                 u_eng/cgr_lo_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            u_eng/wb_data_r_reg[101]/CE
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.081ns  (logic 0.761ns (36.569%)  route 1.320ns (63.431%))
+  Logic Levels:           8  (CARRY8=3 LUT2=2 LUT3=1 LUT4=1 LUT6=1)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=187756, unset)       0.000     0.000    u_eng/clk
+                         FDRE                                         r  u_eng/cgr_lo_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+                         FDRE (Prop_FDRE_C_Q)         0.077     0.077 r  u_eng/cgr_lo_reg[0]/Q
+                         net (fo=7, unplaced)         0.162     0.239    u_eng/cgr_lo[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     0.277 r  u_eng/wb_addr_r[7]_i_40/O
+                         net (fo=1, unplaced)         0.020     0.297    u_eng/wb_addr_r[7]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_O[7])
+                                                      0.241     0.538 f  u_eng/wb_addr_r_reg[7]_i_35/O[7]
+                         net (fo=82, unplaced)        0.172     0.710    u_eng/wb_lanes_r4[7]
+                         LUT4 (Prop_LUT4_I0_O)        0.142     0.852 r  u_eng/wb_lanes_r[12]_i_40/O
+                         net (fo=1, unplaced)         0.238     1.090    u_eng/wb_lanes_r[12]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_DI[5]_CO[7])
+                                                      0.097     1.187 r  u_eng/wb_lanes_r_reg[12]_i_10/CO[7]
+                         net (fo=1, unplaced)         0.005     1.192    u_eng/wb_lanes_r_reg[12]_i_10_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052     1.244 r  u_eng/wb_lanes_r_reg[12]_i_4/CO[0]
+                         net (fo=2, unplaced)         0.185     1.429    u_eng/wb_lanes_r237_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038     1.467 r  u_eng/wb_data_r[103]_i_8/O
+                         net (fo=1, unplaced)         0.185     1.652    u_eng/wb_lanes_r139_out
+                         LUT6 (Prop_LUT6_I4_O)        0.038     1.690 r  u_eng/wb_data_r[103]_i_3/O
+                         net (fo=1, unplaced)         0.185     1.875    u_eng/wb_data_r[103]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.038     1.913 r  u_eng/wb_data_r[103]_i_1/O
+                         net (fo=8, unplaced)         0.168     2.081    u_eng/wb_data_r[103]_i_1_n_0
+                         FDRE                                         r  u_eng/wb_data_r_reg[101]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=187756, unset)       0.000     3.298    u_eng/clk
+                         FDRE                                         r  u_eng/wb_data_r_reg[101]/C
+                         clock pessimism              0.000     3.298    
+                         clock uncertainty           -0.035     3.263    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     3.202    u_eng/wb_data_r_reg[101]
+  -------------------------------------------------------------------
+                         required time                          3.202    
+                         arrival time                          -2.081    
+  -------------------------------------------------------------------
+                         slack                                  1.121    
+
+Slack (MET) :             1.121ns  (required time - arrival time)
+  Source:                 u_eng/cgr_lo_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            u_eng/wb_data_r_reg[102]/CE
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.081ns  (logic 0.761ns (36.569%)  route 1.320ns (63.431%))
+  Logic Levels:           8  (CARRY8=3 LUT2=2 LUT3=1 LUT4=1 LUT6=1)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=187756, unset)       0.000     0.000    u_eng/clk
+                         FDRE                                         r  u_eng/cgr_lo_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+                         FDRE (Prop_FDRE_C_Q)         0.077     0.077 r  u_eng/cgr_lo_reg[0]/Q
+                         net (fo=7, unplaced)         0.162     0.239    u_eng/cgr_lo[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     0.277 r  u_eng/wb_addr_r[7]_i_40/O
+                         net (fo=1, unplaced)         0.020     0.297    u_eng/wb_addr_r[7]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_O[7])
+                                                      0.241     0.538 f  u_eng/wb_addr_r_reg[7]_i_35/O[7]
+                         net (fo=82, unplaced)        0.172     0.710    u_eng/wb_lanes_r4[7]
+                         LUT4 (Prop_LUT4_I0_O)        0.142     0.852 r  u_eng/wb_lanes_r[12]_i_40/O
+                         net (fo=1, unplaced)         0.238     1.090    u_eng/wb_lanes_r[12]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_DI[5]_CO[7])
+                                                      0.097     1.187 r  u_eng/wb_lanes_r_reg[12]_i_10/CO[7]
+                         net (fo=1, unplaced)         0.005     1.192    u_eng/wb_lanes_r_reg[12]_i_10_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052     1.244 r  u_eng/wb_lanes_r_reg[12]_i_4/CO[0]
+                         net (fo=2, unplaced)         0.185     1.429    u_eng/wb_lanes_r237_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038     1.467 r  u_eng/wb_data_r[103]_i_8/O
+                         net (fo=1, unplaced)         0.185     1.652    u_eng/wb_lanes_r139_out
+                         LUT6 (Prop_LUT6_I4_O)        0.038     1.690 r  u_eng/wb_data_r[103]_i_3/O
+                         net (fo=1, unplaced)         0.185     1.875    u_eng/wb_data_r[103]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.038     1.913 r  u_eng/wb_data_r[103]_i_1/O
+                         net (fo=8, unplaced)         0.168     2.081    u_eng/wb_data_r[103]_i_1_n_0
+                         FDRE                                         r  u_eng/wb_data_r_reg[102]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=187756, unset)       0.000     3.298    u_eng/clk
+                         FDRE                                         r  u_eng/wb_data_r_reg[102]/C
+                         clock pessimism              0.000     3.298    
+                         clock uncertainty           -0.035     3.263    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     3.202    u_eng/wb_data_r_reg[102]
+  -------------------------------------------------------------------
+                         required time                          3.202    
+                         arrival time                          -2.081    
+  -------------------------------------------------------------------
+                         slack                                  1.121    
+
+Slack (MET) :             1.121ns  (required time - arrival time)
+  Source:                 u_eng/cgr_lo_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            u_eng/wb_data_r_reg[103]/CE
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.081ns  (logic 0.761ns (36.569%)  route 1.320ns (63.431%))
+  Logic Levels:           8  (CARRY8=3 LUT2=2 LUT3=1 LUT4=1 LUT6=1)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=187756, unset)       0.000     0.000    u_eng/clk
+                         FDRE                                         r  u_eng/cgr_lo_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+                         FDRE (Prop_FDRE_C_Q)         0.077     0.077 r  u_eng/cgr_lo_reg[0]/Q
+                         net (fo=7, unplaced)         0.162     0.239    u_eng/cgr_lo[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     0.277 r  u_eng/wb_addr_r[7]_i_40/O
+                         net (fo=1, unplaced)         0.020     0.297    u_eng/wb_addr_r[7]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_O[7])
+                                                      0.241     0.538 f  u_eng/wb_addr_r_reg[7]_i_35/O[7]
+                         net (fo=82, unplaced)        0.172     0.710    u_eng/wb_lanes_r4[7]
+                         LUT4 (Prop_LUT4_I0_O)        0.142     0.852 r  u_eng/wb_lanes_r[12]_i_40/O
+                         net (fo=1, unplaced)         0.238     1.090    u_eng/wb_lanes_r[12]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_DI[5]_CO[7])
+                                                      0.097     1.187 r  u_eng/wb_lanes_r_reg[12]_i_10/CO[7]
+                         net (fo=1, unplaced)         0.005     1.192    u_eng/wb_lanes_r_reg[12]_i_10_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052     1.244 r  u_eng/wb_lanes_r_reg[12]_i_4/CO[0]
+                         net (fo=2, unplaced)         0.185     1.429    u_eng/wb_lanes_r237_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038     1.467 r  u_eng/wb_data_r[103]_i_8/O
+                         net (fo=1, unplaced)         0.185     1.652    u_eng/wb_lanes_r139_out
+                         LUT6 (Prop_LUT6_I4_O)        0.038     1.690 r  u_eng/wb_data_r[103]_i_3/O
+                         net (fo=1, unplaced)         0.185     1.875    u_eng/wb_data_r[103]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.038     1.913 r  u_eng/wb_data_r[103]_i_1/O
+                         net (fo=8, unplaced)         0.168     2.081    u_eng/wb_data_r[103]_i_1_n_0
+                         FDRE                                         r  u_eng/wb_data_r_reg[103]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=187756, unset)       0.000     3.298    u_eng/clk
+                         FDRE                                         r  u_eng/wb_data_r_reg[103]/C
+                         clock pessimism              0.000     3.298    
+                         clock uncertainty           -0.035     3.263    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     3.202    u_eng/wb_data_r_reg[103]
+  -------------------------------------------------------------------
+                         required time                          3.202    
+                         arrival time                          -2.081    
+  -------------------------------------------------------------------
+                         slack                                  1.121    
+
+Slack (MET) :             1.121ns  (required time - arrival time)
+  Source:                 u_eng/cgr_lo_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            u_eng/wb_data_r_reg[1]/CE
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.081ns  (logic 0.761ns (36.569%)  route 1.320ns (63.431%))
+  Logic Levels:           8  (CARRY8=3 LUT2=2 LUT3=1 LUT4=1 LUT6=1)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=187756, unset)       0.000     0.000    u_eng/clk
+                         FDRE                                         r  u_eng/cgr_lo_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+                         FDRE (Prop_FDRE_C_Q)         0.077     0.077 r  u_eng/cgr_lo_reg[0]/Q
+                         net (fo=7, unplaced)         0.162     0.239    u_eng/cgr_lo[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     0.277 r  u_eng/wb_addr_r[7]_i_40/O
+                         net (fo=1, unplaced)         0.020     0.297    u_eng/wb_addr_r[7]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_O[7])
+                                                      0.241     0.538 f  u_eng/wb_addr_r_reg[7]_i_35/O[7]
+                         net (fo=82, unplaced)        0.172     0.710    u_eng/wb_lanes_r4[7]
+                         LUT4 (Prop_LUT4_I0_O)        0.142     0.852 r  u_eng/wb_lanes_r[0]_i_44/O
+                         net (fo=1, unplaced)         0.238     1.090    u_eng/wb_lanes_r[0]_i_44_n_0
+                         CARRY8 (Prop_CARRY8_DI[5]_CO[7])
+                                                      0.097     1.187 r  u_eng/wb_lanes_r_reg[0]_i_9/CO[7]
+                         net (fo=1, unplaced)         0.005     1.192    u_eng/wb_lanes_r_reg[0]_i_9_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052     1.244 r  u_eng/wb_lanes_r_reg[0]_i_4/CO[0]
+                         net (fo=2, unplaced)         0.185     1.429    u_eng/wb_lanes_r146_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038     1.467 r  u_eng/wb_data_r[7]_i_6/O
+                         net (fo=1, unplaced)         0.185     1.652    u_eng/wb_lanes_r0
+                         LUT6 (Prop_LUT6_I4_O)        0.038     1.690 r  u_eng/wb_data_r[7]_i_3/O
+                         net (fo=1, unplaced)         0.185     1.875    u_eng/wb_data_r[7]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.038     1.913 r  u_eng/wb_data_r[7]_i_1/O
+                         net (fo=8, unplaced)         0.168     2.081    u_eng/wb_data_r[7]_i_1_n_0
+                         FDRE                                         r  u_eng/wb_data_r_reg[1]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=187756, unset)       0.000     3.298    u_eng/clk
+                         FDRE                                         r  u_eng/wb_data_r_reg[1]/C
+                         clock pessimism              0.000     3.298    
+                         clock uncertainty           -0.035     3.263    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     3.202    u_eng/wb_data_r_reg[1]
+  -------------------------------------------------------------------
+                         required time                          3.202    
+                         arrival time                          -2.081    
+  -------------------------------------------------------------------
+                         slack                                  1.121    
+
+Slack (MET) :             1.121ns  (required time - arrival time)
+  Source:                 u_eng/cgr_lo_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            u_eng/wb_data_r_reg[2]/CE
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.081ns  (logic 0.761ns (36.569%)  route 1.320ns (63.431%))
+  Logic Levels:           8  (CARRY8=3 LUT2=2 LUT3=1 LUT4=1 LUT6=1)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=187756, unset)       0.000     0.000    u_eng/clk
+                         FDRE                                         r  u_eng/cgr_lo_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+                         FDRE (Prop_FDRE_C_Q)         0.077     0.077 r  u_eng/cgr_lo_reg[0]/Q
+                         net (fo=7, unplaced)         0.162     0.239    u_eng/cgr_lo[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     0.277 r  u_eng/wb_addr_r[7]_i_40/O
+                         net (fo=1, unplaced)         0.020     0.297    u_eng/wb_addr_r[7]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_O[7])
+                                                      0.241     0.538 f  u_eng/wb_addr_r_reg[7]_i_35/O[7]
+                         net (fo=82, unplaced)        0.172     0.710    u_eng/wb_lanes_r4[7]
+                         LUT4 (Prop_LUT4_I0_O)        0.142     0.852 r  u_eng/wb_lanes_r[0]_i_44/O
+                         net (fo=1, unplaced)         0.238     1.090    u_eng/wb_lanes_r[0]_i_44_n_0
+                         CARRY8 (Prop_CARRY8_DI[5]_CO[7])
+                                                      0.097     1.187 r  u_eng/wb_lanes_r_reg[0]_i_9/CO[7]
+                         net (fo=1, unplaced)         0.005     1.192    u_eng/wb_lanes_r_reg[0]_i_9_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052     1.244 r  u_eng/wb_lanes_r_reg[0]_i_4/CO[0]
+                         net (fo=2, unplaced)         0.185     1.429    u_eng/wb_lanes_r146_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038     1.467 r  u_eng/wb_data_r[7]_i_6/O
+                         net (fo=1, unplaced)         0.185     1.652    u_eng/wb_lanes_r0
+                         LUT6 (Prop_LUT6_I4_O)        0.038     1.690 r  u_eng/wb_data_r[7]_i_3/O
+                         net (fo=1, unplaced)         0.185     1.875    u_eng/wb_data_r[7]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.038     1.913 r  u_eng/wb_data_r[7]_i_1/O
+                         net (fo=8, unplaced)         0.168     2.081    u_eng/wb_data_r[7]_i_1_n_0
+                         FDRE                                         r  u_eng/wb_data_r_reg[2]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=187756, unset)       0.000     3.298    u_eng/clk
+                         FDRE                                         r  u_eng/wb_data_r_reg[2]/C
+                         clock pessimism              0.000     3.298    
+                         clock uncertainty           -0.035     3.263    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     3.202    u_eng/wb_data_r_reg[2]
+  -------------------------------------------------------------------
+                         required time                          3.202    
+                         arrival time                          -2.081    
+  -------------------------------------------------------------------
+                         slack                                  1.121    
+
+Slack (MET) :             1.121ns  (required time - arrival time)
+  Source:                 u_eng/cgr_lo_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            u_eng/wb_data_r_reg[32]/CE
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.081ns  (logic 0.761ns (36.569%)  route 1.320ns (63.431%))
+  Logic Levels:           8  (CARRY8=3 LUT2=2 LUT3=1 LUT4=1 LUT6=1)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=187756, unset)       0.000     0.000    u_eng/clk
+                         FDRE                                         r  u_eng/cgr_lo_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+                         FDRE (Prop_FDRE_C_Q)         0.077     0.077 r  u_eng/cgr_lo_reg[0]/Q
+                         net (fo=7, unplaced)         0.162     0.239    u_eng/cgr_lo[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     0.277 r  u_eng/wb_addr_r[7]_i_40/O
+                         net (fo=1, unplaced)         0.020     0.297    u_eng/wb_addr_r[7]_i_40_n_0
+                         CARRY8 (Prop_CARRY8_S[0]_O[7])
+                                                      0.241     0.538 f  u_eng/wb_addr_r_reg[7]_i_35/O[7]
+                         net (fo=82, unplaced)        0.172     0.710    u_eng/wb_lanes_r4[7]
+                         LUT4 (Prop_LUT4_I0_O)        0.142     0.852 r  u_eng/wb_lanes_r[4]_i_39/O
+                         net (fo=1, unplaced)         0.238     1.090    u_eng/wb_lanes_r[4]_i_39_n_0
+                         CARRY8 (Prop_CARRY8_DI[5]_CO[7])
+                                                      0.097     1.187 r  u_eng/wb_lanes_r_reg[4]_i_10/CO[7]
+                         net (fo=1, unplaced)         0.005     1.192    u_eng/wb_lanes_r_reg[4]_i_10_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052     1.244 r  u_eng/wb_lanes_r_reg[4]_i_4/CO[0]
+                         net (fo=2, unplaced)         0.185     1.429    u_eng/wb_lanes_r213_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038     1.467 r  u_eng/wb_data_r[39]_i_6/O
+                         net (fo=1, unplaced)         0.185     1.652    u_eng/wb_lanes_r115_out
+                         LUT6 (Prop_LUT6_I4_O)        0.038     1.690 r  u_eng/wb_data_r[39]_i_3/O
+                         net (fo=1, unplaced)         0.185     1.875    u_eng/wb_data_r[39]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.038     1.913 r  u_eng/wb_data_r[39]_i_1/O
+                         net (fo=8, unplaced)         0.168     2.081    u_eng/wb_data_r[39]_i_1_n_0
+                         FDRE                                         r  u_eng/wb_data_r_reg[32]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=187756, unset)       0.000     3.298    u_eng/clk
+                         FDRE                                         r  u_eng/wb_data_r_reg[32]/C
+                         clock pessimism              0.000     3.298    
+                         clock uncertainty           -0.035     3.263    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     3.202    u_eng/wb_data_r_reg[32]
+  -------------------------------------------------------------------
+                         required time                          3.202    
+                         arrival time                          -2.081    
+  -------------------------------------------------------------------
+                         slack                                  1.121    
+
+
+
+

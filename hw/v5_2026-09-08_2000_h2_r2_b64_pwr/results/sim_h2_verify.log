@@ -1,0 +1,57 @@
+== hw v5 H2 验证记录（2026-09-08，iverilog -DVERILATOR 行为模型口径）==
+
+-- tb_sys_p2 阵列级（PD=5/6 安全窗口）--
+TB_SYS_P2 PASS_PD=5
+TB_SYS_P2 PASS_PD=6
+
+-- tb_gemm_p2 PCOLS=4（v4 参考 vs v5）--
+[v4 参考]
+[D0] cycles=99 mac=640 m=16 n=8 nl=8 j0=0 k=5 tr=0
+[D1a] cycles=293 mac=14208 m=35 n=22 nl=8 j0=0 k=37 tr=0
+[D1b] cycles=293 mac=14208 m=35 n=22 nl=8 j0=8 k=37 tr=0
+[D1c] cycles=283 mac=14208 m=35 n=22 nl=6 j0=16 k=37 tr=0
+[D2] cycles=255 mac=16384 m=19 n=16 nl=6 j0=10 k=64 tr=1
+[D3] cycles=397 mac=38400 m=48 n=8 nl=8 j0=0 k=100 tr=0
+TB_GEMM_P2 ALL PASS
+[v5]
+[D0] cycles=99 mac=640 m=16 n=8 nl=8 j0=0 k=5 tr=0
+[D1a] cycles=293 mac=14208 m=35 n=22 nl=8 j0=0 k=37 tr=0
+[D1b] cycles=293 mac=14208 m=35 n=22 nl=8 j0=8 k=37 tr=0
+[D1c] cycles=291 mac=14208 m=35 n=22 nl=6 j0=16 k=37 tr=0
+[D2] cycles=255 mac=16384 m=19 n=16 nl=6 j0=10 k=64 tr=1
+[D3] cycles=401 mac=38400 m=48 n=8 nl=8 j0=0 k=100 tr=0
+TB_GEMM_P2 ALL PASS
+
+-- tb_gemm_p2 PCOLS=48（v4 参考 vs v5）--
+[D0] cycles=143 mac=7680 m=16 n=8 nl=8 j0=0 k=5 tr=0
+[D1a] cycles=393 mac=170496 m=35 n=22 nl=8 j0=0 k=37 tr=0
+[D1b] cycles=393 mac=170496 m=35 n=22 nl=8 j0=8 k=37 tr=0
+[D1c] cycles=391 mac=170496 m=35 n=22 nl=6 j0=16 k=37 tr=0
+[D2] cycles=319 mac=196608 m=19 n=16 nl=6 j0=10 k=64 tr=1
+[D3] cycles=453 mac=460800 m=48 n=8 nl=8 j0=0 k=100 tr=0
+[W0] cycles=265 mac=61440 m=16 n=96 nl=96 j0=0 k=40 tr=0
+[W1] cycles=601 mac=170496 m=35 n=96 nl=96 j0=0 k=37 tr=0
+[W2] cycles=457 mac=196608 m=19 n=96 nl=90 j0=6 k=64 tr=1
+TB_GEMM_P2 ALL PASS
+[D0] cycles=143 mac=7680 m=16 n=8 nl=8 j0=0 k=5 tr=0
+[D1a] cycles=393 mac=170496 m=35 n=22 nl=8 j0=0 k=37 tr=0
+[D1b] cycles=393 mac=170496 m=35 n=22 nl=8 j0=8 k=37 tr=0
+[D1c] cycles=391 mac=170496 m=35 n=22 nl=6 j0=16 k=37 tr=0
+[D2] cycles=319 mac=196608 m=19 n=16 nl=6 j0=10 k=64 tr=1
+[D3] cycles=457 mac=460800 m=48 n=8 nl=8 j0=0 k=100 tr=0
+[W0] cycles=269 mac=61440 m=16 n=96 nl=96 j0=0 k=40 tr=0
+[W1] cycles=601 mac=170496 m=35 n=96 nl=96 j0=0 k=37 tr=0
+[W2] cycles=461 mac=196608 m=19 n=96 nl=90 j0=6 k=64 tr=1
+TB_GEMM_P2 ALL PASS
+
+-- tb_gemm_p2 PCOLS=64（B8-64，仅 v5）--
+[D0] cycles=159 mac=10240 m=16 n=8 nl=8 j0=0 k=5 tr=0
+[D1a] cycles=441 mac=227328 m=35 n=22 nl=8 j0=0 k=37 tr=0
+[D1b] cycles=441 mac=227328 m=35 n=22 nl=8 j0=8 k=37 tr=0
+[D1c] cycles=439 mac=227328 m=35 n=22 nl=6 j0=16 k=37 tr=0
+[D2] cycles=351 mac=262144 m=19 n=16 nl=6 j0=10 k=64 tr=1
+[D3] cycles=505 mac=614400 m=48 n=8 nl=8 j0=0 k=100 tr=0
+[W0] cycles=285 mac=81920 m=16 n=96 nl=96 j0=0 k=40 tr=0
+[W1] cycles=617 mac=227328 m=35 n=96 nl=96 j0=0 k=37 tr=0
+[W2] cycles=477 mac=262144 m=19 n=96 nl=90 j0=6 k=64 tr=1
+TB_GEMM_P2 ALL PASS

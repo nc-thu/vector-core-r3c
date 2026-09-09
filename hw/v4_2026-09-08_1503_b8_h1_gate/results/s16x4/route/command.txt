@@ -1,0 +1,1 @@
+vivado syn.tcl ae_sysarr_p2 3.298 E:/ae_syn/hb_h1/runs/s16x4/route E:/ae_syn/hb_h1/src/s16x4 8 route

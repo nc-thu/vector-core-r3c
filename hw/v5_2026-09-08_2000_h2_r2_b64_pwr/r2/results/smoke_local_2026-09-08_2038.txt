@@ -1,0 +1,29 @@
+v5-R2 本地 iverilog 全芯片三遍冒烟（2026-09-08 20:38:45，tb_ae.sv REF/PRIM/PRIM-pf1）
+R3C 12 项回归口径中的 gen_vectors+compare 项；smoke.vvp 为 r2 RTL 编译产物。
+
+== default 用例 ==
+[tb] REF -pf0: cycles=6554 gemm=4526 dma=949  mac_total=86016 skip_macs=0     skip_stages=0
+[probe] pf_stall=0 rd_c=113 rd_w=428 both=27 union=514 overlap=5.3%
+[tb] PRIM-pf0: cycles=6342 gemm=4311 dma=927  mac_total=82944 skip_macs=2048  skip_stages=2
+[probe] pf_stall=0 rd_c=112 rd_w=447 both=30 union=529 overlap=5.7%
+[tb] PRIM-pf1: cycles=6342 gemm=4311 dma=927  mac_total=82944 skip_macs=2048  skip_stages=2
+[cmp] CTX PRIM: PASS (16384 字节一致)
+[cmp] DDR PRIM: PASS (65536 字节一致)
+[cmp] ==> 全部位精确一致
+prim2 vs prim dump 逐位一致（DDR 与 CTX 均一致）
+（底本基线拍数 REF 6814 / PRIM 6618 → r2 6554 / 6342，−3.8% / −4.2%）
+
+== actv 用例 ==
+[tb] REF -pf0: cycles=9800 gemm=4524 dma=3406 mac_total=86016 skip_macs=0     skip_stages=0
+[probe] pf_stall=0 rd_c=2364 rd_w=443 both=27 union=2780 overlap=1.0%
+[tb] PRIM-pf0: cycles=9592 gemm=4315 dma=3193 mac_total=82944 skip_macs=2048  skip_stages=2
+[tb] PRIM-pf1: cycles=9580 gemm=4314 dma=3292 mac_total=82944 skip_macs=2048  skip_stages=2
+[cmp] CTX PRIM: PASS (16384 字节一致)
+[cmp] DDR PRIM: PASS (65536 字节一致)
+[cmp] ==> 全部位精确一致
+prim2 vs prim dump 逐位一致（DDR 与 CTX 均一致）
+（底本基线 PRIM-pf0 9848 → r2 9592，−2.6%）
+
+断言（tb_ae.sv PF_CHK A/B + v5-R2 新增 C）：全程无 FATAL 触发。
+pf_stall=0：这两个合成负载里 ctx 预取没有撞上 B 口被占的场景（无丢写风险验证空白，
+由断言 C 与段级运行兜底）。

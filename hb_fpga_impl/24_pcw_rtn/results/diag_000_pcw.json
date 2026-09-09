@@ -1,0 +1,8648 @@
+{
+ "n_calls": 815,
+ "fp_s": 2.9,
+ "pl_s": 528.2,
+ "targets": 389,
+ "per_call": [
+  {
+   "i": 0,
+   "name": "backbone.patch_embed.projection",
+   "rel": 0.16582918167114258,
+   "shape": [
+    4,
+    96,
+    64,
+    80
+   ]
+  },
+  {
+   "i": 2,
+   "name": "backbone.stages.0.blocks.0.attn.w_msa",
+   "rel": 0.3235062062740326,
+   "shape": [
+    480,
+    49,
+    96
+   ]
+  },
+  {
+   "i": 3,
+   "name": "backbone.stages.0.blocks.0.ffn.layers.0.0",
+   "rel": 0.5713120102882385,
+   "shape": [
+    4,
+    5120,
+    384
+   ]
+  },
+  {
+   "i": 4,
+   "name": "backbone.stages.0.blocks.0.ffn.layers.1",
+   "rel": 0.9784173369407654,
+   "shape": [
+    4,
+    5120,
+    96
+   ]
+  },
+  {
+   "i": 6,
+   "name": "backbone.stages.0.blocks.1.attn.w_msa",
+   "rel": 1.69917631149292,
+   "shape": [
+    480,
+    49,
+    96
+   ]
+  },
+  {
+   "i": 7,
+   "name": "backbone.stages.0.blocks.1.ffn.layers.0.0",
+   "rel": 1.0679479837417603,
+   "shape": [
+    4,
+    5120,
+    384
+   ]
+  },
+  {
+   "i": 8,
+   "name": "backbone.stages.0.blocks.1.ffn.layers.1",
+   "rel": 1.3171532154083252,
+   "shape": [
+    4,
+    5120,
+    96
+   ]
+  },
+  {
+   "i": 9,
+   "name": "backbone.stages.0.downsample.reduction",
+   "rel": 1.4342211484909058,
+   "shape": [
+    4,
+    1280,
+    192
+   ]
+  },
+  {
+   "i": 11,
+   "name": "backbone.stages.1.blocks.0.attn.w_msa",
+   "rel": 1.859061360359192,
+   "shape": [
+    120,
+    49,
+    192
+   ]
+  },
+  {
+   "i": 12,
+   "name": "backbone.stages.1.blocks.0.ffn.layers.0.0",
+   "rel": 0.8648146986961365,
+   "shape": [
+    4,
+    1280,
+    768
+   ]
+  },
+  {
+   "i": 13,
+   "name": "backbone.stages.1.blocks.0.ffn.layers.1",
+   "rel": 1.0003154277801514,
+   "shape": [
+    4,
+    1280,
+    192
+   ]
+  },
+  {
+   "i": 15,
+   "name": "backbone.stages.1.blocks.1.attn.w_msa",
+   "rel": 1.9975566864013672,
+   "shape": [
+    120,
+    49,
+    192
+   ]
+  },
+  {
+   "i": 16,
+   "name": "backbone.stages.1.blocks.1.ffn.layers.0.0",
+   "rel": 0.8252259492874146,
+   "shape": [
+    4,
+    1280,
+    768
+   ]
+  },
+  {
+   "i": 17,
+   "name": "backbone.stages.1.blocks.1.ffn.layers.1",
+   "rel": 1.3028600215911865,
+   "shape": [
+    4,
+    1280,
+    192
+   ]
+  },
+  {
+   "i": 18,
+   "name": "backbone.stages.1.downsample.reduction",
+   "rel": 1.011795163154602,
+   "shape": [
+    4,
+    320,
+    384
+   ]
+  },
+  {
+   "i": 20,
+   "name": "backbone.stages.2.blocks.0.attn.w_msa",
+   "rel": 0.8840129375457764,
+   "shape": [
+    36,
+    49,
+    384
+   ]
+  },
+  {
+   "i": 21,
+   "name": "backbone.stages.2.blocks.0.ffn.layers.0.0",
+   "rel": 0.6258633136749268,
+   "shape": [
+    4,
+    320,
+    1536
+   ]
+  },
+  {
+   "i": 22,
+   "name": "backbone.stages.2.blocks.0.ffn.layers.1",
+   "rel": 1.2516356706619263,
+   "shape": [
+    4,
+    320,
+    384
+   ]
+  },
+  {
+   "i": 24,
+   "name": "backbone.stages.2.blocks.1.attn.w_msa",
+   "rel": 1.3258687257766724,
+   "shape": [
+    36,
+    49,
+    384
+   ]
+  },
+  {
+   "i": 25,
+   "name": "backbone.stages.2.blocks.1.ffn.layers.0.0",
+   "rel": 0.5906239748001099,
+   "shape": [
+    4,
+    320,
+    1536
+   ]
+  },
+  {
+   "i": 26,
+   "name": "backbone.stages.2.blocks.1.ffn.layers.1",
+   "rel": 1.1482222080230713,
+   "shape": [
+    4,
+    320,
+    384
+   ]
+  },
+  {
+   "i": 28,
+   "name": "backbone.stages.2.blocks.2.attn.w_msa",
+   "rel": 0.9454213380813599,
+   "shape": [
+    36,
+    49,
+    384
+   ]
+  },
+  {
+   "i": 29,
+   "name": "backbone.stages.2.blocks.2.ffn.layers.0.0",
+   "rel": 0.5439717769622803,
+   "shape": [
+    4,
+    320,
+    1536
+   ]
+  },
+  {
+   "i": 30,
+   "name": "backbone.stages.2.blocks.2.ffn.layers.1",
+   "rel": 1.0132840871810913,
+   "shape": [
+    4,
+    320,
+    384
+   ]
+  },
+  {
+   "i": 32,
+   "name": "backbone.stages.2.blocks.3.attn.w_msa",
+   "rel": 0.8395953178405762,
+   "shape": [
+    36,
+    49,
+    384
+   ]
+  },
+  {
+   "i": 33,
+   "name": "backbone.stages.2.blocks.3.ffn.layers.0.0",
+   "rel": 0.5027797222137451,
+   "shape": [
+    4,
+    320,
+    1536
+   ]
+  },
+  {
+   "i": 34,
+   "name": "backbone.stages.2.blocks.3.ffn.layers.1",
+   "rel": 0.8965098261833191,
+   "shape": [
+    4,
+    320,
+    384
+   ]
+  },
+  {
+   "i": 36,
+   "name": "backbone.stages.2.blocks.4.attn.w_msa",
+   "rel": 0.8053579330444336,
+   "shape": [
+    36,
+    49,
+    384
+   ]
+  },
+  {
+   "i": 37,
+   "name": "backbone.stages.2.blocks.4.ffn.layers.0.0",
+   "rel": 0.4949871897697449,
+   "shape": [
+    4,
+    320,
+    1536
+   ]
+  },
+  {
+   "i": 38,
+   "name": "backbone.stages.2.blocks.4.ffn.layers.1",
+   "rel": 0.9038651585578918,
+   "shape": [
+    4,
+    320,
+    384
+   ]
+  },
+  {
+   "i": 40,
+   "name": "backbone.stages.2.blocks.5.attn.w_msa",
+   "rel": 0.7909666895866394,
+   "shape": [
+    36,
+    49,
+    384
+   ]
+  },
+  {
+   "i": 41,
+   "name": "backbone.stages.2.blocks.5.ffn.layers.0.0",
+   "rel": 0.457424521446228,
+   "shape": [
+    4,
+    320,
+    1536
+   ]
+  },
+  {
+   "i": 42,
+   "name": "backbone.stages.2.blocks.5.ffn.layers.1",
+   "rel": 0.9069101214408875,
+   "shape": [
+    4,
+    320,
+    384
+   ]
+  },
+  {
+   "i": 43,
+   "name": "backbone.stages.2.downsample.reduction",
+   "rel": 0.7050769329071045,
+   "shape": [
+    4,
+    80,
+    768
+   ]
+  },
+  {
+   "i": 45,
+   "name": "backbone.stages.3.blocks.0.attn.w_msa",
+   "rel": 0.7898858785629272,
+   "shape": [
+    16,
+    49,
+    768
+   ]
+  },
+  {
+   "i": 46,
+   "name": "backbone.stages.3.blocks.0.ffn.layers.0.0",
+   "rel": 0.42058265209198,
+   "shape": [
+    4,
+    80,
+    3072
+   ]
+  },
+  {
+   "i": 47,
+   "name": "backbone.stages.3.blocks.0.ffn.layers.1",
+   "rel": 0.7904491424560547,
+   "shape": [
+    4,
+    80,
+    768
+   ]
+  },
+  {
+   "i": 49,
+   "name": "backbone.stages.3.blocks.1.attn.w_msa",
+   "rel": 0.8630362153053284,
+   "shape": [
+    16,
+    49,
+    768
+   ]
+  },
+  {
+   "i": 50,
+   "name": "backbone.stages.3.blocks.1.ffn.layers.0.0",
+   "rel": 0.5628048181533813,
+   "shape": [
+    4,
+    80,
+    3072
+   ]
+  },
+  {
+   "i": 51,
+   "name": "backbone.stages.3.blocks.1.ffn.layers.1",
+   "rel": 0.8647961616516113,
+   "shape": [
+    4,
+    80,
+    768
+   ]
+  },
+  {
+   "i": 52,
+   "name": "neck.convs.0.0",
+   "rel": 0.9905291199684143,
+   "shape": [
+    4,
+    256,
+    32,
+    40
+   ]
+  },
+  {
+   "i": 53,
+   "name": "neck.convs.1.0",
+   "rel": 0.7881200313568115,
+   "shape": [
+    4,
+    256,
+    16,
+    20
+   ]
+  },
+  {
+   "i": 54,
+   "name": "neck.convs.2.0",
+   "rel": 0.9719891548156738,
+   "shape": [
+    4,
+    256,
+    8,
+    10
+   ]
+  },
+  {
+   "i": 55,
+   "name": "backbone_3d.patch_embed.projection",
+   "rel": 0.20190685987472534,
+   "shape": [
+    4,
+    16,
+    64,
+    80
+   ]
+  },
+  {
+   "i": 57,
+   "name": "backbone_3d.stages.0.blocks.0.attn.w_msa",
+   "rel": 0.3507467806339264,
+   "shape": [
+    480,
+    49,
+    16
+   ]
+  },
+  {
+   "i": 58,
+   "name": "backbone_3d.stages.0.blocks.0.ffn.layers.0.0",
+   "rel": 0.07485351711511612,
+   "shape": [
+    4,
+    5120,
+    64
+   ]
+  },
+  {
+   "i": 59,
+   "name": "backbone_3d.stages.0.blocks.0.ffn.layers.1",
+   "rel": 0.09806190431118011,
+   "shape": [
+    4,
+    5120,
+    16
+   ]
+  },
+  {
+   "i": 61,
+   "name": "backbone_3d.stages.0.blocks.1.attn.w_msa",
+   "rel": 0.2691488564014435,
+   "shape": [
+    480,
+    49,
+    16
+   ]
+  },
+  {
+   "i": 62,
+   "name": "backbone_3d.stages.0.blocks.1.ffn.layers.0.0",
+   "rel": 0.1155390739440918,
+   "shape": [
+    4,
+    5120,
+    64
+   ]
+  },
+  {
+   "i": 63,
+   "name": "backbone_3d.stages.0.blocks.1.ffn.layers.1",
+   "rel": 0.0761665478348732,
+   "shape": [
+    4,
+    5120,
+    16
+   ]
+  },
+  {
+   "i": 64,
+   "name": "backbone_3d.stages.0.downsample.reduction",
+   "rel": 0.10686538368463516,
+   "shape": [
+    4,
+    1280,
+    32
+   ]
+  },
+  {
+   "i": 66,
+   "name": "backbone_3d.stages.1.blocks.0.attn.w_msa",
+   "rel": 1.2904280424118042,
+   "shape": [
+    120,
+    49,
+    32
+   ]
+  },
+  {
+   "i": 67,
+   "name": "backbone_3d.stages.1.blocks.0.ffn.layers.0.0",
+   "rel": 0.2380513697862625,
+   "shape": [
+    4,
+    1280,
+    128
+   ]
+  },
+  {
+   "i": 68,
+   "name": "backbone_3d.stages.1.blocks.0.ffn.layers.1",
+   "rel": 0.27196869254112244,
+   "shape": [
+    4,
+    1280,
+    32
+   ]
+  },
+  {
+   "i": 70,
+   "name": "backbone_3d.stages.1.blocks.1.attn.w_msa",
+   "rel": 0.9369922280311584,
+   "shape": [
+    120,
+    49,
+    32
+   ]
+  },
+  {
+   "i": 71,
+   "name": "backbone_3d.stages.1.blocks.1.ffn.layers.0.0",
+   "rel": 0.4116853177547455,
+   "shape": [
+    4,
+    1280,
+    128
+   ]
+  },
+  {
+   "i": 72,
+   "name": "backbone_3d.stages.1.blocks.1.ffn.layers.1",
+   "rel": 0.8131911754608154,
+   "shape": [
+    4,
+    1280,
+    32
+   ]
+  },
+  {
+   "i": 73,
+   "name": "backbone_3d.stages.1.downsample.reduction",
+   "rel": 0.300334095954895,
+   "shape": [
+    4,
+    320,
+    64
+   ]
+  },
+  {
+   "i": 75,
+   "name": "backbone_3d.stages.2.blocks.0.attn.w_msa",
+   "rel": 0.6378991603851318,
+   "shape": [
+    36,
+    49,
+    64
+   ]
+  },
+  {
+   "i": 76,
+   "name": "backbone_3d.stages.2.blocks.0.ffn.layers.0.0",
+   "rel": 0.33675041794776917,
+   "shape": [
+    4,
+    320,
+    256
+   ]
+  },
+  {
+   "i": 77,
+   "name": "backbone_3d.stages.2.blocks.0.ffn.layers.1",
+   "rel": 0.27030444145202637,
+   "shape": [
+    4,
+    320,
+    64
+   ]
+  },
+  {
+   "i": 79,
+   "name": "backbone_3d.stages.2.blocks.1.attn.w_msa",
+   "rel": 0.42805877327919006,
+   "shape": [
+    36,
+    49,
+    64
+   ]
+  },
+  {
+   "i": 80,
+   "name": "backbone_3d.stages.2.blocks.1.ffn.layers.0.0",
+   "rel": 0.2901006042957306,
+   "shape": [
+    4,
+    320,
+    256
+   ]
+  },
+  {
+   "i": 81,
+   "name": "backbone_3d.stages.2.blocks.1.ffn.layers.1",
+   "rel": 0.322071373462677,
+   "shape": [
+    4,
+    320,
+    64
+   ]
+  },
+  {
+   "i": 83,
+   "name": "backbone_3d.stages.2.blocks.2.attn.w_msa",
+   "rel": 0.6252685785293579,
+   "shape": [
+    36,
+    49,
+    64
+   ]
+  },
+  {
+   "i": 84,
+   "name": "backbone_3d.stages.2.blocks.2.ffn.layers.0.0",
+   "rel": 0.2671193778514862,
+   "shape": [
+    4,
+    320,
+    256
+   ]
+  },
+  {
+   "i": 85,
+   "name": "backbone_3d.stages.2.blocks.2.ffn.layers.1",
+   "rel": 0.35095638036727905,
+   "shape": [
+    4,
+    320,
+    64
+   ]
+  },
+  {
+   "i": 87,
+   "name": "backbone_3d.stages.2.blocks.3.attn.w_msa",
+   "rel": 0.3795619010925293,
+   "shape": [
+    36,
+    49,
+    64
+   ]
+  },
+  {
+   "i": 88,
+   "name": "backbone_3d.stages.2.blocks.3.ffn.layers.0.0",
+   "rel": 0.25179553031921387,
+   "shape": [
+    4,
+    320,
+    256
+   ]
+  },
+  {
+   "i": 89,
+   "name": "backbone_3d.stages.2.blocks.3.ffn.layers.1",
+   "rel": 0.4233718812465668,
+   "shape": [
+    4,
+    320,
+    64
+   ]
+  },
+  {
+   "i": 91,
+   "name": "backbone_3d.stages.2.blocks.4.attn.w_msa",
+   "rel": 0.6534611582756042,
+   "shape": [
+    36,
+    49,
+    64
+   ]
+  },
+  {
+   "i": 92,
+   "name": "backbone_3d.stages.2.blocks.4.ffn.layers.0.0",
+   "rel": 0.2516263723373413,
+   "shape": [
+    4,
+    320,
+    256
+   ]
+  },
+  {
+   "i": 93,
+   "name": "backbone_3d.stages.2.blocks.4.ffn.layers.1",
+   "rel": 0.4290498197078705,
+   "shape": [
+    4,
+    320,
+    64
+   ]
+  },
+  {
+   "i": 95,
+   "name": "backbone_3d.stages.2.blocks.5.attn.w_msa",
+   "rel": 0.7329819798469543,
+   "shape": [
+    36,
+    49,
+    64
+   ]
+  },
+  {
+   "i": 96,
+   "name": "backbone_3d.stages.2.blocks.5.ffn.layers.0.0",
+   "rel": 0.27640634775161743,
+   "shape": [
+    4,
+    320,
+    256
+   ]
+  },
+  {
+   "i": 97,
+   "name": "backbone_3d.stages.2.blocks.5.ffn.layers.1",
+   "rel": 0.35259151458740234,
+   "shape": [
+    4,
+    320,
+    64
+   ]
+  },
+  {
+   "i": 98,
+   "name": "backbone_3d.stages.2.downsample.reduction",
+   "rel": 0.27605709433555603,
+   "shape": [
+    4,
+    80,
+    128
+   ]
+  },
+  {
+   "i": 100,
+   "name": "backbone_3d.stages.3.blocks.0.attn.w_msa",
+   "rel": 0.2967481315135956,
+   "shape": [
+    16,
+    49,
+    128
+   ]
+  },
+  {
+   "i": 101,
+   "name": "backbone_3d.stages.3.blocks.0.ffn.layers.0.0",
+   "rel": 0.2619991898536682,
+   "shape": [
+    4,
+    80,
+    512
+   ]
+  },
+  {
+   "i": 102,
+   "name": "backbone_3d.stages.3.blocks.0.ffn.layers.1",
+   "rel": 0.2946389615535736,
+   "shape": [
+    4,
+    80,
+    128
+   ]
+  },
+  {
+   "i": 104,
+   "name": "backbone_3d.stages.3.blocks.1.attn.w_msa",
+   "rel": 0.3810328245162964,
+   "shape": [
+    16,
+    49,
+    128
+   ]
+  },
+  {
+   "i": 105,
+   "name": "backbone_3d.stages.3.blocks.1.ffn.layers.0.0",
+   "rel": 0.22027602791786194,
+   "shape": [
+    4,
+    80,
+    512
+   ]
+  },
+  {
+   "i": 106,
+   "name": "backbone_3d.stages.3.blocks.1.ffn.layers.1",
+   "rel": 0.3717535138130188,
+   "shape": [
+    4,
+    80,
+    128
+   ]
+  },
+  {
+   "i": 107,
+   "name": "neck_3d.convs.0.0",
+   "rel": 0.5745484828948975,
+   "shape": [
+    4,
+    128,
+    32,
+    40
+   ]
+  },
+  {
+   "i": 108,
+   "name": "neck_3d.convs.1.0",
+   "rel": 0.2612634599208832,
+   "shape": [
+    4,
+    128,
+    16,
+    20
+   ]
+  },
+  {
+   "i": 109,
+   "name": "neck_3d.convs.2.0",
+   "rel": 0.23234060406684875,
+   "shape": [
+    4,
+    128,
+    8,
+    10
+   ]
+  },
+  {
+   "i": 110,
+   "name": "neck_3d.extra_convs.0.0",
+   "rel": 0.1924031674861908,
+   "shape": [
+    4,
+    128,
+    4,
+    5
+   ]
+  },
+  {
+   "i": 111,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.0.attention",
+   "rel": 0.5017899870872498,
+   "shape": null
+  },
+  {
+   "i": 112,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.0.intermediate.dense",
+   "rel": 0.3461245000362396,
+   "shape": [
+    1,
+    21,
+    3072
+   ]
+  },
+  {
+   "i": 113,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.0.output.dense",
+   "rel": 0.48382094502449036,
+   "shape": [
+    1,
+    21,
+    768
+   ]
+  },
+  {
+   "i": 114,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.1.attention",
+   "rel": 0.5453954339027405,
+   "shape": null
+  },
+  {
+   "i": 115,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.1.intermediate.dense",
+   "rel": 0.3203088343143463,
+   "shape": [
+    1,
+    21,
+    3072
+   ]
+  },
+  {
+   "i": 116,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.1.output.dense",
+   "rel": 0.5125545859336853,
+   "shape": [
+    1,
+    21,
+    768
+   ]
+  },
+  {
+   "i": 117,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.2.attention",
+   "rel": 0.598702073097229,
+   "shape": null
+  },
+  {
+   "i": 118,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.2.intermediate.dense",
+   "rel": 0.3031330406665802,
+   "shape": [
+    1,
+    21,
+    3072
+   ]
+  },
+  {
+   "i": 119,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.2.output.dense",
+   "rel": 0.5640819072723389,
+   "shape": [
+    1,
+    21,
+    768
+   ]
+  },
+  {
+   "i": 120,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.3.attention",
+   "rel": 0.6067658066749573,
+   "shape": null
+  },
+  {
+   "i": 121,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.3.intermediate.dense",
+   "rel": 0.3995993733406067,
+   "shape": [
+    1,
+    21,
+    3072
+   ]
+  },
+  {
+   "i": 122,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.3.output.dense",
+   "rel": 0.8159500956535339,
+   "shape": [
+    1,
+    21,
+    768
+   ]
+  },
+  {
+   "i": 123,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.4.attention",
+   "rel": 0.5404414534568787,
+   "shape": null
+  },
+  {
+   "i": 124,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.4.intermediate.dense",
+   "rel": 0.39273807406425476,
+   "shape": [
+    1,
+    21,
+    3072
+   ]
+  },
+  {
+   "i": 125,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.4.output.dense",
+   "rel": 0.844136118888855,
+   "shape": [
+    1,
+    21,
+    768
+   ]
+  },
+  {
+   "i": 126,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.5.attention",
+   "rel": 0.5768060684204102,
+   "shape": null
+  },
+  {
+   "i": 127,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.5.intermediate.dense",
+   "rel": 0.3570044934749603,
+   "shape": [
+    1,
+    21,
+    3072
+   ]
+  },
+  {
+   "i": 128,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.5.output.dense",
+   "rel": 0.7694715857505798,
+   "shape": [
+    1,
+    21,
+    768
+   ]
+  },
+  {
+   "i": 129,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.6.attention",
+   "rel": 0.5890059471130371,
+   "shape": null
+  },
+  {
+   "i": 130,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.6.intermediate.dense",
+   "rel": 0.3639960289001465,
+   "shape": [
+    1,
+    21,
+    3072
+   ]
+  },
+  {
+   "i": 131,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.6.output.dense",
+   "rel": 0.8301718831062317,
+   "shape": [
+    1,
+    21,
+    768
+   ]
+  },
+  {
+   "i": 132,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.7.attention",
+   "rel": 0.5853482484817505,
+   "shape": null
+  },
+  {
+   "i": 133,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.7.intermediate.dense",
+   "rel": 0.4018455147743225,
+   "shape": [
+    1,
+    21,
+    3072
+   ]
+  },
+  {
+   "i": 134,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.7.output.dense",
+   "rel": 0.8556606769561768,
+   "shape": [
+    1,
+    21,
+    768
+   ]
+  },
+  {
+   "i": 135,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.8.attention",
+   "rel": 0.5979983806610107,
+   "shape": null
+  },
+  {
+   "i": 136,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.8.intermediate.dense",
+   "rel": 0.436603844165802,
+   "shape": [
+    1,
+    21,
+    3072
+   ]
+  },
+  {
+   "i": 137,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.8.output.dense",
+   "rel": 0.8018836975097656,
+   "shape": [
+    1,
+    21,
+    768
+   ]
+  },
+  {
+   "i": 138,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.9.attention",
+   "rel": 0.6952134966850281,
+   "shape": null
+  },
+  {
+   "i": 139,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.9.intermediate.dense",
+   "rel": 0.4551178216934204,
+   "shape": [
+    1,
+    21,
+    3072
+   ]
+  },
+  {
+   "i": 140,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.9.output.dense",
+   "rel": 0.41656479239463806,
+   "shape": [
+    1,
+    21,
+    768
+   ]
+  },
+  {
+   "i": 141,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.10.attention",
+   "rel": 0.7202861905097961,
+   "shape": null
+  },
+  {
+   "i": 142,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.10.intermediate.dense",
+   "rel": 0.46528077125549316,
+   "shape": [
+    1,
+    21,
+    3072
+   ]
+  },
+  {
+   "i": 143,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.10.output.dense",
+   "rel": 0.3557671308517456,
+   "shape": [
+    1,
+    21,
+    768
+   ]
+  },
+  {
+   "i": 144,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.11.attention",
+   "rel": 0.7800453305244446,
+   "shape": null
+  },
+  {
+   "i": 145,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.11.intermediate.dense",
+   "rel": 0.43450623750686646,
+   "shape": [
+    1,
+    21,
+    3072
+   ]
+  },
+  {
+   "i": 146,
+   "name": "text_encoder.language_backbone.body.model.encoder.layer.11.output.dense",
+   "rel": 0.6587748527526855,
+   "shape": [
+    1,
+    21,
+    768
+   ]
+  },
+  {
+   "i": 147,
+   "name": "text_feat_map",
+   "rel": 0.4318874180316925,
+   "shape": [
+    1,
+    21,
+    256
+   ]
+  },
+  {
+   "i": 152,
+   "name": "feature_enhancer.text_img_attn_blocks.0.attn",
+   "rel": 1.2327203750610352,
+   "shape": null
+  },
+  {
+   "i": 153,
+   "name": "feature_enhancer.img_attn_blocks.0.self_attn.value_proj",
+   "rel": 0.8861659169197083,
+   "shape": [
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 154,
+   "name": "feature_enhancer.img_attn_blocks.0.self_attn.sampling_offsets",
+   "rel": 0.8479525446891785,
+   "shape": [
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 155,
+   "name": "feature_enhancer.img_attn_blocks.0.self_attn.attention_weights",
+   "rel": 0.4449087977409363,
+   "shape": [
+    4,
+    1700,
+    128
+   ]
+  },
+  {
+   "i": 156,
+   "name": "feature_enhancer.img_attn_blocks.0.self_attn.output_proj",
+   "rel": 1.1331976652145386,
+   "shape": [
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 157,
+   "name": "feature_enhancer.img_attn_blocks.0.ffn.layers.0.0",
+   "rel": 1.245912790298462,
+   "shape": [
+    4,
+    1700,
+    2048
+   ]
+  },
+  {
+   "i": 158,
+   "name": "feature_enhancer.img_attn_blocks.0.ffn.layers.1",
+   "rel": 1.1521846055984497,
+   "shape": [
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 159,
+   "name": "feature_enhancer.text_attn_blocks.0.self_attn.attn",
+   "rel": 0.899741530418396,
+   "shape": null
+  },
+  {
+   "i": 160,
+   "name": "feature_enhancer.text_attn_blocks.0.ffn.layers.0.0",
+   "rel": 1.0746403932571411,
+   "shape": [
+    1,
+    21,
+    1024
+   ]
+  },
+  {
+   "i": 161,
+   "name": "feature_enhancer.text_attn_blocks.0.ffn.layers.1",
+   "rel": 0.7887639403343201,
+   "shape": [
+    1,
+    21,
+    256
+   ]
+  },
+  {
+   "i": 166,
+   "name": "feature_enhancer.text_img_attn_blocks.1.attn",
+   "rel": 1.2074675559997559,
+   "shape": null
+  },
+  {
+   "i": 167,
+   "name": "feature_enhancer.img_attn_blocks.1.self_attn.value_proj",
+   "rel": 1.1705149412155151,
+   "shape": [
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 168,
+   "name": "feature_enhancer.img_attn_blocks.1.self_attn.sampling_offsets",
+   "rel": 0.88627028465271,
+   "shape": [
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 169,
+   "name": "feature_enhancer.img_attn_blocks.1.self_attn.attention_weights",
+   "rel": 0.3643403947353363,
+   "shape": [
+    4,
+    1700,
+    128
+   ]
+  },
+  {
+   "i": 170,
+   "name": "feature_enhancer.img_attn_blocks.1.self_attn.output_proj",
+   "rel": 1.1090651750564575,
+   "shape": [
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 171,
+   "name": "feature_enhancer.img_attn_blocks.1.ffn.layers.0.0",
+   "rel": 1.135995626449585,
+   "shape": [
+    4,
+    1700,
+    2048
+   ]
+  },
+  {
+   "i": 172,
+   "name": "feature_enhancer.img_attn_blocks.1.ffn.layers.1",
+   "rel": 0.9672918319702148,
+   "shape": [
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 173,
+   "name": "feature_enhancer.text_attn_blocks.1.self_attn.attn",
+   "rel": 1.0698884725570679,
+   "shape": null
+  },
+  {
+   "i": 174,
+   "name": "feature_enhancer.text_attn_blocks.1.ffn.layers.0.0",
+   "rel": 0.9861882328987122,
+   "shape": [
+    1,
+    21,
+    1024
+   ]
+  },
+  {
+   "i": 175,
+   "name": "feature_enhancer.text_attn_blocks.1.ffn.layers.1",
+   "rel": 0.9232144951820374,
+   "shape": [
+    1,
+    21,
+    256
+   ]
+  },
+  {
+   "i": 180,
+   "name": "feature_enhancer.text_img_attn_blocks.2.attn",
+   "rel": 1.145168423652649,
+   "shape": null
+  },
+  {
+   "i": 181,
+   "name": "feature_enhancer.img_attn_blocks.2.self_attn.value_proj",
+   "rel": 1.0174142122268677,
+   "shape": [
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 182,
+   "name": "feature_enhancer.img_attn_blocks.2.self_attn.sampling_offsets",
+   "rel": 0.9638144969940186,
+   "shape": [
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 183,
+   "name": "feature_enhancer.img_attn_blocks.2.self_attn.attention_weights",
+   "rel": 0.4862074553966522,
+   "shape": [
+    4,
+    1700,
+    128
+   ]
+  },
+  {
+   "i": 184,
+   "name": "feature_enhancer.img_attn_blocks.2.self_attn.output_proj",
+   "rel": 1.0956246852874756,
+   "shape": [
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 185,
+   "name": "feature_enhancer.img_attn_blocks.2.ffn.layers.0.0",
+   "rel": 1.0431917905807495,
+   "shape": [
+    4,
+    1700,
+    2048
+   ]
+  },
+  {
+   "i": 186,
+   "name": "feature_enhancer.img_attn_blocks.2.ffn.layers.1",
+   "rel": 0.8397302031517029,
+   "shape": [
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 187,
+   "name": "feature_enhancer.text_attn_blocks.2.self_attn.attn",
+   "rel": 1.29295814037323,
+   "shape": null
+  },
+  {
+   "i": 188,
+   "name": "feature_enhancer.text_attn_blocks.2.ffn.layers.0.0",
+   "rel": 0.9985250234603882,
+   "shape": [
+    1,
+    21,
+    1024
+   ]
+  },
+  {
+   "i": 189,
+   "name": "feature_enhancer.text_attn_blocks.2.ffn.layers.1",
+   "rel": 0.9212073683738708,
+   "shape": [
+    1,
+    21,
+    256
+   ]
+  },
+  {
+   "i": 194,
+   "name": "feature_enhancer.text_img_attn_blocks.3.attn",
+   "rel": 1.4681402444839478,
+   "shape": null
+  },
+  {
+   "i": 195,
+   "name": "feature_enhancer.img_attn_blocks.3.self_attn.value_proj",
+   "rel": 0.9568958282470703,
+   "shape": [
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 196,
+   "name": "feature_enhancer.img_attn_blocks.3.self_attn.sampling_offsets",
+   "rel": 0.8944746255874634,
+   "shape": [
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 197,
+   "name": "feature_enhancer.img_attn_blocks.3.self_attn.attention_weights",
+   "rel": 0.42079901695251465,
+   "shape": [
+    4,
+    1700,
+    128
+   ]
+  },
+  {
+   "i": 198,
+   "name": "feature_enhancer.img_attn_blocks.3.self_attn.output_proj",
+   "rel": 1.0829918384552002,
+   "shape": [
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 199,
+   "name": "feature_enhancer.img_attn_blocks.3.ffn.layers.0.0",
+   "rel": 1.0236704349517822,
+   "shape": [
+    4,
+    1700,
+    2048
+   ]
+  },
+  {
+   "i": 200,
+   "name": "feature_enhancer.img_attn_blocks.3.ffn.layers.1",
+   "rel": 0.7784989476203918,
+   "shape": [
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 201,
+   "name": "feature_enhancer.text_attn_blocks.3.self_attn.attn",
+   "rel": 1.6004657745361328,
+   "shape": null
+  },
+  {
+   "i": 202,
+   "name": "feature_enhancer.text_attn_blocks.3.ffn.layers.0.0",
+   "rel": 1.0768048763275146,
+   "shape": [
+    1,
+    21,
+    1024
+   ]
+  },
+  {
+   "i": 203,
+   "name": "feature_enhancer.text_attn_blocks.3.ffn.layers.1",
+   "rel": 0.9166736602783203,
+   "shape": [
+    1,
+    21,
+    256
+   ]
+  },
+  {
+   "i": 208,
+   "name": "feature_enhancer.text_img_attn_blocks.4.attn",
+   "rel": 1.1105293035507202,
+   "shape": null
+  },
+  {
+   "i": 209,
+   "name": "feature_enhancer.img_attn_blocks.4.self_attn.value_proj",
+   "rel": 0.8487026691436768,
+   "shape": [
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 210,
+   "name": "feature_enhancer.img_attn_blocks.4.self_attn.sampling_offsets",
+   "rel": 0.8725261092185974,
+   "shape": [
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 211,
+   "name": "feature_enhancer.img_attn_blocks.4.self_attn.attention_weights",
+   "rel": 0.3005213439464569,
+   "shape": [
+    4,
+    1700,
+    128
+   ]
+  },
+  {
+   "i": 212,
+   "name": "feature_enhancer.img_attn_blocks.4.self_attn.output_proj",
+   "rel": 1.0593304634094238,
+   "shape": [
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 213,
+   "name": "feature_enhancer.img_attn_blocks.4.ffn.layers.0.0",
+   "rel": 0.9789953827857971,
+   "shape": [
+    4,
+    1700,
+    2048
+   ]
+  },
+  {
+   "i": 214,
+   "name": "feature_enhancer.img_attn_blocks.4.ffn.layers.1",
+   "rel": 0.835195004940033,
+   "shape": [
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 215,
+   "name": "feature_enhancer.text_attn_blocks.4.self_attn.attn",
+   "rel": 1.192173719406128,
+   "shape": null
+  },
+  {
+   "i": 216,
+   "name": "feature_enhancer.text_attn_blocks.4.ffn.layers.0.0",
+   "rel": 0.9996407628059387,
+   "shape": [
+    1,
+    21,
+    1024
+   ]
+  },
+  {
+   "i": 217,
+   "name": "feature_enhancer.text_attn_blocks.4.ffn.layers.1",
+   "rel": 0.9168851971626282,
+   "shape": [
+    1,
+    21,
+    256
+   ]
+  },
+  {
+   "i": 222,
+   "name": "feature_enhancer.text_img_attn_blocks.5.attn",
+   "rel": 1.337429404258728,
+   "shape": null
+  },
+  {
+   "i": 223,
+   "name": "feature_enhancer.img_attn_blocks.5.self_attn.value_proj",
+   "rel": 0.8681900501251221,
+   "shape": [
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 224,
+   "name": "feature_enhancer.img_attn_blocks.5.self_attn.sampling_offsets",
+   "rel": 0.8893760442733765,
+   "shape": [
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 225,
+   "name": "feature_enhancer.img_attn_blocks.5.self_attn.attention_weights",
+   "rel": 0.3613913059234619,
+   "shape": [
+    4,
+    1700,
+    128
+   ]
+  },
+  {
+   "i": 226,
+   "name": "feature_enhancer.img_attn_blocks.5.self_attn.output_proj",
+   "rel": 1.190050721168518,
+   "shape": [
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 227,
+   "name": "feature_enhancer.img_attn_blocks.5.ffn.layers.0.0",
+   "rel": 0.9690608382225037,
+   "shape": [
+    4,
+    1700,
+    2048
+   ]
+  },
+  {
+   "i": 228,
+   "name": "feature_enhancer.img_attn_blocks.5.ffn.layers.1",
+   "rel": 0.8990856409072876,
+   "shape": [
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 229,
+   "name": "feature_enhancer.text_attn_blocks.5.self_attn.attn",
+   "rel": 1.374305009841919,
+   "shape": null
+  },
+  {
+   "i": 230,
+   "name": "feature_enhancer.text_attn_blocks.5.ffn.layers.0.0",
+   "rel": 0.9692872166633606,
+   "shape": [
+    1,
+    21,
+    1024
+   ]
+  },
+  {
+   "i": 231,
+   "name": "feature_enhancer.text_attn_blocks.5.ffn.layers.1",
+   "rel": 0.4181346595287323,
+   "shape": [
+    1,
+    21,
+    256
+   ]
+  },
+  {
+   "i": 232,
+   "name": "spatial_enhancer.pts_prob_pre_fc",
+   "rel": 0.7183219194412231,
+   "shape": [
+    1,
+    4,
+    1700,
+    128
+   ]
+  },
+  {
+   "i": 233,
+   "name": "spatial_enhancer.pts_prob_fc.layers.0",
+   "rel": 0.176570862531662,
+   "shape": [
+    1,
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 234,
+   "name": "spatial_enhancer.pts_fc",
+   "rel": 0.012238317169249058,
+   "shape": [
+    1,
+    4,
+    1700,
+    128,
+    128
+   ]
+  },
+  {
+   "i": 235,
+   "name": "spatial_enhancer.fusion_fc.0.layers.0.0",
+   "rel": 0.46323272585868835,
+   "shape": [
+    1,
+    4,
+    1700,
+    1024
+   ]
+  },
+  {
+   "i": 236,
+   "name": "spatial_enhancer.fusion_fc.0.layers.1",
+   "rel": 0.326111763715744,
+   "shape": [
+    1,
+    4,
+    1700,
+    512
+   ]
+  },
+  {
+   "i": 237,
+   "name": "spatial_enhancer.fusion_fc.1",
+   "rel": 0.2689598798751831,
+   "shape": [
+    1,
+    4,
+    1700,
+    256
+   ]
+  },
+  {
+   "i": 238,
+   "name": "decoder.robot_encoder.input_fc.0",
+   "rel": 0.01383549626916647,
+   "shape": [
+    1,
+    14,
+    1,
+    256
+   ]
+  },
+  {
+   "i": 239,
+   "name": "decoder.robot_encoder.input_fc.2",
+   "rel": 0.017655033618211746,
+   "shape": [
+    1,
+    14,
+    1,
+    256
+   ]
+  },
+  {
+   "i": 240,
+   "name": "decoder.robot_encoder.input_fc.5",
+   "rel": 0.043040670454502106,
+   "shape": [
+    1,
+    14,
+    1,
+    256
+   ]
+  },
+  {
+   "i": 241,
+   "name": "decoder.robot_encoder.input_fc.7",
+   "rel": 0.04605793580412865,
+   "shape": [
+    1,
+    14,
+    1,
+    256
+   ]
+  },
+  {
+   "i": 242,
+   "name": "decoder.robot_encoder.input_fc.10",
+   "rel": 0.07910577952861786,
+   "shape": [
+    1,
+    14,
+    1,
+    256
+   ]
+  },
+  {
+   "i": 246,
+   "name": "decoder.robot_encoder.layers.1.position_encoder.mlp.0",
+   "rel": 0.978765070438385,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 247,
+   "name": "decoder.robot_encoder.layers.1.position_encoder.mlp.2",
+   "rel": 0.9261641502380371,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 248,
+   "name": "decoder.robot_encoder.layers.1",
+   "rel": 0.543702244758606,
+   "shape": [
+    1,
+    14,
+    256
+   ]
+  },
+  {
+   "i": 249,
+   "name": "decoder.robot_encoder.layers.5.layers.0.0",
+   "rel": 0.6428089141845703,
+   "shape": [
+    1,
+    14,
+    1,
+    2048
+   ]
+  },
+  {
+   "i": 250,
+   "name": "decoder.robot_encoder.layers.5.layers.1",
+   "rel": 0.36111384630203247,
+   "shape": [
+    1,
+    14,
+    1,
+    256
+   ]
+  },
+  {
+   "i": 254,
+   "name": "decoder.robot_encoder.layers.7.position_encoder.mlp.0",
+   "rel": 0.9892894625663757,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 255,
+   "name": "decoder.robot_encoder.layers.7.position_encoder.mlp.2",
+   "rel": 0.9067229628562927,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 256,
+   "name": "decoder.robot_encoder.layers.7",
+   "rel": 0.5676891207695007,
+   "shape": [
+    1,
+    14,
+    256
+   ]
+  },
+  {
+   "i": 257,
+   "name": "decoder.robot_encoder.layers.11.layers.0.0",
+   "rel": 1.1315838098526,
+   "shape": [
+    1,
+    14,
+    1,
+    2048
+   ]
+  },
+  {
+   "i": 258,
+   "name": "decoder.robot_encoder.layers.11.layers.1",
+   "rel": 0.7440977692604065,
+   "shape": [
+    1,
+    14,
+    1,
+    256
+   ]
+  },
+  {
+   "i": 262,
+   "name": "decoder.robot_encoder.layers.13.position_encoder.mlp.0",
+   "rel": 1.0877591371536255,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 263,
+   "name": "decoder.robot_encoder.layers.13.position_encoder.mlp.2",
+   "rel": 1.8983125686645508,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 264,
+   "name": "decoder.robot_encoder.layers.13",
+   "rel": 0.6390130519866943,
+   "shape": [
+    1,
+    14,
+    256
+   ]
+  },
+  {
+   "i": 265,
+   "name": "decoder.robot_encoder.layers.17.layers.0.0",
+   "rel": 1.4687504768371582,
+   "shape": [
+    1,
+    14,
+    1,
+    2048
+   ]
+  },
+  {
+   "i": 266,
+   "name": "decoder.robot_encoder.layers.17.layers.1",
+   "rel": 0.9406796097755432,
+   "shape": [
+    1,
+    14,
+    1,
+    256
+   ]
+  },
+  {
+   "i": 270,
+   "name": "decoder.robot_encoder.layers.19.position_encoder.mlp.0",
+   "rel": 0.9992998242378235,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 271,
+   "name": "decoder.robot_encoder.layers.19.position_encoder.mlp.2",
+   "rel": 1.071772813796997,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 272,
+   "name": "decoder.robot_encoder.layers.19",
+   "rel": 0.6895259618759155,
+   "shape": [
+    1,
+    14,
+    256
+   ]
+  },
+  {
+   "i": 273,
+   "name": "decoder.robot_encoder.layers.23.layers.0.0",
+   "rel": 1.3065418004989624,
+   "shape": [
+    1,
+    14,
+    1,
+    2048
+   ]
+  },
+  {
+   "i": 274,
+   "name": "decoder.robot_encoder.layers.23.layers.1",
+   "rel": 0.9905238151550293,
+   "shape": [
+    1,
+    14,
+    1,
+    256
+   ]
+  },
+  {
+   "i": 275,
+   "name": "decoder.t_embed.mlp.0",
+   "rel": 0.0066609433852136135,
+   "shape": [
+    1,
+    256
+   ]
+  },
+  {
+   "i": 276,
+   "name": "decoder.t_embed.mlp.2",
+   "rel": 0.016860753297805786,
+   "shape": [
+    1,
+    256
+   ]
+  },
+  {
+   "i": 277,
+   "name": "decoder.input_layers.0",
+   "rel": 0.0,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 278,
+   "name": "decoder.input_layers.1",
+   "rel": 0.01801951788365841,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 279,
+   "name": "decoder.input_layers.3",
+   "rel": 0.042116858065128326,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 280,
+   "name": "decoder.input_layers.6",
+   "rel": 0.027480578050017357,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 281,
+   "name": "decoder.input_layers.8",
+   "rel": 0.025641022250056267,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 282,
+   "name": "decoder.layers.0.adaLN_modulation.1",
+   "rel": 0.021796662360429764,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 286,
+   "name": "decoder.layers.1.joint_pos_encoder.mlp.0",
+   "rel": 0.00546449888497591,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 287,
+   "name": "decoder.layers.1.joint_pos_encoder.mlp.2",
+   "rel": 0.020709101110696793,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 288,
+   "name": "decoder.layers.1",
+   "rel": 0.7150333523750305,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 292,
+   "name": "decoder.layers.4",
+   "rel": 0.7159960269927979,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 296,
+   "name": "decoder.layers.6",
+   "rel": 0.7835504412651062,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 297,
+   "name": "decoder.layers.9.layers.0.0",
+   "rel": 1.0016192197799683,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 298,
+   "name": "decoder.layers.9.layers.1",
+   "rel": 0.8864160776138306,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 299,
+   "name": "decoder.layers.11.adaLN_modulation.1",
+   "rel": 0.024062998592853546,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 303,
+   "name": "decoder.layers.12.joint_pos_encoder.mlp.0",
+   "rel": 0.0058799199759960175,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 304,
+   "name": "decoder.layers.12.joint_pos_encoder.mlp.2",
+   "rel": 0.02020803466439247,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 305,
+   "name": "decoder.layers.12",
+   "rel": 0.6864255666732788,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 309,
+   "name": "decoder.layers.15",
+   "rel": 0.8200274109840393,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 313,
+   "name": "decoder.layers.17",
+   "rel": 0.8818471431732178,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 314,
+   "name": "decoder.layers.20.layers.0.0",
+   "rel": 1.1469696760177612,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 315,
+   "name": "decoder.layers.20.layers.1",
+   "rel": 1.096973180770874,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 316,
+   "name": "decoder.layers.22.adaLN_modulation.1",
+   "rel": 0.02346818521618843,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 320,
+   "name": "decoder.layers.23.joint_pos_encoder.mlp.0",
+   "rel": 0.004937657155096531,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 321,
+   "name": "decoder.layers.23.joint_pos_encoder.mlp.2",
+   "rel": 0.01772978901863098,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 322,
+   "name": "decoder.layers.23",
+   "rel": 0.8741363286972046,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 326,
+   "name": "decoder.layers.26",
+   "rel": 0.952491283416748,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 330,
+   "name": "decoder.layers.28",
+   "rel": 0.9920695424079895,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 331,
+   "name": "decoder.layers.31.layers.0.0",
+   "rel": 1.1009148359298706,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 332,
+   "name": "decoder.layers.31.layers.1",
+   "rel": 1.040625810623169,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 333,
+   "name": "decoder.layers.33.adaLN_modulation.1",
+   "rel": 0.02312465012073517,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 337,
+   "name": "decoder.layers.34.joint_pos_encoder.mlp.0",
+   "rel": 0.008341806940734386,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 338,
+   "name": "decoder.layers.34.joint_pos_encoder.mlp.2",
+   "rel": 0.014353426173329353,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 339,
+   "name": "decoder.layers.34",
+   "rel": 0.9503573179244995,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 343,
+   "name": "decoder.layers.37",
+   "rel": 0.9494415521621704,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 347,
+   "name": "decoder.layers.39",
+   "rel": 0.9433683156967163,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 348,
+   "name": "decoder.layers.42.layers.0.0",
+   "rel": 1.1172245740890503,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 349,
+   "name": "decoder.layers.42.layers.1",
+   "rel": 1.0005161762237549,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 350,
+   "name": "decoder.layers.44.adaLN_modulation.1",
+   "rel": 0.017215369269251823,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 354,
+   "name": "decoder.layers.45.joint_pos_encoder.mlp.0",
+   "rel": 0.006840602029114962,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 355,
+   "name": "decoder.layers.45.joint_pos_encoder.mlp.2",
+   "rel": 0.017484325915575027,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 356,
+   "name": "decoder.layers.45",
+   "rel": 0.9417392611503601,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 360,
+   "name": "decoder.layers.48",
+   "rel": 0.9919543862342834,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 364,
+   "name": "decoder.layers.50",
+   "rel": 0.9863938093185425,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 365,
+   "name": "decoder.layers.53.layers.0.0",
+   "rel": 1.1188627481460571,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 366,
+   "name": "decoder.layers.53.layers.1",
+   "rel": 1.0420238971710205,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 367,
+   "name": "decoder.layers.55.adaLN_modulation.1",
+   "rel": 0.015460184775292873,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 371,
+   "name": "decoder.layers.56.joint_pos_encoder.mlp.0",
+   "rel": 0.010142503306269646,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 372,
+   "name": "decoder.layers.56.joint_pos_encoder.mlp.2",
+   "rel": 0.017104757949709892,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 373,
+   "name": "decoder.layers.56",
+   "rel": 1.0234793424606323,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 377,
+   "name": "decoder.layers.59",
+   "rel": 0.983528733253479,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 381,
+   "name": "decoder.layers.61",
+   "rel": 0.9750968217849731,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 382,
+   "name": "decoder.layers.64.layers.0.0",
+   "rel": 1.0706781148910522,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 383,
+   "name": "decoder.layers.64.layers.1",
+   "rel": 0.9912333488464355,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 384,
+   "name": "decoder.head.convs.0",
+   "rel": 0.9547215104103088,
+   "shape": [
+    14,
+    128,
+    32
+   ]
+  },
+  {
+   "i": 385,
+   "name": "decoder.head.convs.1",
+   "rel": 1.2494755983352661,
+   "shape": [
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 386,
+   "name": "decoder.head.output_layers.1",
+   "rel": 1.2084848880767822,
+   "shape": [
+    1,
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 387,
+   "name": "decoder.head.output_layers.3",
+   "rel": 1.0920343399047852,
+   "shape": [
+    1,
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 388,
+   "name": "decoder.head.output_layers.4",
+   "rel": 1.521157145500183,
+   "shape": [
+    1,
+    14,
+    64,
+    8
+   ]
+  },
+  {
+   "i": 389,
+   "name": "decoder.t_embed.mlp.0",
+   "rel": 0.0060811652801930904,
+   "shape": [
+    1,
+    256
+   ]
+  },
+  {
+   "i": 390,
+   "name": "decoder.t_embed.mlp.2",
+   "rel": 0.019133884459733963,
+   "shape": [
+    1,
+    256
+   ]
+  },
+  {
+   "i": 391,
+   "name": "decoder.input_layers.0",
+   "rel": 0.20927053689956665,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 392,
+   "name": "decoder.input_layers.1",
+   "rel": 0.2348007708787918,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 393,
+   "name": "decoder.input_layers.3",
+   "rel": 0.17776021361351013,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 394,
+   "name": "decoder.input_layers.6",
+   "rel": 0.17830000817775726,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 395,
+   "name": "decoder.input_layers.8",
+   "rel": 0.14216436445713043,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 396,
+   "name": "decoder.layers.0.adaLN_modulation.1",
+   "rel": 0.019150858744978905,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 400,
+   "name": "decoder.layers.1.joint_pos_encoder.mlp.0",
+   "rel": 0.00546449888497591,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 401,
+   "name": "decoder.layers.1.joint_pos_encoder.mlp.2",
+   "rel": 0.020709101110696793,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 402,
+   "name": "decoder.layers.1",
+   "rel": 0.7448491454124451,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 406,
+   "name": "decoder.layers.4",
+   "rel": 0.739945650100708,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 410,
+   "name": "decoder.layers.6",
+   "rel": 0.8024148941040039,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 411,
+   "name": "decoder.layers.9.layers.0.0",
+   "rel": 1.0905588865280151,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 412,
+   "name": "decoder.layers.9.layers.1",
+   "rel": 0.9655410051345825,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 413,
+   "name": "decoder.layers.11.adaLN_modulation.1",
+   "rel": 0.021086186170578003,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 417,
+   "name": "decoder.layers.12.joint_pos_encoder.mlp.0",
+   "rel": 0.0058799199759960175,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 418,
+   "name": "decoder.layers.12.joint_pos_encoder.mlp.2",
+   "rel": 0.02020803466439247,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 419,
+   "name": "decoder.layers.12",
+   "rel": 0.701000988483429,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 423,
+   "name": "decoder.layers.15",
+   "rel": 0.8272534608840942,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 427,
+   "name": "decoder.layers.17",
+   "rel": 0.8849186897277832,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 428,
+   "name": "decoder.layers.20.layers.0.0",
+   "rel": 1.167973279953003,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 429,
+   "name": "decoder.layers.20.layers.1",
+   "rel": 1.109274983406067,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 430,
+   "name": "decoder.layers.22.adaLN_modulation.1",
+   "rel": 0.020757660269737244,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 434,
+   "name": "decoder.layers.23.joint_pos_encoder.mlp.0",
+   "rel": 0.004937657155096531,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 435,
+   "name": "decoder.layers.23.joint_pos_encoder.mlp.2",
+   "rel": 0.01772978901863098,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 436,
+   "name": "decoder.layers.23",
+   "rel": 0.8716574311256409,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 440,
+   "name": "decoder.layers.26",
+   "rel": 0.9505745768547058,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 444,
+   "name": "decoder.layers.28",
+   "rel": 0.9891769886016846,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 445,
+   "name": "decoder.layers.31.layers.0.0",
+   "rel": 1.1152034997940063,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 446,
+   "name": "decoder.layers.31.layers.1",
+   "rel": 1.0462697744369507,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 447,
+   "name": "decoder.layers.33.adaLN_modulation.1",
+   "rel": 0.02237093634903431,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 451,
+   "name": "decoder.layers.34.joint_pos_encoder.mlp.0",
+   "rel": 0.008341806940734386,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 452,
+   "name": "decoder.layers.34.joint_pos_encoder.mlp.2",
+   "rel": 0.014353426173329353,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 453,
+   "name": "decoder.layers.34",
+   "rel": 0.9479109644889832,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 457,
+   "name": "decoder.layers.37",
+   "rel": 0.9490416646003723,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 461,
+   "name": "decoder.layers.39",
+   "rel": 0.943044126033783,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 462,
+   "name": "decoder.layers.42.layers.0.0",
+   "rel": 1.1213630437850952,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 463,
+   "name": "decoder.layers.42.layers.1",
+   "rel": 1.0048381090164185,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 464,
+   "name": "decoder.layers.44.adaLN_modulation.1",
+   "rel": 0.018427003175020218,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 468,
+   "name": "decoder.layers.45.joint_pos_encoder.mlp.0",
+   "rel": 0.006840602029114962,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 469,
+   "name": "decoder.layers.45.joint_pos_encoder.mlp.2",
+   "rel": 0.017484325915575027,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 470,
+   "name": "decoder.layers.45",
+   "rel": 0.9385685324668884,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 474,
+   "name": "decoder.layers.48",
+   "rel": 0.9900087714195251,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 478,
+   "name": "decoder.layers.50",
+   "rel": 0.9842950701713562,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 479,
+   "name": "decoder.layers.53.layers.0.0",
+   "rel": 1.1184331178665161,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 480,
+   "name": "decoder.layers.53.layers.1",
+   "rel": 1.0415349006652832,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 481,
+   "name": "decoder.layers.55.adaLN_modulation.1",
+   "rel": 0.01698107086122036,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 485,
+   "name": "decoder.layers.56.joint_pos_encoder.mlp.0",
+   "rel": 0.010142503306269646,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 486,
+   "name": "decoder.layers.56.joint_pos_encoder.mlp.2",
+   "rel": 0.017104757949709892,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 487,
+   "name": "decoder.layers.56",
+   "rel": 1.025020956993103,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 491,
+   "name": "decoder.layers.59",
+   "rel": 0.9856722354888916,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 495,
+   "name": "decoder.layers.61",
+   "rel": 0.9771485328674316,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 496,
+   "name": "decoder.layers.64.layers.0.0",
+   "rel": 1.0697318315505981,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 497,
+   "name": "decoder.layers.64.layers.1",
+   "rel": 0.993876576423645,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 498,
+   "name": "decoder.head.convs.0",
+   "rel": 0.9579538702964783,
+   "shape": [
+    14,
+    128,
+    32
+   ]
+  },
+  {
+   "i": 499,
+   "name": "decoder.head.convs.1",
+   "rel": 1.250953197479248,
+   "shape": [
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 500,
+   "name": "decoder.head.output_layers.1",
+   "rel": 1.216107726097107,
+   "shape": [
+    1,
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 501,
+   "name": "decoder.head.output_layers.3",
+   "rel": 1.1045196056365967,
+   "shape": [
+    1,
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 502,
+   "name": "decoder.head.output_layers.4",
+   "rel": 1.6628851890563965,
+   "shape": [
+    1,
+    14,
+    64,
+    8
+   ]
+  },
+  {
+   "i": 503,
+   "name": "decoder.t_embed.mlp.0",
+   "rel": 0.00643836660310626,
+   "shape": [
+    1,
+    256
+   ]
+  },
+  {
+   "i": 504,
+   "name": "decoder.t_embed.mlp.2",
+   "rel": 0.015527382493019104,
+   "shape": [
+    1,
+    256
+   ]
+  },
+  {
+   "i": 505,
+   "name": "decoder.input_layers.0",
+   "rel": 0.27366918325424194,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 506,
+   "name": "decoder.input_layers.1",
+   "rel": 1.636172890663147,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 507,
+   "name": "decoder.input_layers.3",
+   "rel": 1.3614336252212524,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 508,
+   "name": "decoder.input_layers.6",
+   "rel": 1.3501180410385132,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 509,
+   "name": "decoder.input_layers.8",
+   "rel": 1.0537850856781006,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 510,
+   "name": "decoder.layers.0.adaLN_modulation.1",
+   "rel": 0.0179909560829401,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 514,
+   "name": "decoder.layers.1.joint_pos_encoder.mlp.0",
+   "rel": 0.00546449888497591,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 515,
+   "name": "decoder.layers.1.joint_pos_encoder.mlp.2",
+   "rel": 0.020709101110696793,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 516,
+   "name": "decoder.layers.1",
+   "rel": 1.0782289505004883,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 520,
+   "name": "decoder.layers.4",
+   "rel": 1.0982961654663086,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 524,
+   "name": "decoder.layers.6",
+   "rel": 1.081274390220642,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 525,
+   "name": "decoder.layers.9.layers.0.0",
+   "rel": 2.221407413482666,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 526,
+   "name": "decoder.layers.9.layers.1",
+   "rel": 2.3857967853546143,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 527,
+   "name": "decoder.layers.11.adaLN_modulation.1",
+   "rel": 0.01739862561225891,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 531,
+   "name": "decoder.layers.12.joint_pos_encoder.mlp.0",
+   "rel": 0.0058799199759960175,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 532,
+   "name": "decoder.layers.12.joint_pos_encoder.mlp.2",
+   "rel": 0.02020803466439247,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 533,
+   "name": "decoder.layers.12",
+   "rel": 1.2875189781188965,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 537,
+   "name": "decoder.layers.15",
+   "rel": 1.2109718322753906,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 541,
+   "name": "decoder.layers.17",
+   "rel": 1.1641134023666382,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 542,
+   "name": "decoder.layers.20.layers.0.0",
+   "rel": 1.6897412538528442,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 543,
+   "name": "decoder.layers.20.layers.1",
+   "rel": 1.854354977607727,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 544,
+   "name": "decoder.layers.22.adaLN_modulation.1",
+   "rel": 0.016908200457692146,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 548,
+   "name": "decoder.layers.23.joint_pos_encoder.mlp.0",
+   "rel": 0.004937657155096531,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 549,
+   "name": "decoder.layers.23.joint_pos_encoder.mlp.2",
+   "rel": 0.01772978901863098,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 550,
+   "name": "decoder.layers.23",
+   "rel": 1.0461513996124268,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 554,
+   "name": "decoder.layers.26",
+   "rel": 1.0571316480636597,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 558,
+   "name": "decoder.layers.28",
+   "rel": 1.0620566606521606,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 559,
+   "name": "decoder.layers.31.layers.0.0",
+   "rel": 1.2913610935211182,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 560,
+   "name": "decoder.layers.31.layers.1",
+   "rel": 1.2437381744384766,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 561,
+   "name": "decoder.layers.33.adaLN_modulation.1",
+   "rel": 0.019742188975214958,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 565,
+   "name": "decoder.layers.34.joint_pos_encoder.mlp.0",
+   "rel": 0.008341806940734386,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 566,
+   "name": "decoder.layers.34.joint_pos_encoder.mlp.2",
+   "rel": 0.014353426173329353,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 567,
+   "name": "decoder.layers.34",
+   "rel": 1.0224055051803589,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 571,
+   "name": "decoder.layers.37",
+   "rel": 0.9959415793418884,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 575,
+   "name": "decoder.layers.39",
+   "rel": 0.9865919947624207,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 576,
+   "name": "decoder.layers.42.layers.0.0",
+   "rel": 1.2103500366210938,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 577,
+   "name": "decoder.layers.42.layers.1",
+   "rel": 1.0962891578674316,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 578,
+   "name": "decoder.layers.44.adaLN_modulation.1",
+   "rel": 0.014664920046925545,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 582,
+   "name": "decoder.layers.45.joint_pos_encoder.mlp.0",
+   "rel": 0.006840602029114962,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 583,
+   "name": "decoder.layers.45.joint_pos_encoder.mlp.2",
+   "rel": 0.017484325915575027,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 584,
+   "name": "decoder.layers.45",
+   "rel": 0.9627091884613037,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 588,
+   "name": "decoder.layers.48",
+   "rel": 1.0023856163024902,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 592,
+   "name": "decoder.layers.50",
+   "rel": 0.9956883192062378,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 593,
+   "name": "decoder.layers.53.layers.0.0",
+   "rel": 1.144595742225647,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 594,
+   "name": "decoder.layers.53.layers.1",
+   "rel": 1.0679173469543457,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 595,
+   "name": "decoder.layers.55.adaLN_modulation.1",
+   "rel": 0.012282116338610649,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 599,
+   "name": "decoder.layers.56.joint_pos_encoder.mlp.0",
+   "rel": 0.010142503306269646,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 600,
+   "name": "decoder.layers.56.joint_pos_encoder.mlp.2",
+   "rel": 0.017104757949709892,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 601,
+   "name": "decoder.layers.56",
+   "rel": 1.0134845972061157,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 605,
+   "name": "decoder.layers.59",
+   "rel": 0.9755416512489319,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 609,
+   "name": "decoder.layers.61",
+   "rel": 0.96745365858078,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 610,
+   "name": "decoder.layers.64.layers.0.0",
+   "rel": 1.0564930438995361,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 611,
+   "name": "decoder.layers.64.layers.1",
+   "rel": 0.9935096502304077,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 612,
+   "name": "decoder.head.convs.0",
+   "rel": 0.9577525854110718,
+   "shape": [
+    14,
+    128,
+    32
+   ]
+  },
+  {
+   "i": 613,
+   "name": "decoder.head.convs.1",
+   "rel": 1.2357935905456543,
+   "shape": [
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 614,
+   "name": "decoder.head.output_layers.1",
+   "rel": 1.209959864616394,
+   "shape": [
+    1,
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 615,
+   "name": "decoder.head.output_layers.3",
+   "rel": 1.1072242259979248,
+   "shape": [
+    1,
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 616,
+   "name": "decoder.head.output_layers.4",
+   "rel": 1.6066511869430542,
+   "shape": [
+    1,
+    14,
+    64,
+    8
+   ]
+  },
+  {
+   "i": 617,
+   "name": "decoder.t_embed.mlp.0",
+   "rel": 0.006184202618896961,
+   "shape": [
+    1,
+    256
+   ]
+  },
+  {
+   "i": 618,
+   "name": "decoder.t_embed.mlp.2",
+   "rel": 0.01816144399344921,
+   "shape": [
+    1,
+    256
+   ]
+  },
+  {
+   "i": 619,
+   "name": "decoder.input_layers.0",
+   "rel": 0.4159280061721802,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 620,
+   "name": "decoder.input_layers.1",
+   "rel": 1.0065699815750122,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 621,
+   "name": "decoder.input_layers.3",
+   "rel": 0.9887152910232544,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 622,
+   "name": "decoder.input_layers.6",
+   "rel": 1.6412776708602905,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 623,
+   "name": "decoder.input_layers.8",
+   "rel": 1.6973644495010376,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 624,
+   "name": "decoder.layers.0.adaLN_modulation.1",
+   "rel": 0.01580255664885044,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 628,
+   "name": "decoder.layers.1.joint_pos_encoder.mlp.0",
+   "rel": 0.00546449888497591,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 629,
+   "name": "decoder.layers.1.joint_pos_encoder.mlp.2",
+   "rel": 0.020709101110696793,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 630,
+   "name": "decoder.layers.1",
+   "rel": 0.9564660787582397,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 634,
+   "name": "decoder.layers.4",
+   "rel": 1.0239081382751465,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 638,
+   "name": "decoder.layers.6",
+   "rel": 1.0061060190200806,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 639,
+   "name": "decoder.layers.9.layers.0.0",
+   "rel": 1.449608325958252,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 640,
+   "name": "decoder.layers.9.layers.1",
+   "rel": 1.471798300743103,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 641,
+   "name": "decoder.layers.11.adaLN_modulation.1",
+   "rel": 0.016696037724614143,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 645,
+   "name": "decoder.layers.12.joint_pos_encoder.mlp.0",
+   "rel": 0.0058799199759960175,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 646,
+   "name": "decoder.layers.12.joint_pos_encoder.mlp.2",
+   "rel": 0.02020803466439247,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 647,
+   "name": "decoder.layers.12",
+   "rel": 0.8834814429283142,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 651,
+   "name": "decoder.layers.15",
+   "rel": 1.017030119895935,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 655,
+   "name": "decoder.layers.17",
+   "rel": 1.0157952308654785,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 656,
+   "name": "decoder.layers.20.layers.0.0",
+   "rel": 1.261813998222351,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 657,
+   "name": "decoder.layers.20.layers.1",
+   "rel": 1.274012565612793,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 658,
+   "name": "decoder.layers.22.adaLN_modulation.1",
+   "rel": 0.01616491563618183,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 662,
+   "name": "decoder.layers.23.joint_pos_encoder.mlp.0",
+   "rel": 0.004937657155096531,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 663,
+   "name": "decoder.layers.23.joint_pos_encoder.mlp.2",
+   "rel": 0.01772978901863098,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 664,
+   "name": "decoder.layers.23",
+   "rel": 0.968658447265625,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 668,
+   "name": "decoder.layers.26",
+   "rel": 1.0057029724121094,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 672,
+   "name": "decoder.layers.28",
+   "rel": 1.0358446836471558,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 673,
+   "name": "decoder.layers.31.layers.0.0",
+   "rel": 1.1809253692626953,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 674,
+   "name": "decoder.layers.31.layers.1",
+   "rel": 1.069481611251831,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 675,
+   "name": "decoder.layers.33.adaLN_modulation.1",
+   "rel": 0.020099245011806488,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 679,
+   "name": "decoder.layers.34.joint_pos_encoder.mlp.0",
+   "rel": 0.008341806940734386,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 680,
+   "name": "decoder.layers.34.joint_pos_encoder.mlp.2",
+   "rel": 0.014353426173329353,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 681,
+   "name": "decoder.layers.34",
+   "rel": 0.9247716665267944,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 685,
+   "name": "decoder.layers.37",
+   "rel": 0.9278233647346497,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 689,
+   "name": "decoder.layers.39",
+   "rel": 0.9213774800300598,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 690,
+   "name": "decoder.layers.42.layers.0.0",
+   "rel": 1.104305386543274,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 691,
+   "name": "decoder.layers.42.layers.1",
+   "rel": 0.996048629283905,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 692,
+   "name": "decoder.layers.44.adaLN_modulation.1",
+   "rel": 0.01572365127503872,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 696,
+   "name": "decoder.layers.45.joint_pos_encoder.mlp.0",
+   "rel": 0.006840602029114962,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 697,
+   "name": "decoder.layers.45.joint_pos_encoder.mlp.2",
+   "rel": 0.017484325915575027,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 698,
+   "name": "decoder.layers.45",
+   "rel": 0.9175583720207214,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 702,
+   "name": "decoder.layers.48",
+   "rel": 0.9731159806251526,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 706,
+   "name": "decoder.layers.50",
+   "rel": 0.9670117497444153,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 707,
+   "name": "decoder.layers.53.layers.0.0",
+   "rel": 1.0876672267913818,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 708,
+   "name": "decoder.layers.53.layers.1",
+   "rel": 1.040448784828186,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 709,
+   "name": "decoder.layers.55.adaLN_modulation.1",
+   "rel": 0.01322751771658659,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 713,
+   "name": "decoder.layers.56.joint_pos_encoder.mlp.0",
+   "rel": 0.010142503306269646,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 714,
+   "name": "decoder.layers.56.joint_pos_encoder.mlp.2",
+   "rel": 0.017104757949709892,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 715,
+   "name": "decoder.layers.56",
+   "rel": 1.0162773132324219,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 719,
+   "name": "decoder.layers.59",
+   "rel": 0.9806026816368103,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 723,
+   "name": "decoder.layers.61",
+   "rel": 0.972639262676239,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 724,
+   "name": "decoder.layers.64.layers.0.0",
+   "rel": 1.084116816520691,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 725,
+   "name": "decoder.layers.64.layers.1",
+   "rel": 0.9599097967147827,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 726,
+   "name": "decoder.head.convs.0",
+   "rel": 0.9375444054603577,
+   "shape": [
+    14,
+    128,
+    32
+   ]
+  },
+  {
+   "i": 727,
+   "name": "decoder.head.convs.1",
+   "rel": 1.240647792816162,
+   "shape": [
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 728,
+   "name": "decoder.head.output_layers.1",
+   "rel": 1.2097556591033936,
+   "shape": [
+    1,
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 729,
+   "name": "decoder.head.output_layers.3",
+   "rel": 1.0985065698623657,
+   "shape": [
+    1,
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 730,
+   "name": "decoder.head.output_layers.4",
+   "rel": 1.6125060319900513,
+   "shape": [
+    1,
+    14,
+    64,
+    8
+   ]
+  },
+  {
+   "i": 731,
+   "name": "decoder.t_embed.mlp.0",
+   "rel": 0.006591281853616238,
+   "shape": [
+    1,
+    256
+   ]
+  },
+  {
+   "i": 732,
+   "name": "decoder.t_embed.mlp.2",
+   "rel": 0.019921397790312767,
+   "shape": [
+    1,
+    256
+   ]
+  },
+  {
+   "i": 733,
+   "name": "decoder.input_layers.0",
+   "rel": 0.4704225957393646,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 734,
+   "name": "decoder.input_layers.1",
+   "rel": 1.0057393312454224,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 735,
+   "name": "decoder.input_layers.3",
+   "rel": 0.9881216883659363,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 736,
+   "name": "decoder.input_layers.6",
+   "rel": 1.6398067474365234,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 737,
+   "name": "decoder.input_layers.8",
+   "rel": 1.700737714767456,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 738,
+   "name": "decoder.layers.0.adaLN_modulation.1",
+   "rel": 0.015037755481898785,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 742,
+   "name": "decoder.layers.1.joint_pos_encoder.mlp.0",
+   "rel": 0.00546449888497591,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 743,
+   "name": "decoder.layers.1.joint_pos_encoder.mlp.2",
+   "rel": 0.020709101110696793,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 744,
+   "name": "decoder.layers.1",
+   "rel": 0.9742404818534851,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 748,
+   "name": "decoder.layers.4",
+   "rel": 1.0391525030136108,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 752,
+   "name": "decoder.layers.6",
+   "rel": 1.020864725112915,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 753,
+   "name": "decoder.layers.9.layers.0.0",
+   "rel": 1.499081015586853,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 754,
+   "name": "decoder.layers.9.layers.1",
+   "rel": 1.5267053842544556,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 755,
+   "name": "decoder.layers.11.adaLN_modulation.1",
+   "rel": 0.016209322959184647,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 759,
+   "name": "decoder.layers.12.joint_pos_encoder.mlp.0",
+   "rel": 0.0058799199759960175,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 760,
+   "name": "decoder.layers.12.joint_pos_encoder.mlp.2",
+   "rel": 0.02020803466439247,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 761,
+   "name": "decoder.layers.12",
+   "rel": 0.910496711730957,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 765,
+   "name": "decoder.layers.15",
+   "rel": 1.0417851209640503,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 769,
+   "name": "decoder.layers.17",
+   "rel": 1.034635305404663,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 770,
+   "name": "decoder.layers.20.layers.0.0",
+   "rel": 1.2795876264572144,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 771,
+   "name": "decoder.layers.20.layers.1",
+   "rel": 1.30168616771698,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 772,
+   "name": "decoder.layers.22.adaLN_modulation.1",
+   "rel": 0.016320809721946716,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 776,
+   "name": "decoder.layers.23.joint_pos_encoder.mlp.0",
+   "rel": 0.004937657155096531,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 777,
+   "name": "decoder.layers.23.joint_pos_encoder.mlp.2",
+   "rel": 0.01772978901863098,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 778,
+   "name": "decoder.layers.23",
+   "rel": 0.9801133871078491,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 782,
+   "name": "decoder.layers.26",
+   "rel": 1.012393593788147,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 786,
+   "name": "decoder.layers.28",
+   "rel": 1.040244460105896,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 787,
+   "name": "decoder.layers.31.layers.0.0",
+   "rel": 1.2077122926712036,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 788,
+   "name": "decoder.layers.31.layers.1",
+   "rel": 1.08517324924469,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 789,
+   "name": "decoder.layers.33.adaLN_modulation.1",
+   "rel": 0.019925441592931747,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 793,
+   "name": "decoder.layers.34.joint_pos_encoder.mlp.0",
+   "rel": 0.008341806940734386,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 794,
+   "name": "decoder.layers.34.joint_pos_encoder.mlp.2",
+   "rel": 0.014353426173329353,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 795,
+   "name": "decoder.layers.34",
+   "rel": 0.9199329018592834,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 799,
+   "name": "decoder.layers.37",
+   "rel": 0.9265155792236328,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 803,
+   "name": "decoder.layers.39",
+   "rel": 0.9197688698768616,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 804,
+   "name": "decoder.layers.42.layers.0.0",
+   "rel": 1.1086374521255493,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 805,
+   "name": "decoder.layers.42.layers.1",
+   "rel": 1.0043920278549194,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 806,
+   "name": "decoder.layers.44.adaLN_modulation.1",
+   "rel": 0.0151948481798172,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 810,
+   "name": "decoder.layers.45.joint_pos_encoder.mlp.0",
+   "rel": 0.006840602029114962,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 811,
+   "name": "decoder.layers.45.joint_pos_encoder.mlp.2",
+   "rel": 0.017484325915575027,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 812,
+   "name": "decoder.layers.45",
+   "rel": 0.9163748025894165,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 816,
+   "name": "decoder.layers.48",
+   "rel": 0.9724785089492798,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 820,
+   "name": "decoder.layers.50",
+   "rel": 0.9661863446235657,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 821,
+   "name": "decoder.layers.53.layers.0.0",
+   "rel": 1.0893950462341309,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 822,
+   "name": "decoder.layers.53.layers.1",
+   "rel": 1.0406153202056885,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 823,
+   "name": "decoder.layers.55.adaLN_modulation.1",
+   "rel": 0.012975512072443962,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 827,
+   "name": "decoder.layers.56.joint_pos_encoder.mlp.0",
+   "rel": 0.010142503306269646,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 828,
+   "name": "decoder.layers.56.joint_pos_encoder.mlp.2",
+   "rel": 0.017104757949709892,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 829,
+   "name": "decoder.layers.56",
+   "rel": 1.0127049684524536,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 833,
+   "name": "decoder.layers.59",
+   "rel": 0.9781972169876099,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 837,
+   "name": "decoder.layers.61",
+   "rel": 0.9701793193817139,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 838,
+   "name": "decoder.layers.64.layers.0.0",
+   "rel": 1.0919922590255737,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 839,
+   "name": "decoder.layers.64.layers.1",
+   "rel": 0.951269268989563,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 840,
+   "name": "decoder.head.convs.0",
+   "rel": 0.9285128116607666,
+   "shape": [
+    14,
+    128,
+    32
+   ]
+  },
+  {
+   "i": 841,
+   "name": "decoder.head.convs.1",
+   "rel": 1.231780767440796,
+   "shape": [
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 842,
+   "name": "decoder.head.output_layers.1",
+   "rel": 1.203666090965271,
+   "shape": [
+    1,
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 843,
+   "name": "decoder.head.output_layers.3",
+   "rel": 1.0907082557678223,
+   "shape": [
+    1,
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 844,
+   "name": "decoder.head.output_layers.4",
+   "rel": 1.6290171146392822,
+   "shape": [
+    1,
+    14,
+    64,
+    8
+   ]
+  },
+  {
+   "i": 845,
+   "name": "decoder.t_embed.mlp.0",
+   "rel": 0.006459592841565609,
+   "shape": [
+    1,
+    256
+   ]
+  },
+  {
+   "i": 846,
+   "name": "decoder.t_embed.mlp.2",
+   "rel": 0.021402165293693542,
+   "shape": [
+    1,
+    256
+   ]
+  },
+  {
+   "i": 847,
+   "name": "decoder.input_layers.0",
+   "rel": 0.49841779470443726,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 848,
+   "name": "decoder.input_layers.1",
+   "rel": 1.0141335725784302,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 849,
+   "name": "decoder.input_layers.3",
+   "rel": 1.0027693510055542,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 850,
+   "name": "decoder.input_layers.6",
+   "rel": 1.64510977268219,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 851,
+   "name": "decoder.input_layers.8",
+   "rel": 1.7031611204147339,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 852,
+   "name": "decoder.layers.0.adaLN_modulation.1",
+   "rel": 0.020122408866882324,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 856,
+   "name": "decoder.layers.1.joint_pos_encoder.mlp.0",
+   "rel": 0.00546449888497591,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 857,
+   "name": "decoder.layers.1.joint_pos_encoder.mlp.2",
+   "rel": 0.020709101110696793,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 858,
+   "name": "decoder.layers.1",
+   "rel": 0.9989089369773865,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 862,
+   "name": "decoder.layers.4",
+   "rel": 1.0545337200164795,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 866,
+   "name": "decoder.layers.6",
+   "rel": 1.037260890007019,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 867,
+   "name": "decoder.layers.9.layers.0.0",
+   "rel": 1.5496400594711304,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 868,
+   "name": "decoder.layers.9.layers.1",
+   "rel": 1.5765568017959595,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 869,
+   "name": "decoder.layers.11.adaLN_modulation.1",
+   "rel": 0.02098964713513851,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 873,
+   "name": "decoder.layers.12.joint_pos_encoder.mlp.0",
+   "rel": 0.0058799199759960175,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 874,
+   "name": "decoder.layers.12.joint_pos_encoder.mlp.2",
+   "rel": 0.02020803466439247,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 875,
+   "name": "decoder.layers.12",
+   "rel": 0.9378883838653564,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 879,
+   "name": "decoder.layers.15",
+   "rel": 1.0623663663864136,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 883,
+   "name": "decoder.layers.17",
+   "rel": 1.051792860031128,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 884,
+   "name": "decoder.layers.20.layers.0.0",
+   "rel": 1.3042548894882202,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 885,
+   "name": "decoder.layers.20.layers.1",
+   "rel": 1.3345609903335571,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 886,
+   "name": "decoder.layers.22.adaLN_modulation.1",
+   "rel": 0.020731424912810326,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 890,
+   "name": "decoder.layers.23.joint_pos_encoder.mlp.0",
+   "rel": 0.004937657155096531,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 891,
+   "name": "decoder.layers.23.joint_pos_encoder.mlp.2",
+   "rel": 0.01772978901863098,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 892,
+   "name": "decoder.layers.23",
+   "rel": 0.9841451644897461,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 896,
+   "name": "decoder.layers.26",
+   "rel": 1.0148087739944458,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 900,
+   "name": "decoder.layers.28",
+   "rel": 1.040848731994629,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 901,
+   "name": "decoder.layers.31.layers.0.0",
+   "rel": 1.2318371534347534,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 902,
+   "name": "decoder.layers.31.layers.1",
+   "rel": 1.1094188690185547,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 903,
+   "name": "decoder.layers.33.adaLN_modulation.1",
+   "rel": 0.023342162370681763,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 907,
+   "name": "decoder.layers.34.joint_pos_encoder.mlp.0",
+   "rel": 0.008341806940734386,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 908,
+   "name": "decoder.layers.34.joint_pos_encoder.mlp.2",
+   "rel": 0.014353426173329353,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 909,
+   "name": "decoder.layers.34",
+   "rel": 0.9152061939239502,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 913,
+   "name": "decoder.layers.37",
+   "rel": 0.926720142364502,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 917,
+   "name": "decoder.layers.39",
+   "rel": 0.9199113249778748,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 918,
+   "name": "decoder.layers.42.layers.0.0",
+   "rel": 1.1114572286605835,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 919,
+   "name": "decoder.layers.42.layers.1",
+   "rel": 1.0156179666519165,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 920,
+   "name": "decoder.layers.44.adaLN_modulation.1",
+   "rel": 0.020359398797154427,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 924,
+   "name": "decoder.layers.45.joint_pos_encoder.mlp.0",
+   "rel": 0.006840602029114962,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 925,
+   "name": "decoder.layers.45.joint_pos_encoder.mlp.2",
+   "rel": 0.017484325915575027,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 926,
+   "name": "decoder.layers.45",
+   "rel": 0.9161405563354492,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 930,
+   "name": "decoder.layers.48",
+   "rel": 0.9719866514205933,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 934,
+   "name": "decoder.layers.50",
+   "rel": 0.9656057953834534,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 935,
+   "name": "decoder.layers.53.layers.0.0",
+   "rel": 1.09112548828125,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 936,
+   "name": "decoder.layers.53.layers.1",
+   "rel": 1.0438482761383057,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 937,
+   "name": "decoder.layers.55.adaLN_modulation.1",
+   "rel": 0.018687888979911804,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 941,
+   "name": "decoder.layers.56.joint_pos_encoder.mlp.0",
+   "rel": 0.010142503306269646,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 942,
+   "name": "decoder.layers.56.joint_pos_encoder.mlp.2",
+   "rel": 0.017104757949709892,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 943,
+   "name": "decoder.layers.56",
+   "rel": 1.0129506587982178,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 947,
+   "name": "decoder.layers.59",
+   "rel": 0.9797527194023132,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 951,
+   "name": "decoder.layers.61",
+   "rel": 0.9716029167175293,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 952,
+   "name": "decoder.layers.64.layers.0.0",
+   "rel": 1.0992482900619507,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 953,
+   "name": "decoder.layers.64.layers.1",
+   "rel": 0.9438460469245911,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 954,
+   "name": "decoder.head.convs.0",
+   "rel": 0.9247271418571472,
+   "shape": [
+    14,
+    128,
+    32
+   ]
+  },
+  {
+   "i": 955,
+   "name": "decoder.head.convs.1",
+   "rel": 1.2279037237167358,
+   "shape": [
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 956,
+   "name": "decoder.head.output_layers.1",
+   "rel": 1.202188491821289,
+   "shape": [
+    1,
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 957,
+   "name": "decoder.head.output_layers.3",
+   "rel": 1.0895483493804932,
+   "shape": [
+    1,
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 958,
+   "name": "decoder.head.output_layers.4",
+   "rel": 1.6166421175003052,
+   "shape": [
+    1,
+    14,
+    64,
+    8
+   ]
+  },
+  {
+   "i": 959,
+   "name": "decoder.t_embed.mlp.0",
+   "rel": 0.005824230145663023,
+   "shape": [
+    1,
+    256
+   ]
+  },
+  {
+   "i": 960,
+   "name": "decoder.t_embed.mlp.2",
+   "rel": 0.015369050204753876,
+   "shape": [
+    1,
+    256
+   ]
+  },
+  {
+   "i": 961,
+   "name": "decoder.input_layers.0",
+   "rel": 0.5679348707199097,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 962,
+   "name": "decoder.input_layers.1",
+   "rel": 0.6295400857925415,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 963,
+   "name": "decoder.input_layers.3",
+   "rel": 0.5461530685424805,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 964,
+   "name": "decoder.input_layers.6",
+   "rel": 0.5577822327613831,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 965,
+   "name": "decoder.input_layers.8",
+   "rel": 0.4924129247665405,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 966,
+   "name": "decoder.layers.0.adaLN_modulation.1",
+   "rel": 0.013914527371525764,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 970,
+   "name": "decoder.layers.1.joint_pos_encoder.mlp.0",
+   "rel": 0.00546449888497591,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 971,
+   "name": "decoder.layers.1.joint_pos_encoder.mlp.2",
+   "rel": 0.020709101110696793,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 972,
+   "name": "decoder.layers.1",
+   "rel": 0.862977147102356,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 976,
+   "name": "decoder.layers.4",
+   "rel": 0.8351223468780518,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 980,
+   "name": "decoder.layers.6",
+   "rel": 0.8701232671737671,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 981,
+   "name": "decoder.layers.9.layers.0.0",
+   "rel": 1.3695930242538452,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 982,
+   "name": "decoder.layers.9.layers.1",
+   "rel": 1.1055655479431152,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 983,
+   "name": "decoder.layers.11.adaLN_modulation.1",
+   "rel": 0.01483955979347229,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 987,
+   "name": "decoder.layers.12.joint_pos_encoder.mlp.0",
+   "rel": 0.0058799199759960175,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 988,
+   "name": "decoder.layers.12.joint_pos_encoder.mlp.2",
+   "rel": 0.02020803466439247,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 989,
+   "name": "decoder.layers.12",
+   "rel": 0.7703437805175781,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 993,
+   "name": "decoder.layers.15",
+   "rel": 0.8712072372436523,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 997,
+   "name": "decoder.layers.17",
+   "rel": 0.9056843519210815,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 998,
+   "name": "decoder.layers.20.layers.0.0",
+   "rel": 1.4048835039138794,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 999,
+   "name": "decoder.layers.20.layers.1",
+   "rel": 1.2922320365905762,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1000,
+   "name": "decoder.layers.22.adaLN_modulation.1",
+   "rel": 0.014466624706983566,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 1004,
+   "name": "decoder.layers.23.joint_pos_encoder.mlp.0",
+   "rel": 0.004937657155096531,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1005,
+   "name": "decoder.layers.23.joint_pos_encoder.mlp.2",
+   "rel": 0.01772978901863098,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1006,
+   "name": "decoder.layers.23",
+   "rel": 0.854794979095459,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1010,
+   "name": "decoder.layers.26",
+   "rel": 0.9336204528808594,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1014,
+   "name": "decoder.layers.28",
+   "rel": 0.96463543176651,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1015,
+   "name": "decoder.layers.31.layers.0.0",
+   "rel": 1.2164602279663086,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 1016,
+   "name": "decoder.layers.31.layers.1",
+   "rel": 1.1415596008300781,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1017,
+   "name": "decoder.layers.33.adaLN_modulation.1",
+   "rel": 0.018802061676979065,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 1021,
+   "name": "decoder.layers.34.joint_pos_encoder.mlp.0",
+   "rel": 0.008341806940734386,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1022,
+   "name": "decoder.layers.34.joint_pos_encoder.mlp.2",
+   "rel": 0.014353426173329353,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1023,
+   "name": "decoder.layers.34",
+   "rel": 0.9369477033615112,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1027,
+   "name": "decoder.layers.37",
+   "rel": 0.938689112663269,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1031,
+   "name": "decoder.layers.39",
+   "rel": 0.9324974417686462,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1032,
+   "name": "decoder.layers.42.layers.0.0",
+   "rel": 1.1749430894851685,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 1033,
+   "name": "decoder.layers.42.layers.1",
+   "rel": 1.0874994993209839,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1034,
+   "name": "decoder.layers.44.adaLN_modulation.1",
+   "rel": 0.014753144234418869,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 1038,
+   "name": "decoder.layers.45.joint_pos_encoder.mlp.0",
+   "rel": 0.006840602029114962,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1039,
+   "name": "decoder.layers.45.joint_pos_encoder.mlp.2",
+   "rel": 0.017484325915575027,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1040,
+   "name": "decoder.layers.45",
+   "rel": 0.9302407503128052,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1044,
+   "name": "decoder.layers.48",
+   "rel": 0.9832017421722412,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1048,
+   "name": "decoder.layers.50",
+   "rel": 0.9759957790374756,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1049,
+   "name": "decoder.layers.53.layers.0.0",
+   "rel": 1.1098705530166626,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 1050,
+   "name": "decoder.layers.53.layers.1",
+   "rel": 1.0571856498718262,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1051,
+   "name": "decoder.layers.55.adaLN_modulation.1",
+   "rel": 0.012714948505163193,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 1055,
+   "name": "decoder.layers.56.joint_pos_encoder.mlp.0",
+   "rel": 0.010142503306269646,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1056,
+   "name": "decoder.layers.56.joint_pos_encoder.mlp.2",
+   "rel": 0.017104757949709892,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1057,
+   "name": "decoder.layers.56",
+   "rel": 1.010384440422058,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1061,
+   "name": "decoder.layers.59",
+   "rel": 0.9707517623901367,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1065,
+   "name": "decoder.layers.61",
+   "rel": 0.9627424478530884,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1066,
+   "name": "decoder.layers.64.layers.0.0",
+   "rel": 1.0599285364151,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 1067,
+   "name": "decoder.layers.64.layers.1",
+   "rel": 0.9744817614555359,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1068,
+   "name": "decoder.head.convs.0",
+   "rel": 0.9478170871734619,
+   "shape": [
+    14,
+    128,
+    32
+   ]
+  },
+  {
+   "i": 1069,
+   "name": "decoder.head.convs.1",
+   "rel": 1.2326561212539673,
+   "shape": [
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 1070,
+   "name": "decoder.head.output_layers.1",
+   "rel": 1.2074120044708252,
+   "shape": [
+    1,
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 1071,
+   "name": "decoder.head.output_layers.3",
+   "rel": 1.1010798215866089,
+   "shape": [
+    1,
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 1072,
+   "name": "decoder.head.output_layers.4",
+   "rel": 1.5895317792892456,
+   "shape": [
+    1,
+    14,
+    64,
+    8
+   ]
+  },
+  {
+   "i": 1073,
+   "name": "decoder.t_embed.mlp.0",
+   "rel": 0.006278750486671925,
+   "shape": [
+    1,
+    256
+   ]
+  },
+  {
+   "i": 1074,
+   "name": "decoder.t_embed.mlp.2",
+   "rel": 0.012776713818311691,
+   "shape": [
+    1,
+    256
+   ]
+  },
+  {
+   "i": 1075,
+   "name": "decoder.input_layers.0",
+   "rel": 0.6014379262924194,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1076,
+   "name": "decoder.input_layers.1",
+   "rel": 1.0048532485961914,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1077,
+   "name": "decoder.input_layers.3",
+   "rel": 0.9880760312080383,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1078,
+   "name": "decoder.input_layers.6",
+   "rel": 1.6253827810287476,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1079,
+   "name": "decoder.input_layers.8",
+   "rel": 1.6782102584838867,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1080,
+   "name": "decoder.layers.0.adaLN_modulation.1",
+   "rel": 0.016692686825990677,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 1084,
+   "name": "decoder.layers.1.joint_pos_encoder.mlp.0",
+   "rel": 0.00546449888497591,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1085,
+   "name": "decoder.layers.1.joint_pos_encoder.mlp.2",
+   "rel": 0.020709101110696793,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1086,
+   "name": "decoder.layers.1",
+   "rel": 1.0269206762313843,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1090,
+   "name": "decoder.layers.4",
+   "rel": 1.0688416957855225,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1094,
+   "name": "decoder.layers.6",
+   "rel": 1.0538491010665894,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1095,
+   "name": "decoder.layers.9.layers.0.0",
+   "rel": 1.6096481084823608,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 1096,
+   "name": "decoder.layers.9.layers.1",
+   "rel": 1.6002370119094849,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1097,
+   "name": "decoder.layers.11.adaLN_modulation.1",
+   "rel": 0.017747776582837105,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 1101,
+   "name": "decoder.layers.12.joint_pos_encoder.mlp.0",
+   "rel": 0.0058799199759960175,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1102,
+   "name": "decoder.layers.12.joint_pos_encoder.mlp.2",
+   "rel": 0.02020803466439247,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1103,
+   "name": "decoder.layers.12",
+   "rel": 0.9724456667900085,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1107,
+   "name": "decoder.layers.15",
+   "rel": 1.10720694065094,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1111,
+   "name": "decoder.layers.17",
+   "rel": 1.0916748046875,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1112,
+   "name": "decoder.layers.20.layers.0.0",
+   "rel": 1.3469611406326294,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 1113,
+   "name": "decoder.layers.20.layers.1",
+   "rel": 1.3772478103637695,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1114,
+   "name": "decoder.layers.22.adaLN_modulation.1",
+   "rel": 0.016886774450540543,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 1118,
+   "name": "decoder.layers.23.joint_pos_encoder.mlp.0",
+   "rel": 0.004937657155096531,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1119,
+   "name": "decoder.layers.23.joint_pos_encoder.mlp.2",
+   "rel": 0.01772978901863098,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1120,
+   "name": "decoder.layers.23",
+   "rel": 0.9637374877929688,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1124,
+   "name": "decoder.layers.26",
+   "rel": 1.0090992450714111,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1128,
+   "name": "decoder.layers.28",
+   "rel": 1.0305166244506836,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1129,
+   "name": "decoder.layers.31.layers.0.0",
+   "rel": 1.2828059196472168,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 1130,
+   "name": "decoder.layers.31.layers.1",
+   "rel": 1.2028099298477173,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1131,
+   "name": "decoder.layers.33.adaLN_modulation.1",
+   "rel": 0.019832544028759003,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 1135,
+   "name": "decoder.layers.34.joint_pos_encoder.mlp.0",
+   "rel": 0.008341806940734386,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1136,
+   "name": "decoder.layers.34.joint_pos_encoder.mlp.2",
+   "rel": 0.014353426173329353,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1137,
+   "name": "decoder.layers.34",
+   "rel": 0.8997117280960083,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1141,
+   "name": "decoder.layers.37",
+   "rel": 0.9307177066802979,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1145,
+   "name": "decoder.layers.39",
+   "rel": 0.9228048324584961,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1146,
+   "name": "decoder.layers.42.layers.0.0",
+   "rel": 1.150801658630371,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 1147,
+   "name": "decoder.layers.42.layers.1",
+   "rel": 1.1052831411361694,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1148,
+   "name": "decoder.layers.44.adaLN_modulation.1",
+   "rel": 0.015546370297670364,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 1152,
+   "name": "decoder.layers.45.joint_pos_encoder.mlp.0",
+   "rel": 0.006840602029114962,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1153,
+   "name": "decoder.layers.45.joint_pos_encoder.mlp.2",
+   "rel": 0.017484325915575027,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1154,
+   "name": "decoder.layers.45",
+   "rel": 0.9158176183700562,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1158,
+   "name": "decoder.layers.48",
+   "rel": 0.9742796421051025,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1162,
+   "name": "decoder.layers.50",
+   "rel": 0.9676605463027954,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1163,
+   "name": "decoder.layers.53.layers.0.0",
+   "rel": 1.1081417798995972,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 1164,
+   "name": "decoder.layers.53.layers.1",
+   "rel": 1.0410465002059937,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1165,
+   "name": "decoder.layers.55.adaLN_modulation.1",
+   "rel": 0.01357017457485199,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 1169,
+   "name": "decoder.layers.56.joint_pos_encoder.mlp.0",
+   "rel": 0.010142503306269646,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1170,
+   "name": "decoder.layers.56.joint_pos_encoder.mlp.2",
+   "rel": 0.017104757949709892,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1171,
+   "name": "decoder.layers.56",
+   "rel": 1.0076754093170166,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1175,
+   "name": "decoder.layers.59",
+   "rel": 0.9728218913078308,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1179,
+   "name": "decoder.layers.61",
+   "rel": 0.9644823670387268,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1180,
+   "name": "decoder.layers.64.layers.0.0",
+   "rel": 1.1247577667236328,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 1181,
+   "name": "decoder.layers.64.layers.1",
+   "rel": 0.9308798909187317,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1182,
+   "name": "decoder.head.convs.0",
+   "rel": 0.9152365326881409,
+   "shape": [
+    14,
+    128,
+    32
+   ]
+  },
+  {
+   "i": 1183,
+   "name": "decoder.head.convs.1",
+   "rel": 1.224648118019104,
+   "shape": [
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 1184,
+   "name": "decoder.head.output_layers.1",
+   "rel": 1.198874831199646,
+   "shape": [
+    1,
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 1185,
+   "name": "decoder.head.output_layers.3",
+   "rel": 1.085564374923706,
+   "shape": [
+    1,
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 1186,
+   "name": "decoder.head.output_layers.4",
+   "rel": 1.537566065788269,
+   "shape": [
+    1,
+    14,
+    64,
+    8
+   ]
+  },
+  {
+   "i": 1187,
+   "name": "decoder.t_embed.mlp.0",
+   "rel": 0.006311939097940922,
+   "shape": [
+    1,
+    256
+   ]
+  },
+  {
+   "i": 1188,
+   "name": "decoder.t_embed.mlp.2",
+   "rel": 0.014478766359388828,
+   "shape": [
+    1,
+    256
+   ]
+  },
+  {
+   "i": 1189,
+   "name": "decoder.input_layers.0",
+   "rel": 0.648626983165741,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1190,
+   "name": "decoder.input_layers.1",
+   "rel": 1.0891966819763184,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1191,
+   "name": "decoder.input_layers.3",
+   "rel": 1.0251491069793701,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1192,
+   "name": "decoder.input_layers.6",
+   "rel": 1.60536527633667,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1193,
+   "name": "decoder.input_layers.8",
+   "rel": 1.6403028964996338,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1194,
+   "name": "decoder.layers.0.adaLN_modulation.1",
+   "rel": 0.016301702708005905,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 1198,
+   "name": "decoder.layers.1.joint_pos_encoder.mlp.0",
+   "rel": 0.00546449888497591,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1199,
+   "name": "decoder.layers.1.joint_pos_encoder.mlp.2",
+   "rel": 0.020709101110696793,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1200,
+   "name": "decoder.layers.1",
+   "rel": 1.0597409009933472,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1204,
+   "name": "decoder.layers.4",
+   "rel": 1.1020346879959106,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1208,
+   "name": "decoder.layers.6",
+   "rel": 1.0859569311141968,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1209,
+   "name": "decoder.layers.9.layers.0.0",
+   "rel": 1.7367790937423706,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 1210,
+   "name": "decoder.layers.9.layers.1",
+   "rel": 1.6950905323028564,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1211,
+   "name": "decoder.layers.11.adaLN_modulation.1",
+   "rel": 0.015971671789884567,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 1215,
+   "name": "decoder.layers.12.joint_pos_encoder.mlp.0",
+   "rel": 0.0058799199759960175,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1216,
+   "name": "decoder.layers.12.joint_pos_encoder.mlp.2",
+   "rel": 0.02020803466439247,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1217,
+   "name": "decoder.layers.12",
+   "rel": 1.0445877313613892,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1221,
+   "name": "decoder.layers.15",
+   "rel": 1.172927975654602,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1225,
+   "name": "decoder.layers.17",
+   "rel": 1.151893138885498,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1226,
+   "name": "decoder.layers.20.layers.0.0",
+   "rel": 1.431026816368103,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 1227,
+   "name": "decoder.layers.20.layers.1",
+   "rel": 1.4678025245666504,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1228,
+   "name": "decoder.layers.22.adaLN_modulation.1",
+   "rel": 0.016218062490224838,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 1232,
+   "name": "decoder.layers.23.joint_pos_encoder.mlp.0",
+   "rel": 0.004937657155096531,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1233,
+   "name": "decoder.layers.23.joint_pos_encoder.mlp.2",
+   "rel": 0.01772978901863098,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1234,
+   "name": "decoder.layers.23",
+   "rel": 0.9874017238616943,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1238,
+   "name": "decoder.layers.26",
+   "rel": 1.0387654304504395,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1242,
+   "name": "decoder.layers.28",
+   "rel": 1.050016164779663,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1243,
+   "name": "decoder.layers.31.layers.0.0",
+   "rel": 1.3996974229812622,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 1244,
+   "name": "decoder.layers.31.layers.1",
+   "rel": 1.3956009149551392,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1245,
+   "name": "decoder.layers.33.adaLN_modulation.1",
+   "rel": 0.01929324120283127,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 1249,
+   "name": "decoder.layers.34.joint_pos_encoder.mlp.0",
+   "rel": 0.008341806940734386,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1250,
+   "name": "decoder.layers.34.joint_pos_encoder.mlp.2",
+   "rel": 0.014353426173329353,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1251,
+   "name": "decoder.layers.34",
+   "rel": 0.93429034948349,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1255,
+   "name": "decoder.layers.37",
+   "rel": 0.9660808444023132,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1259,
+   "name": "decoder.layers.39",
+   "rel": 0.9569331407546997,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1260,
+   "name": "decoder.layers.42.layers.0.0",
+   "rel": 1.2217715978622437,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 1261,
+   "name": "decoder.layers.42.layers.1",
+   "rel": 1.1996268033981323,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1262,
+   "name": "decoder.layers.44.adaLN_modulation.1",
+   "rel": 0.015326617285609245,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 1266,
+   "name": "decoder.layers.45.joint_pos_encoder.mlp.0",
+   "rel": 0.006840602029114962,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1267,
+   "name": "decoder.layers.45.joint_pos_encoder.mlp.2",
+   "rel": 0.017484325915575027,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1268,
+   "name": "decoder.layers.45",
+   "rel": 0.92689049243927,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1272,
+   "name": "decoder.layers.48",
+   "rel": 0.9867755174636841,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1276,
+   "name": "decoder.layers.50",
+   "rel": 0.97861248254776,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1277,
+   "name": "decoder.layers.53.layers.0.0",
+   "rel": 1.140414834022522,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 1278,
+   "name": "decoder.layers.53.layers.1",
+   "rel": 1.056492567062378,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1279,
+   "name": "decoder.layers.55.adaLN_modulation.1",
+   "rel": 0.013064317405223846,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 1283,
+   "name": "decoder.layers.56.joint_pos_encoder.mlp.0",
+   "rel": 0.010142503306269646,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1284,
+   "name": "decoder.layers.56.joint_pos_encoder.mlp.2",
+   "rel": 0.017104757949709892,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1285,
+   "name": "decoder.layers.56",
+   "rel": 1.008076786994934,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1289,
+   "name": "decoder.layers.59",
+   "rel": 0.9617758989334106,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1293,
+   "name": "decoder.layers.61",
+   "rel": 0.9523656964302063,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1294,
+   "name": "decoder.layers.64.layers.0.0",
+   "rel": 1.1158902645111084,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 1295,
+   "name": "decoder.layers.64.layers.1",
+   "rel": 0.9290875196456909,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1296,
+   "name": "decoder.head.convs.0",
+   "rel": 0.9211114048957825,
+   "shape": [
+    14,
+    128,
+    32
+   ]
+  },
+  {
+   "i": 1297,
+   "name": "decoder.head.convs.1",
+   "rel": 1.223896861076355,
+   "shape": [
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 1298,
+   "name": "decoder.head.output_layers.1",
+   "rel": 1.198173999786377,
+   "shape": [
+    1,
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 1299,
+   "name": "decoder.head.output_layers.3",
+   "rel": 1.0851454734802246,
+   "shape": [
+    1,
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 1300,
+   "name": "decoder.head.output_layers.4",
+   "rel": 1.5440449714660645,
+   "shape": [
+    1,
+    14,
+    64,
+    8
+   ]
+  },
+  {
+   "i": 1301,
+   "name": "decoder.t_embed.mlp.0",
+   "rel": 0.005828826688230038,
+   "shape": [
+    1,
+    256
+   ]
+  },
+  {
+   "i": 1302,
+   "name": "decoder.t_embed.mlp.2",
+   "rel": 0.01670636422932148,
+   "shape": [
+    1,
+    256
+   ]
+  },
+  {
+   "i": 1303,
+   "name": "decoder.input_layers.0",
+   "rel": 0.6331186294555664,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1304,
+   "name": "decoder.input_layers.1",
+   "rel": 0.9999905824661255,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1305,
+   "name": "decoder.input_layers.3",
+   "rel": 0.9858744740486145,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1306,
+   "name": "decoder.input_layers.6",
+   "rel": 1.6462318897247314,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1307,
+   "name": "decoder.input_layers.8",
+   "rel": 1.699694037437439,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1308,
+   "name": "decoder.layers.0.adaLN_modulation.1",
+   "rel": 0.0160268172621727,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 1312,
+   "name": "decoder.layers.1.joint_pos_encoder.mlp.0",
+   "rel": 0.00546449888497591,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1313,
+   "name": "decoder.layers.1.joint_pos_encoder.mlp.2",
+   "rel": 0.020709101110696793,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1314,
+   "name": "decoder.layers.1",
+   "rel": 1.069059133529663,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1318,
+   "name": "decoder.layers.4",
+   "rel": 1.0775063037872314,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1322,
+   "name": "decoder.layers.6",
+   "rel": 1.0657780170440674,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1323,
+   "name": "decoder.layers.9.layers.0.0",
+   "rel": 1.5858805179595947,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 1324,
+   "name": "decoder.layers.9.layers.1",
+   "rel": 1.5418064594268799,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1325,
+   "name": "decoder.layers.11.adaLN_modulation.1",
+   "rel": 0.015399033203721046,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 1329,
+   "name": "decoder.layers.12.joint_pos_encoder.mlp.0",
+   "rel": 0.0058799199759960175,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1330,
+   "name": "decoder.layers.12.joint_pos_encoder.mlp.2",
+   "rel": 0.02020803466439247,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1331,
+   "name": "decoder.layers.12",
+   "rel": 1.0231677293777466,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1335,
+   "name": "decoder.layers.15",
+   "rel": 1.1356605291366577,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1339,
+   "name": "decoder.layers.17",
+   "rel": 1.124612808227539,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1340,
+   "name": "decoder.layers.20.layers.0.0",
+   "rel": 1.4261409044265747,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 1341,
+   "name": "decoder.layers.20.layers.1",
+   "rel": 1.4087072610855103,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1342,
+   "name": "decoder.layers.22.adaLN_modulation.1",
+   "rel": 0.014542016200721264,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 1346,
+   "name": "decoder.layers.23.joint_pos_encoder.mlp.0",
+   "rel": 0.004937657155096531,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1347,
+   "name": "decoder.layers.23.joint_pos_encoder.mlp.2",
+   "rel": 0.01772978901863098,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1348,
+   "name": "decoder.layers.23",
+   "rel": 0.9462631940841675,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1352,
+   "name": "decoder.layers.26",
+   "rel": 1.0218032598495483,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1356,
+   "name": "decoder.layers.28",
+   "rel": 1.0280331373214722,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1357,
+   "name": "decoder.layers.31.layers.0.0",
+   "rel": 1.5063000917434692,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 1358,
+   "name": "decoder.layers.31.layers.1",
+   "rel": 1.6108886003494263,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1359,
+   "name": "decoder.layers.33.adaLN_modulation.1",
+   "rel": 0.018605586141347885,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 1363,
+   "name": "decoder.layers.34.joint_pos_encoder.mlp.0",
+   "rel": 0.008341806940734386,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1364,
+   "name": "decoder.layers.34.joint_pos_encoder.mlp.2",
+   "rel": 0.014353426173329353,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1365,
+   "name": "decoder.layers.34",
+   "rel": 0.9454383254051208,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1369,
+   "name": "decoder.layers.37",
+   "rel": 0.9908463358879089,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1373,
+   "name": "decoder.layers.39",
+   "rel": 0.9790733456611633,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1374,
+   "name": "decoder.layers.42.layers.0.0",
+   "rel": 1.3029245138168335,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 1375,
+   "name": "decoder.layers.42.layers.1",
+   "rel": 1.301176905632019,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1376,
+   "name": "decoder.layers.44.adaLN_modulation.1",
+   "rel": 0.014003362506628036,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 1380,
+   "name": "decoder.layers.45.joint_pos_encoder.mlp.0",
+   "rel": 0.006840602029114962,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1381,
+   "name": "decoder.layers.45.joint_pos_encoder.mlp.2",
+   "rel": 0.017484325915575027,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1382,
+   "name": "decoder.layers.45",
+   "rel": 0.9270304441452026,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1386,
+   "name": "decoder.layers.48",
+   "rel": 0.9915107488632202,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1390,
+   "name": "decoder.layers.50",
+   "rel": 0.9824140667915344,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1391,
+   "name": "decoder.layers.53.layers.0.0",
+   "rel": 1.132627010345459,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 1392,
+   "name": "decoder.layers.53.layers.1",
+   "rel": 1.0556108951568604,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1393,
+   "name": "decoder.layers.55.adaLN_modulation.1",
+   "rel": 0.011489197611808777,
+   "shape": [
+    1,
+    1536
+   ]
+  },
+  {
+   "i": 1397,
+   "name": "decoder.layers.56.joint_pos_encoder.mlp.0",
+   "rel": 0.010142503306269646,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1398,
+   "name": "decoder.layers.56.joint_pos_encoder.mlp.2",
+   "rel": 0.017104757949709892,
+   "shape": [
+    196,
+    256
+   ]
+  },
+  {
+   "i": 1399,
+   "name": "decoder.layers.56",
+   "rel": 1.0123295783996582,
+   "shape": [
+    1,
+    14,
+    16,
+    256
+   ]
+  },
+  {
+   "i": 1403,
+   "name": "decoder.layers.59",
+   "rel": 0.9542967081069946,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1407,
+   "name": "decoder.layers.61",
+   "rel": 0.9442276954650879,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1408,
+   "name": "decoder.layers.64.layers.0.0",
+   "rel": 1.093652606010437,
+   "shape": [
+    1,
+    224,
+    2048
+   ]
+  },
+  {
+   "i": 1409,
+   "name": "decoder.layers.64.layers.1",
+   "rel": 0.9288247227668762,
+   "shape": [
+    1,
+    224,
+    256
+   ]
+  },
+  {
+   "i": 1410,
+   "name": "decoder.head.convs.0",
+   "rel": 0.9114673137664795,
+   "shape": [
+    14,
+    128,
+    32
+   ]
+  },
+  {
+   "i": 1411,
+   "name": "decoder.head.convs.1",
+   "rel": 1.2214510440826416,
+   "shape": [
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 1412,
+   "name": "decoder.head.output_layers.1",
+   "rel": 1.198312759399414,
+   "shape": [
+    1,
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 1413,
+   "name": "decoder.head.output_layers.3",
+   "rel": 1.0836403369903564,
+   "shape": [
+    1,
+    14,
+    64,
+    64
+   ]
+  },
+  {
+   "i": 1414,
+   "name": "decoder.head.output_layers.4",
+   "rel": 1.5924440622329712,
+   "shape": [
+    1,
+    14,
+    64,
+    8
+   ]
+  }
+ ],
+ "jpos_mae": 0.33276957273483276,
+ "per_joint_mae": [
+  0.09590812027454376,
+  0.7058262825012207,
+  0.09635798633098602,
+  0.09531132876873016,
+  0.16910871863365173,
+  0.09569498896598816,
+  0.45190566778182983,
+  0.6429125070571899,
+  0.7642899751663208,
+  0.2531058192253113,
+  0.8718553185462952,
+  0.09705513715744019,
+  0.07559116929769516,
+  0.24385081231594086
+ ],
+ "n_big": 605,
+ "first_big": [
+  {
+   "i": 0,
+   "name": "backbone.patch_embed.projection",
+   "rel": 0.16582918167114258,
+   "shape": [
+    4,
+    96,
+    64,
+    80
+   ]
+  },
+  {
+   "i": 2,
+   "name": "backbone.stages.0.blocks.0.attn.w_msa",
+   "rel": 0.3235062062740326,
+   "shape": [
+    480,
+    49,
+    96
+   ]
+  },
+  {
+   "i": 3,
+   "name": "backbone.stages.0.blocks.0.ffn.layers.0.0",
+   "rel": 0.5713120102882385,
+   "shape": [
+    4,
+    5120,
+    384
+   ]
+  },
+  {
+   "i": 4,
+   "name": "backbone.stages.0.blocks.0.ffn.layers.1",
+   "rel": 0.9784173369407654,
+   "shape": [
+    4,
+    5120,
+    96
+   ]
+  },
+  {
+   "i": 6,
+   "name": "backbone.stages.0.blocks.1.attn.w_msa",
+   "rel": 1.69917631149292,
+   "shape": [
+    480,
+    49,
+    96
+   ]
+  },
+  {
+   "i": 7,
+   "name": "backbone.stages.0.blocks.1.ffn.layers.0.0",
+   "rel": 1.0679479837417603,
+   "shape": [
+    4,
+    5120,
+    384
+   ]
+  },
+  {
+   "i": 8,
+   "name": "backbone.stages.0.blocks.1.ffn.layers.1",
+   "rel": 1.3171532154083252,
+   "shape": [
+    4,
+    5120,
+    96
+   ]
+  },
+  {
+   "i": 9,
+   "name": "backbone.stages.0.downsample.reduction",
+   "rel": 1.4342211484909058,
+   "shape": [
+    4,
+    1280,
+    192
+   ]
+  },
+  {
+   "i": 11,
+   "name": "backbone.stages.1.blocks.0.attn.w_msa",
+   "rel": 1.859061360359192,
+   "shape": [
+    120,
+    49,
+    192
+   ]
+  },
+  {
+   "i": 12,
+   "name": "backbone.stages.1.blocks.0.ffn.layers.0.0",
+   "rel": 0.8648146986961365,
+   "shape": [
+    4,
+    1280,
+    768
+   ]
+  },
+  {
+   "i": 13,
+   "name": "backbone.stages.1.blocks.0.ffn.layers.1",
+   "rel": 1.0003154277801514,
+   "shape": [
+    4,
+    1280,
+    192
+   ]
+  },
+  {
+   "i": 15,
+   "name": "backbone.stages.1.blocks.1.attn.w_msa",
+   "rel": 1.9975566864013672,
+   "shape": [
+    120,
+    49,
+    192
+   ]
+  },
+  {
+   "i": 16,
+   "name": "backbone.stages.1.blocks.1.ffn.layers.0.0",
+   "rel": 0.8252259492874146,
+   "shape": [
+    4,
+    1280,
+    768
+   ]
+  },
+  {
+   "i": 17,
+   "name": "backbone.stages.1.blocks.1.ffn.layers.1",
+   "rel": 1.3028600215911865,
+   "shape": [
+    4,
+    1280,
+    192
+   ]
+  },
+  {
+   "i": 18,
+   "name": "backbone.stages.1.downsample.reduction",
+   "rel": 1.011795163154602,
+   "shape": [
+    4,
+    320,
+    384
+   ]
+  },
+  {
+   "i": 20,
+   "name": "backbone.stages.2.blocks.0.attn.w_msa",
+   "rel": 0.8840129375457764,
+   "shape": [
+    36,
+    49,
+    384
+   ]
+  },
+  {
+   "i": 21,
+   "name": "backbone.stages.2.blocks.0.ffn.layers.0.0",
+   "rel": 0.6258633136749268,
+   "shape": [
+    4,
+    320,
+    1536
+   ]
+  },
+  {
+   "i": 22,
+   "name": "backbone.stages.2.blocks.0.ffn.layers.1",
+   "rel": 1.2516356706619263,
+   "shape": [
+    4,
+    320,
+    384
+   ]
+  },
+  {
+   "i": 24,
+   "name": "backbone.stages.2.blocks.1.attn.w_msa",
+   "rel": 1.3258687257766724,
+   "shape": [
+    36,
+    49,
+    384
+   ]
+  },
+  {
+   "i": 25,
+   "name": "backbone.stages.2.blocks.1.ffn.layers.0.0",
+   "rel": 0.5906239748001099,
+   "shape": [
+    4,
+    320,
+    1536
+   ]
+  },
+  {
+   "i": 26,
+   "name": "backbone.stages.2.blocks.1.ffn.layers.1",
+   "rel": 1.1482222080230713,
+   "shape": [
+    4,
+    320,
+    384
+   ]
+  },
+  {
+   "i": 28,
+   "name": "backbone.stages.2.blocks.2.attn.w_msa",
+   "rel": 0.9454213380813599,
+   "shape": [
+    36,
+    49,
+    384
+   ]
+  },
+  {
+   "i": 29,
+   "name": "backbone.stages.2.blocks.2.ffn.layers.0.0",
+   "rel": 0.5439717769622803,
+   "shape": [
+    4,
+    320,
+    1536
+   ]
+  },
+  {
+   "i": 30,
+   "name": "backbone.stages.2.blocks.2.ffn.layers.1",
+   "rel": 1.0132840871810913,
+   "shape": [
+    4,
+    320,
+    384
+   ]
+  },
+  {
+   "i": 32,
+   "name": "backbone.stages.2.blocks.3.attn.w_msa",
+   "rel": 0.8395953178405762,
+   "shape": [
+    36,
+    49,
+    384
+   ]
+  },
+  {
+   "i": 33,
+   "name": "backbone.stages.2.blocks.3.ffn.layers.0.0",
+   "rel": 0.5027797222137451,
+   "shape": [
+    4,
+    320,
+    1536
+   ]
+  },
+  {
+   "i": 34,
+   "name": "backbone.stages.2.blocks.3.ffn.layers.1",
+   "rel": 0.8965098261833191,
+   "shape": [
+    4,
+    320,
+    384
+   ]
+  },
+  {
+   "i": 36,
+   "name": "backbone.stages.2.blocks.4.attn.w_msa",
+   "rel": 0.8053579330444336,
+   "shape": [
+    36,
+    49,
+    384
+   ]
+  },
+  {
+   "i": 37,
+   "name": "backbone.stages.2.blocks.4.ffn.layers.0.0",
+   "rel": 0.4949871897697449,
+   "shape": [
+    4,
+    320,
+    1536
+   ]
+  },
+  {
+   "i": 38,
+   "name": "backbone.stages.2.blocks.4.ffn.layers.1",
+   "rel": 0.9038651585578918,
+   "shape": [
+    4,
+    320,
+    384
+   ]
+  },
+  {
+   "i": 40,
+   "name": "backbone.stages.2.blocks.5.attn.w_msa",
+   "rel": 0.7909666895866394,
+   "shape": [
+    36,
+    49,
+    384
+   ]
+  },
+  {
+   "i": 41,
+   "name": "backbone.stages.2.blocks.5.ffn.layers.0.0",
+   "rel": 0.457424521446228,
+   "shape": [
+    4,
+    320,
+    1536
+   ]
+  },
+  {
+   "i": 42,
+   "name": "backbone.stages.2.blocks.5.ffn.layers.1",
+   "rel": 0.9069101214408875,
+   "shape": [
+    4,
+    320,
+    384
+   ]
+  },
+  {
+   "i": 43,
+   "name": "backbone.stages.2.downsample.reduction",
+   "rel": 0.7050769329071045,
+   "shape": [
+    4,
+    80,
+    768
+   ]
+  },
+  {
+   "i": 45,
+   "name": "backbone.stages.3.blocks.0.attn.w_msa",
+   "rel": 0.7898858785629272,
+   "shape": [
+    16,
+    49,
+    768
+   ]
+  },
+  {
+   "i": 46,
+   "name": "backbone.stages.3.blocks.0.ffn.layers.0.0",
+   "rel": 0.42058265209198,
+   "shape": [
+    4,
+    80,
+    3072
+   ]
+  },
+  {
+   "i": 47,
+   "name": "backbone.stages.3.blocks.0.ffn.layers.1",
+   "rel": 0.7904491424560547,
+   "shape": [
+    4,
+    80,
+    768
+   ]
+  },
+  {
+   "i": 49,
+   "name": "backbone.stages.3.blocks.1.attn.w_msa",
+   "rel": 0.8630362153053284,
+   "shape": [
+    16,
+    49,
+    768
+   ]
+  },
+  {
+   "i": 50,
+   "name": "backbone.stages.3.blocks.1.ffn.layers.0.0",
+   "rel": 0.5628048181533813,
+   "shape": [
+    4,
+    80,
+    3072
+   ]
+  },
+  {
+   "i": 51,
+   "name": "backbone.stages.3.blocks.1.ffn.layers.1",
+   "rel": 0.8647961616516113,
+   "shape": [
+    4,
+    80,
+    768
+   ]
+  },
+  {
+   "i": 52,
+   "name": "neck.convs.0.0",
+   "rel": 0.9905291199684143,
+   "shape": [
+    4,
+    256,
+    32,
+    40
+   ]
+  },
+  {
+   "i": 53,
+   "name": "neck.convs.1.0",
+   "rel": 0.7881200313568115,
+   "shape": [
+    4,
+    256,
+    16,
+    20
+   ]
+  },
+  {
+   "i": 54,
+   "name": "neck.convs.2.0",
+   "rel": 0.9719891548156738,
+   "shape": [
+    4,
+    256,
+    8,
+    10
+   ]
+  },
+  {
+   "i": 55,
+   "name": "backbone_3d.patch_embed.projection",
+   "rel": 0.20190685987472534,
+   "shape": [
+    4,
+    16,
+    64,
+    80
+   ]
+  },
+  {
+   "i": 57,
+   "name": "backbone_3d.stages.0.blocks.0.attn.w_msa",
+   "rel": 0.3507467806339264,
+   "shape": [
+    480,
+    49,
+    16
+   ]
+  },
+  {
+   "i": 58,
+   "name": "backbone_3d.stages.0.blocks.0.ffn.layers.0.0",
+   "rel": 0.07485351711511612,
+   "shape": [
+    4,
+    5120,
+    64
+   ]
+  },
+  {
+   "i": 59,
+   "name": "backbone_3d.stages.0.blocks.0.ffn.layers.1",
+   "rel": 0.09806190431118011,
+   "shape": [
+    4,
+    5120,
+    16
+   ]
+  },
+  {
+   "i": 61,
+   "name": "backbone_3d.stages.0.blocks.1.attn.w_msa",
+   "rel": 0.2691488564014435,
+   "shape": [
+    480,
+    49,
+    16
+   ]
+  },
+  {
+   "i": 62,
+   "name": "backbone_3d.stages.0.blocks.1.ffn.layers.0.0",
+   "rel": 0.1155390739440918,
+   "shape": [
+    4,
+    5120,
+    64
+   ]
+  },
+  {
+   "i": 63,
+   "name": "backbone_3d.stages.0.blocks.1.ffn.layers.1",
+   "rel": 0.0761665478348732,
+   "shape": [
+    4,
+    5120,
+    16
+   ]
+  },
+  {
+   "i": 64,
+   "name": "backbone_3d.stages.0.downsample.reduction",
+   "rel": 0.10686538368463516,
+   "shape": [
+    4,
+    1280,
+    32
+   ]
+  },
+  {
+   "i": 66,
+   "name": "backbone_3d.stages.1.blocks.0.attn.w_msa",
+   "rel": 1.2904280424118042,
+   "shape": [
+    120,
+    49,
+    32
+   ]
+  },
+  {
+   "i": 67,
+   "name": "backbone_3d.stages.1.blocks.0.ffn.layers.0.0",
+   "rel": 0.2380513697862625,
+   "shape": [
+    4,
+    1280,
+    128
+   ]
+  },
+  {
+   "i": 68,
+   "name": "backbone_3d.stages.1.blocks.0.ffn.layers.1",
+   "rel": 0.27196869254112244,
+   "shape": [
+    4,
+    1280,
+    32
+   ]
+  },
+  {
+   "i": 70,
+   "name": "backbone_3d.stages.1.blocks.1.attn.w_msa",
+   "rel": 0.9369922280311584,
+   "shape": [
+    120,
+    49,
+    32
+   ]
+  },
+  {
+   "i": 71,
+   "name": "backbone_3d.stages.1.blocks.1.ffn.layers.0.0",
+   "rel": 0.4116853177547455,
+   "shape": [
+    4,
+    1280,
+    128
+   ]
+  },
+  {
+   "i": 72,
+   "name": "backbone_3d.stages.1.blocks.1.ffn.layers.1",
+   "rel": 0.8131911754608154,
+   "shape": [
+    4,
+    1280,
+    32
+   ]
+  },
+  {
+   "i": 73,
+   "name": "backbone_3d.stages.1.downsample.reduction",
+   "rel": 0.300334095954895,
+   "shape": [
+    4,
+    320,
+    64
+   ]
+  },
+  {
+   "i": 75,
+   "name": "backbone_3d.stages.2.blocks.0.attn.w_msa",
+   "rel": 0.6378991603851318,
+   "shape": [
+    36,
+    49,
+    64
+   ]
+  },
+  {
+   "i": 76,
+   "name": "backbone_3d.stages.2.blocks.0.ffn.layers.0.0",
+   "rel": 0.33675041794776917,
+   "shape": [
+    4,
+    320,
+    256
+   ]
+  }
+ ]
+}

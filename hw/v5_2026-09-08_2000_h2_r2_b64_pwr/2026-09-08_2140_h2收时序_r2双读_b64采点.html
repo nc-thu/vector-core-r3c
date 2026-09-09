@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>H2 时序收口 + R2 双读引擎 + B8-64 采点 2026-09-08</title>
+<style>
+  body{font-family:"Microsoft YaHei",SimSun,serif;max-width:1000px;margin:24px auto;padding:0 16px;color:#111;background:#fff;line-height:1.75}
+  h1{font-size:22px;border-bottom:2px solid #000;padding-bottom:6px}
+  h2{font-size:18px;border-left:5px solid #000;padding-left:8px;margin-top:32px}
+  h3{font-size:15px;margin-top:22px}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14px}
+  th,td{border:1px solid #444;padding:5px 8px;text-align:left}
+  th{background:#eee}
+  .num{text-align:right;font-variant-numeric:tabular-nums}
+  .mono{font-family:Consolas,monospace;font-size:13px;background:#f4f4f4;padding:1px 4px}
+  .meta{color:#555;font-size:13px}
+  .box{border:1px dashed #888;padding:10px 14px;margin:12px 0;background:#fafafa}
+  .hint{color:#555;font-size:13px;margin:4px 0}
+  svg text{font-family:"Microsoft YaHei",SimSun,serif}
+</style>
+</head>
+<body>
+<h1>H2 时序收口（两条读出腿）+ R2 双读引擎 RTL + B8-64 采点：架构/硬件各更新一版</h1>
+<p class="meta">生成时刻：2026-09-08 22:08:53　|　hw v5 + arch v6 双版本轮　|　代码：hw/v5_2026-09-08_2000_h2_r2_b64_pwr/、arch/v6_2026-09-08_2000_h1anchor_r2_b64_final/</p>
+
+<div class="box">这一轮把上一版架构报告点名的四件事全部做完：① R2 双读引擎 RTL 落地（段级实测 −7.4%，并修正一个架构假设——不动调度器光复制引擎收益接近零）；② H2 收时序成功——eng48 重布线 WNS 从 −0.169ns 收到 <b>+0.009ns，303.215MHz 收敛</b>，位精确与拍数纪律全过，净代价 +208 LUT/+733 FF；③ B8-64 采点完毕并<b>裁决：定版 B8-48</b>（eng64 三条件两不过：WNS −0.696、功耗 10.7W；降频 250MHz 用反而比 48 列慢）；④ R5/COPY 清单归档（B8-48 定版下 R5 不进 H3）。</div>
+
+<h2>第零节　背景：接着上一轮的什么往下做</h2>
+<p>上一轮（2026-09-08 下午，hw v4 H1 门 + arch v5）把 B8 PE（一颗 DSP 一拍出 4 个 INT8 乘法的打包乘法单元）集成成了 16×48 物理列的 GEMM 引擎：768 颗 DSP，比部署基线 R3C-96 的 1536 颗少一半，帧时间模型 0.909 秒（预算 2.13 秒，余量 2.3 倍）。位精确验证全绿，但布线差了一步：303.2MHz 的目标时钟下 WNS = −0.169ns，约差 5%，两条最慢路径都出在读出侧。</p>
+<p>同时架构模型的账上写着：验证平台口径（TB，指仿真验证环境的理想内存）下读数据要 301M 拍，比计算还慢，是第一瓶颈。R2 双读引擎（CTX 和权重各配一台读引擎）能把读压到 184M 拍。所以这一轮四件事是一串的：先把时序收掉（H2），再把读侧的墙拆掉（R2），顺手采 B8-64 的点（128 逻辑列值不值得多花 256 颗 DSP），最后把下一步的清单（R5 写侧、COPY 消除）写清楚。</p>
+
+<h2>第一节　H2 时序收口：两条读出腿怎么切的（完成时刻 2026-09-08 20:33:45）</h2>
+<p>H1 布线报告把 −0.169ns 拆成两条腿，这一轮各给一个修法，都不改计算语义：</p>
+<table>
+<tr><th>路径（H1 布线报告）</th><th>问题</th><th>H2 修法</th><th>代价</th></tr>
+<tr><td>drain_row 扇出</td><td>一个 4 位寄存器一拍内驱动全部 96 个逻辑列的 16 选 1 快照选择器，放置/布线距离摆不平</td><td>改成 12 份<b>同值副本</b>寄存器（同一 D、同拍同值），每份只管 4 个物理列——切的是扇出，不是语义</td><td>12×4 触发器，约 48 FF</td></tr>
+<tr><td>requant 入口</td><td>累加快照 → 4 选 1 slot 选择 → 27×8 窄乘法挤在同一个 3.298ns 拍里</td><td>换 <span class="mono">rq_ms_x</span>：slot 选择的输出先寄存一拍（<span class="mono">x_sel_r</span>）再进乘法核心，选择和乘法分家</td><td>核心数据整体滞后 2 拍，用 FSM 相位前移一拍补回（见下）</td></tr>
+</table>
+<p>相位补偿是这次改动里最容易出错的地方，说清楚：requant 核心吃的列数据本来滞后快照 1 拍（H1 加的 <span class="mono">acc_rq_r</span>），<span class="mono">rq_ms_x</span> 再加 1 拍变 2 拍。补偿办法是让整个发射窗口提前一拍——发请求（rq_v）从 DALIGN 状态的 slot==3 提前到 slot==2，换行从 slot==2 提前到 slot==1，停发和走尾判定同样从 slot==3 提前到 slot==2。提前发射的那一拍正好被新加的寄存器吃掉，<b>requant 核心消费数据的窗口和 H1 版逐拍重合</b>，每次走读仍是精确 64 拍、16 行×4 列不重不漏。</p>
+<p>有一个例外：如果进入 DALIGN 那一拍的相位正好落在 slot==3，等 slot==2 要多绕几拍，这一轮走读就多 1~4 拍。它只影响"读出比喂数慢"的行组（读出不是瓶颈时被 max 掩掉），实测影响见下表。</p>
+
+<h3>验证结果（iverilog 行为模型口径，全绿）</h3>
+<table>
+<tr><th>测试</th><th>内容</th><th>结果</th><th>完成时刻</th></tr>
+<tr><td>tb_gemm PCOLS=4</td><td>6 个描述符（小 k / 尾巴 / j0 偏移 / 转置 / 负 rq_m）逐字节对拍</td><td>ALL PASS</td><td class="num">2026-09-08 20:31:02</td></tr>
+<tr><td>tb_gemm PCOLS=48</td><td>9 个描述符（含全宽 W0/W1/W2）逐字节对拍</td><td>ALL PASS</td><td class="num">2026-09-08 20:32:40</td></tr>
+<tr><td>tb_gemm PCOLS=64</td><td>9 个描述符（B8-64，128 逻辑列）</td><td>ALL PASS</td><td class="num">2026-09-08 20:36:10</td></tr>
+<tr><td>tb_sys 阵列级</td><td>末脉冲延迟 PD=5/6 安全窗口 + 背靠背 kill 测试</td><td>PASS×2</td><td class="num">2026-09-08 20:30:15</td></tr>
+</table>
+<p>拍数纪律（和 v4 逐项比，不许悄悄变慢）：48 列 9 个描述符里 <b>6 个一拍不差</b>；D3、W0、W2 三个 +4 拍（+0.9%~+1.5%），就是上面说的 DALIGN 入口相位例外；4 列档 D1c +8 拍、D3 +4 拍，其余不变。帧级模型上界（arch v6 的 DRAIN 64→65 敏感性）：GEMM +0.25%、TB +0.0%（读腿非瓶颈被 max 掩掉）、HP64 0.909→0.910 秒（+0.1%）。结论：<b>这个补偿方案的帧级代价可以忽略</b>。</p>
+<table>
+<caption class="hint">怎么看：对比 v4（H1 版）和 v5（H2 版）的 start→done 周期数，"Δ" 列是这轮改动实际多花的拍数。</caption>
+<tr><th>描述符（48 列）</th><th class="num">v4 拍数</th><th class="num">v5 拍数</th><th class="num">Δ</th><th class="num">Δ%</th></tr>
+<tr><td>D0 小 k=5</td><td class="num">143</td><td class="num">143</td><td class="num">0</td><td class="num">0%</td></tr>
+<tr><td>D1a k=37</td><td class="num">393</td><td class="num">393</td><td class="num">0</td><td class="num">0%</td></tr>
+<tr><td>D1b j0=8</td><td class="num">393</td><td class="num">393</td><td class="num">0</td><td class="num">0%</td></tr>
+<tr><td>D1c 尾组</td><td class="num">391</td><td class="num">391</td><td class="num">0</td><td class="num">0%</td></tr>
+<tr><td>D2 转置写回</td><td class="num">319</td><td class="num">319</td><td class="num">0</td><td class="num">0%</td></tr>
+<tr><td>D3 k=100</td><td class="num">453</td><td class="num">457</td><td class="num">+4</td><td class="num">+0.9%</td></tr>
+<tr><td>W0 全宽 k=40</td><td class="num">265</td><td class="num">269</td><td class="num">+4</td><td class="num">+1.5%</td></tr>
+<tr><td>W1 全宽 k=37</td><td class="num">601</td><td class="num">601</td><td class="num">0</td><td class="num">0%</td></tr>
+<tr><td>W2 全宽转置</td><td class="num">457</td><td class="num">461</td><td class="num">+4</td><td class="num">+0.9%</td></tr>
+</table>
+
+<h2>第二节　eng48 重布线 + eng64 采点：WNS / LUT / 功耗（eng48 完成时刻 2026-09-08 20:45:04）</h2>
+<p>H2 改完后同一套 OOC 流程重跑布线（303.215MHz 约束、Vivado 2021.2），eng64 是 B8-64 的第一个综合数据点：</p>
+<table>
+<tr><th>目标</th><th class="num">LUT</th><th class="num">FF</th><th class="num">DSP</th><th class="num">BRAM</th><th class="num">WNS (ns)</th><th>折算频率</th></tr>
+<tr><td>eng48 H1 版（对照）</td><td class="num">118,148</td><td class="num">181,333</td><td class="num">768</td><td class="num">0</td><td class="num">−0.169</td><td>≈288 MHz（OOC 悲观口径）</td></tr>
+<tr><td><b>eng48 H2 版</b></td><td class="num">118,356（+208）</td><td class="num">182,066（+733）</td><td class="num">768</td><td class="num">0</td><td class="num"><b>+0.009</b></td><td><b>303.215 MHz 收敛</b></td></tr>
+<tr><td>eng64（B8-64，完成 22:03:10）</td><td class="num">155,629（67.55%）</td><td class="num">242,525</td><td class="num">1024</td><td class="num">0</td><td class="num">−0.696</td><td>≈250 MHz，303.2 不收敛</td></tr>
+</table>
+<p class="hint">怎么看：WNS ≥ 0 表示 303.215MHz 布线收敛。OOC（Out-Of-Context，只综合引擎本身不带外围）口径偏悲观，R3C 先例是真机比 OOC 快约 6%——eng48 的 +0.009 即使打个 6% 折也有余量。BRAM=0 是因为引擎 OOC 不含权重存储（WRAM 在系统级）。H2 净成本：+208 LUT（+0.18%）、+733 FF——正好是 24 套 requant 的输入流水寄存器（每套 28 位）加 48 个副本触发器的账，换回 0.178ns 时序。eng64 的违例是拥塞型（7,313 个失败端点、TNS −1,532ns，不是单条流氓路径），79% 布线密度下这个量级不是微调能救的。</p>
+
+<h3>LUT 模型用实测锚点修正（arch v6，完成时刻 2026-09-08 20:25:33）</h3>
+<p>v5 的面积模型把 B8 引擎外推成每物理列 3140 LUT（436 列基础设施 + 16×169 PE），eng48 估 150.7k；H1 布线实测 118,148，<b>模型高 27.6%</b>。arch v6 用实测反推每列 2461 LUT 重算全档（eng64 综合数落地后优先用双点实测）：</p>
+<table>
+<caption class="hint">怎么看："芯片" = 引擎 + 25k 非引擎基础设施（R3C-96 = 120,616 实测锚定），85% 是这轮定的可行线。</caption>
+<tr><th>配置</th><th class="num">v5 引擎外推</th><th class="num">实测</th><th class="num">锚点外推</th><th class="num">芯片（修正后）</th><th class="num">占器件</th><th>判定</th></tr>
+<tr><td>B8-24</td><td class="num">75,360</td><td class="num">—</td><td class="num">59,074</td><td class="num">84,074</td><td class="num">36.5%</td><td>放得下</td></tr>
+<tr><td>B8-48</td><td class="num">150,720</td><td class="num"><b>118,148</b></td><td class="num">118,148</td><td class="num">143,148</td><td class="num">62.1%</td><td>放得下</td></tr>
+<tr><td>B8-64</td><td class="num">200,960</td><td class="num"><b>155,629</b></td><td class="num">157,530</td><td class="num">180,629</td><td class="num">78.4%</td><td>放得下（实测，与外推差 1.2%）</td></tr>
+<tr><td>B8-96</td><td class="num">301,440</td><td class="num">—</td><td class="num">236,296</td><td class="num">261,296</td><td class="num">113.4%</td><td>仍放不下（v5 结论不变）</td></tr>
+</table>
+<p>修正的意义：v5 说 B8-64 占 98%"紧张"，修正后 79.2%——<b>B8-64 从"贴线"变成"有余量"，这是这一轮要采 eng64 点的原因</b>。</p>
+
+<h3>模块资源 × 计算占比 breakdown</h3>
+<table>
+<tr><th>模块</th><th class="num">LUT</th><th class="num">DSP</th><th class="num">BRAM</th><th>承担的活（帧模型口径）</th></tr>
+<tr><td>PE 阵列 16×48（含 Pack2 乘法）</td><td class="num">92,071</td><td class="num">768</td><td class="num">—（WRAM 权重 96.5 在系统级）</td><td>GEMM 185.2M 拍 = 计算腿 275.5M 拍的 67%</td></tr>
+<tr><td>requant 24 套 + 读出/写回 FSM</td><td class="num">26,285</td><td class="num">0</td><td class="num">—</td><td>读出走读（每行组 64+ 拍）+ INT8 写回</td></tr>
+<tr><td>引擎合计（eng48 H2 版实测）</td><td class="num">118,356（51.37%）</td><td class="num">768</td><td class="num">0（OOC 不含 WRAM）</td><td>—</td></tr>
+<tr><td>R2 双读引擎 + 调度器（r2/rtl 改动）</td><td class="num">【模型估 +2.4k，未综合】</td><td class="num">0</td><td class="num">—</td><td>读腿 301.0→184.0M 拍（TB 口径，段级实测 −7.4%）</td></tr>
+</table>
+<p class="hint">怎么看：PE 阵列 + requant/FSM 两行是 eng48 H2 版布线后实测拆分（92,071 + 26,285 = 118,356）。帧四腿（B8-48 TB 现状）：计算 275.5 / 读 301.0 / 写 218.4M 拍 + 停顿 40M——读是第一瓶颈，R2 就是拆它。面积大头 PE 阵列同时承担 100% 的 GEMM 计算。</p>
+
+<h3>功耗（H4，vectorless 口径，如实标注）</h3>
+<table>
+<tr><th>目标</th><th class="num">总功耗 (W)</th><th class="num">动态</th><th class="num">静态</th><th>口径说明</th></tr>
+<tr><td>eng48 H2 版</td><td class="num">8.321</td><td class="num">7.684</td><td class="num">0.637</td><td>布线后 DCP、无激励向量（开关活动为概率估计，置信度 Medium）</td></tr>
+<tr><td>eng64</td><td class="num">10.709</td><td class="num">10.054</td><td class="num">0.655</td><td>同流程，用于 48/64 横向对比</td></tr>
+</table>
+<p class="hint">参照：v5 模型估 B8-48 芯片 7.83W（实测引擎 8.32W，模型低 6%——同档）；v1 全芯片实测锚点 4.47W@1728DSP@200MHz（频率/DSP 数都低得多，不能直接比）。48→64 实测功耗 +28.7%（8.32→10.71W），接近 DSP 数比例 +33%。vectorless 只分档不做绝对承诺。</p>
+
+<h2>第三节　R2 双读引擎：RTL 落地 + 一个重要发现（完成时刻 2026-09-08 20:38:45）</h2>
+<p>R2 的目标：CTX（上下文/激活数据）和 W（权重）两条装载流现在共用一条读通路，TB 口径 301M 拍；各配一台读引擎后理论值 max(184, 117) = 184M 拍。<b>实现选在 R3C 底本（22_r3c_rtl）上做</b>——DMA/调度器层是 R3C 和 B8 共用的，B8 系统集成在 H3，先在成熟底本上验证这条路。</p>
+<h3>发现：光复制引擎没用，三个地方把两条流串成了串行</h3>
+<ol>
+<li><b>一台读引擎</b>：前台 CTX 装载、前台 W 装载、后台预取全进同一个状态机（<span class="mono">ae_dma.sv</span> 单 rd FSM），一次只能跑一条。</li>
+<li><b>一组读通道</b>：顶层只有一个 AXI 读主口，验证平台的从机还是单 outstanding（接住一个读请求后要等数据送完才接下一个）。</li>
+<li><b>调度器死等</b>：主 FSM 发一条 LOAD 后停在 <span class="mono">T_RUN_DMA</span> 等完成——<b>就算把引擎翻倍，调度器也走不到下一条 LOAD 的发射点，重叠接近零</b>。这是对架构线 R2 假设的实质修正：R2 不只是 DMA 改造，必须同时改调度器发射策略。</li>
+</ol>
+<h3>改了什么</h3>
+<p>读引擎抽成 <span class="mono">ae_rd_eng</span> ×2（读口 1 服务 CTX，读口 2 服务 WRAM，按 tag 路由），顶层加第二组读主口；调度器的前台 LOAD 改 fire-and-forget（发出去就走），消费点（GEMM/COPY/ACTV/STORE 启动前）等对应引擎空闲；预取簿记按引擎拆。底本 22_r3c_rtl 一字未动（git 核查为空），全部改动在 r2/ 目录。</p>
+<h3>验证与实测（数字已从原始存档核对）</h3>
+<table>
+<tr><th>证据</th><th>内容</th><th>结果</th></tr>
+<tr><td>本地全芯片三遍</td><td>REF/PRIM/PRIM-pf1，CTX+DDR 全量逐字节对拍 + 断言 A/B/C</td><td>全部一致，断言零触发</td></tr>
+<tr><td>服务器 4 段对拍</td><td>seg_0600/0529/0602/0636，base 与 r2 的 DDR dump 逐字节 cmp</td><td>4 段全部一致</td></tr>
+</table>
+<table>
+<caption class="hint">怎么看：服务器 Verilator、MODE=1+PF=1；"重叠率"是两口同拍都在送数的比例——base 恒 0%（物理上只有一口），r2 最高 15.5%。</caption>
+<tr><th>段</th><th class="num">base 拍数</th><th class="num">r2 拍数</th><th class="num">Δ</th><th class="num">r2 重叠率</th><th>段形态</th></tr>
+<tr><td>seg_0600</td><td class="num">2,365</td><td class="num">2,061</td><td class="num">−12.9%</td><td class="num">15.5%</td><td>小段，ctx/w 均衡</td></tr>
+<tr><td>seg_0529</td><td class="num">4,381</td><td class="num">4,221</td><td class="num">−3.7%</td><td class="num">0%</td><td>无 W 流，白付开销</td></tr>
+<tr><td>seg_0602</td><td class="num">51,057</td><td class="num">48,761</td><td class="num">−4.5%</td><td class="num">4.8%</td><td>单条 LOAD w 循环体，已贴同流下界</td></tr>
+<tr><td>seg_0636</td><td class="num">83,844</td><td class="num">76,192</td><td class="num">−9.1%</td><td class="num">10.9%</td><td>大段混合流</td></tr>
+<tr><td><b>合计</td><td class="num"><b>141,647</td><td class="num"><b>131,235</td><td class="num"><b>−7.4%</td><td class="num">—</td><td>读侧服务拍 −8.1%</td></tr>
+</table>
+<p>和架构模型 −19.1% 的差距要如实交代：模型的 max(X,V) 是理想上界，实测受三个折扣——同流单 outstanding 从机串行化、真实段的形态（段头大 ctx 装载没有重叠窗口、循环体里只有单条 W 装载）、没有 W 流的段白付第二台引擎的等待开销。<b>段级 −7.4% 是 R2 在真实负载形态下的可信锚点</b>；整帧收益要等 H3 全帧调度重排后再说（帧级外推这一轮不做）。</p>
+
+<h2>第四节　B8-64 采点：值不值得多花 256 颗 DSP（完成时刻 2026-09-08 22:03:10）</h2>
+<p>B8-64 = 64 物理列（128 逻辑列）、1024 颗 DSP。RTL 位精确已过（第一节表里 PCOLS=64 那行）。模型账：HP64 帧时间 0.801 秒，比 B8-48 再快 11.9%；TB 口径 R2 之后 0.852 秒，写腿（218.4M 拍）变成新瓶颈。</p>
+<table>
+<caption class="hint">怎么看：这是三档的横向对比。TB=验证平台口径，HP64=真机 64B/拍口径，两个都要看——真机的墙在计算，验证平台的墙在读/写。注意 B8-64 的帧时间是"303.215MHz 能跑起来"为前提的模型值，实际布线到不了这个频率（见下）。</caption>
+<tr><th>指标</th><th class="num">R3C-96（现部署）</th><th class="num">B8-48</th><th class="num">B8-64</th></tr>
+<tr><td>DSP</td><td class="num">1,536（88.9%）</td><td class="num">768（44.4%）</td><td class="num">1,024（59.3%）</td></tr>
+<tr><td>芯片 LUT（修正后）</td><td class="num">120,616（52.4%）</td><td class="num">143,356（62.2%，实测）</td><td class="num">180,629（78.4%，实测）</td></tr>
+<tr><td>TB 帧时间（现状）</td><td class="num">1.676 s</td><td class="num">1.125 s</td><td class="num">1.111 s</td></tr>
+<tr><td>TB 帧时间（R2 后）</td><td class="num">—</td><td class="num">0.909 s</td><td class="num">0.852 s（写瓶颈）</td></tr>
+<tr><td>HP64 帧时间（@303.2MHz）</td><td class="num">1.388 s</td><td class="num">0.909 s（−34.5%）</td><td class="num">0.801 s（−42.3%）</td></tr>
+<tr><td>布线 WNS @303.2MHz</td><td class="num">−1.363 @250MHz 口径</td><td class="num"><b>+0.009 收敛</b></td><td class="num">−0.696（≈250MHz）</td></tr>
+<tr><td>功耗（vectorless 实测）</td><td class="num">4,018 mW</td><td class="num">8,321 mW</td><td class="num">10,709 mW</td></tr>
+</table>
+<h3>定版判据（三条件，实测回填）</h3>
+<table>
+<tr><th>条件</th><th>判据</th><th>结果</th><th>判定</th></tr>
+<tr><td>布线收敛</td><td>eng64 WNS ≥ 0 @303.215MHz</td><td class="num">−0.696（拥塞型，7,313 失败端点）</td><td><b>不过</b></td></tr>
+<tr><td>面积</td><td>芯片 LUT ≤ 85%（≈196k）</td><td class="num">180,629 = 78.4%</td><td>过</td></tr>
+<tr><td>功耗</td><td>vectorless ≤ 9,000 mW</td><td class="num">10,709 mW</td><td><b>不过</b></td></tr>
+</table>
+<p>再补一刀决定性的账：就算 eng64 降频到它布线能收敛的 ≈250.4MHz 用，HP64 = 243.0M 拍 ÷ 250.4MHz = <b>0.970 秒，反而比 B8-48 的 0.909 秒慢</b>。也就是说 B8-64 要翻案只有一条路：深度重流水把 303.2MHz 挤出来，那是不可预期的工作量。</p>
+<div class="box"><b>裁决：定版 B8-48</b>（16×48 物理列 / 96 逻辑列 / 768 DSP / 单时钟 303.215MHz）。三条件两不过，且降频使用也赢不了 B8-48。B8-64 的综合数据（LUT 实测 155,629、与锚点外推差 1.2%）留档，给以后工艺/器件变化时复用。连带裁决：R5 写侧压缩不进 H3（写腿在 B8-48 下不是瓶颈），COPY 消除的量化分析保留。</div>
+
+<h2>第五节　H3 清单：R5 写侧与 COPY 消除（完成时刻 2026-09-08 20:28:50）</h2>
+<p>arch v6 的量化结论（详见 <span class="mono">arch/v6.../h3_r5_copy.md</span>）：</p>
+<ul>
+<li><b>R5 写侧压缩</b>：只有定版 B8-64 才值得做——R2 后 B8-64 的写腿占 TB 的 84.5%（瓶颈），压到计算地板上限 −6.0%（0.852→0.801 秒）；定版 B8-48 则写腿只占次要位，R5 吞吐收益为零，只剩 DDR 带宽/功耗价值，不进 H3。</li>
+<li><b>COPY 消除</b>：COPY 40.3M + ACTV 10.0M 拍占 B8-48 计算腿的 18.3%，全消除理论地板 0.909→0.744 秒（−18%），实际消不完。H3 第一步在编译器侧把 COPY 段逐类分解（哪些是零拷贝可消除的），先量化再动手。</li>
+<li><b>已裁决不进 H3</b>：requant 不加倍（H1 证伪）；H2 走读 +1 拍（本轮实测 ≤0.27%，关闭）；R1 驻留（R2 后只剩 ctx 字节 −31% 的功耗价值，降为可选）。</li>
+</ul>
+
+<h2>第六节　诚实边界</h2>
+<ul>
+<li><b>实测</b>：H2 位精确/拍数（iverilog 行为模型口径，DSP 是行为级不是门级）；R2 段级拍数与位精确（服务器 Verilator + 本地 iverilog 两层）；eng48/eng64 全套综合数（LUT/WNS/功耗，OOC 口径）。
+<li><b>口径限制</b>：功耗是 vectorless（开关活动为概率估计，横向可比、绝对值只分档）；WNS 是 OOC 悲观口径（R3C 先例真机快约 6%，eng48 的 +0.009 打折后仍有余量，eng64 的 −0.696 打折后仍差约 18%，翻不了案）。
+<li><b>外推/假设</b>：B8-24/96 的 LUT 是锚点外推；帧时间 0.909/0.852 秒是模型不是实测；R2 的 −7.4% 是 4 段样本不是整帧，帧级外推明确不做；HP64 口径的帧时间依赖真机 64B/拍的带宽假设。
+<li><b>验证空白</b>：R2 的 12 项回归只重跑了 2 项（其余 10 项模块未动）；预取撞 B 口的丢写风险场景没被负载实际压到（探针=0，靠断言兜底）；R2 验证从机是行为级单 outstanding，实机重叠率会更低；段级 golden 门对 fast_interp_a3 有预存 diff（与 R2 无关，旧二进制同样不绿，建议单开一轮查）。</li>
+</ul>
+
+<h2>第七节　复现命令</h2>
+<p class="mono">cd hw/v5_2026-09-08_2000_h2_r2_b64_pwr<br>
+# 位精确（iverilog 秒级~3 分钟，-DVERILATOR 走行为 DSP 模型）<br>
+iverilog -g2012 -DVERILATOR -o sim/tb_gemm4_v5.vvp rtl/pack2_mult_dsp.sv rtl/rq_ms_x.sv rtl/rq_v2.sv rtl/ae_pe_p2.sv rtl/ae_sysarr_p2.sv rtl/ae_gemm_p2.sv sim/tb_gemm_p2.sv && vvp sim/tb_gemm4_v5.vvp<br>
+# 48/64 列：同上加 -DWIDE -P tb_gemm_p2.PCOLS_TB=48（或 64）<br>
+# 阵列级：iverilog -g2012 -DVERILATOR -o sim/tb_sys_v5.vvp rtl/pack2_mult_dsp.sv rtl/ae_pe_p2.sv rtl/ae_sysarr_p2.sv sim/tb_sys_p2.sv && vvp sim/tb_sys_v5.vvp +PD=5<br>
+# 综合/布线（Vivado 2021.2 OOC @3.298ns，工作区 E:\ae_syn\hb_h1）<br>
+bash synth/run_synth.sh eng48 route　# eng64 同理；产物回 results/&lt;target&gt;/route/<br>
+# 架构模型<br>
+cd ../../arch/v6_2026-09-08_2000_h1anchor_r2_b64_final && python b8_final.py<br>
+# R2 段级对拍（服务器 /tmp/ae_v5r2/ 保留）<br>
+python run_r2.py</p>
+
+<script>/* 生成工具留痕：本页由 Claude Code 生成，风格遵循 html-report/shuo-renhua skill */</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+done N=0 jpos=jpos MAE=0.0021
+done N=100 jpos=jpos MAE=0.0196
+done N=300 jpos=jpos MAE=0.1330
+done N=500 jpos=jpos MAE=0.1366
+done N=700 jpos=jpos MAE=0.1337
+SWEEP_STAGE1_DONE

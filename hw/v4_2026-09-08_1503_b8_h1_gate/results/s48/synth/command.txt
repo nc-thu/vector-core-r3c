@@ -1,0 +1,1 @@
+vivado syn.tcl top_s48 3.298 E:/ae_syn/hb_h1/runs/s48/synth E:/ae_syn/hb_h1/src/s48 8 synth

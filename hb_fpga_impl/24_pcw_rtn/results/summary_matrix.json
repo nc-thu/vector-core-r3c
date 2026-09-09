@@ -1,0 +1,95 @@
+{
+ "generated": "2026-09-04 13:24:45",
+ "criterion_jpos": 0.045,
+ "matrix_jpos_mae": {
+  "000_pcwF": 0.3319,
+  "000_pcw": 0.3328,
+  "000_pcwv3": 0.2383,
+  "000_ptF": 0.2992,
+  "001_pcwF": 0.2683,
+  "001_pcw": 0.2698,
+  "001_pcwv3": 0.1828,
+  "001_ptF": 0.2165
+ },
+ "notes": {
+  "000_pcw/001_pcw": "pcW+RTN v1（v2 表）：bias 路径 bug——所有 pcW 层退 host fp，qkv 等 PL 内消费层偏置静默丢失",
+  "000_pcwF/001_pcwF": "同 bug，换 fresh 表（表等价，数字几乎不变）",
+  "000_ptF/001_ptF": "逐 tensor 权重 + RTN，fresh 表（部署粒度对照）",
+  "000_pcwv3/001_pcwv3": "修复版：逐通道 K+1 增广（w_bias_j=round(b_j/(sa*swc_j*c)), c∈{2^0..2^6}），注意力内部层 c=64 饱和（近似偏置好过零偏置）；v2 基表"
+ },
+ "vs_per_tensor": {
+  "s000": "+20.4%",
+  "s001": "+15.6%"
+ },
+ "bisect_s000_pcwv3": {
+  "method": "host_driver --fp-after N：全局前 N 次量化调用走 PL，其后原生 fp；N=0 纯 fp sanity",
+  "total_quantized_calls": 816,
+  "curve": [
+   {
+    "N": 0,
+    "jpos_mae": 0.0021,
+    "forward_s": 1.9
+   },
+   {
+    "N": 100,
+    "jpos_mae": 0.0196,
+    "forward_s": 107.1
+   },
+   {
+    "N": 150,
+    "jpos_mae": 0.0303,
+    "forward_s": 140.9
+   },
+   {
+    "N": 200,
+    "jpos_mae": 0.0542,
+    "forward_s": 220.8
+   },
+   {
+    "N": 250,
+    "jpos_mae": 0.1335,
+    "forward_s": 240.0
+   },
+   {
+    "N": 300,
+    "jpos_mae": 0.133,
+    "forward_s": 265.2
+   },
+   {
+    "N": 500,
+    "jpos_mae": 0.1366,
+    "forward_s": 366.4
+   },
+   {
+    "N": 700,
+    "jpos_mae": 0.1337,
+    "forward_s": 453.3
+   },
+   {
+    "N": 750,
+    "jpos_mae": 0.1321,
+    "forward_s": 451.0
+   },
+   {
+    "N": 809,
+    "jpos_mae": 0.6765,
+    "forward_s": 507.3
+   },
+   {
+    "N": 815,
+    "jpos_mae": 0.2383,
+    "forward_s": 478.6
+   }
+  ],
+  "call_map": {
+   "0-140": "文本编码器 BERT 12 层",
+   "140-190": "特征增强 MSDeform/img/text/text_img attn",
+   "190-816": "解码器（robot_encoder + decoder.layers×2 遍 + head/t_embed/input_layers×2 遍）"
+  }
+ },
+ "lever_F_s000": {
+  "F1_12bert_ffn_prefix": 0.2376,
+  "F2_38prefix_261calls": 0.2384,
+  "baseline_pcwv3": 0.2383
+ }
+}

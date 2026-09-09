@@ -1,0 +1,19 @@
+WARNING: tb_rq.sv:155: $readmemh(xa.mem): Not enough words in the file for the requested range [0:99999].
+WARNING: tb_rq.sv:156: $readmemh(ma.mem): Not enough words in the file for the requested range [0:99999].
+[PHASE-A] n=60000 err=0  (a27/a32/g27@8/ms2/ms4 vs v1)
+WARNING: tb_rq.sv:193: $readmemh(xb.mem): Not enough words in the file for the requested range [0:99999].
+WARNING: tb_rq.sv:194: $readmemh(mb.mem): Not enough words in the file for the requested range [0:99999].
+WARNING: tb_rq.sv:195: $readmemh(sb.mem): Not enough words in the file for the requested range [0:99999].
+[PHASE-B] n=30000 cmp=773 skip=29227 err=0  (g27 s∈[8,47] vs v1)
+WARNING: tb_rq.sv:236: $readmemh(xr.mem): Not enough words in the file for the requested range [0:99999].
+WARNING: tb_rq.sv:237: $readmemh(mr.mem): Not enough words in the file for the requested range [0:99999].
+WARNING: tb_rq.sv:238: $readmemh(sr.mem): Not enough words in the file for the requested range [0:99999].
+WARNING: tb_rq.sv:239: $readmemh(er.mem): Not enough words in the file for the requested range [0:99999].
+[PHASE-D] n=60000 err=0  (rq_v2 RTN rn_en=1 vs python 神谕)
+WARNING: tb_rq.sv:273: $readmemh(xc.mem): Not enough words in the file for the requested range [0:99999].
+WARNING: tb_rq.sv:274: $readmemh(mc.mem): Not enough words in the file for the requested range [0:99999].
+WARNING: tb_rq.sv:275: $readmemh(m6c.mem): Not enough words in the file for the requested range [0:99999].
+WARNING: tb_rq.sv:276: $readmemh(t6c.mem): Not enough words in the file for the requested range [0:99999].
+[PHASE-C] n=30000 diff=238 (0.79%) mean_abs=0.0250 max_abs=4
+TB_RQ PASS (floor 位精确 + RTN 对神谕位精确)
+tb_rq.sv:321: $finish called at 1800220000 (1ps)

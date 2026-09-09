@@ -1,0 +1,1 @@
+vivado syn.tcl ae_pe_p2 3.298 E:/ae_syn/hb_h1/runs/pe/route E:/ae_syn/hb_h1/src/pe 8 route

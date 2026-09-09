@@ -1,0 +1,2 @@
+TB_PE_PACK PASS (2216 tiles bit-identical to 2x ae_pe)
+tb_pe_pack.sv:146: $finish called at 6455680000 (1ps)

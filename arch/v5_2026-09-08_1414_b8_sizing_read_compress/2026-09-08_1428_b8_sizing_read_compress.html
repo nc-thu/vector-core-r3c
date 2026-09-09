@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>B8 PE 列数选型与读压缩三路线重算 2026-09-08</title>
+<style>
+  body{font-family:"Microsoft YaHei",SimSun,serif;max-width:1000px;margin:24px auto;padding:0 16px;color:#111;background:#fff;line-height:1.75}
+  h1{font-size:22px;border-bottom:2px solid #000;padding-bottom:6px}
+  h2{font-size:18px;border-left:5px solid #000;padding-left:8px;margin-top:32px}
+  h3{font-size:15px;margin-top:22px}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14px}
+  th,td{border:1px solid #444;padding:5px 8px;text-align:left}
+  th{background:#eee}
+  .num{text-align:right;font-variant-numeric:tabular-nums}
+  .mono{font-family:Consolas,monospace;font-size:13px;background:#f4f4f4;padding:1px 4px}
+  .meta{color:#555;font-size:13px}
+  .box{border:1px dashed #888;padding:10px 14px;margin:12px 0;background:#fafafa}
+  .warn{border-left:4px solid #000;background:#f6f6f6;padding:8px 12px;margin:12px 0}
+  .hint{color:#555;font-size:13px;margin:4px 0}
+  svg text{font-family:"Microsoft YaHei",SimSun,serif}
+  td.hl{background:#f0f0f0}
+  td.bad{background:#e8e8e8}
+</style>
+</head>
+<body>
+
+<h1>B8 PE 选型定案：48 物理列是甜点（帧时间 −35%、DSP −50%）；满配 96 列放不下（LUT 超 器件 113%）</h1>
+<p class="meta">生成时刻：2026-09-08 14:28:11　|　架构线 v5（A1 列数扫描 + A2 读压缩三路线重算）　|　数据：a3 真实流 2580 段 / 49,569 条逻辑 GEMM / 150.8 GMAC 每帧　|　纯模型，不碰 RTL　|　脚本：<span class="mono">arch/v5_2026-09-08_1414_b8_sizing_read_compress/b8_scan.py</span>（跑一次约 2 秒）</p>
+
+<h2>零、先把背景说清楚</h2>
+<p>现在的部署基线叫 R3C：16 行 × 96 列的脉动阵列，1536 颗 DSP，占 ZCU104 这块 FPGA 的 88.9%。整帧推理（机器人模型一步的完整计算）在真机口径下 1.388 秒，预算是 2.13 秒（30Hz 控制频率 × 64 步），所以现在是达标状态。</p>
+<p>B8 是另一边的实验刚做出来的新型 PE（运算单元）。一颗 DSP 里有 4 份互不干扰的乘加状态，核心时钟能跑到 606 MHz——同样一颗 DSP，吞吐是 R3C PE 的 6.1 倍。代价是每颗 PE 的逻辑面积（LUT）从几十涨到 169，是 R3C 的 3~5 倍。</p>
+<p>本轮要回答两个问题：<b>A1，到底该用多少列 B8？拿阵列面积（DSP/LUT/BRAM/功耗）换窄阵列划不划算？</b><b>A2，之前排的读压缩三路线，在 B8 把计算打到零头之后还值多少钱？</b>方法是纯建模：把 B8 当成一个旋钮塞进原有的周期模型（pe_sizing.py 的重编译口径），扫物理列数 {24, 32, 48, 64, 96} × PE 类型 {R3C, B8}。</p>
+<p>还有一对口径要先讲明白，后面到处用：<b>TB 口径</b>是验证平台（Verilator 仿真）里内存模型的服务速率，读大约 3.7 字节/拍、写最差 2.72 字节/拍；<b>HP64 口径</b>是真机 DDR 口的 64 字节/拍全双工。同一个设计在两个口径下帧时间不同——TB 口径 1.676 秒，真机 1.388 秒。读侧的"墙"只存在于 TB 口径。</p>
+
+<h2>一、B8 在模型里怎么表示</h2>
+<table>
+<tr><th>旋钮</th><th>R3C（基线）</th><th>B8</th><th>依据</th></tr>
+<tr><td>每颗 DSP 每接口拍 MAC 数</td><td class="num">1</td><td class="num">4</td><td>Pack2（一颗 DSP 的位空间塞 2 对 int8 乘法）× Pump2（核心时钟 2 倍）</td></tr>
+<tr><td>逻辑列数 = 物理列数 ×</td><td class="num">1</td><td class="num">2</td><td>Pack2 让每物理列驻 2 条逻辑列的权重</td></tr>
+<tr><td>接口时钟</td><td class="num">198.5 MHz</td><td class="num">303.2 MHz</td><td>B8 64 集群布线后 606.43 MHz 实测 ÷ 2（喂数/读出在接口域）</td></tr>
+<tr><td>每颗 PE 的 LUT</td><td class="num">约 35（反推）</td><td class="num">169（实测）</td><td>B8 cl64 = 10,806 LUT / 64 PE；R3C 由 96 列总账反推</td></tr>
+<tr><td>行组拍数公式</td><td colspan="2">max(k+2, 68+wb) —— 两条腿都在接口时钟域，不随 Pump2 加速</td><td>R3C 模型原式</td></tr>
+</table>
+<p class="hint">怎么看：B8 的快不是"每拍做的事变多"，而是"每物理列干两列的活 + 每秒拍数×1.53"。喂数和读出这两条腿（公式里的 k+2 和 68+wb）还是接口时钟的节奏，这是后面利用率掉下来的根源。</p>
+<p>先说一个模型算出来最干净的事实：<b>B8-48 物理列的整帧拍数和今天的 R3C-96 一模一样（275.5M 拍），一拍不变</b>——因为它的逻辑宽度就是 96 列，调度完全相同；变的只有两件事：物理阵列减半（1536→768 颗 DSP），时钟从 198.5 提到 303.2 MHz。所以帧时间 1.388 → 0.909 秒，降 35%。</p>
+
+<h2>二、A1 主表：物理列数 × PE 类型全扫描</h2>
+<table>
+<tr><th>配置</th><th>物理列(逻辑列)</th><th>DSP</th><th class="num">GEMM 拍</th><th class="num">利用率</th><th class="num">真机帧时间</th><th class="num">vs 基线</th><th class="num">LUT 估</th><th class="num">BRAM</th><th class="num">功耗粗档</th><th>判定</th></tr>
+<tr><td>R3C-24</td><td class="num">24(24)</td><td class="num">384 (22%)</td><td class="num">529M</td><td class="num">74.3%</td><td class="num">3.119 s</td><td class="num">+124.7%</td><td class="num">21%</td><td class="num">42.5</td><td class="num">1.5 W 低</td><td class="bad">超预算</td></tr>
+<tr><td>R3C-32</td><td class="num">32(32)</td><td class="num">512 (30%)</td><td class="num">380M</td><td class="num">77.4%</td><td class="num">2.372 s</td><td class="num">+70.9%</td><td class="num">25%</td><td class="num">50.5</td><td class="num">1.8 W 低</td><td class="bad">超预算</td></tr>
+<tr><td>R3C-48</td><td class="num">48(48)</td><td class="num">768 (44%)</td><td class="num">292M</td><td class="num">67.2%</td><td class="num">1.926 s</td><td class="num">+38.8%</td><td class="num">32%</td><td class="num">66.5</td><td class="num">2.3 W 低</td><td>勉强过预算</td></tr>
+<tr><td>R3C-64</td><td class="num">64(64)</td><td class="num">1024 (59%)</td><td class="num">227M</td><td class="num">65.0%</td><td class="num">1.597 s</td><td class="num">+15.0%</td><td class="num">39%</td><td class="num">82.5</td><td class="num">2.9 W 低</td><td>可行但无必要</td></tr>
+<tr><td>R3C-96（基线）</td><td class="num">96(96)</td><td class="num">1536 (89%)</td><td class="num">185M</td><td class="num">53.0%</td><td class="num">1.388 s</td><td class="num">0%</td><td class="num">52%</td><td class="num">114.5</td><td class="num">4.0 W 低</td><td>现状</td></tr>
+<tr><td>B8-24</td><td class="num">24(48)</td><td class="num">384 (22%)</td><td class="num">292M</td><td class="num">33.6%</td><td class="num">1.261 s</td><td class="num">−9.1%</td><td class="num">44%</td><td class="num">66.5</td><td class="num">4.3 W 低</td><td>极限省面积档</td></tr>
+<tr><td>B8-32</td><td class="num">32(64)</td><td class="num">512 (30%)</td><td class="num">227M</td><td class="num">32.5%</td><td class="num">1.045 s</td><td class="num">−24.7%</td><td class="num">55%</td><td class="num">82.5</td><td class="num">5.4 W 低</td><td>可行</td></tr>
+<tr class="hl"><td><b>B8-48</b></td><td class="num">48(96)</td><td class="num">768 (44%)</td><td class="num">185M</td><td class="num">26.5%</td><td class="num">0.909 s</td><td class="num">−34.5%</td><td class="num">76%</td><td class="num">114.5</td><td class="num">7.8 W 中</td><td><b>甜点（推荐）</b></td></tr>
+<tr><td>B8-64</td><td class="num">64(128)</td><td class="num">1024 (59%)</td><td class="num">153M</td><td class="num">24.1%</td><td class="num">0.801 s</td><td class="num">−42.3%</td><td class="num">98%</td><td class="num">146.5</td><td class="num">10.2 W 高</td><td>上进档（有条件）</td></tr>
+<tr><td>B8-96</td><td class="num">96(192)</td><td class="num">1536 (89%)</td><td class="num">140M</td><td class="num">17.6%</td><td class="num">0.758 s</td><td class="num">−45.4%</td><td class="num">142%</td><td class="num">210.5</td><td class="num">15.0 W 高</td><td class="bad">放不下（LUT 超器件）</td></tr>
+</table>
+<p class="hint">怎么看：先看"真机帧时间"和"vs 基线"两列——B8 从 24 列起就全面超过现基线；再看"LUT 估"和"功耗粗档"——B8 的约束从 DSP 变成了 LUT 和功耗。帧时间都低于 2.13 秒预算的配置里，B8-48 是面积/速度/功耗三者的平衡点。（LUT/功耗是外推粗档，见第九节边界。）</p>
+
+<div class="box">
+<p><b>A1 三个直接回答：</b></p>
+<p>① <b>用多少列 B8：48 物理列（=96 逻辑列）</b>。帧时间 0.909 秒（−35%），DSP 减半到 44%，LUT 估 76%，功耗中档。B8-64 只再多赚 7 个点（−42%）但 LUT 顶到 98%、功耗上 10 W 高档，要等 H4 功耗实测过关才值得做。</p>
+<p>② <b>满配 96 物理列直接排除</b>：光 PE 核就要 259,584 LUT，是整片 230,400 的 113%，还没算阵列外围——物理上放不下，功耗外推也到 15 W。DSP 有余量（88.9%）这件事在 B8 语境下已经没有意义，<b>B8 的第一约束是 LUT，第二是功耗</b>。</p>
+<p>③ <b>窄阵列换面积，对 R3C 不划算，对 B8 划算</b>。R3C 窄到 48 列以下就破 2.13 秒预算（32 列 2.37 秒、24 列 3.12 秒），省面积要用帧时间买单；B8-24 只用 22% 的 DSP、4.3 W 低功耗档，帧时间 1.26 秒还是比现基线快 9%。B8 第一次让"砍阵列"不用牺牲速度。</p>
+</div>
+
+<h2>三、帧时间图：真机口径，预算线 2.13 秒</h2>
+<svg width="960" height="420" viewBox="0 0 960 420">
+  <!-- 横条：每秒 255px；原点 x=150 -->
+  <line x1="150" y1="20" x2="150" y2="390" stroke="#888"/>
+  <!-- 预算线 2.13s -->
+  <line x1="693" y1="10" x2="693" y2="400" stroke="#000" stroke-dasharray="6,4"/>
+  <text x="693" y="415" text-anchor="middle" font-size="13">预算 2.13s</text>
+  <!-- 基线线 1.388s -->
+  <line x1="504" y1="10" x2="504" y2="400" stroke="#555" stroke-dasharray="2,3"/>
+  <text x="504" y="415" text-anchor="middle" font-size="12">现基线 1.388s</text>
+  <!-- R3C 组 -->
+  <text x="140" y="45" text-anchor="end" font-size="13">R3C-24</text><rect x="150" y="32" width="795" height="16" fill="#bbb"/><text x="935" y="45" font-size="12" text-anchor="end" fill="#000">3.119</text>
+  <text x="140" y="75" text-anchor="end" font-size="13">R3C-32</text><rect x="150" y="62" width="605" height="16" fill="#bbb"/><text x="761" y="75" font-size="12">2.372</text>
+  <text x="140" y="105" text-anchor="end" font-size="13">R3C-48</text><rect x="150" y="92" width="491" height="16" fill="#bbb"/><text x="647" y="105" font-size="12">1.926</text>
+  <text x="140" y="135" text-anchor="end" font-size="13">R3C-64</text><rect x="150" y="122" width="407" height="16" fill="#bbb"/><text x="563" y="135" font-size="12">1.597</text>
+  <text x="140" y="165" text-anchor="end" font-size="13">R3C-96 基线</text><rect x="150" y="152" width="359" height="16" fill="#888"/><text x="515" y="165" font-size="12">1.388</text>
+  <!-- B8 组 -->
+  <text x="140" y="205" text-anchor="end" font-size="13" font-weight="bold">B8-24</text><rect x="150" y="192" width="322" height="16" fill="#333"/><text x="478" y="205" font-size="12">1.261（−9%）</text>
+  <text x="140" y="235" text-anchor="end" font-size="13" font-weight="bold">B8-32</text><rect x="150" y="222" width="266" height="16" fill="#333"/><text x="422" y="235" font-size="12">1.045（−25%）</text>
+  <text x="140" y="265" text-anchor="end" font-size="13" font-weight="bold">B8-48 甜点</text><rect x="150" y="252" width="232" height="16" fill="#000"/><text x="388" y="265" font-size="12">0.909（−35%）</text>
+  <text x="140" y="295" text-anchor="end" font-size="13" font-weight="bold">B8-64</text><rect x="150" y="282" width="204" height="16" fill="#333"/><text x="360" y="295" font-size="12">0.801（−42%）</text>
+  <text x="140" y="325" text-anchor="end" font-size="13" font-weight="bold">B8-96 ✗</text><rect x="150" y="312" width="193" height="16" fill="#333" opacity="0.35"/><text x="349" y="325" font-size="12">0.758（−45%，LUT 放不下）</text>
+  <text x="150" y="375" font-size="12" fill="#555">条长 = 真机（HP64 口径）帧时间，每秒 255px；灰色=R3C，黑色=B8；虚线左=达标。</text>
+</svg>
+<p class="hint">怎么看这张图：竖的两条虚线是判据——右边的预算线（2.13s）是硬约束，左边的基线线（1.388s）是"要比今天好"的线。R3C 的三条长条全在预算线右边（不达标）；B8 全部在基线线左边（都比今天快）。B8-96 那条半透明，因为它的帧时间虽然最短，但 LUT 超过器件根本做不出来。</p>
+
+<h2>四、为什么放不下：LUT 是新约束</h2>
+<svg width="960" height="380" viewBox="0 0 960 380">
+  <!-- 每占用 1% = 5.5px；原点 x=150 -->
+  <line x1="150" y1="20" x2="150" y2="330" stroke="#888"/>
+  <line x1="700" y1="10" x2="700" y2="340" stroke="#000" stroke-dasharray="6,4"/>
+  <text x="700" y="355" text-anchor="middle" font-size="13">器件 100%（230,400 LUT / 1728 DSP）</text>
+  <!-- B8 行：深=LUT估，浅=DSP% -->
+  <text x="140" y="50" text-anchor="end" font-size="13" font-weight="bold">B8-24</text><rect x="150" y="38" width="240" height="14" fill="#000"/><rect x="150" y="54" width="122" height="8" fill="#bbb"/><text x="395" y="50" font-size="12">LUT 44% / DSP 22%</text>
+  <text x="140" y="95" text-anchor="end" font-size="13" font-weight="bold">B8-32</text><rect x="150" y="83" width="300" height="14" fill="#000"/><rect x="150" y="99" width="163" height="8" fill="#bbb"/><text x="455" y="95" font-size="12">LUT 55% / DSP 30%</text>
+  <text x="140" y="140" text-anchor="end" font-size="13" font-weight="bold">B8-48</text><rect x="150" y="128" width="420" height="14" fill="#000"/><rect x="150" y="144" width="244" height="8" fill="#bbb"/><text x="575" y="140" font-size="12">LUT 76% / DSP 44%</text>
+  <text x="140" y="185" text-anchor="end" font-size="13" font-weight="bold">B8-64</text><rect x="150" y="173" width="540" height="14" fill="#000"/><rect x="150" y="189" width="326" height="8" fill="#bbb"/><text x="695" y="185" font-size="12">LUT 98% / DSP 59%</text>
+  <text x="140" y="230" text-anchor="end" font-size="13" font-weight="bold">B8-96 ✗</text><rect x="150" y="218" width="779" height="14" fill="#000" opacity="0.35"/><rect x="150" y="234" width="489" height="8" fill="#bbb" opacity="0.35"/><text x="150" y="262" font-size="12">LUT 142%（PE 核 259,584 = 113% 就已超） / DSP 89%</text>
+  <text x="140" y="305" text-anchor="end" font-size="13">R3C-96 对照</text><rect x="150" y="293" width="288" height="14" fill="#666"/><rect x="150" y="309" width="489" height="8" fill="#ddd"/><text x="443" y="305" font-size="12">LUT 52% / DSP 89%</text>
+  <text x="150" y="352" font-size="12" fill="#555">深条 = LUT 占用估（固定 25k + 每列基础设施 + PE 核）；浅条 = DSP 占用；每 1% = 5.5px。</text>
+</svg>
+<p class="hint">怎么看：B8 每颗 PE 169 LUT（cl64 实测），是 R3C PE 的 3~5 倍，所以 B8 的 LUT 条比 DSP 条高出一大截——R3C 时代正好反过来（DSP 满、LUT 半空）。B8-96 的 LUT 条穿过 100% 线；B8-64 顶在线上；B8-48 留了 24 个点的布线余量。</p>
+
+<h2>五、B8 的利用率为什么掉到 26.5%，两个敏感性</h2>
+<p>B8-48 的阵列利用率只有 26.5%（R3C-96 是 53.0%）。原因在行组拍数公式 max(k+2, 68+wb)：喂数腿和读出腿都按接口时钟走，Pump2 把核心提速 2 倍帮不到它们。每行组至少 68 拍（requant 移位链排空的固定开销），这期间 B8 的 4 份乘加能力大部分在空转。这是<b>结构性地板，不是 bug</b>；也正因为这样，B8 超过 48 列后边际收益快速递减——96 列比 48 列 DSP 翻倍，GEMM 只从 185M 拍降到 140M 拍（−24%）。</p>
+<table>
+<tr><th>敏感性（B8 各配置）</th><th class="num">GEMM 拍（基准）</th><th class="num">读出链加宽 2×</th><th class="num">requant 不加倍（惩罚下界）</th></tr>
+<tr><td>B8-24</td><td class="num">292M</td><td class="num">279M（−4.5%）</td><td class="num">340M（+16.6%）</td></tr>
+<tr><td>B8-32</td><td class="num">227M</td><td class="num">213M（−6.2%）</td><td class="num">261M（+15.3%）</td></tr>
+<tr><td>B8-48</td><td class="num">185M</td><td class="num">171M（−7.6%）</td><td class="num">215M（+16.1%）</td></tr>
+<tr><td>B8-64</td><td class="num">153M</td><td class="num">139M（−9.2%）</td><td class="num">176M（+15.6%）</td></tr>
+<tr><td>B8-96</td><td class="num">140M</td><td class="num">125M（−10.7%）</td><td class="num">164M（+17.6%）</td></tr>
+</table>
+<p class="hint">怎么看：两列敏感性对应 RTL 需求清单（rtl_requirements_h3.md）的 B3/B4 两条。"requant 不加倍"是必须躲开的坑：B8 每物理列出 2 列结果，requant 套数不加倍的话 DRAIN 从 64 拍变 128 拍，B8-48 帧时间从 0.909 秒恶化到 1.007 秒（+10.8%）。"读出加宽 2×"是可选项：只值 5~8 个点，先不承诺。</p>
+
+<h2>六、A2：读压缩三路线在 B8 语境下重算</h2>
+<p>先把一件事说透：<b>真机（HP64 口径）的读侧从来不是墙</b>——全部读数据（680MB 激活 + 607MB 权重）按 64 字节/拍只要 20.1M 拍，连计算通道的十分之一都不到。所以 B8 之后真机帧时间全是计算瓶颈（0.76~1.26 秒），读压缩在真机上的价值只剩<b>DDR 字节/功耗</b>，不再买帧时间。"墙全在喂数"这句话只在 TB 验证平台口径成立（TB 的读引擎串行服务 292~318M 拍）。三路线的重算按 TB 口径给数。</p>
+<table>
+<tr><th>路线（B8-48 语境）</th><th class="num">读通道</th><th class="num">TB 帧时间</th><th>够不够（&lt;0.909s）</th><th>真机上的价值</th></tr>
+<tr><td>现状</td><td class="num">301.0M 拍</td><td class="num">1.125 s</td><td>—</td><td>—</td></tr>
+<tr class="hl"><td><b>路线 2：双读引擎</b></td><td class="num">184.0M 拍</td><td class="num"><b>0.909 s</b></td><td><b>够，一步归一</b></td><td>无帧时间收益；+2.4k LUT 换 TB 账实一致</td></tr>
+<tr><td>路线 1：CTX 驻留+host 折链</td><td class="num">243.8M 拍</td><td class="num">0.936 s</td><td>差一口气</td><td>ctx 字节 680→469MB（−31%），DDR 功耗是主要收益</td></tr>
+<tr><td>路线 3：WRAM 4 组</td><td class="num">243.6M 拍</td><td class="num">0.935 s</td><td>差一口气</td><td>同上，权重重装字节减半</td></tr>
+<tr><td>三路线全上</td><td class="num">126.8M 拍</td><td class="num">0.909 s</td><td>= 路线 2 单独</td><td>字节大头（−31% ctx + 权重重装减半）</td></tr>
+</table>
+<p class="hint">怎么看：B8-48 下 TB 帧时间的下限就是计算通道 0.909 秒，路线 2 一条就把 TB 和真机两个口径归一。路线 1/3 对 TB 帧时间已经没有边际（都被计算通道盖住），但它们减的是真金白银的 DDR 字节——功耗和带宽占用，这在功率预算变紧的 B8 时代反而更重要了。</p>
+<div class="warn">
+<b>新暴露的墙：TB 写墙。</b>B8-64/96 这类计算更快的配置里，读压缩过后 TB 平台的下一个瓶颈是写服务 W=218.4M 拍（TB 写最差 2.72 字节/拍），TB 帧时间卡在 0.852 秒不再往下。真机无此问题（写只要 9.3M 拍）。要 TB 账实彻底归一，写侧（R5：DMA 列主序/写突发整形）是下一张牌——建议排在路线 2 之后。
+</div>
+
+<h2>七、资源 × 时间总表：每块逻辑花多少面积、承担多少计算</h2>
+<table>
+<tr><th>模块</th><th>资源：R3C-96 → B8-48</th><th class="num">每帧拍数（两配置相同）</th><th class="num">占真机帧时间</th><th>说明</th></tr>
+<tr><td>脉动阵列（PE×快照×requant）</td><td>DSP 1536→768（89%→44%）；LUT 约 96k→176k（估）；FF 约 150k→约 235k（估）</td><td class="num">185.2M</td><td class="num">67.2%</td><td>B8 PE 169 LUT/颗抵消了 DSP 减半的面积收益，LUT 反而涨 83%</td></tr>
+<tr><td>COPY 引擎（片上重排）</td><td>LUT 约 3k</td><td class="num">40.3M</td><td class="num">14.6%</td><td>下一块可动的计算（R5）</td></tr>
+<tr><td>AE_ACTV（片上算子）</td><td>LUT 5,147</td><td class="num">10.0M</td><td class="num">3.6%</td><td>192 站 281 条描述符</td></tr>
+<tr><td>调度/停顿 θ</td><td>—</td><td class="num">40.0M</td><td class="num">14.5%</td><td>重叠口径保守值</td></tr>
+<tr><td>DMA 读引擎（X=激活装载 184.0M + V=权重装载）</td><td>LUT 2.2k</td><td class="num">292.8M（TB 口径）</td><td class="num">0%（真机被计算藏住）</td><td>路线 2 要复制的就是它</td></tr>
+<tr><td>DMA 写引擎（W=结果写回）</td><td>同上（双引擎）</td><td class="num">218.4M（TB 口径）</td><td class="num">0%（真机同上）</td><td>B8-64/96 下 TB 的新墙</td></tr>
+<tr><td>WRAM（权重驻留）</td><td>BRAM 96→96（B8 每列 2 颗×48 列）</td><td class="num">—</td><td class="num">—</td><td>路线 3 要翻倍到 192 颗（67%）</td></tr>
+<tr><td>CTX（激活驻留）</td><td>URAM 64（不变）</td><td class="num">—</td><td class="num">—</td><td>路线 1 从现有 2MB 里划双区，零 BRAM</td></tr>
+</table>
+<p class="hint">怎么看：B8-48 的每帧拍数与 R3C-96 完全相同（调度不变），所以"占帧时间"一列两配置通用；差在每拍的时钟（198.5→303.2 MHz）和阵列物理规模（DSP 减半、LUT 反涨）。计算大头仍是 GEMM 67%，搬运大头在真机口径全部藏进计算里。</p>
+
+<h2>八、结论与下一步</h2>
+<div class="box">
+<p><b>给硬件线（H1）：</b>集成验证直接按 <b>B8-48 物理列（逻辑 96 列）</b>做，别按满配做。三个硬性 RTL 需求（清单见 rtl_requirements_h3.md）：requant 吞吐随逻辑列数加倍（不加倍帧时间 +10.8%）；606/303 双时钟 wrapper；每物理列驻 2 逻辑列权重。B8-64 列为上进档，等 H2 集群采点（768 PE 频率退化）和 H4 功耗实测过关再启动；B8-96 kill。</p>
+<p><b>给硬件线（H3）：</b>读压缩按新优先级排——路线 2（双读引擎，+2.4k LUT）单独就把 TB 归一到 0.909 秒，先做；路线 1 的价值重新定位为 DDR 字节 −31%（功耗项），跟着做；路线 3 顺手。新任务：TB 写墙（R5 写侧整形）排进 H3 后半。</p>
+<p><b>给架构线自己：</b>下一轮（v6 候选）两个题目——①B8-24/32 的极省面积档做一版完整资源/功耗表（若 H4 功耗实测卡死在 8W 以下，B8-32 就是备用甜点）；②COPY 40.3M 拍（帧时间 15%，第二大计算块）的 R5 消法。</p>
+</div>
+<p>决策点更新（对照 09-08 13:12 讨论页的 D1）：D1"先 B8 还是先读压缩"现在可以答了——<b>先 B8-48（H1），读压缩路线 2 并行进 H3</b>；两者改的是不同模块（阵列 vs DMA），不冲突。B8 帧时间收益（−35%）远大于读压缩在真机上的残余收益（0%），顺序不会再翻。</p>
+
+<h2>九、诚实边界（哪些数是实测，哪些是外推）</h2>
+<ul>
+<li><b>实测锚点</b>：B8 单核布线后 688.7 MHz / 171 LUT、cl64 606.43 MHz / 10,806 LUT（pe_w8a8_sota/rounds/2026-09-04_150930）；R3C-96 全片 120,619 LUT / 1536 DSP / 114.5 BRAM；a3 真实流 2580 段全部拍数分量（X=184.0 / V=108.1 / W=218.4M 拍，Verilator 校准）。</li>
+<li><b>外推（非综合数）</b>：LUT 估 = 固定 25k + 每列边际（R3C 996、B8 3,140），锚定 R3C-96 反推，误差量级 ±20%；B8-96"放不下"的结论只依赖 PE 核下界（169×1536 = 259,584 > 230,400），这个下界是稳的。</li>
+<li><b>功耗粗档</b>：从 v1 时代 vectorless 4,465mW 按 DSP 数×时钟×B8 翻转 1.4 外推，vectorless 本身误差就大，只用于分档（低/中/高），不许引用具体瓦数做决策——B8-64 是否可行由 H4 布线后实测定案。</li>
+<li><b>模型假设（H1 未验证）</b>：行组流水公式 max(k+2, 68+wb) 在 B8 的 4 上下文累加下成立（快照兼容性是 H1 的核心问题，不成立则 B8 全部数字作废回到串行读出）；接口域 303.2 MHz 上 DMA/COPY/ACTV 引擎闭合（B7，闭不到就按实际频率重除）。</li>
+<li><b>口径近似</b>：V 的列数敏感只按 xing 项外推，pf/驻留折抵未逐列重算（影响 &lt;8%）；R3C-96 的 TB 帧时间 1.676s 与旧发布 1.673s 差 0.2%（V(96) 重算 108.8 vs 锚点 108.1），不改变任何结论。</li>
+<li><b>未测</b>：768/1024 PE 集群的频率退化（H2）；B8 集成后的实际利用率（模型 26.5% 是调度层的，快照兼容性变化会动它）；TB 混合读并发速率（路线 2 的待测点）。</li>
+</ul>
+
+<h2>十、复现</h2>
+<pre>
+# 本页全部表格与三张图的数字：
+cd "arch/v5_2026-09-08_1414_b8_sizing_read_compress"
+python b8_scan.py          # 约 2s（冷缓存约 28s），产出 b8_scan.json + 控制台三张表
+
+# 输入数据（未动，2026-09-01 定版）：
+#   hb_fpga_impl/12_actv/a3/build_a3/segments/*/seq.mem   2580 段真实流
+#   hb_fpga_impl/19_r3c_arch/pe_sizing.py                 逻辑 GEMM 重建（本脚本 import）
+#   pe_w8a8_sota/rounds/2026-09-04_150930/results/summary.csv   B8 面积/频率实测
+#
+# RTL 需求清单（给 H1/H3）：rtl_requirements_h3.md（同目录）
+</pre>
+<p class="meta">工作条目：2026-09-08 14:14:00 建版本文件夹与脚本骨架；14:20:00 首轮扫描（28s）；14:24:00 V 口径对账（acct_a3 实跑，确认 108.1M 为 pf/驻留折抵后暴露口径）+ 读出 2× / requant 不加倍两个敏感性；14:26:00 RTL 需求清单；14:28:11 本页。</p>
+
+</body>
+</html>

@@ -1,0 +1,1101 @@
+Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
+----------------------------------------------------------------------------------------------------
+| Tool Version      : Vivado v.2021.2 (win64) Build 3367213 Tue Oct 19 02:48:09 MDT 2021
+| Date              : Tue Sep  8 15:31:07 2026
+| Host              : nc23 running 64-bit major release  (build 9200)
+| Command           : report_timing -max_paths 20 -file E:/ae_syn/hb_h1/runs/s16x4/route/timing.rpt
+| Design            : ae_sysarr_p2
+| Device            : xczu7ev-ffvc1156
+| Speed File        : -2  PRODUCTION 1.29 08-03-2020
+| Temperature Grade : E
+----------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (MET) :             0.830ns  (required time - arrival time)
+  Source:                 apdly_reg[3][3]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            g_row[3].g_col[0].u_pe/snap1_r_reg[17]/CE
+                            (rising edge-triggered cell FDCE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.364ns  (logic 0.079ns (3.342%)  route 2.285ns (96.658%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.009ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.020ns = ( 3.318 - 3.298 ) 
+    Source Clock Delay      (SCD):    0.029ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=14342, unset)        0.029     0.029    clk
+    SLICE_X95Y295        FDRE                                         r  apdly_reg[3][3]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X95Y295        FDRE (Prop_EFF_SLICEL_C_Q)
+                                                      0.079     0.108 r  apdly_reg[3][3]/Q
+                         net (fo=111, routed)         2.285     2.393    g_row[3].g_col[0].u_pe/pulse_in
+    SLICE_X98Y312        FDCE                                         r  g_row[3].g_col[0].u_pe/snap1_r_reg[17]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=14342, unset)        0.020     3.318    g_row[3].g_col[0].u_pe/clk
+    SLICE_X98Y312        FDCE                                         r  g_row[3].g_col[0].u_pe/snap1_r_reg[17]/C
+                         clock pessimism              0.000     3.318    
+                         clock uncertainty           -0.035     3.283    
+    SLICE_X98Y312        FDCE (Setup_HFF2_SLICEL_C_CE)
+                                                     -0.060     3.223    g_row[3].g_col[0].u_pe/snap1_r_reg[17]
+  -------------------------------------------------------------------
+                         required time                          3.223    
+                         arrival time                          -2.393    
+  -------------------------------------------------------------------
+                         slack                                  0.830    
+
+Slack (MET) :             0.830ns  (required time - arrival time)
+  Source:                 apdly_reg[3][3]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            g_row[3].g_col[0].u_pe/snap1_r_reg[21]/CE
+                            (rising edge-triggered cell FDCE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.364ns  (logic 0.079ns (3.342%)  route 2.285ns (96.658%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.009ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.020ns = ( 3.318 - 3.298 ) 
+    Source Clock Delay      (SCD):    0.029ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=14342, unset)        0.029     0.029    clk
+    SLICE_X95Y295        FDRE                                         r  apdly_reg[3][3]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X95Y295        FDRE (Prop_EFF_SLICEL_C_Q)
+                                                      0.079     0.108 r  apdly_reg[3][3]/Q
+                         net (fo=111, routed)         2.285     2.393    g_row[3].g_col[0].u_pe/pulse_in
+    SLICE_X98Y312        FDCE                                         r  g_row[3].g_col[0].u_pe/snap1_r_reg[21]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=14342, unset)        0.020     3.318    g_row[3].g_col[0].u_pe/clk
+    SLICE_X98Y312        FDCE                                         r  g_row[3].g_col[0].u_pe/snap1_r_reg[21]/C
+                         clock pessimism              0.000     3.318    
+                         clock uncertainty           -0.035     3.283    
+    SLICE_X98Y312        FDCE (Setup_GFF2_SLICEL_C_CE)
+                                                     -0.060     3.223    g_row[3].g_col[0].u_pe/snap1_r_reg[21]
+  -------------------------------------------------------------------
+                         required time                          3.223    
+                         arrival time                          -2.393    
+  -------------------------------------------------------------------
+                         slack                                  0.830    
+
+Slack (MET) :             0.919ns  (required time - arrival time)
+  Source:                 apdly_reg[15][15]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            g_row[15].g_col[0].u_pe/snap1_r_reg[1]/CE
+                            (rising edge-triggered cell FDCE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.275ns  (logic 0.079ns (3.473%)  route 2.196ns (96.527%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.008ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.021ns = ( 3.319 - 3.298 ) 
+    Source Clock Delay      (SCD):    0.029ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=14342, unset)        0.029     0.029    clk
+    SLICE_X98Y294        FDRE                                         r  apdly_reg[15][15]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X98Y294        FDRE (Prop_FFF_SLICEL_C_Q)
+                                                      0.079     0.108 r  apdly_reg[15][15]/Q
+                         net (fo=110, routed)         2.196     2.304    g_row[15].g_col[0].u_pe/pulse_in
+    SLICE_X104Y309       FDCE                                         r  g_row[15].g_col[0].u_pe/snap1_r_reg[1]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=14342, unset)        0.021     3.319    g_row[15].g_col[0].u_pe/clk
+    SLICE_X104Y309       FDCE                                         r  g_row[15].g_col[0].u_pe/snap1_r_reg[1]/C
+                         clock pessimism              0.000     3.319    
+                         clock uncertainty           -0.035     3.284    
+    SLICE_X104Y309       FDCE (Setup_HFF2_SLICEM_C_CE)
+                                                     -0.061     3.223    g_row[15].g_col[0].u_pe/snap1_r_reg[1]
+  -------------------------------------------------------------------
+                         required time                          3.223    
+                         arrival time                          -2.304    
+  -------------------------------------------------------------------
+                         slack                                  0.919    
+
+Slack (MET) :             0.919ns  (required time - arrival time)
+  Source:                 apdly_reg[15][15]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            g_row[15].g_col[0].u_pe/snap1_r_reg[2]/CE
+                            (rising edge-triggered cell FDCE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.275ns  (logic 0.079ns (3.473%)  route 2.196ns (96.527%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.008ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.021ns = ( 3.319 - 3.298 ) 
+    Source Clock Delay      (SCD):    0.029ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=14342, unset)        0.029     0.029    clk
+    SLICE_X98Y294        FDRE                                         r  apdly_reg[15][15]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X98Y294        FDRE (Prop_FFF_SLICEL_C_Q)
+                                                      0.079     0.108 r  apdly_reg[15][15]/Q
+                         net (fo=110, routed)         2.196     2.304    g_row[15].g_col[0].u_pe/pulse_in
+    SLICE_X104Y309       FDCE                                         r  g_row[15].g_col[0].u_pe/snap1_r_reg[2]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=14342, unset)        0.021     3.319    g_row[15].g_col[0].u_pe/clk
+    SLICE_X104Y309       FDCE                                         r  g_row[15].g_col[0].u_pe/snap1_r_reg[2]/C
+                         clock pessimism              0.000     3.319    
+                         clock uncertainty           -0.035     3.284    
+    SLICE_X104Y309       FDCE (Setup_GFF2_SLICEM_C_CE)
+                                                     -0.061     3.223    g_row[15].g_col[0].u_pe/snap1_r_reg[2]
+  -------------------------------------------------------------------
+                         required time                          3.223    
+                         arrival time                          -2.304    
+  -------------------------------------------------------------------
+                         slack                                  0.919    
+
+Slack (MET) :             0.933ns  (required time - arrival time)
+  Source:                 g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[10]
+                            (rising edge-triggered cell DSP_M_DATA clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.359ns  (logic 0.913ns (38.703%)  route 1.446ns (61.297%))
+  Logic Levels:           3  (DSP_A_B_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.015ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.043ns = ( 3.341 - 3.298 ) 
+    Source Clock Delay      (SCD):    0.028ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=14342, unset)        0.028     0.028    g_row[9].g_col[2].u_pe/u_mul/clk
+    SLICE_X97Y271        FDRE                                         r  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X97Y271        FDRE (Prop_CFF2_SLICEL_C_Q)
+                                                      0.080     0.108 f  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/Q
+                         net (fo=2, routed)           1.446     1.554    g_row[9].g_col[2].u_pe/u_mul/u_dsp/B[4]
+    DSP48E2_X13Y108      DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_B[4]_B2_DATA[4])
+                                                      0.151     1.705 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA_INST/B2_DATA[4]
+                         net (fo=1, routed)           0.000     1.705    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA.B2_DATA<4>
+    DSP48E2_X13Y108      DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_B2_DATA[4]_B2B1[4])
+                                                      0.073     1.778 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA_INST/B2B1[4]
+                         net (fo=1, routed)           0.000     1.778    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA.B2B1<4>
+    DSP48E2_X13Y108      DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_B2B1[4]_V[10])
+                                                      0.609     2.387 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER_INST/V[10]
+                         net (fo=1, routed)           0.000     2.387    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER.V<10>
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[10]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=14342, unset)        0.043     3.341    g_row[9].g_col[2].u_pe/u_mul/u_dsp/CLK
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/CLK
+                         clock pessimism              0.000     3.341    
+                         clock uncertainty           -0.035     3.306    
+    DSP48E2_X13Y108      DSP_M_DATA (Setup_DSP_M_DATA_DSP48E2_CLK_V[10])
+                                                      0.014     3.320    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST
+  -------------------------------------------------------------------
+                         required time                          3.320    
+                         arrival time                          -2.387    
+  -------------------------------------------------------------------
+                         slack                                  0.933    
+
+Slack (MET) :             0.933ns  (required time - arrival time)
+  Source:                 g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[11]
+                            (rising edge-triggered cell DSP_M_DATA clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.359ns  (logic 0.913ns (38.703%)  route 1.446ns (61.297%))
+  Logic Levels:           3  (DSP_A_B_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.015ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.043ns = ( 3.341 - 3.298 ) 
+    Source Clock Delay      (SCD):    0.028ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=14342, unset)        0.028     0.028    g_row[9].g_col[2].u_pe/u_mul/clk
+    SLICE_X97Y271        FDRE                                         r  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X97Y271        FDRE (Prop_CFF2_SLICEL_C_Q)
+                                                      0.080     0.108 f  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/Q
+                         net (fo=2, routed)           1.446     1.554    g_row[9].g_col[2].u_pe/u_mul/u_dsp/B[4]
+    DSP48E2_X13Y108      DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_B[4]_B2_DATA[4])
+                                                      0.151     1.705 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA_INST/B2_DATA[4]
+                         net (fo=1, routed)           0.000     1.705    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA.B2_DATA<4>
+    DSP48E2_X13Y108      DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_B2_DATA[4]_B2B1[4])
+                                                      0.073     1.778 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA_INST/B2B1[4]
+                         net (fo=1, routed)           0.000     1.778    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA.B2B1<4>
+    DSP48E2_X13Y108      DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_B2B1[4]_V[11])
+                                                      0.609     2.387 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER_INST/V[11]
+                         net (fo=1, routed)           0.000     2.387    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER.V<11>
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[11]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=14342, unset)        0.043     3.341    g_row[9].g_col[2].u_pe/u_mul/u_dsp/CLK
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/CLK
+                         clock pessimism              0.000     3.341    
+                         clock uncertainty           -0.035     3.306    
+    DSP48E2_X13Y108      DSP_M_DATA (Setup_DSP_M_DATA_DSP48E2_CLK_V[11])
+                                                      0.014     3.320    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST
+  -------------------------------------------------------------------
+                         required time                          3.320    
+                         arrival time                          -2.387    
+  -------------------------------------------------------------------
+                         slack                                  0.933    
+
+Slack (MET) :             0.933ns  (required time - arrival time)
+  Source:                 g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[12]
+                            (rising edge-triggered cell DSP_M_DATA clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.359ns  (logic 0.913ns (38.703%)  route 1.446ns (61.297%))
+  Logic Levels:           3  (DSP_A_B_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.015ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.043ns = ( 3.341 - 3.298 ) 
+    Source Clock Delay      (SCD):    0.028ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=14342, unset)        0.028     0.028    g_row[9].g_col[2].u_pe/u_mul/clk
+    SLICE_X97Y271        FDRE                                         r  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X97Y271        FDRE (Prop_CFF2_SLICEL_C_Q)
+                                                      0.080     0.108 f  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/Q
+                         net (fo=2, routed)           1.446     1.554    g_row[9].g_col[2].u_pe/u_mul/u_dsp/B[4]
+    DSP48E2_X13Y108      DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_B[4]_B2_DATA[4])
+                                                      0.151     1.705 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA_INST/B2_DATA[4]
+                         net (fo=1, routed)           0.000     1.705    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA.B2_DATA<4>
+    DSP48E2_X13Y108      DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_B2_DATA[4]_B2B1[4])
+                                                      0.073     1.778 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA_INST/B2B1[4]
+                         net (fo=1, routed)           0.000     1.778    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA.B2B1<4>
+    DSP48E2_X13Y108      DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_B2B1[4]_V[12])
+                                                      0.609     2.387 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER_INST/V[12]
+                         net (fo=1, routed)           0.000     2.387    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER.V<12>
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[12]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=14342, unset)        0.043     3.341    g_row[9].g_col[2].u_pe/u_mul/u_dsp/CLK
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/CLK
+                         clock pessimism              0.000     3.341    
+                         clock uncertainty           -0.035     3.306    
+    DSP48E2_X13Y108      DSP_M_DATA (Setup_DSP_M_DATA_DSP48E2_CLK_V[12])
+                                                      0.014     3.320    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST
+  -------------------------------------------------------------------
+                         required time                          3.320    
+                         arrival time                          -2.387    
+  -------------------------------------------------------------------
+                         slack                                  0.933    
+
+Slack (MET) :             0.933ns  (required time - arrival time)
+  Source:                 g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[13]
+                            (rising edge-triggered cell DSP_M_DATA clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.359ns  (logic 0.913ns (38.703%)  route 1.446ns (61.297%))
+  Logic Levels:           3  (DSP_A_B_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.015ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.043ns = ( 3.341 - 3.298 ) 
+    Source Clock Delay      (SCD):    0.028ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=14342, unset)        0.028     0.028    g_row[9].g_col[2].u_pe/u_mul/clk
+    SLICE_X97Y271        FDRE                                         r  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X97Y271        FDRE (Prop_CFF2_SLICEL_C_Q)
+                                                      0.080     0.108 f  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/Q
+                         net (fo=2, routed)           1.446     1.554    g_row[9].g_col[2].u_pe/u_mul/u_dsp/B[4]
+    DSP48E2_X13Y108      DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_B[4]_B2_DATA[4])
+                                                      0.151     1.705 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA_INST/B2_DATA[4]
+                         net (fo=1, routed)           0.000     1.705    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA.B2_DATA<4>
+    DSP48E2_X13Y108      DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_B2_DATA[4]_B2B1[4])
+                                                      0.073     1.778 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA_INST/B2B1[4]
+                         net (fo=1, routed)           0.000     1.778    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA.B2B1<4>
+    DSP48E2_X13Y108      DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_B2B1[4]_V[13])
+                                                      0.609     2.387 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER_INST/V[13]
+                         net (fo=1, routed)           0.000     2.387    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER.V<13>
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[13]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=14342, unset)        0.043     3.341    g_row[9].g_col[2].u_pe/u_mul/u_dsp/CLK
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/CLK
+                         clock pessimism              0.000     3.341    
+                         clock uncertainty           -0.035     3.306    
+    DSP48E2_X13Y108      DSP_M_DATA (Setup_DSP_M_DATA_DSP48E2_CLK_V[13])
+                                                      0.014     3.320    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST
+  -------------------------------------------------------------------
+                         required time                          3.320    
+                         arrival time                          -2.387    
+  -------------------------------------------------------------------
+                         slack                                  0.933    
+
+Slack (MET) :             0.933ns  (required time - arrival time)
+  Source:                 g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[14]
+                            (rising edge-triggered cell DSP_M_DATA clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.359ns  (logic 0.913ns (38.703%)  route 1.446ns (61.297%))
+  Logic Levels:           3  (DSP_A_B_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.015ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.043ns = ( 3.341 - 3.298 ) 
+    Source Clock Delay      (SCD):    0.028ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=14342, unset)        0.028     0.028    g_row[9].g_col[2].u_pe/u_mul/clk
+    SLICE_X97Y271        FDRE                                         r  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X97Y271        FDRE (Prop_CFF2_SLICEL_C_Q)
+                                                      0.080     0.108 f  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/Q
+                         net (fo=2, routed)           1.446     1.554    g_row[9].g_col[2].u_pe/u_mul/u_dsp/B[4]
+    DSP48E2_X13Y108      DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_B[4]_B2_DATA[4])
+                                                      0.151     1.705 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA_INST/B2_DATA[4]
+                         net (fo=1, routed)           0.000     1.705    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA.B2_DATA<4>
+    DSP48E2_X13Y108      DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_B2_DATA[4]_B2B1[4])
+                                                      0.073     1.778 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA_INST/B2B1[4]
+                         net (fo=1, routed)           0.000     1.778    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA.B2B1<4>
+    DSP48E2_X13Y108      DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_B2B1[4]_V[14])
+                                                      0.609     2.387 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER_INST/V[14]
+                         net (fo=1, routed)           0.000     2.387    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER.V<14>
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[14]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=14342, unset)        0.043     3.341    g_row[9].g_col[2].u_pe/u_mul/u_dsp/CLK
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/CLK
+                         clock pessimism              0.000     3.341    
+                         clock uncertainty           -0.035     3.306    
+    DSP48E2_X13Y108      DSP_M_DATA (Setup_DSP_M_DATA_DSP48E2_CLK_V[14])
+                                                      0.014     3.320    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST
+  -------------------------------------------------------------------
+                         required time                          3.320    
+                         arrival time                          -2.387    
+  -------------------------------------------------------------------
+                         slack                                  0.933    
+
+Slack (MET) :             0.933ns  (required time - arrival time)
+  Source:                 g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[15]
+                            (rising edge-triggered cell DSP_M_DATA clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.359ns  (logic 0.913ns (38.703%)  route 1.446ns (61.297%))
+  Logic Levels:           3  (DSP_A_B_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.015ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.043ns = ( 3.341 - 3.298 ) 
+    Source Clock Delay      (SCD):    0.028ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=14342, unset)        0.028     0.028    g_row[9].g_col[2].u_pe/u_mul/clk
+    SLICE_X97Y271        FDRE                                         r  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X97Y271        FDRE (Prop_CFF2_SLICEL_C_Q)
+                                                      0.080     0.108 f  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/Q
+                         net (fo=2, routed)           1.446     1.554    g_row[9].g_col[2].u_pe/u_mul/u_dsp/B[4]
+    DSP48E2_X13Y108      DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_B[4]_B2_DATA[4])
+                                                      0.151     1.705 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA_INST/B2_DATA[4]
+                         net (fo=1, routed)           0.000     1.705    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA.B2_DATA<4>
+    DSP48E2_X13Y108      DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_B2_DATA[4]_B2B1[4])
+                                                      0.073     1.778 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA_INST/B2B1[4]
+                         net (fo=1, routed)           0.000     1.778    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA.B2B1<4>
+    DSP48E2_X13Y108      DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_B2B1[4]_V[15])
+                                                      0.609     2.387 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER_INST/V[15]
+                         net (fo=1, routed)           0.000     2.387    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER.V<15>
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[15]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=14342, unset)        0.043     3.341    g_row[9].g_col[2].u_pe/u_mul/u_dsp/CLK
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/CLK
+                         clock pessimism              0.000     3.341    
+                         clock uncertainty           -0.035     3.306    
+    DSP48E2_X13Y108      DSP_M_DATA (Setup_DSP_M_DATA_DSP48E2_CLK_V[15])
+                                                      0.014     3.320    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST
+  -------------------------------------------------------------------
+                         required time                          3.320    
+                         arrival time                          -2.387    
+  -------------------------------------------------------------------
+                         slack                                  0.933    
+
+Slack (MET) :             0.933ns  (required time - arrival time)
+  Source:                 g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[16]
+                            (rising edge-triggered cell DSP_M_DATA clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.359ns  (logic 0.913ns (38.703%)  route 1.446ns (61.297%))
+  Logic Levels:           3  (DSP_A_B_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.015ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.043ns = ( 3.341 - 3.298 ) 
+    Source Clock Delay      (SCD):    0.028ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=14342, unset)        0.028     0.028    g_row[9].g_col[2].u_pe/u_mul/clk
+    SLICE_X97Y271        FDRE                                         r  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X97Y271        FDRE (Prop_CFF2_SLICEL_C_Q)
+                                                      0.080     0.108 f  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/Q
+                         net (fo=2, routed)           1.446     1.554    g_row[9].g_col[2].u_pe/u_mul/u_dsp/B[4]
+    DSP48E2_X13Y108      DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_B[4]_B2_DATA[4])
+                                                      0.151     1.705 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA_INST/B2_DATA[4]
+                         net (fo=1, routed)           0.000     1.705    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA.B2_DATA<4>
+    DSP48E2_X13Y108      DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_B2_DATA[4]_B2B1[4])
+                                                      0.073     1.778 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA_INST/B2B1[4]
+                         net (fo=1, routed)           0.000     1.778    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA.B2B1<4>
+    DSP48E2_X13Y108      DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_B2B1[4]_V[16])
+                                                      0.609     2.387 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER_INST/V[16]
+                         net (fo=1, routed)           0.000     2.387    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER.V<16>
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[16]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=14342, unset)        0.043     3.341    g_row[9].g_col[2].u_pe/u_mul/u_dsp/CLK
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/CLK
+                         clock pessimism              0.000     3.341    
+                         clock uncertainty           -0.035     3.306    
+    DSP48E2_X13Y108      DSP_M_DATA (Setup_DSP_M_DATA_DSP48E2_CLK_V[16])
+                                                      0.014     3.320    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST
+  -------------------------------------------------------------------
+                         required time                          3.320    
+                         arrival time                          -2.387    
+  -------------------------------------------------------------------
+                         slack                                  0.933    
+
+Slack (MET) :             0.933ns  (required time - arrival time)
+  Source:                 g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[17]
+                            (rising edge-triggered cell DSP_M_DATA clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.359ns  (logic 0.913ns (38.703%)  route 1.446ns (61.297%))
+  Logic Levels:           3  (DSP_A_B_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.015ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.043ns = ( 3.341 - 3.298 ) 
+    Source Clock Delay      (SCD):    0.028ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=14342, unset)        0.028     0.028    g_row[9].g_col[2].u_pe/u_mul/clk
+    SLICE_X97Y271        FDRE                                         r  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X97Y271        FDRE (Prop_CFF2_SLICEL_C_Q)
+                                                      0.080     0.108 f  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/Q
+                         net (fo=2, routed)           1.446     1.554    g_row[9].g_col[2].u_pe/u_mul/u_dsp/B[4]
+    DSP48E2_X13Y108      DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_B[4]_B2_DATA[4])
+                                                      0.151     1.705 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA_INST/B2_DATA[4]
+                         net (fo=1, routed)           0.000     1.705    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA.B2_DATA<4>
+    DSP48E2_X13Y108      DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_B2_DATA[4]_B2B1[4])
+                                                      0.073     1.778 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA_INST/B2B1[4]
+                         net (fo=1, routed)           0.000     1.778    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA.B2B1<4>
+    DSP48E2_X13Y108      DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_B2B1[4]_V[17])
+                                                      0.609     2.387 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER_INST/V[17]
+                         net (fo=1, routed)           0.000     2.387    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER.V<17>
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[17]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=14342, unset)        0.043     3.341    g_row[9].g_col[2].u_pe/u_mul/u_dsp/CLK
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/CLK
+                         clock pessimism              0.000     3.341    
+                         clock uncertainty           -0.035     3.306    
+    DSP48E2_X13Y108      DSP_M_DATA (Setup_DSP_M_DATA_DSP48E2_CLK_V[17])
+                                                      0.014     3.320    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST
+  -------------------------------------------------------------------
+                         required time                          3.320    
+                         arrival time                          -2.387    
+  -------------------------------------------------------------------
+                         slack                                  0.933    
+
+Slack (MET) :             0.933ns  (required time - arrival time)
+  Source:                 g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[18]
+                            (rising edge-triggered cell DSP_M_DATA clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.359ns  (logic 0.913ns (38.703%)  route 1.446ns (61.297%))
+  Logic Levels:           3  (DSP_A_B_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.015ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.043ns = ( 3.341 - 3.298 ) 
+    Source Clock Delay      (SCD):    0.028ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=14342, unset)        0.028     0.028    g_row[9].g_col[2].u_pe/u_mul/clk
+    SLICE_X97Y271        FDRE                                         r  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X97Y271        FDRE (Prop_CFF2_SLICEL_C_Q)
+                                                      0.080     0.108 f  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/Q
+                         net (fo=2, routed)           1.446     1.554    g_row[9].g_col[2].u_pe/u_mul/u_dsp/B[4]
+    DSP48E2_X13Y108      DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_B[4]_B2_DATA[4])
+                                                      0.151     1.705 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA_INST/B2_DATA[4]
+                         net (fo=1, routed)           0.000     1.705    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA.B2_DATA<4>
+    DSP48E2_X13Y108      DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_B2_DATA[4]_B2B1[4])
+                                                      0.073     1.778 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA_INST/B2B1[4]
+                         net (fo=1, routed)           0.000     1.778    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA.B2B1<4>
+    DSP48E2_X13Y108      DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_B2B1[4]_V[18])
+                                                      0.609     2.387 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER_INST/V[18]
+                         net (fo=1, routed)           0.000     2.387    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER.V<18>
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[18]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=14342, unset)        0.043     3.341    g_row[9].g_col[2].u_pe/u_mul/u_dsp/CLK
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/CLK
+                         clock pessimism              0.000     3.341    
+                         clock uncertainty           -0.035     3.306    
+    DSP48E2_X13Y108      DSP_M_DATA (Setup_DSP_M_DATA_DSP48E2_CLK_V[18])
+                                                      0.014     3.320    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST
+  -------------------------------------------------------------------
+                         required time                          3.320    
+                         arrival time                          -2.387    
+  -------------------------------------------------------------------
+                         slack                                  0.933    
+
+Slack (MET) :             0.933ns  (required time - arrival time)
+  Source:                 g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[19]
+                            (rising edge-triggered cell DSP_M_DATA clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.359ns  (logic 0.913ns (38.703%)  route 1.446ns (61.297%))
+  Logic Levels:           3  (DSP_A_B_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.015ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.043ns = ( 3.341 - 3.298 ) 
+    Source Clock Delay      (SCD):    0.028ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=14342, unset)        0.028     0.028    g_row[9].g_col[2].u_pe/u_mul/clk
+    SLICE_X97Y271        FDRE                                         r  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X97Y271        FDRE (Prop_CFF2_SLICEL_C_Q)
+                                                      0.080     0.108 f  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/Q
+                         net (fo=2, routed)           1.446     1.554    g_row[9].g_col[2].u_pe/u_mul/u_dsp/B[4]
+    DSP48E2_X13Y108      DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_B[4]_B2_DATA[4])
+                                                      0.151     1.705 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA_INST/B2_DATA[4]
+                         net (fo=1, routed)           0.000     1.705    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA.B2_DATA<4>
+    DSP48E2_X13Y108      DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_B2_DATA[4]_B2B1[4])
+                                                      0.073     1.778 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA_INST/B2B1[4]
+                         net (fo=1, routed)           0.000     1.778    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA.B2B1<4>
+    DSP48E2_X13Y108      DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_B2B1[4]_V[19])
+                                                      0.609     2.387 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER_INST/V[19]
+                         net (fo=1, routed)           0.000     2.387    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER.V<19>
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[19]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=14342, unset)        0.043     3.341    g_row[9].g_col[2].u_pe/u_mul/u_dsp/CLK
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/CLK
+                         clock pessimism              0.000     3.341    
+                         clock uncertainty           -0.035     3.306    
+    DSP48E2_X13Y108      DSP_M_DATA (Setup_DSP_M_DATA_DSP48E2_CLK_V[19])
+                                                      0.014     3.320    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST
+  -------------------------------------------------------------------
+                         required time                          3.320    
+                         arrival time                          -2.387    
+  -------------------------------------------------------------------
+                         slack                                  0.933    
+
+Slack (MET) :             0.933ns  (required time - arrival time)
+  Source:                 g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[20]
+                            (rising edge-triggered cell DSP_M_DATA clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.359ns  (logic 0.913ns (38.703%)  route 1.446ns (61.297%))
+  Logic Levels:           3  (DSP_A_B_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.015ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.043ns = ( 3.341 - 3.298 ) 
+    Source Clock Delay      (SCD):    0.028ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=14342, unset)        0.028     0.028    g_row[9].g_col[2].u_pe/u_mul/clk
+    SLICE_X97Y271        FDRE                                         r  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X97Y271        FDRE (Prop_CFF2_SLICEL_C_Q)
+                                                      0.080     0.108 f  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/Q
+                         net (fo=2, routed)           1.446     1.554    g_row[9].g_col[2].u_pe/u_mul/u_dsp/B[4]
+    DSP48E2_X13Y108      DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_B[4]_B2_DATA[4])
+                                                      0.151     1.705 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA_INST/B2_DATA[4]
+                         net (fo=1, routed)           0.000     1.705    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA.B2_DATA<4>
+    DSP48E2_X13Y108      DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_B2_DATA[4]_B2B1[4])
+                                                      0.073     1.778 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA_INST/B2B1[4]
+                         net (fo=1, routed)           0.000     1.778    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA.B2B1<4>
+    DSP48E2_X13Y108      DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_B2B1[4]_V[20])
+                                                      0.609     2.387 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER_INST/V[20]
+                         net (fo=1, routed)           0.000     2.387    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER.V<20>
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[20]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=14342, unset)        0.043     3.341    g_row[9].g_col[2].u_pe/u_mul/u_dsp/CLK
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/CLK
+                         clock pessimism              0.000     3.341    
+                         clock uncertainty           -0.035     3.306    
+    DSP48E2_X13Y108      DSP_M_DATA (Setup_DSP_M_DATA_DSP48E2_CLK_V[20])
+                                                      0.014     3.320    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST
+  -------------------------------------------------------------------
+                         required time                          3.320    
+                         arrival time                          -2.387    
+  -------------------------------------------------------------------
+                         slack                                  0.933    
+
+Slack (MET) :             0.933ns  (required time - arrival time)
+  Source:                 g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[21]
+                            (rising edge-triggered cell DSP_M_DATA clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.359ns  (logic 0.913ns (38.703%)  route 1.446ns (61.297%))
+  Logic Levels:           3  (DSP_A_B_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.015ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.043ns = ( 3.341 - 3.298 ) 
+    Source Clock Delay      (SCD):    0.028ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=14342, unset)        0.028     0.028    g_row[9].g_col[2].u_pe/u_mul/clk
+    SLICE_X97Y271        FDRE                                         r  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X97Y271        FDRE (Prop_CFF2_SLICEL_C_Q)
+                                                      0.080     0.108 f  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/Q
+                         net (fo=2, routed)           1.446     1.554    g_row[9].g_col[2].u_pe/u_mul/u_dsp/B[4]
+    DSP48E2_X13Y108      DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_B[4]_B2_DATA[4])
+                                                      0.151     1.705 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA_INST/B2_DATA[4]
+                         net (fo=1, routed)           0.000     1.705    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA.B2_DATA<4>
+    DSP48E2_X13Y108      DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_B2_DATA[4]_B2B1[4])
+                                                      0.073     1.778 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA_INST/B2B1[4]
+                         net (fo=1, routed)           0.000     1.778    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA.B2B1<4>
+    DSP48E2_X13Y108      DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_B2B1[4]_V[21])
+                                                      0.609     2.387 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER_INST/V[21]
+                         net (fo=1, routed)           0.000     2.387    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER.V<21>
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[21]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=14342, unset)        0.043     3.341    g_row[9].g_col[2].u_pe/u_mul/u_dsp/CLK
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/CLK
+                         clock pessimism              0.000     3.341    
+                         clock uncertainty           -0.035     3.306    
+    DSP48E2_X13Y108      DSP_M_DATA (Setup_DSP_M_DATA_DSP48E2_CLK_V[21])
+                                                      0.014     3.320    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST
+  -------------------------------------------------------------------
+                         required time                          3.320    
+                         arrival time                          -2.387    
+  -------------------------------------------------------------------
+                         slack                                  0.933    
+
+Slack (MET) :             0.933ns  (required time - arrival time)
+  Source:                 g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[22]
+                            (rising edge-triggered cell DSP_M_DATA clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.359ns  (logic 0.913ns (38.703%)  route 1.446ns (61.297%))
+  Logic Levels:           3  (DSP_A_B_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.015ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.043ns = ( 3.341 - 3.298 ) 
+    Source Clock Delay      (SCD):    0.028ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=14342, unset)        0.028     0.028    g_row[9].g_col[2].u_pe/u_mul/clk
+    SLICE_X97Y271        FDRE                                         r  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X97Y271        FDRE (Prop_CFF2_SLICEL_C_Q)
+                                                      0.080     0.108 f  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/Q
+                         net (fo=2, routed)           1.446     1.554    g_row[9].g_col[2].u_pe/u_mul/u_dsp/B[4]
+    DSP48E2_X13Y108      DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_B[4]_B2_DATA[4])
+                                                      0.151     1.705 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA_INST/B2_DATA[4]
+                         net (fo=1, routed)           0.000     1.705    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA.B2_DATA<4>
+    DSP48E2_X13Y108      DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_B2_DATA[4]_B2B1[4])
+                                                      0.073     1.778 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA_INST/B2B1[4]
+                         net (fo=1, routed)           0.000     1.778    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA.B2B1<4>
+    DSP48E2_X13Y108      DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_B2B1[4]_V[22])
+                                                      0.609     2.387 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER_INST/V[22]
+                         net (fo=1, routed)           0.000     2.387    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER.V<22>
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[22]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=14342, unset)        0.043     3.341    g_row[9].g_col[2].u_pe/u_mul/u_dsp/CLK
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/CLK
+                         clock pessimism              0.000     3.341    
+                         clock uncertainty           -0.035     3.306    
+    DSP48E2_X13Y108      DSP_M_DATA (Setup_DSP_M_DATA_DSP48E2_CLK_V[22])
+                                                      0.014     3.320    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST
+  -------------------------------------------------------------------
+                         required time                          3.320    
+                         arrival time                          -2.387    
+  -------------------------------------------------------------------
+                         slack                                  0.933    
+
+Slack (MET) :             0.933ns  (required time - arrival time)
+  Source:                 g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[23]
+                            (rising edge-triggered cell DSP_M_DATA clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.359ns  (logic 0.913ns (38.703%)  route 1.446ns (61.297%))
+  Logic Levels:           3  (DSP_A_B_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.015ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.043ns = ( 3.341 - 3.298 ) 
+    Source Clock Delay      (SCD):    0.028ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=14342, unset)        0.028     0.028    g_row[9].g_col[2].u_pe/u_mul/clk
+    SLICE_X97Y271        FDRE                                         r  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X97Y271        FDRE (Prop_CFF2_SLICEL_C_Q)
+                                                      0.080     0.108 f  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/Q
+                         net (fo=2, routed)           1.446     1.554    g_row[9].g_col[2].u_pe/u_mul/u_dsp/B[4]
+    DSP48E2_X13Y108      DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_B[4]_B2_DATA[4])
+                                                      0.151     1.705 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA_INST/B2_DATA[4]
+                         net (fo=1, routed)           0.000     1.705    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA.B2_DATA<4>
+    DSP48E2_X13Y108      DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_B2_DATA[4]_B2B1[4])
+                                                      0.073     1.778 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA_INST/B2B1[4]
+                         net (fo=1, routed)           0.000     1.778    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA.B2B1<4>
+    DSP48E2_X13Y108      DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_B2B1[4]_V[23])
+                                                      0.609     2.387 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER_INST/V[23]
+                         net (fo=1, routed)           0.000     2.387    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER.V<23>
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[23]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=14342, unset)        0.043     3.341    g_row[9].g_col[2].u_pe/u_mul/u_dsp/CLK
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/CLK
+                         clock pessimism              0.000     3.341    
+                         clock uncertainty           -0.035     3.306    
+    DSP48E2_X13Y108      DSP_M_DATA (Setup_DSP_M_DATA_DSP48E2_CLK_V[23])
+                                                      0.014     3.320    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST
+  -------------------------------------------------------------------
+                         required time                          3.320    
+                         arrival time                          -2.387    
+  -------------------------------------------------------------------
+                         slack                                  0.933    
+
+Slack (MET) :             0.933ns  (required time - arrival time)
+  Source:                 g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[24]
+                            (rising edge-triggered cell DSP_M_DATA clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.359ns  (logic 0.913ns (38.703%)  route 1.446ns (61.297%))
+  Logic Levels:           3  (DSP_A_B_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.015ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.043ns = ( 3.341 - 3.298 ) 
+    Source Clock Delay      (SCD):    0.028ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=14342, unset)        0.028     0.028    g_row[9].g_col[2].u_pe/u_mul/clk
+    SLICE_X97Y271        FDRE                                         r  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X97Y271        FDRE (Prop_CFF2_SLICEL_C_Q)
+                                                      0.080     0.108 f  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/Q
+                         net (fo=2, routed)           1.446     1.554    g_row[9].g_col[2].u_pe/u_mul/u_dsp/B[4]
+    DSP48E2_X13Y108      DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_B[4]_B2_DATA[4])
+                                                      0.151     1.705 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA_INST/B2_DATA[4]
+                         net (fo=1, routed)           0.000     1.705    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA.B2_DATA<4>
+    DSP48E2_X13Y108      DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_B2_DATA[4]_B2B1[4])
+                                                      0.073     1.778 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA_INST/B2B1[4]
+                         net (fo=1, routed)           0.000     1.778    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA.B2B1<4>
+    DSP48E2_X13Y108      DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_B2B1[4]_V[24])
+                                                      0.609     2.387 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER_INST/V[24]
+                         net (fo=1, routed)           0.000     2.387    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER.V<24>
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[24]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=14342, unset)        0.043     3.341    g_row[9].g_col[2].u_pe/u_mul/u_dsp/CLK
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/CLK
+                         clock pessimism              0.000     3.341    
+                         clock uncertainty           -0.035     3.306    
+    DSP48E2_X13Y108      DSP_M_DATA (Setup_DSP_M_DATA_DSP48E2_CLK_V[24])
+                                                      0.014     3.320    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST
+  -------------------------------------------------------------------
+                         required time                          3.320    
+                         arrival time                          -2.387    
+  -------------------------------------------------------------------
+                         slack                                  0.933    
+
+Slack (MET) :             0.933ns  (required time - arrival time)
+  Source:                 g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Destination:            g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[25]
+                            (rising edge-triggered cell DSP_M_DATA clocked by clk  {rise@0.000ns fall@1.649ns period=3.298ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.298ns  (clk rise@3.298ns - clk rise@0.000ns)
+  Data Path Delay:        2.359ns  (logic 0.913ns (38.703%)  route 1.446ns (61.297%))
+  Logic Levels:           3  (DSP_A_B_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.015ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.043ns = ( 3.341 - 3.298 ) 
+    Source Clock Delay      (SCD):    0.028ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=14342, unset)        0.028     0.028    g_row[9].g_col[2].u_pe/u_mul/clk
+    SLICE_X97Y271        FDRE                                         r  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X97Y271        FDRE (Prop_CFF2_SLICEL_C_Q)
+                                                      0.080     0.108 f  g_row[9].g_col[2].u_pe/u_mul/a_s0_reg[4]/Q
+                         net (fo=2, routed)           1.446     1.554    g_row[9].g_col[2].u_pe/u_mul/u_dsp/B[4]
+    DSP48E2_X13Y108      DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_B[4]_B2_DATA[4])
+                                                      0.151     1.705 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA_INST/B2_DATA[4]
+                         net (fo=1, routed)           0.000     1.705    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_A_B_DATA.B2_DATA<4>
+    DSP48E2_X13Y108      DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_B2_DATA[4]_B2B1[4])
+                                                      0.073     1.778 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA_INST/B2B1[4]
+                         net (fo=1, routed)           0.000     1.778    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_PREADD_DATA.B2B1<4>
+    DSP48E2_X13Y108      DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_B2B1[4]_V[25])
+                                                      0.609     2.387 r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER_INST/V[25]
+                         net (fo=1, routed)           0.000     2.387    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_MULTIPLIER.V<25>
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/V[25]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        3.298     3.298 r  
+                                                      0.000     3.298 r  clk (IN)
+                         net (fo=14342, unset)        0.043     3.341    g_row[9].g_col[2].u_pe/u_mul/u_dsp/CLK
+    DSP48E2_X13Y108      DSP_M_DATA                                   r  g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST/CLK
+                         clock pessimism              0.000     3.341    
+                         clock uncertainty           -0.035     3.306    
+    DSP48E2_X13Y108      DSP_M_DATA (Setup_DSP_M_DATA_DSP48E2_CLK_V[25])
+                                                      0.014     3.320    g_row[9].g_col[2].u_pe/u_mul/u_dsp/DSP_M_DATA_INST
+  -------------------------------------------------------------------
+                         required time                          3.320    
+                         arrival time                          -2.387    
+  -------------------------------------------------------------------
+                         slack                                  0.933    
+
+
+
+

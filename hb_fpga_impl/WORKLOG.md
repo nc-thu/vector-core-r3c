@@ -551,3 +551,239 @@ u_gemm 模块 LUT 76176→65452（−14.1%）、FF 105657→137097（+29.8%）�
 ## 2026-09-02　R3C 交接包同步 GitHub
 
 仓库 github.com/nc-thu/vector-core-r3c（private），main=23c20e4。按用户裁决只推核心：仿真器/算法/RTL 代码+核心结果（3653 文件，最大单文件 4.6MB）；数据块全部不入库（权重 blob 188MB、segments 的 ctx/w/ddr mem、t7_*.npy、04_dataset npz、fixture.pt、第三方 robo_orchard_lab），segments/*/seq.mem 保留供 r3c_model/pe_sizing 复算。白名单式 .gitignore 落在仓库根。坑两条：①aux.json 是 Windows 保留设备名，git 打不开，gitignore 掉（measure.py 可重新生成）；②校园网到 github.com:443 时通时断，推送需趁连接窗口抢推重试。
+
+## 2026-09-02　仓库转公开
+
+github.com/nc-thu/vector-core-r3c 转 PUBLIC（用户裁决）。转公开前全库清理内网信息：内网 IP、登录串、服务器家目录路径全部占位符化（29 个文件）；Vivado 报告头裸主机名保留；token/密钥扫描零命中。
+
+## 2026-09-02 13:40:54　双代理并行启动：W8A8 SOTA PE 探索 + W8A8 部署错误根因调查
+
+- **代理 A**：pe_w8a8_sota/（独立目录，PLAN.md=用户 42 节计划原文 + TASK.md=环境/纪律）。目标：DSP48E2 上 bit-space×clock-pumping 联合利用（1 DSP 服务 2×2 logical MAC contexts）+ hierarchical exact accumulation（INT24 chunk→INT32 后台 flush，HA1/HA2 两版），baseline 矩阵 B0~B8（XtraMAC/FPL-ring/UDP），Phase 1~4 必做、OOC ≤40 次、kill criteria 诚实触发。
+- **代理 B**：research_w8a8_error/（BRIEF.md）。目标：逐层误差分解（0.29 rad 超判据 6.6× 的来源）+ 量化粒度主因判定 + 解法对比（动态激活 scale 可能硬件零改动——requant 描述符已带 rq_m/rq_s；W8A16；敏感层保精度；舍入改就近）。
+- 两项各出一 HTML（代理完成后主会话写）。
+
+## 2026-09-02　双代理重启（会话中断接续）
+
+上会话 13:40 启动的两个代理随会话终止而中断（A 只剩目录骨架+XtraMAC clone，B 零开工）。本会话重新派发，任务书不变（pe_w8a8_sota/PLAN.md+TASK.md、research_w8a8_error/BRIEF.md）。
+
+### 2026-09-02 15:27:55 面试速成教程
+- 新建 tutorial/，产出《架构模拟器速成：从指令解码到周期模型》图文 HTML。
+- 内容全部取自仓库真实代码：golden_interp.decode（指令解码）、fast_interp_a3（功能模拟）、acct_a3（周期公式+校准表）、cycle_exact_a3（事件模拟+预取并发）、r3c_model/pe_sizing（两个架构决策案例）。
+- 附 60 秒电梯陈述、高频追问预演表、event-driven simulator 手撕骨架（20 行）。
+
+## 2026-09-02 16:46:30　W8A8 SOTA PE：Phase 0 全绿（golden + TB + 7 variant 位精确对拍）
+
+- **golden**：model/golden.py 生成 full suite（10251 dots / 1,032,501 txs；K∈{1..4096} 23 档 × 5 分布 + K=1 全枚举 2401 块）+ smoke（55 dots）。文件格式 B/T/X/E 四行型，TB 统一消费。
+- **TB 三件套**（tb/）：tb_pe.sv（B1/B4/B5/B6/B7 通用，negedge 命令队列驱动、每 slot 恰 2 posedge）、tb_b0.sv（4-pass 重放）、tb_quad_raw.sv（raw 核逐 beat 对拍 FIFO）+ glbl.v stub。
+- **RTL 七件全部 iverilog 位精确全绿**（unisim DSP48E2）：B0 scalar、B1 XtraMAC 移植、B4 naive、B5 HA1、B6 HA2、B7 窗口 ring、quad_raw（raw Pack2×Pump2 乘法核，2,065,002 beats 零误差）——**Phase 2 前提（乘法核 bit-exact）已成立**。
+- 修复记录：B7 三处（cap 双拍/满判据差一/乒乓 rdy 同拍清零竞态 + 处理-填充节奏失配改为 st3 背靠背换 bank）；B4 符号扩展 30b 截断；`local`/`void` 关键字；TB slot 驱动多采样 1 posedge；对拍 FIFO 满判据。
+- 证据：runs/<variant>/sim_full/{command.txt,sim.log,result.json}。
+- 下一步：Vivado OOC（工作区 E:\ae_syn\pe_w8a8_sota\，tcl/syn.tcl + synth/run_synth.sh + sweep.py 已备），按 PLAN §38 顺序 Phase 1（B0/B1/B7）→ Phase 2（quad_raw@fast）→ Phase 3/4。
+
+---
+
+## 2026-09-02 16:57:56 W8A8 部署错误根因定案：逐 tensor 权重量化是主因；逐通道权重+就近舍入实测 -75%
+
+**背景**：全深度 W8A8 链在真实 RoboTwin 样本上 jpos 0.2993 rad（判据 0.045，超 6.6x）。本轮在真实 s000 上做同硬件语义的逐项切换 A/B（模块边界深度，与 modeB 门禁同口径），把误差来源拆开。全部材料在 research_w8a8_error/（REPORT.md + analysis_00~05 + results/）。
+
+**根因（实测证据链）**：
+- 只把权重改逐通道（激活/输出/requant 全不动）：0.189 → 0.059（**-69%**）。
+- 激活侧一切改动（逐帧/逐 token/dyadic 动态 scale、SmoothQuant 折入）端到端差 ≤0.007，**全部无效**——激活噪声零均值、在 K 项 MAC 里平均掉；权重误差是相干扰动（每个 token 同向），430 层 + 10 步 DPM 同向累积。
+- 输出 INT8 轨道/截幅：无效（V0b fp 输出 0.196 ≈ V0 0.189）。
+- requant 截断的 -0.5 LSB 偏置：权重修好后可见，改就近舍入再拿 21%（0.0595 → 0.0472）。
+- 组合（逐通道权重 + RTN）= **0.047**，贴近 W8A16 天花板路径（0.0049）；W8A16 判定为过度设计。
+- 最差层三方对齐（bringup 实测 rel / 部署权重解析误差 / 真实样本 sentinel）：Swin stages.2/3 ffn.layers.1（逐通道幅值差 15.9x、e_pt 0.111）、downsample.reduction、BERT output.dense、fusion ffn/out_l_proj。
+- 首层 patch_embed rel 0.70 之谜解开：全部来自输出 requant 网格太粗（合成批 absmax 标定的 so，真实输出重尾），输入侧 sa 超量程 1.42x/2.17x 只占 0.164；**端到端无害**（V2_rn 到 0.047 时首层仍 0.705，LayerNorm 吸收）。
+- 门禁教训：合成 bringup 批逐层 rel 也有 0.8+ 却端到端绿（0.029）——该门禁对真实部署无预测力，评估集必须换真实样本。
+
+**解法与硬件改动量**（推荐 = A）：
+- A. 逐通道权重 + RTN：rq_ms 的 m/s 单输入改 per-slot 总线（x 已是 mux，24 核共 2.3 kbit 系数 RAM）+ rq_v2 加 35b 舍入常数加法器（rn=2^(s-9) 随描述符锁存）+ ae_gemm SF_INIT 载 96 组系数；累加器界不变，不碰脉动阵列。编译器：逐通道 sw 标定 + 逐列 (m,s,rn) 描述符 + 逐通道 bias aug。
+- 下一步第 1 任务（软件先行）：pcW+RTN 移植进全深度仿真链，s000/s001 对拍 fp32_ref，判据 jpos ≤0.045（边界深度预测区间 0.07~0.16，需实测）。
+
+## 2026-09-02 17:02:21　W8A8 错误根因调查汇报页
+
+`research_w8a8_error/2026-09-02_1702_W8A8部署错误根因.html`：A/B 切换对照图（只动权重 −69%/−75%，激活侧全部无效）、相干 vs 零均值误差机理、最差层三方对齐表、推荐方案硬件改动量表（rq_ms 每列系数 + rq_v2 舍入加法器，不碰脉动阵列）、否决路线各一条理由、下一步四步路线。诚实边界：0.047 是模块边界深度，全深度预测 0.07~0.16 待下轮实测。
+
+## 2026-09-02 17:07:40 — W8A8 PE 探索 Phase 1 完成：B0/B1/B7 OOC 全绿
+- B0 scalar baseline：33 LUT / 164 FF / 1 DSP，Fmax ≈ 401.8 MHz（三档 period WNS 一致收敛）
+- B1 pack2 baseline：191 LUT / 236 FF / 1 DSP，Fmax ≈ 471.0 MHz
+- B7 ring（pack2+pump2+窗口环+层次累加）：217 LUT / 332 FF / 1 DSP，Fmax ≈ 421.4 MHz @ 2× 快钟
+- 全部 iverilog full-suite 位精确全绿（10251 dots，B0 为 4-pass 重放对拍）
+- 备注：Vivado 偶发内部错误 "rt-undefined"（synth_design 崩溃），重试即恢复，非 RTL 问题
+- 下一步：Phase 2 quad_raw OOC 时序验证（失败即停）
+
+## 2026-09-02 17:10:10 — W8A8 PE 探索 Phase 2 完成：quad_raw gate 通过
+- raw Pack2×Pump2 乘法核（1 DSP 服务 2×2 逻辑 MAC）：30 LUT / 76 FF / 1 DSP
+- 三档 period 全部大裕量：2.5ns WNS +1.256 / 2.222ns +0.978 / 2.0ns +0.756 → Fmax ≈ 803.9 MHz
+- 结论：DSP48E2 位空间并行与时钟倍频可同时利用，raw 核时序完全不是瓶颈
+- 瓶颈在外围：B7 全核 421.4 MHz vs raw 核 803.9 MHz，差距来自抽取校正+层次累加逻辑
+- 下一步：Phase 3 B4 naive OOC sweep
+
+## 2026-09-02 17:15:00 — W8A8 PE 探索 Phase 3 完成：B4 naive OOC
+- B4（pack2×pump2 + 每拍朴素抽取 + 4×INT32 独立累加）：127 LUT / 172 FF / 1 DSP，Fmax ≈ 495.3 MHz
+- 对比 B7 ring（217 LUT / 332 FF / 421.4 MHz）：B4 面积近半、频率更高——窗口环的抽取折叠 FSM 反而拖累时序
+- 注：B4 三档中 2.5ns 两次撞上 Vivado 偶发文件读取故障（unimacro_verilog.tcl 读失败，与 rt-undefined 同源），第三次重试成功；非 RTL 问题
+- 下一步：Phase 4 B5（HA1）/ B6（HA2）OOC sweep
+
+## 2026-09-02 17:25:30 — W8A8 PE 探索 Phase 4 完成：B5/B6 HA 结构 OOC
+- B5（HA1：DSP-P 窗口环 + INT32 全局）：406 LUT / 520 FF / 1 DSP，Fmax ≈ 501.0 MHz
+- B6（HA2：两级累加 INT24 chunk→INT32 global）：386 LUT / 553 FF / 1 DSP，Fmax ≈ 672.95 MHz
+  - 加测 1.818ns（WNS +0.332）与 1.667ns（WNS +0.181）：600 MHz 目标仍通过，Fmax 收敛一致
+  - 折算吞吐：672.95 MHz × 2 MAC/拍 = 1346 GMAC/s / DSP，为 B0 scalar（401.8 × 1）的 3.35 倍
+- 结论：两级累加（HA2）胜出——chunk 累加保持窄位宽进 DSP 反馈路径，全局累加仅慢速域承担
+- Vivado rt 瞬态故障复现两次（rtSynthParallelPrep.tcl 读失败、.Xil realtime tcl 读失败），清 .Xil 后恢复
+- 下一步：汇总 summary.csv；Phase 5 cluster 视时间决定
+
+## 2026-09-02 18:25:00 — W8A8 PE 探索 Phase 5 完成（缩水版）+ 全任务收官
+- B6 单 PE post-route（synth+opt+place+route @1.667ns）：WNS −0.065 → Fmax 577.4 MHz，较 OOC 672.9 退化 14.1%
+- 16×B6 广播 cluster post-route：6692 LUT / 16 DSP，WNS −0.412 → 481.0 MHz（单核 83.3%）
+- 64×B6 广播 cluster post-route：26707 LUT / 64 DSP，WNS −0.386 → 487.1 MHz（单核 84.4%）
+  - 16→64 吞吐/DSP 基本持平（0.96 vs 0.97 GMAC/s/DSP）：cluster 扩展性良好，退化集中在单核→多核一跳
+  - 违例路径在 PE 内部（route 占 64%），非广播扇出：floorplan（PBLOCK）有希望挽回，未做（缺口）
+- B0 post-route @2.5ns：WNS +0.025 → 404.0 MHz（近零退化）；B6/B0 post-route 口径吞吐比 2.86×
+- cluster 等价性冒烟：pe_b6_cluster(N=2) vs 单体 pe_b6，63 块 PASS（runs/cl16/sim_smoke/）
+- 环境备注：Vivado 2021.2 本机随机文件读失败（rt-undefined 家族）已用自动重试+清 .Xil 根治；综合 tcl 加 set_param general.maxThreads 1
+- Phase 6 power 按指令未做；CHUNK sweep、floorplan 对比、B1 post-route 未做（缺口记入 REPORT）
+- 交付：results/summary.csv（27 行，OOC 23 + post-route 4，全脚本生成）、REPORT.md 内容（因子代理写文件限制，由主会话落盘）
+- 探索汇报 HTML：pe_w8a8_sota/2026-09-02_1823_W8A8SOTA_PE探索结果.html（2026-09-02 18:23:53 落盘）。核心结论：4 积/DSP 位精确可行但布线后吞吐 2.86×（判据 3×，边缘未达）；损失分解——朴素累加 −38%、布线 −14%、集群密度 −16%、乘法核与 packing 零损失；意外发现 B4 为面积黑马（127 LUT 面积效率第一）、HA2 真实收益是频率（+34%）非面积；最大缺口为 floorplan（PBLOCK）实验未做
+
+## 2026-09-04 10:30:30 — 24_pcw_rtn 阶段1：语义移植与编译器扩展（代码全部落地）
+- BRIEF_SW 执行：pcW+RTN（逐输出通道 INT8 权重 + requant 就近舍入）从模块边界 A/B 移植进全深度链（compiler → fast/golden_interp → host_driver），语义权威 = research_w8a8_error/analysis_02_server_ab.py 的 V2c_pcW / V2_rn_pcW，逐位对齐
+- sw/ 目录：03_compiler 26 个 py 全量拷贝，只改副本。新增描述符 op=14（OP_SF 系数装载：每 256b 字 10 个 24b 槽 m<<8|s，bits[251:240]=槽号）；GEMM 标志位 rq_s bit7=逐列系数、rq_m bit15=RTN；两解释器（golden 纯 Python / fast numpy 向量化）在真实 build 段逐位一致
+- RTN 整数语义定稿：y = sat8((acc·m + 2^(s-1)) >>> s)，s≥9；与 RTL rq_v2 内部口径 y = sat8((acc·mh + ((acc·ml)>>>8) + 2^(s-9)) >>> (s-8)) 逐位相等（整数恒等式，本地 2 万随机 + 负数边界用例零失配）
+- 服务器 pcw_export.py 从 fp32 ckpt 重导逐通道 INT8 权重 427 个 tensor（逐 tensor 的 w8_export 信息已丢不可反推），通道 scale 最大比值 41.2×；mk_pcw_calib.py 合成 hw_calib_table_pcw.json：426 层 pcW + 12 conv 保持逐 tensor + 全部量化层 bias 改 host fp（aug 关闭，A/B 实测两者差 <0.001）
+- 修复一个键名失配：pcw_scales.json 按 manifest 键（带 .weight）存、v2 校准表键不带后缀，首轮只匹配 6 层；双向查找后 427 层全覆盖（唯一未匹配层 spatial_enhancer.pts_prob_fc.layers.1 本就是豁免层）
+
+## 2026-09-04 10:31:00 — 24_pcw_rtn 阶段2：编译 + fast_selftest 全绿
+- build_s000_pcw / build_s001_pcw（服务器 /tmp/pcw_rtn/）：3118 段、362091 描述符（其中 OP_SF 101294 字）、最大 SEQ=1009（预算 2048）、权重 blob 196.46MB 与 v3 相同、预估 3162ms@198.5MHz（v3 为 3102 段；增量全部来自 OP_SF 字与逐列系数重发）
+- fast_selftest（fast vs golden 逐位对拍，特征桶抽段）：9 桶全 PASS，其中 8 桶含 OP_SF + 逐列 GEMM（最大一段 470 个 SF 字 + 44 个逐列 GEMM），含 y_tr/softmax/COPY 混合路径
+- 判据锚点：全深度部署基线 V0 jpos=0.2993/0.2108（s000/s001），边界 A/B pcW+RTN=0.04715，fp 重采样噪声 0.0457，判据 0.045
+
+## 2026-09-04 10:39:34 — 24_pcw_rtn 阶段2（RTL 线）：三处 RTL 改动 + RTN 向量门全绿
+- rq_v2.sv：加 rn_en 输入，RTN 就近舍入。rn 由 s 在模块内译码（one-hot 取 2^(t-1)，t=s-8≥1 才使能；t≥PW 时钳位 2^(PW-1)，两侧都移位到 0 无损），T0 与乘积同拍寄存 rn_r/t_r（不加在 T1 移位关键路径）。sum 容器 PW→PW+1（36b）：sext(sum)+zext(rn) ∈ (−2^34, 2^35) 不回绕。floor（rn_en=0）与 R3C 逐位一致
+- rq_ms.sv：m/s 单输入 → m_bus[SHARE×16]/s_bus[SHARE×8] 按 slot 选择（照抄 x_bus 模式），rn_en 直通
+- ae_gemm.sv：SF_INIT 从锁 1 组 (m,s) 改为锁 rq_coeff[COLS×24]（列 c 的 {m[16b],s[8b]} 在 [c·24+8]/[c·24]）+ rq_rn_en；24 套 rq_ms × 4 slot = 96 组
+- ae_sched.sv/ae_core.sv：GEMM 族描述符（op∉{3,4,5,6,15}）扩成 1+NCW 字（NCW=ceil(COLS·24/256)，96 列=9 字），新增 T_CFETCH/T_CLATCH 泵（2 拍/字，枚举追加保持旧编码）；pc 推进 = pc+1+NCW（与预取 pc_next 同式，预取只看紧邻描述符无多步前瞻，天然安全）；rn_en 走头字 bit 28（原空闲位）
+- tb_rq.sv 新增相位 D：rq_v2(rn_en=1) 60k 向量对 python 神谕 sat8((x·m+2^(s-1))>>>s) 位精确（s 覆盖 HB 标定域 [21,27]/全域 [9,47]/s=8 退化 7500 行/小 s 饱也撞舍入，饱和命中 36288 行）；相位 A/B（floor 锚，rq_v1 神谕）60k+30k 全绿不变
+- 修 R3C 遗留向量坑两处：①gen_rq_vec.py 写 ctrl.mem 但 tb_rq 读 rq_ctrl.mem（靠手工改名凑合），生成侧改名对齐；②x 裁剪上界 2^26 → 2^26−1（+2^26 越出 27b 有符号域，R3C 相位 A/B 双侧同错抵消未暴露，对 python 神谕才炸，1555 失配全在 x=+2^26/128·128·4096）。两 TB 加向量空载守卫（缺 .mem 时 $fatal 而非空跑假 PASS），regression.sh 补 gen_rq 步骤、复制 sm16 孤本向量与 spec/norm_gold
+- gen_vectors.py：golden 逐列 requant + RTN、描述符 +NCW 系数字（平铺 blob）、--case pcw（每 GEMM 独立 12 组随机 (m,s)、每层掷 RTN/floor、s 域含 8/9/11 边界列）；tb_ae.sv SEQ_N 64→128（默认用例 64 字恰好顶满）
+- pcw 用例全链路三遍（REF/PRIM/PRIM-pf1）dump 与 golden 逐位一致，prim2==prim 逐字节；默认用例引擎计数 vs R3C 实测：gemm 4532 vs 4526（+6，slot 相位抖动同 R3C 的 pf1−pf0=+3 性质）、dma 712 vs 710、macs/skip 精确一致；总周期 6814→6930（+116 = 系数泵 2 拍×2 字×29 条 GEMM，纯调度器侧）
+- 与软件线语义对齐：RTN 整数公式两侧已各自从相反方向验证逐位等价（SW 侧 2 万随机含负数边界零失配 + 本线 60k 向量门）；描述符编码两侧不同（RTL：头字后挂 NCW 字 + bit 28；SW：op=14 OP_SF 独立字 + rq_s bit7/rq_m bit15 标志）——两条 BRIEF 各自授权的格式，REPORT_RTL.md 写清偏离与收敛建议
+
+## 2026-09-04 11:06:45 — 24_pcw_rtn 阶段3（RTL 线）：回归 17 项全绿 + 芯片级 floor 锚 + tb_ae_actv X 根因
+
+- 回归 run-4（11:02 完，约 5 分钟）：ALL PASS 17 项（新增 gen_lut 步骤）。tb_rq 相位 D 60000 向量对 python 神谕 err=0（s∈[21,27]/全域/7500 行 s=8 退化/小 s，饱和命中 36288 行）；相位 A/B floor 锚 err=0。
+- 芯片级 floor 锚（11:00）：本 rtl/ 重跑 actv 用例，CTX/DDR 四个终态 dump 与 R3C 存档 cmp 逐字节一致（ddr_init 输入亦一致）。seq.mem 40→70 字 = 15 GEMM × 2 系数字，行为零变化。
+- pcW 全链路：逐列 (m,s) + 每 GEMM 掷 RTN，REF/PRIM/prim2 全部位精确；默认用例位精确 + 引擎 MAC 精确一致；总拍 REF 6814→6930（+1.7%，泵 108 + 相位抖动 +8）、PRIM 6618→6702（+84）。
+- tb_ae_actv 全 X 根因（耗时最久的一坑）：ae_actv.sv 运行期 $readmemh("rsqrt_lut.mem")，NORM 子模式的 rsqrt 表是输入孤本（spec/norm_gold.py --dump-lut 生成），拷目录时按"*.mem 是生成物"漏拷。定位手段：R3C 编译产物 vvp 在两目录交叉运行隔离出 CWD 变量 → 枚举运行期文件 IO。修复：regression.sh 加 gen_lut 步骤，表与 R3C 孤本逐字节一致；tb_ae_actv 恢复 221184 字节位精确 PASS。
+- REPORT_RTL.md 全文已完成（三处改动、验证、语义对齐含描述符编码分叉裁决、资源对照、复现命令、6 条诚实边界）；子代理写文件被工具策略拦截，全文已发回主会话落盘。
+
+## 2026-09-04 11:27:00 — 24_pcw_rtn 阶段4（门禁线）：真实样本门禁交付 + 两次翻案（一次自查、一次根因级）
+
+- gate_real.py（服务器 /tmp/pcw_rtn/）：评估集换真实样本 s000/s001（batch 来自 host_driver 同款加载 + kinematics device 修复），协议其余与 hw_calib mode B_v1 完全一致（import 复用，不复制数值代码）；4 种子 × 2 样本，判据 0.045
+- 翻案一（自查）：初版从 v2 表重建 params 时 88 个 bias_fp_fallback 层 w_acc 置 None（bias 丢失，假红 0.2415），二版塞原始 bias（单位错，应为累加器域 b/(sa·sw)，0.1849）。修复后逐字段核对：v2 表与今日 fresh 标定 sa/so/sw/m 全部精确一致（430 层比值 1.000）——此前"v2 表是独立误差源"的说法撤回，标定表没有问题
+- 最终数字：host_bias（compiler.py:31 部署约定：aug 层 K+1 进累加器、fallback 层 PL 出 int8 后 host 加 fp bias）s000=0.02167 / s001=0.02437 双绿；acc_bias（bias 进累加器理想口径）0.01855/0.02523。fp 参考与 fp32_ref_000.npz 逐位一致（jpos=0.00000），排除参考漂移
+- 翻案二（根因级）：ab_quant.py（research_w8a8_error 的语义权威）pt 权重路径单位 bug——get_w 返回 qz(W,sw)*sw（反量化权重）进 acc，requant r=(sa·sw)/so 却按整数 acc 写 → 矩阵项压 sw 倍、bias 项正确，层输出≈只剩 bias；make_conv_fwd 同款，10 个 conv 输出全部缩 sw 倍（视觉流死亡）。单层实测：ab 输出 rel_vs_fp=1.04，我的实现贴 fp。上一轮"per-tensor 权重量化是 0.29 主因/pcW −75%/激活侧全无效"三个结论全部作废（都测在坏基线上）；V2c/V2_rn 的 pc 线性路径单位正确但 conv 仍坏，"视觉 sentinel 0.8~1.0 但动作到地板"的旧解释（LayerNorm 吸收）实为 conv 坏了
+- 新根因陈述：0.29 = GEMM 量化在 815 次调用链上的逐级 requant 复利（only_gemm 0.2942 ≈ 全链 0.2975，非 GEMM op 只占 0.003；模块间 fp 复位时同样 430 个 GEMM 只剩 0.022，13.8× 全部来自深度）+ 合成标定对真实输入失配（patch_embed 输入 80% 超量程削顶 in_sat=0.802，105~115/430 模块超 calib×1.05；注意力层输入在量程内时单 GEMM max_rel 仅 2.0~2.4%）
+- 影响与去向：RTL 线三处改动正确且验证完备（保留，基础设施不浪费），但 pcW+RTN 修的粒度在全深度账本里占小头；软件线全深度实测变为"测深度代价"本身，深度二分价值上升；门禁下版应加真实样本标定通道（train/test 分离）与 in_proj 覆盖（部署表含 in_proj_weight，门禁/hw_calib 目前留 fp）
+- 交付：24_pcw_rtn/REPORT_GATE.md（完整调查过程+复现命令）、results/gate_real_results.json、results/gate_real_full3.log、REPORT_RTL.md 已落盘（RTL 线全文）
+
+## 2026-09-04 13:30:00 — 24_pcw_rtn 阶段5（软件线）：pcW+RTN 全深度 bias 根因修复 + 深度二分曲线
+
+- bias 根因（0.333 元凶）：mk_pcw_calib 首版把所有 pcW 层偏置改 host fp，但注意力 qkv 的 int8 输出在 PL 段内被 QK^T/PV 直接消费不回 host，q/k/v 偏置全部静默丢失（另 6 个 MHA in_proj 偏置键别名丢失）。修复 = 逐通道 K+1 增广 w_bias_j=round(b_j/(sa·swc_j·c))，c∈2^0..2^6 每层统一；注意力内部 134 层 c=64 溢出改逐通道饱和 ±127（真饱和 37 层 3373 通道），host 边界 99 层保持 fp fallback（精确）；compiler apply_calib pcW 分支改落穿 aug 判定
+- 修复效果：s000 0.3328→0.2383（−28.5%）、s001 0.2698→0.1828（−32.2%）；对逐 tensor 基线 0.2992/0.2165 低 20.3%/15.6%；仍超判据 0.045 约 5.3×/4.1×（如实报红）。fast_selftest 9/9 全绿复跑通过。数字已与 results/result_*_pcwv3_vs_fp32.json 逐个核对一致
+- 深度二分（host_driver 新增 --fp-after N；N=815 与全量跑 0.2383 完全一致，机制交叉验证过）：判据穿越 N≈180（特征增强/robot_encoder 入口，BERT 段 N=150 仍 0.030 绿）；主跳变 200–250（0.054→0.134）；250–750 平台 0.133；N=809 反常 0.6765——只留最后 5 个输出头调用走 fp 反而爆炸，全量（含头量化）0.238：静态标定在输出头的重量化把漂移拉回量程，混合精度尾巴不单调更好（记账已排除：5 个未跑段=5 个 native 模块，4 个缺输入为全量同样存在的预存行为）
+- lever F 无效：F1（12 BERT FFN 前缀）0.2376、F2（38 前缀/261 调用点豁免）0.2384 vs 基线 0.2383——豁免 20% 调用点纹丝不动，证实误差是传播复利+输出头回拉、非 per-GEMM 贡献
+- RTN 恒等式再验证：20 万随机向量（x 全域 ±2^26）RTN/floor 双模式 0 失配（12:04:42）；OP_SF 开销 101,294 字×8 拍≈4.1ms@198.5MHz=整帧 0.13%；表 v3 统计 s∈[21,30] m∈[16384,32767] 无钳位
+- REPORT_SW.md 已落盘（全文由子代理交付、主会话转写）；含 RTL 团队用的 rn 公式+证明、OP_SF 格式、RTL 对齐 8 条清单、复现命令、10 条诚实边界；服务器 /tmp/pcw_rtn 进程已清理（gate_real 未动）。下一轮最值得跟进：N=809 输出头回拉现象（fp 头 0.68 vs 量化头 0.24，0.44 差值全来自 5 个调用的重量化回拉）
+
+## 2026-09-04 15:13:41 — W8A8 B8 正确性门通过
+
+- 新增 B8：Pack2 × Pump2、4 份 exact INT32 state、乘积校正和 INT32 recurrence 分两级，row0/row1 交错访问；不使用 INT24 chunk、snapshot 或 global flush。
+- 服务器 Verilator 全量对拍通过：10,251 个 dots、1,032,501 个 transaction、0 错误，仿真用时 7.87 秒。Icarus + UNISIM 冒烟 55 dots、0 错误。
+
+## 2026-09-04 15:23:06 — W8A8 B8 单核同流程比较完成
+
+- B8 初版因 accumulator 上多余 keep 属性占 238 LUT；去掉后降到 143 LUT，减少 39.9%，OOC Fmax 保持 771.6 MHz，硬门槛全部通过。
+- 同一 post-route 流程下，B8 为 688.7 MHz / 171 LUT / 1 DSP。相对 B4，Fmax 提高 14.3%、LUT 增加 11.8%；相对 B6，Fmax 提高 23.6%、LUT 减少 57.1%。
+- B8 关键路径已经不是“乘积校正 + INT32 累加”串联。所有 route run 的 routing error、未约束内部 endpoint、DRC Error/Critical Warning 均为 0。
+
+## 2026-09-04 15:43:42 — W8A8 B8 cluster 规模实验完成
+
+- B8 16/32/64 PE AUTO 分别达到 636.5/619.2/606.4 MHz。64 PE 总吞吐 77.623 GMAC/s，每 DSP 1.213 GMAC/s，相对单核频率退化 11.9%。
+- 16 PE SOFT PBLOCK 为 625.4 MHz，比 AUTO 低 1.8%，因此 32/64 PE 继续使用 AUTO。
+- 四线程稳定完成，最大单次实验为 64 PE route，耗时 285.67 秒，所有实验均低于 10 分钟。
+
+## 2026-09-04 15:48:06 — W8A8 B8 实验总结生成
+
+- 生成单文件 HTML、Markdown 报告和 CSV 汇总。公式、必填字段、时间戳、DRC/路由状态和 HTML 结构自动检查通过。
+- Power、真实 250/500 MHz 双时钟 wrapper 和 R3C 集成本轮未做。B6 只重跑到 16 PE；旧 64 PE 数据为 487 MHz，报告没有把 16 PE 结果冒充大规模结论。
+
+## 2026-09-04 16:56:00 — 25_alg 三线（标定/SmoothQuant/输出头）：两线证伪 + N=809"回拉"翻案为输出坍缩
+
+- 任务来源：用户 0904 提出的 12 实验矩阵（S0-S11，主流 PTQ 经验对照：SmoothQuant/RPTQ/FQ-ViT/LLM.int8/HAWQ-V3/BRECQ/PACT）。三代理并行（/tmp/alg_calib、/tmp/alg_smooth、/tmp/alg_head），S0 复用基线 0.2383/0.1828 不重跑
+- 标定线（REPORT_CALIB.md，25_alg_calib/）：假设证伪。S1 全网真实 absmax 标定 0.2710/0.2097（+13.7%/+14.7% 更差，in/out 一致）；p99.9 口径 0.2313/0.1855（−2.9%/+1.5%）；仅 patch_embed −1.0%、仅穿越段 −0.4%、段内乘子扫描 ±0.5% 噪声带。机制：削顶被下游 LayerNorm 幅度归一化吸收，为消削顶放大 sa 反而让步长变粗、在 583 次 GEMM 复利下代价更大——分辨率比削顶值钱但量级 ≤3%。副产品 S10：全网 22.2 万通道 outlier 清单（top 0.1% 比值 57-115×，聚集 backbone.stages.3.blocks.0.ffn.layers.1 等；BERT 段典型通道仅用量程 ~15%），在 diag_real_s000.json
+- SmoothQuant 线（REPORT_SMOOTH.md，25_smooth_quant/）：机制生效、误差不动。S5 robot_encoder 10 组 0.238131（−0.09%，fp 等价门 6.6e-08）；S6 全域 102 组 0.235129/0.180371（−1.3%，混 0.0064 fp 地板要打折）。通道比值压平真实（中位 3.3→1.9/4.7→2.2，超标率→0），但 per-tensor sa 被最大通道钉死（0.76-1.11）——压平小通道换不来分辨率，权重侧 swc 比值还恶化到 26×。结论：激活逐通道动态范围不是主因，RPTQ/FQ-ViT 型激活整形在本链不成立
+- 输出头线（REPORT_HEAD.md，25_alg_head/）：① 调用图修正：全链 815 次调用，5 个头调用=#810-814（convs.0/convs.1/ol.1/ol.3/ol.4），头纯读出全流程调 10 次、末次主导。② S7 瀑布：#811 convs.1 主回拉（−0.318，占 73%），convs.0 −0.071、ol.4 −0.051，ol.1/ol.3 轻微有害。③ S8 A2（权重fp+激活requant）=0.6825、A3（权重W8+不requant）=0.6832——任一成分单独拿掉都塌回 0.68，回拉是 W8 舍入×requant 舍入的交互效应。④ S9 so 乘子：×2.0→0.2059（−13.6%，全部来自 convs.0 单层），×3.0 平台，距判据 4.6×。⑤ **机制翻案：回拉=输出坍缩**——部署基线头输出 72/112（关节,参数）单元格在 64 步上精确恒定（9/14 关节全 8 参数单一值）；fp32 参考 9/14 关节近常数（std≤0.02）、坍缩常数在 6 个押中，0.68→0.24 是记分运气不是精度恢复；该动的关节 8/9/10/13 仍死（j8 误差 0.86）；out_sat 全 0、rail 0——"饱和即收缩"假说被 T4 直接否定。0904 根因陈述第 2 条的输出头部分应改写
+- 三线合计：主流 PTQ 三板斧（标定/激活平滑/头策略）在本链全部测完、全部无效或边际（最好 0.2059=so×2 反坍缩，距判据 4.6×）；每条死路都有机制级解释，唯一存活的 main hypothesis=逐级 requant 复利把信号 SNR 磨到头输出常数化。下一档杠杆（按用户文献框架）：逐级 requant 本身动刀（少数关键边界 int16/int24 中间态保留、HAWQ 式 mixed boundary policy）或 QAT/块重建（BRECQ/OmniQuant，jpos 目标函数）
+- 交付：REPORT_{CALIB,SMOOTH,HEAD}.md 三份全部落盘（数字主会话逐个从服务器 json 复核）；脚本本地副本 25_alg_calib/、25_smooth_quant/sw/、24_pcw_rtn/sw/head_probe.py；三代理进程清理确认，/tmp/pcw_rtn 与 /tmp/ae_hostdrv 零改动
+
+## 2026-09-06 22:50:00 — 25_alg 轮 HTML 重写为白话版
+
+- 原因：0904 首版（2026-09-04_1658_算法三线探索与回拉翻案.html）术语密度过高被用户退回（"我看不懂"），且中文文件名在 IDE 链接中被 URL 转义后解析失败
+- 重写版：round_report_alg_ptq/2026-09-06_2249_plain_rewrite.html（纯 ASCII 文件名；实验数据与首版完全相同，仅表述重写：术语首现即解释、一句一事、数字带意义、图表配"怎么看"）
+- 旧文件已删除
+
+## 2026-09-07 02:48:10 — 26_ref_denoise：四参照梯定案"8 位格式够用、整数执行背锅"，去噪迭代证伪放大，缺口 87% 定位 attention 占位标定常数，真尺度上链 −19.3%/−23.5%
+
+- 任务来源：用户 0906 评审——五条结论收回意见 + 下轮目标四参照对比 + 去噪"步内误差 vs 跨步放大"分离 + INT16 先软后硬。两代理并行（/tmp/alg_refq、/tmp/alg_denoise），全部头条数字主会话从服务器 json 逐个复核，A6=0.02577 由主会话本人复跑确认
+- **四参照梯（REPORT_REFQ.md）**：R0 fp32=0（定义）；R1 部署图全 fp=0.0021（既有 --fp-after 0）；**R2 独立假量化（同位置同 scale 同网格、浮点执行舍入乘加、量化数学独立重写不复用 requant 代码）= 0.0208/0.0209（s000 双种子）、0.0295/0.0220（s001）——低于 0.045 判据**；R3 整数链 0.23834/0.18275。三验证门：fp 直通 6.99e-08；round(W/swc) 与 pcw_export 逐位一致（19 万元素差 1 LSB）；单模块 vs 整数链 rel 6e-4（15-bit 乘子预期量级）。**判据树落 ③≪④ 分支：0.2383 的 85~90% 是整数执行细节，不是 8 位格式**。变体：W8Afp 0.0085（权重几乎免费）、A-only 0.016、int16 网格 −18.9%、floor 差 3 倍（RTN 对）、bias 增广 +0.003、BERT mask ≤0.002、requant 乘子全链定界 0.031（alg_denoise drfix 0.0306/0.0232）。两套独立 harness 互证（refq V1=0.0208 / denoise free=0.01969）
+- **去噪解剖与隔离（REPORT_DENOISE.md）**：10 步 DPMSolverMultistepScheduler（dpmsolver++ order2 sample，配置 model.config.json /decoder/base_cfg/test_noise_scheduler），反馈只走 noisy_action dim0 一条窄通道（dim1-6 每步由 recompute() 正运动学重建）。**"815 层串行复利"双杀**：结构上 815=215 一次性前缀+60/步×10 步（275 边界×调用次数），"decoder.layers 走两遍"是误记（66 槽每层每步一次）；机制上每步传导比全程<0.5（回灌先衰减一半以上）、步 0-7 单独量化 ≈3e-05、只量化末步=TF=TF+=0.00889008 逐位相同（绿，调度器 model_outputs 历史零贡献）、状态存储单独 int8 仅 4.69e-05（**16 位预算不必给去噪状态**）、整数链 bisect 第 2-9 步 500 调用零增量。free=0.01969 构成：前缀条件偏差 77% + 末步出口 45%（近似可加小幅抵消）
+- **attention 三档梯子+实修（REPORT_ATTENTION.md）**：A1 S 压 int8 +1.6%、A2 整数 exp 表 +1.2%、A3 P 压 1/127 ≈0——**A4（v 码 σvs+PV 段 requant 用部署占位常数）一档占缺口 87.4%（0.0208→0.2110，与部署动作 corr 0.947）**；A5 同结构换真 absmax=0.02722、A6 完整整数执行复刻（V1 背景）=0.02577。家族：temporal 75.6%、rotary 29.7%、WindowMSA 6.9%、其余噪声（temporal_A4 输出波动放大 542 倍）。机制=compiler.py L1139/L1163 占位常数（PV 码欠程约 10 倍）非实测。**真尺度上链（工具链零代码改动，--attn-calib 数据通道，fast_selftest 全过、不加开关重编逐字节等于原 build）：s000 0.23834→0.19222（−19.3%）、s001 0.18275→0.13991（−23.5%，out-of-sample 更大）**。附带：query-thrice 接线 e2e 增量恰 0（不修，归档）；输出头 11/112 恒定格与注意力无关不随修复解除
+- **主会话警告（下一轮必做）**：代理判"真链残差主因=GEMM requant 复利"所引旧证据（base bisect N=250→0.133、only_gemm≈全链）都是在注意力常数还坏着时测的，被混淆；且两套 harness 均未仿真 AE_ACTV int8 NORM/ELTWISE（148+148 站点）、SM16/SM32 softmax、rotary 读 int8 中间值——A6 与真链间一整类语义差未定界。下一轮：修复链重测 bisect + 仿真 ACTV 族，归因关闭后再排 int16 边界/QAT 顺序
+- so×2 终局（C 线）：s001 上 +6.1% 反噬（0.1940），样本特定不泛化，放弃、不并入基线（与用户 0906 裁决一致）
+- 交付：hb_fpga_impl/26_ref_denoise/REPORT_{REFQ,DENOISE,ATTENTION}.md；HTML round_report_ref_denoise/2026-09-07_*.html；/tmp/pcw_rtn 与 /tmp/ae_hostdrv 零改动（swfix 为副本且链上三文件 diff 逐字节相同）；记忆已更新
+
+## 2026-09-08 13:12:00 — 27 轮收官：0.16 全归因（接线 78% + 头行错排 + conv im2col padding），修复链 0.1922→0.0500（−74%）/0.1399→0.0622（−56%）；600MHz PE 后硬件/架构路线讨论页
+
+- **0.16 归因关闭（三根因，148 旗标全归因无第四类）**：①id() 地址复用错喂（0.192 中的 0.150=78%，SSA 修复四门全过）；②头/行错排（_pop_heads 返回 2D 块、stack(qs,1).view 必错排，6 处改 stack().reshape，canonical 老链同带——0.1922/0.13991 锚点是带病成绩单）；③conv im2col padding 一行 bug（标量 pad 垫穿尺寸 1 的假维→A 矩阵 2/3 零行，在动作出口+自回归放大；`padding=(0,pad)` 一行修）。
+- **修复链终局**（服务器 /tmp/alg_fix/，主会话从 fix_summary.json 逐项复核）：SSA 0.2486/0.2571 → stackfix 0.2450 → convfix **0.04998（−74.0% vs 锚）/0.0622（−55.6%）**；旗标 24→0；公平性门全程不变（fallback 27/missing 59/segments 3118）。距判据 0.045 差 11%；语义天花板 B5b 0.04247。
+- **三个负结果定案**：JG S×1.5=打乱参照伪影（对正确逐头积 α=0.998-0.999，requant 常数未动）；k 侧 1.07=文本指令路径 6 层量化深度损伤（feature_enhancer 21 行文本特征，LayerNorm 放大成去相关；b5b 同指纹=在 0.04247 天花板内，不修）；input_layers 簇=纯继承（fp 回退从未量化，conv 修后自然落 0.053）。修后 decoder 族中位 rel 0.0659 vs b5b 0.0656——修复链与语义天花板贴合。
+- **下一档杠杆**（归因关闭后首次定义良好）：6 个文本注意力块边界保 int16 的软件 A/B → 不够再 QAT。剩 0.0050 差距无驱动侧位点。
+- 交付：/tmp/alg_fix/REPORT_FIX.md §9~§15、results/fix_summary.json phase3、walk_table_v2.json、rotcap/kproj_hook/segcap_kproj 探针；破案过程页 round_report_routing_bug/2026-09-08_1252_*.html。
+- **路线讨论页**（用户口令：600MHz PE 之后硬件/架构两线分工）：round_report_hw_arch_next/2026-09-08_1312_hw_arch_plan_after_600mhz_pe.html。要点：B8（1.213 GMAC/s/DSP=现 R3C PE 6.1×，位精确）把计算需求 933ms→~153ms，但读需求 1.47s 没动→帧时间只省 10-25%，墙全在喂数；硬件线 H1=B8×R3C 快照 micro 门（生死题）、H2=集群 64→256 采点、H4=600MHz 功耗；架构线 A1=pe_sizing/r3c_model 加 B8 旋钮（列数×PE 类型扫描）、A2=读压缩重排（双读引擎 292→184M、CTX 驻留消 548MB 往返）；现状 1.39s 已过 2.13s 实时预算（裕量 1.5×），性能线买的是裕量/功耗/面积。决策点 D1（先 H1）/D2（A1 含 R3C 对照线）/D3（B8 失败退路=R3C+读压缩）待拍板。
+
+## 2026-09-08 14:28:11 — 架构线 v5：B8 列数选型定案 B8-48（帧时间 −35%、DSP −50%），B8-96 因 LUT 放不下排除；读压缩三路线重算（真机无帧时间收益、TB 写墙新暴露）；三线目录 + 全局工作流 skill
+
+- **A1（B8 旋钮进周期模型）**：B8 = 4 MAC/接口拍/DSP（Pack2×Pump2）+ 接口时钟 303.2 MHz（cl64 606.43 实测/2）+ 逻辑列=2×物理列 + PE 169 LUT/颗（cl64 实测），塞进 pe_sizing 重编译口径，扫物理列 {24,32,48,64,96}×{R3C,B8}。**定案 B8-48（逻辑 96 列）：HP64 帧时间 0.909s（−34.5%）、DSP 768 颗（−50%）、LUT 估 76%、每帧拍数与 R3C-96 一拍不变只换时钟**。B8-96 光 PE 核 259,584 LUT=器件 113% 放不下——**B8 第一约束从 DSP 变成 LUT（第二功耗）**；R3C 窄到 48 列以下破 2.13s 预算而 B8-24（22% DSP）仍 −9%，窄阵列第一次划算。B8 利用率 26.5%（R3C 53%）= 行组下限 68 拍接口域地板（结构性，非 bug）。
+- **敏感性两条（进 RTL 需求 B3/B4）**：requant 不加倍（DRAIN 128）→ GEMM +16%/帧 +10.8%，必须躲；读出链 2× 宽 → 只 −6~8%，可选。
+- **A2（读压缩三路线 B8 语境重算）**：真机 HP64 读侧仅 20.1M 拍从来不是墙，三路线帧时间收益全在 TB 口径——路线 2 双读引擎仍是单刀（B8-48 TB 1.125→0.909s 两口径归一）；路线 1 价值重定位为 ctx 字节 680→469MB（−31%，功耗项）；**新暴露 TB 写墙 W=218.4M 拍**（B8-64/96 读压缩后 TB 卡 0.852s），R5 写侧整形成 H3 下一张牌。
+- 交付：arch/v5_2026-09-08_1414_b8_sizing_read_compress/（b8_scan.py ~2s / b8_scan.json / rtl_requirements_h3.md B1-B7+R1-R3 / 2026-09-08_1428 HTML）；arch/CHANGELOG.md v5 条目；**全局 skill ~/.claude/skills/lines-workflow**（三线版本纪律+实验规矩+报告规矩）；三线目录（algo/arch/hw/compiler/plans + LINES.md + 四份 CHANGELOG 历史映射）本轮 13:42 用户拍板建立。
+
+## 2026-09-08 18:10:00 — hw v4 / H1 门：B8×R3C 集成收官，位精确全绿（阵列+引擎双宽度）、全宽 768DSP 引擎布线落地，时序差 5% 定位两条读出路径；修出底本三个潜伏问题
+- 任务来源：用户 1440 口令"去做一版硬件的实现吧，看看当前的方案是否合适的"——把架构线 v5 定案的 B8-48（48 物理列 × Pack2，768 DSP，303.2MHz，0.909s）写成真 RTL 过 H1 微门，kill 线=位精确不过/WNS 收不了/LUT 每对超 250。
+- **RTL 三件套**（hw/v4_2026-09-08_1503_b8_h1_gate/rtl/，底本 22_r3c_rtl 未动）：ae_pe_p2（Pack2 脉动 PE，积落地 6 拍，脉冲拍优先级=快照>清零>累加）、ae_sysarr_p2（逻辑列展平读出）、ae_gemm_p2（PULSE_DLY=5 脉冲延迟线；requant 24 套=逻辑列/4）。
+- **位精确**：末脉冲安全窗口实测 {5,6}（PD=7 时脉冲拍丢弃下组首积，比纸面推导窄 1 拍）；引擎级 PCOLS=4 六描述符 + 全宽 48 九描述符全 PASS（全宽本地 ~100s）；三轮 RTL 修复（见下）每轮双宽度复跑，逐位且逐拍不变。
+- **底本三个潜伏问题（全部修复在本轮文件，待回移）**：①互锁 bug——k<59 时脉冲经 drain row≥12 逃生舱发射后 pend 被旧 walk 完成清零，下组脉冲过早发射覆盖未读快照（m=35/k=37 用例击穿，row5..15 全零），svc_r（读侧消费放行才重臂）修复；生产 k≥64 从未触发。②地址乘法——(行组号+1)×k / 行组号×n 的 16×16 乘法 18 级逻辑，250MHz 无事、@3.298ns 综合全 4 条违例（−0.280ns），换基址寄存器 +k/+n 增量。③读出长路径——行选择 mux→requant 桶形移位跨模块单拍，布线 −1.097ns（R3C 同族弱路径，v3 OOC 也是 −1.363），引擎侧加一拍 acc_rq_r 读出寄存 + 换行提前 slot==2 + r15_seen 防第 16 行漏读（第一版踩坑：停发挂 drain_row==15 提前一个窗口触发，requant 捕获停在 15/16 卡死，探针定位）。
+- **综合/布线 @3.298ns OOC**：PE 120 LUT/1 DSP/布线后 675MHz；16×4 条带 7,703 LUT/布线后 395MHz；16×48 阵列 92,055 LUT（39.95%）+768 DSP（44.4%）/综合 +2.054——**每对 119.9 LUT，kill 线 250 的一半**；全宽引擎布线后 118,148 LUT（51.28%）/181,333 FF/768 DSP/WNS −0.169（读出修法从 −1.097 收回 0.93ns，违例端点 7543→716；AggressiveExplore phys_opt 不再改善）。剩余两条腿：drain_row 扇出（96 列 16:1 mux 一拍）、requant 入口一拍塞 4:1 mux+27×8 乘——H2 修法明确；R3C 先例真机比 OOC 快 ~6%，288MHz 保守口径帧 0.957s（vs R3C-96 −31%），303.2MHz 收口则 0.909s（−34.5%）。
+- **模型修正**（results/model_corr.py）：v5 读腿公式漏计 ptap 放行——R3C-96 真实 167+wb 拍、B8-48 124+wb（每读出界行组反少 43 拍），帧区间 B8-48 0.909~0.995s vs R3C-96 1.388~1.627s（相对 −34.5%→−38.9%）；requant 无需加倍坐实（24 套 DRAIN 64 拍不变，v5 的 +10.8% 惩罚场景取消）；**无需双时钟**（B8-48 映射 Pump2 第二相闲置，单时钟 303.2MHz 每拍每 DSP 2 有效 MAC）。
+- 交付：hw/v4_2026-09-08_1503_b8_h1_gate/（rtl/sim/synth/results + 2026-09-08_1600 HTML，18:10 回填布线终数）；hw/CHANGELOG.md v4；综合工作区 E:\ae_syn\hb_h1\（含 phsopt/phsopt2 探索档证据）。H1 判定：位精确 ✓、LUT ✓、时序差 5% 非结构性（kill 线"收不了"指结构性失败，本例有明确收尾路径）——**B8-48 方案成立，进 H2**。
+
+## 2026-09-08 22:08:53 — hw v5 / arch v6：H2 时序收官（eng48 WNS +0.009 @303.215MHz 收敛）+ R2 双读引擎落地（段级 −7.4%）+ B8-64 采点关死翻案窗口——定版 B8-48
+- 任务来源：用户 1945 口令"完成你说的这四项任务……架构和电路都要更新一版，做完之后整理成 HTML"——上一版架构报告点名的四件事：R2 双读引擎 RTL、H2 时序收口、B8-48/64 定版采点、R5/COPY 进 H3 清单。
+- **H2 两条读出腿（hw/v5 rtl/，底本 v4 改造）**：①drain_row 扇出腿——4 位寄存器一拍驱动 96 逻辑列的 16:1 快照选择，换 12 份同值副本（NREP=(PCOLS+3)/4 每份 4 物理列，iverilog 不支持数组端口→打包向量 [ri*4+:4]）；②requant 入口腿——累加快照→4 选 1 slot→27×8 窄乘挤一拍，换 rq_ms_x 输入流水（x_sel_r 先寄一拍），数据滞后 2 拍，FSM 相位前移一拍补回（rq_v 发射 slot==3→2、换行 slot==2→1、停发/走尾同步前移，requant 消费窗口与 H1 逐拍重合、走读仍精确 64 拍；例外=进 DALIGN 撞 slot==3 时多绕 1~4 拍）。
+- **H2 验证**：位精确 PCOLS=4/48/64 + tb_sys PD=5/6 全 PASS；拍数纪律 48 列 9 描述符 6 个一拍不差、D3/W0/W2 +4 拍（+0.9~1.5%）；帧级 DRAIN 64→65 敏感性 GEMM +0.25%/TB +0.0%/HP64 0.909→0.910s。**布线终数：eng48 WNS −0.169→+0.009（303.215MHz 收敛），代价 +208 LUT（+0.18%）/+733 FF**（=24 套×28b rq_ms_x 流水+48 副本 FF 的账）；功耗 8.321W vectorless。
+- **B8-64 采点与定版**：eng64（64 物理列/1024 DSP）位精确 9 描述符 PASS；综合 LUT 155,629（OOC 67.55%，与修正锚点外推 157,530 差 1.2%）、WNS −0.696（拥塞型 7,313 失败端点/TNS −1,531.6ns）、功耗 10.709W（+28.7% vs eng48）。**裁决：定版 B8-48**——三条件两不过（WNS/功耗），补刀：降频 250.4MHz 用 HP64=0.970s 反而比 B8-48 的 0.909s 慢，翻案只剩深度重流水（不可预期工作量）。
+- **arch v6**：LUT 模型锚点修正（v5 每列 3140 高估 27.6%→2461.4 LUT/列实测反推，B8-64 从 98% 贴线变 78.4% 有余量，这正是要采 eng64 点的原因；采完关死）；R2 模型修正——**−19.1% 是理想上界，4 段实测 −7.4%**；R5 写侧压缩 B8-48 下收益为零不进 H3、COPY 40.3M+ACTV 10.0M 拍=计算腿 18.3% 先编译器侧分解。
+- **R2 双读引擎（hw/v5 r2/ 子目录，R3C 底本 22_r3c_rtl 一字未动）**：光复制读引擎没用——三个串行点：单 rd FSM、单 AXI 读通道+单 outstanding 从机、调度器 T_RUN_DMA 死等（**架构实质修正：必须同时改调度器发射策略为 fire-and-forget**）。改 ae_rd_eng ×2+第二读主口+消费点等待；4 段位精确逐字节一致（服务器 Verilator，base 与 r2 DDR dump cmp 全同），段级 −7.4%（141,647→131,235 拍，读服务 −8.1%，两口重叠率最高 15.5%）；与模型 −19.1% 的差距=单 outstanding+段形态（无 W 段白付、段头大 ctx 无重叠窗）+帧级外推明确不做。
+- 交付：hw/v5_2026-09-08_2000_h2_r2_b64_pwr/（rtl/sim/synth/results + r2/ + 2026-09-08_2140 HTML 22:08 定稿）、arch/v6_2026-09-08_2000_h1anchor_r2_b64_final/（b8_final.py/json + measured.json + h3_r5_copy.md）；hw/CHANGELOG v5、arch/CHANGELOG v6；综合工作区 E:\ae_syn\hb_h1\（eng48/eng64 route 级含 power.rpt）、服务器 /tmp/ae_v5r2/。
+- 遗留：R2 的 12 项回归只重跑 2 项；段级 golden 门 fast_interp_a3 预存 diff（与 R2 无关，建议单开一轮查）；R2 验证从机行为级单 outstanding，实机重叠率会更低。
+
+## 2026-09-09 09:52:42 — hw v5 报告重写（说人话）+ arch v6 架构分析页：墙序列 计算→写→读；修正 COPY 全消地板 −18%→−6.3%
+- 用户 0941 反馈 0908 的 hw v5 报告"不够参考说人话 skill"→ 重写版（数据全部不变、行文重排：第零节加术语表、一句一件事、图景先行、每节"怎么看"），新文件不改旧页：hw/v5_2026-09-08_2000_h2_r2_b64_pwr/2026-09-09_0948_H2时序_R2双读_B8定版_重写版.html（页头注明取代 2140 版）。
+- **架构分析页**（arch/v6_2026-09-08_2000_h1anchor_r2_b64_final/2026-09-09_0952_架构分析_B8-48定版后的时间账与优化方向.html，5 张 SVG 图，数字全部从 b8_scan.json/b8_final.json/综合报告核对）：
+  - **修正一处上版账目错误**：H3 清单"COPY 全消地板 0.909→0.744s（−18%）"只做了计算腿减法、没套帧模型 max()——写腿 218.4M 先拦住，正确帧级地板 0.852s（−6.3%）；COPY 的真实价值必须与写压缩捆绑评估。
+  - 墙序列（TB 口径、R2 后起步 0.909s）：计算墙 235.5M → 写墙 218.4M → 读墙 184.0M；真机口径无读墙（20.1M）。
+  - 杠杆按解锁顺序：①停顿吸收 −14.5%（→0.777s，调度重拍不动数据通路）→ ②COPY 消除（①后再 −7.3%，被写墙封顶）→ ③R5 写压缩（②后再 −15.2% → 0.611s 三牌全兑现地板，−32.8%，零 DSP）→ ④requant 加倍远期（真机终段 0.565s；TB 被读墙拦在 0.607s）。
+  - **R5 裁决细化**：从"不进 H3"改为"条件启动"（现在做零收益维持原判，计算腿杠杆落地后它是唯一解锁牌，进 H4 候选）；GEMM 利用率 26.5% vs MAC 地板 49.1M 拍（3.8×）为结构性地板。
+  - 建议路线：H3 系统集成（全帧实测校准模型+验证①）+ 编译器 COPY 分解并行（决定②值不值得动 RTL）。

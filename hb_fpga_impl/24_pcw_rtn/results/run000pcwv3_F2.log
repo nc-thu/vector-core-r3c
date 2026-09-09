@@ -1,0 +1,16 @@
+~/.conda/envs/holobrain/lib/python3.10/site-packages/datasets/utils/experimental.py:37: UserWarning: 'register_feature' is experimental and might be subject to breaking changes in the future.
+  warnings.warn(
+Use default teacher_forcing_mean_steps: 16
+~/.conda/envs/holobrain/lib/python3.10/site-packages/torch/functional.py:539: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at /pytorch/aten/src/ATen/native/TensorShape.cpp:3637.)
+  return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
+[fix] kinematics chain 108 处 device→cpu
+[patch] gemm=275 attn=70 host=600 native=226
+[warn] BERT attention_mask 非全通：PL softmax 无 mask，数值有偏差
+[fallback] spatial_enhancer.pts_prob_pre_fc#652: spatial_enhancer.pts_prob_pre_fc#652: 无法拼装（缺输入 ('seg_0948', ['t139836492601984'], 'spatial_enhancer.pts_prob_pre_fc#652')）
+[fallback] decoder.input_layers.0#736: decoder.input_layers.0#736: 无法拼装（缺输入 ('seg_1024', ['t139836834144608'], 'decoder.input_layers.0#736')）
+[fallback] decoder.input_layers.0#963: decoder.input_layers.0#963: 无法拼装（缺输入 ('seg_1214', ['t139836834142608'], 'decoder.input_layers.0#963')）
+[fallback] decoder.input_layers.0#2098: decoder.input_layers.0#2098: 无法拼装（缺输入 ('seg_2164', ['t139836492322736'], 'decoder.input_layers.0#2098')）
+[run] patch=0.0s forward=401.4s segments=2922/2922 gemm_calls=323
+[warn] 缺输入 4: [('seg_0948', ['t139836492601984'], 'spatial_enhancer.pts_prob_pre_fc#652'), ('seg_1024', ['t139836834144608'], 'decoder.input_layers.0#736'), ('seg_1214', ['t139836834142608'], 'decoder.input_layers.0#963'), ('seg_2164', ['t139836492322736'], 'decoder.input_layers.0#2098')]
+[vs-ref] jpos MAE=0.2384 max=0.9341 arm12=0.2431 gripper(6,13)=0.4477
+[done] result_000_pcwv3_F2.npz + result_000_pcwv3_F2_vs_fp32.json

@@ -1,0 +1,30 @@
+Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
+----------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2021.2 (win64) Build 3367213 Tue Oct 19 02:48:09 MDT 2021
+| Date         : Tue Sep  8 15:28:29 2026
+| Host         : nc23 running 64-bit major release  (build 9200)
+| Command      : report_utilization -hierarchical -file E:/ae_syn/hb_h1/runs/pe/route/util_hier.rpt
+| Design       : ae_pe_p2
+| Device       : xczu7ev-ffvc1156-2-e
+| Speed File   : -2
+| Design State : Optimized
+----------------------------------------------------------------------------------------------------
+
+Utilization Design Information
+
+Table of Contents
+-----------------
+1. Utilization by Hierarchy
+
+1. Utilization by Hierarchy
+---------------------------
+
++--------------+----------------+------------+------------+---------+------+-----+--------+--------+------+------------+
+|   Instance   |     Module     | Total LUTs | Logic LUTs | LUTRAMs | SRLs | FFs | RAMB36 | RAMB18 | URAM | DSP Blocks |
++--------------+----------------+------------+------------+---------+------+-----+--------+--------+------+------------+
+| ae_pe_p2     |          (top) |        120 |        119 |       0 |    1 | 219 |      0 |      0 |    0 |          1 |
+|   (ae_pe_p2) |          (top) |        117 |        117 |       0 |    0 | 178 |      0 |      0 |    0 |          0 |
+|   u_mul      | pack2_mult_dsp |          3 |          2 |       0 |    1 |  41 |      0 |      0 |    0 |          1 |
++--------------+----------------+------------+------------+---------+------+-----+--------+--------+------+------------+
+
+

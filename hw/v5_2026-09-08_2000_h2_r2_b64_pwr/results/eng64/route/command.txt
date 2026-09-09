@@ -1,0 +1,1 @@
+vivado syn.tcl top_eng64 3.298 E:/ae_syn/hb_h1/runs/eng64/route E:/ae_syn/hb_h1/src/eng64 8 route

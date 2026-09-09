@@ -11,6 +11,14 @@
 !/research_holobrain/
 !/hb_fpga_impl/
 
+# ---- 三线目录（2026-09-08 起核心结构，入口 LINES.md） ----
+!/LINES.md
+!/algo/
+!/arch/
+!/compiler/
+!/hw/
+!/plans/
+
 # ---- 数据块不推 ----
 # a3 编译产物流数据：只保留 segments/*/seq.mem（r3c_model/pe_sizing 复算依赖），
 # 其余（权重 blob 188MB、各段 ctx/w/ddr mem）全部不推
@@ -54,3 +62,19 @@ hb_fpga_impl/05_sim/results/aux.json
 # 仿真波形/功耗生成物
 *.vcd
 *.saif
+
+# ---- 三线目录内的本地工具产物与数据块（2026-09-09 增补） ----
+# arch/figures：Visio 本地工具链产物（含本机路径依赖）+ 打包 zip，不入库
+arch/figures/
+# hw R2 段级对拍的 DDR dump（ddr_init/golden，数据块）
+hw/**/r2/sim/stage/
+hw/**/r2/sim/*.mem
+# 24~26 轮的 .mem 回归向量转储（44MB 数据块，复现由脚本重新生成）
+hb_fpga_impl/24_pcw_rtn/**/*.mem
+hb_fpga_impl/25_alg_calib/**/*.mem
+hb_fpga_impl/25_alg_head/**/*.mem
+hb_fpga_impl/25_smooth_quant/**/*.mem
+hb_fpga_impl/26_ref_denoise/**/*.mem
+# 编辑器备份
+*.bak
+*.orig

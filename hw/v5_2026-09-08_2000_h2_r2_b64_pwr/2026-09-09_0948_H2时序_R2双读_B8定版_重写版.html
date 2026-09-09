@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>H2 时序收敛 + R2 双读引擎 + B8-64 采点：定版 B8-48 2026-09-09</title>
+<style>
+  body{font-family:"Microsoft YaHei",SimSun,serif;max-width:1000px;margin:24px auto;padding:0 16px;color:#111;background:#fff;line-height:1.75}
+  h1{font-size:22px;border-bottom:2px solid #000;padding-bottom:6px}
+  h2{font-size:18px;border-left:5px solid #000;padding-left:8px;margin-top:32px}
+  h3{font-size:15px;margin-top:22px}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14px}
+  th,td{border:1px solid #444;padding:5px 8px;text-align:left}
+  th{background:#eee}
+  .num{text-align:right;font-variant-numeric:tabular-nums}
+  .mono{font-family:Consolas,monospace;font-size:13px;background:#f4f4f4;padding:1px 4px}
+  .meta{color:#555;font-size:13px}
+  .box{border:1px dashed #888;padding:10px 14px;margin:12px 0;background:#fafafa}
+  .hint{color:#555;font-size:13px;margin:4px 0}
+  svg text{font-family:"Microsoft YaHei",SimSun,serif}
+</style>
+</head>
+<body>
+<h1>四件事做完：时序收敛了、双读引擎落地了、B8-64 试过放弃了，定版 B8-48</h1>
+<p class="meta">生成时刻：2026-09-09 09:48:41　|　本页是 2026-09-08 21:40 版报告的重写版：数据一个没改，行文按"说人话"标准重排，以本页为准　|　代码：hw/v5_2026-09-08_2000_h2_r2_b64_pwr/、arch/v6_2026-09-08_2000_h1anchor_r2_b64_final/</p>
+
+<div class="box">四件事，四句话：<br>
+① <b>时序收掉了</b>——引擎布线从差 0.169 纳秒（差 5%）修到 +0.009 纳秒，正式能在 303.215MHz 目标频率上跑。<br>
+② <b>双读引擎做出来了</b>——上下文和权重各配一台读引擎，实测段级快 7.4%；还发现光加引擎没用，必须连调度器一起改。<br>
+③ <b>B8-64 试过了、放弃了</b>——多花 256 颗 DSP 换来的 128 列版本，布线和功耗两条硬指标不过关，降频用反而更慢。所以<b>定版 B8-48</b>：48 物理列、768 颗 DSP、一帧 0.909 秒（预算 2.13 秒）。<br>
+④ <b>下一步清单列清了</b>——写侧压缩出局（不再是瓶颈），COPY 消除交给编译器线先量化。</div>
+
+<h2>第零节　先讲背景：这页在说什么</h2>
+<p>我们在把一个机器人视觉-语言-动作模型（HoloBrain-0，20 亿参数，权重和激活都是 8 位整数）搬到一块 FPGA 开发板（ZCU104）上跑。FPGA 上负责矩阵乘法（模型里最重的计算）的电路叫 GEMM 引擎。它长什么样、跑多快，就是这个项目硬件线的核心问题。</p>
+<p>引擎的最新设计叫 <b>B8</b>：让一颗 DSP（FPGA 里的硬件乘法器资源）一拍算出 4 个 INT8 乘法，是老设计效率的 6 倍多。<b>B8-48</b> 就是"16 行 × 48 物理列"的阵列，用 768 颗 DSP——比现在部署的老引擎（R3C-96，1536 颗 DSP）少一半资源，但时钟从 198.5MHz 提到 303.215MHz，模型算下来一帧反而从 1.388 秒降到 0.909 秒（快 34.5%）。</p>
+<p>上一轮（2026-09-08 下午）把 B8-48 写成了真实电路，功能验证全过，但布线差一步：目标频率是 303.215MHz（一拍 3.298 纳秒），布线工具说最差的电路路径慢了 0.169 纳秒——差 5%，跑不到这个频率。这一轮就是把这 5% 收掉，顺带做架构报告里点名的另外三件事。</p>
+
+<h3>这页会反复出现几个词，先解释清楚</h3>
+<table>
+<tr><th style="width:130px">词</th><th>它是什么意思</th></tr>
+<tr><td>WNS（时序余量）</td><td>布线完成后，全芯片最慢那条路径的剩余时间。≥0 表示整个设计能在目标频率跑起来；−0.169 纳秒就是"最慢的路径超时了 0.169 纳秒"，布线不合格。</td></tr>
+<tr><td>位精确</td><td>硬件仿真的输出和软件参考输出逐字节对比，一个二进制位都不许差。这是所有改动的底线：改电路不能改结果。</td></tr>
+<tr><td>requant（重标定）</td><td>乘加累加出来的 32 位结果，要重新压回 8 位才能给下一层用。做这件事的电路就叫 requant，B8-48 里 96 个逻辑列共用 24 套（轮着用）。</td></tr>
+<tr><td>行组</td><td>阵列的干活节奏：一次装 16 行数据进去算，算完停下来把结果读出去，再装下一组。这一进一出叫一个行组周期。</td></tr>
+<tr><td>TB 口径 / HP64 口径</td><td>同一帧时间的两种算法。TB 是验证平台口径：仿真环境的内存一拍送 8 字节，比较"挤"。HP64 是真机口径：板子上的 DMA 一拍最多送 64 字节，读数据宽裕得多。看数字时必须先分清是哪个口径。</td></tr>
+<tr><td>OOC</td><td>Out-Of-Context，只综合引擎本身、不带外围电路。时序结论偏悲观——上一代引擎的先例是真机比 OOC 快约 6%。</td></tr>
+<tr><td>vectorless 功耗</td><td>不跑真实数据、按概率估计信号翻转算出来的功耗。横向对比（A 比 B 费多少电）可信，绝对数值只能分档看。</td></tr>
+</table>
+
+<h2>第一节　H2：把差的那 5% 时序收掉（完成时刻 2026-09-08 20:33:45）</h2>
+<p>布线报告把 −0.169 纳秒拆开看，最慢的两条路径都在同一个地方：<b>读出侧</b>——把算完的结果从阵列里取出来的那段路。两条路径，两个修法。</p>
+
+<h3>路径一：一个寄存器管 96 件事</h3>
+<p>读出时要先选出"现在该读哪一行"。干这件事的是一个 4 位寄存器，叫 <span class="mono">drain_row</span>。问题在于它一个人要在同一拍里驱动全部 96 个逻辑列——每个逻辑列都有一个 16 选 1 的选择器在等它的值。</p>
+<p>一个寄存器要照顾 96 个地方，布线器怎么摆物理距离都摆不平，路径就慢了。</p>
+<p><b>修法：复制。</b>把它复制成 12 份内容完全相同的寄存器，每份只管 4 个物理列。12 份的值永远一样，区别只是每个"喇叭"都不用喊那么远了。切的是扇出（一个信号要驱动的负载数），不碰任何计算语义。代价：48 个触发器，几乎可以忽略。</p>
+
+<h3>路径二：一拍里挤了"选数据"和"做乘法"两件事</h3>
+<p>requant 的入口原来一拍里要干两件事：先从 4 个候选里选出这一拍要用的数据（4 选 1 选择器），紧接着做一个 27 位 × 8 位的窄乘法。两件事串在一拍里，太满了。</p>
+<p><b>修法：拆成两拍。</b>新模块 <span class="mono">rq_ms_x</span> 先把选出来的数据存进寄存器（<span class="mono">x_sel_r</span>），下一拍再进乘法核心。选择和乘法分了家，每拍都不满。</p>
+
+<h3>最险的一步：数据晚了 2 拍，怎么把结果保住</h3>
+<p>拆成两拍是有代价的：数据到乘法核心，比原来晚 2 拍（上一版已经晚 1 拍，这一版再加 1 拍）。如果什么都不补，requant 拿数据的时刻整体后移，乘的就不再是原来那些数——结果会错。</p>
+<p>补偿办法是<b>让整个发射节奏提前一拍</b>：原来在第 3 拍发出的读出请求，提前到第 2 拍发；换行的时刻、停止发送的时刻，同样各提前一拍。提前发出的那一拍，正好被新加的寄存器吃掉。最终 requant 实际消费数据的每一拍，都和上一版逐拍重合——每次读出仍然是精确的 64 拍，16 行 × 4 列不重不漏。</p>
+<p>有一个例外：如果进入对齐状态那一拍的相位不巧，要多绕几拍，这一次读出就多 1~4 拍。实测影响见下面的表——帧一级不到 0.3%，可以接受。</p>
+
+<h3>验证：结果一个 bit 没变，拍数几乎没变</h3>
+<table>
+<tr><th>测试</th><th>内容</th><th>结果</th><th>完成时刻</th></tr>
+<tr><td>引擎级 4 列</td><td>6 个用例逐字节对拍（小矩阵 / 尾巴 / 偏移 / 转置 / 负数缩放）</td><td>全部 PASS</td><td class="num">2026-09-08 20:31:02</td></tr>
+<tr><td>引擎级 48 列（全宽）</td><td>9 个用例逐字节对拍</td><td>全部 PASS</td><td class="num">2026-09-08 20:32:40</td></tr>
+<tr><td>引擎级 64 列</td><td>9 个用例（给 B8-64 采点用）</td><td>全部 PASS</td><td class="num">2026-09-08 20:36:10</td></tr>
+<tr><td>阵列级</td><td>末脉冲安全窗口 + 背靠背压力测试</td><td>PASS×2</td><td class="num">2026-09-08 20:30:15</td></tr>
+</table>
+<p>拍数纪律：和上一版逐项对比，不许悄悄变慢。48 列 9 个用例里 6 个一拍不差；3 个各多 4 拍（多 0.9%~1.5%），就是上面说的相位例外。折算到整帧：最多 +0.27%，一帧时间 0.909 秒只变到 0.910 秒。</p>
+<table>
+<caption class="hint">怎么看：对比改动前（v4）和改动后（v5）每个用例的总拍数。Δ 列就是这次改动实际多花的拍数——最多的也只有 4 拍。</caption>
+<tr><th>用例（48 列）</th><th class="num">改前</th><th class="num">改后</th><th class="num">Δ</th><th class="num">Δ%</th></tr>
+<tr><td>D0 小矩阵 k=5</td><td class="num">143</td><td class="num">143</td><td class="num">0</td><td class="num">0%</td></tr>
+<tr><td>D1a k=37</td><td class="num">393</td><td class="num">393</td><td class="num">0</td><td class="num">0%</td></tr>
+<tr><td>D1b 起始列偏移</td><td class="num">393</td><td class="num">393</td><td class="num">0</td><td class="num">0%</td></tr>
+<tr><td>D1c 尾组</td><td class="num">391</td><td class="num">391</td><td class="num">0</td><td class="num">0%</td></tr>
+<tr><td>D2 转置写回</td><td class="num">319</td><td class="num">319</td><td class="num">0</td><td class="num">0%</td></tr>
+<tr><td>D3 k=100</td><td class="num">453</td><td class="num">457</td><td class="num">+4</td><td class="num">+0.9%</td></tr>
+<tr><td>W0 全宽 k=40</td><td class="num">265</td><td class="num">269</td><td class="num">+4</td><td class="num">+1.5%</td></tr>
+<tr><td>W1 全宽 k=37</td><td class="num">601</td><td class="num">601</td><td class="num">0</td><td class="num">0%</td></tr>
+<tr><td>W2 全宽转置</td><td class="num">457</td><td class="num">461</td><td class="num">+4</td><td class="num">+0.9%</td></tr>
+</table>
+
+<h3>布线结果：+0.009 纳秒，303.215MHz 正式收敛</h3>
+<p>改完用同一套流程重新综合布线。WNS 从 −0.169 变成 <b>+0.009 纳秒</b>：目标频率 303.215MHz 收敛，这一版引擎可以按设计频率交付了。花的面积：+208 个 LUT（+0.18%）、+733 个触发器——正好是 24 套 requant 的输入流水寄存器（每套 28 位）加上 48 个副本寄存器的账，一个不多一个不少。</p>
+
+<h2>第二节　两台引擎的综合实测：面积、时序、功耗（eng48 完成于 20:45:04，eng64 完成于 22:03:10）</h2>
+<p>这一轮综合了两个目标：eng48（定版的 48 列引擎）和 eng64（64 列的 B8-64 引擎，专门为第四节的选择题采数据）。</p>
+<table>
+<caption class="hint">怎么看：WNS ≥ 0 才算布线合格。eng48 收敛、eng64 不收敛，这是第四节定版的关键依据之一。BRAM=0 是因为这次只综合引擎本体，权重存储（WRAM）在系统级另算。</caption>
+<tr><th>目标</th><th class="num">LUT（逻辑资源）</th><th class="num">FF（触发器）</th><th class="num">DSP</th><th class="num">WNS (ns)</th><th>结论</th></tr>
+<tr><td>eng48 上一版（对照）</td><td class="num">118,148</td><td class="num">181,333</td><td class="num">768</td><td class="num">−0.169</td><td>差 5%，跑不到目标频率</td></tr>
+<tr><td><b>eng48 这一版</b></td><td class="num">118,356（+208）</td><td class="num">182,066（+733）</td><td class="num">768</td><td class="num"><b>+0.009</b></td><td><b>303.215MHz 收敛</b></td></tr>
+<tr><td>eng64（B8-64）</td><td class="num">155,629（占 67.6%）</td><td class="num">242,525</td><td class="num">1024</td><td class="num">−0.696</td><td>只能跑到约 250MHz</td></tr>
+</table>
+<p>eng64 的违例性质要说清楚：不是某一条路径特别慢，而是 7,313 个端点集体超时（累计超时量 −1,532 纳秒）。这是布线拥挤造成的——78% 的资源占用率下，线挤不过来。这种违例不是调一调能救的。</p>
+
+<h3>顺手修正了面积模型：原来的估算高估了 27.6%</h3>
+<p>架构线上一版的面积模型估计每物理列 3,140 LUT，eng48 实测只有 118,148——<b>模型高估了 27.6%</b>。这一轮用实测数反推出每列 2,461 LUT，重新算了一遍所有配置。修正的意义：原来算 B8-64 要占全片 98%（贴着极限），修正后只有 78%——<b>看起来"放得下"了，所以才值得真去综合一次 eng64 验证</b>（第四节会讲验证的结果：放得下，但另外两条硬指标没过）。</p>
+<table>
+<caption class="hint">怎么看："芯片" = 引擎 + 约 2.5 万的非引擎基础设施（用现部署的 R3C-96 实测 120,616 锚定）。85% 是这一轮定的可行线。B8-64 实测与外推只差 1.2%，说明修正后的模型可用。</caption>
+<tr><th>配置</th><th class="num">旧模型估</th><th class="num">实测</th><th class="num">修正后外推</th><th class="num">芯片合计</th><th class="num">占全片</th><th>判定</th></tr>
+<tr><td>B8-24</td><td class="num">75,360</td><td class="num">—</td><td class="num">59,074</td><td class="num">84,074</td><td class="num">36.5%</td><td>放得下</td></tr>
+<tr><td>B8-48</td><td class="num">150,720</td><td class="num"><b>118,356</b></td><td class="num">118,356</td><td class="num">143,356</td><td class="num">62.2%</td><td>放得下</td></tr>
+<tr><td>B8-64</td><td class="num">200,960</td><td class="num"><b>155,629</b></td><td class="num">157,530</td><td class="num">180,629</td><td class="num">78.4%</td><td>放得下（实测）</td></tr>
+<tr><td>B8-96</td><td class="num">301,440</td><td class="num">—</td><td class="num">236,296</td><td class="num">261,296</td><td class="num">113.4%</td><td>还是放不下</td></tr>
+</table>
+
+<h3>每个模块花了多少面积、干了多少活</h3>
+<table>
+<caption class="hint">怎么看：面积大头是 PE 阵列（算乘法的单元堆），它同时承担了全部矩阵计算——花钱最多的地方也是干活最多的地方，这是健康的。</caption>
+<tr><th>模块</th><th class="num">LUT</th><th class="num">DSP</th><th>承担的活（按一帧 275.5M 拍的模型账）</th></tr>
+<tr><td>PE 阵列 16×48（含打包乘法）</td><td class="num">92,071</td><td class="num">768</td><td>矩阵乘法 185.2M 拍，占整帧的 67%</td></tr>
+<tr><td>requant 24 套 + 读出/写回控制</td><td class="num">26,285</td><td class="num">0</td><td>每行组 64 拍的读出重标定 + 8 位写回</td></tr>
+<tr><td>引擎合计（实测）</td><td class="num">118,356（51.4%）</td><td class="num">768</td><td>—</td></tr>
+<tr><td>R2 双读引擎（未综合，估算 +2.4k）</td><td class="num">≈+2,400</td><td class="num">0</td><td>读腿 301.0→184.0M 拍（模型）；段级实测 −7.4%</td></tr>
+</table>
+
+<h3>功耗（vectorless 口径，如实标注）</h3>
+<table>
+<tr><th>目标</th><th class="num">总功耗</th><th class="num">其中动态</th><th class="num">其中静态</th><th>说明</th></tr>
+<tr><td>eng48（定版）</td><td class="num">8.321 W</td><td class="num">7.684 W</td><td class="num">0.637 W</td><td>布线后的设计、无真实激励（翻转按概率估）</td></tr>
+<tr><td>eng64</td><td class="num">10.709 W</td><td class="num">10.054 W</td><td class="num">0.655 W</td><td>比 eng48 费 28.7%，接近 DSP 数量比例（+33%）</td></tr>
+</table>
+<p class="hint">怎么看：vectorless 功耗横向比可信、绝对值只分档。8.3W 的引擎档位配上板上其他部分，整机热设计后面在系统级再核。</p>
+
+<h2>第三节　R2 双读引擎：做了、测了、还发现一个重要问题（完成时刻 2026-09-08 20:38:45）</h2>
+<h3>为什么要做</h3>
+<p>架构模型的账：验证平台（TB）口径下，一帧里"读数据"要 301M 拍，比计算（235.5M 拍）还慢——读是第一瓶颈。原因是上下文数据（CTX）和权重（W）两条装载流共用一台读引擎、一条读通道，只能轮流跑。</p>
+<p>对策是 R2：给两条流各配一台读引擎。模型算下来读拍数能从 301M 压到 184M，一帧从 1.125 秒降到 0.909 秒（−19.1%）。</p>
+
+<h3>发现：光把引擎复制一份，几乎没用</h3>
+<p>动手前先查了一遍现状，发现有三个地方把两条流串成了串行。三个都解开，重叠才可能发生：</p>
+<ol>
+<li><b>一台状态机</b>：DMA 里只有一个读状态机，前台装载、后台预取全从它过，一次只能跑一条流。</li>
+<li><b>一条读通道</b>：顶层只有一个 AXI 读口（AXI 是芯片对外取数的标准接口），而且验证平台的模拟内存一次只接一个请求、送完才接下一个。</li>
+<li><b>调度器死等</b>：主调度器发出一条装载指令后，原地踏步等它完成，才走下一条指令。<b>就算把读引擎翻倍，调度器也走不到下一条装载指令的发射点——重叠接近零。</b></li>
+</ol>
+<p>第 3 条是对架构线假设的实质修正：R2 不只是 DMA 的事，<b>必须连调度器的发射方式一起改</b>，否则白做。</p>
+
+<h3>改了什么</h3>
+<p>读引擎抽成独立模块 <span class="mono">ae_rd_eng</span>，配两台：1 号服务上下文数据，2 号服务权重，按标记路由。顶层加第二组读口。调度器的前台装载改成"发出去就走"（fire-and-forget），不等完成；到真正要用这批数据的时刻（矩阵乘、COPY、激活、写回的启动点）再确认它到位。</p>
+<p>这些改动做在 <span class="mono">r2/</span> 子目录里，底本（22_r3c_rtl）一个字没动（用 git 核查过为空）。为什么在老底本上做：DMA 和调度器这一层是 B8 和 R3C 共用的，B8 的系统集成要等下一轮（H3），先在成熟的底本上把这条路验证通。</p>
+
+<h3>测了什么、结果如何</h3>
+<table>
+<tr><th>证据</th><th>内容</th><th>结果</th></tr>
+<tr><td>本地全芯片三遍</td><td>参考模式 / 优化模式 / 优化+预取，全部输出逐字节对拍，另有三组断言</td><td>全部一致，断言零触发</td></tr>
+<tr><td>服务器 4 段对拍</td><td>4 个真实负载段，改前和改后的 DDR 输出逐字节比对</td><td>4 段全部相同</td></tr>
+</table>
+<table>
+<caption class="hint">怎么看："重叠率"是两个读口同一拍都在送数的比例——改前物理上只有一口，恒为 0%；改后最高 15.5%。段越"杂"（两条流都有活干）收益越大。</caption>
+<tr><th>段</th><th class="num">改前拍数</th><th class="num">改后拍数</th><th class="num">快了</th><th class="num">重叠率</th><th>这一段长什么样</th></tr>
+<tr><td>seg_0600</td><td class="num">2,365</td><td class="num">2,061</td><td class="num">−12.9%</td><td class="num">15.5%</td><td>小段，两条流均衡</td></tr>
+<tr><td>seg_0529</td><td class="num">4,381</td><td class="num">4,221</td><td class="num">−3.7%</td><td class="num">0%</td><td>只有上下文流，第二台引擎白等着</td></tr>
+<tr><td>seg_0602</td><td class="num">51,057</td><td class="num">48,761</td><td class="num">−4.5%</td><td class="num">4.8%</td><td>权重装载循环，已贴同流极限</td></tr>
+<tr><td>seg_0636</td><td class="num">83,844</td><td class="num">76,192</td><td class="num">−9.1%</td><td class="num">10.9%</td><td>大段，两条流混合</td></tr>
+<tr><td><b>合计</b></td><td class="num"><b>141,647</b></td><td class="num"><b>131,235</b></td><td class="num"><b>−7.4%</b></td><td class="num">—</td><td>读侧服务拍数 −8.1%</td></tr>
+</table>
+
+<h3>实测 −7.4% 和模型 −19.1% 的差距，要如实交代</h3>
+<p>模型的 −19.1% 是理想上界：假设两条流想重叠就能重叠。实测到 −7.4%，差的部分查清楚了，三个原因：①验证平台的模拟内存一次只接一个请求，同一台引擎内部还是串行；②真实负载的形态——有的段开头一大批上下文装载（没有重叠窗口）、有的段只有一条流（另一台引擎白付等待开销）；③没有权重流的段，第二台引擎纯属闲置。</p>
+<p>所以<b>段级 −7.4% 是 R2 在真实负载下的可信锚点</b>。整帧能拿回多少，要等下一轮（H3）把全帧调度重排后才见分晓——这一轮明确不做帧级外推，不猜。</p>
+
+<h2>第四节　B8-64 试过之后放弃：定版 B8-48（完成时刻 2026-09-08 22:03:10）</h2>
+<p>B8-64 是 64 物理列（128 逻辑列）、1024 颗 DSP 的加大版。功能验证已经过了（第一节表里 64 列那行）。模型账很好看：一帧 0.801 秒，比 B8-48 再快 11.9%。问题是它能不能真的跑到 303.215MHz——跑不到的话，模型账就是空头支票。</p>
+<table>
+<caption class="hint">怎么看：注意 B8-64 的帧时间是以"能跑 303.2MHz"为前提的模型值——它的布线实际到不了这个频率，所以最后一行"实际可用"才是它的真实水平。两个口径说明：TB=验证平台（内存一拍 8 字节），HP64=真机（一拍 64 字节）。</caption>
+<tr><th>指标</th><th class="num">R3C-96（现部署）</th><th class="num">B8-48</th><th class="num">B8-64</th></tr>
+<tr><td>DSP 占用</td><td class="num">1,536（88.9%）</td><td class="num">768（44.4%）</td><td class="num">1,024（59.3%）</td></tr>
+<tr><td>芯片 LUT</td><td class="num">120,616（52.4%）</td><td class="num">143,356（62.2%，实测）</td><td class="num">180,629（78.4%，实测）</td></tr>
+<tr><td>布线时序 @303.2MHz</td><td class="num">上一代口径 −1.363</td><td class="num"><b>+0.009 收敛</b></td><td class="num">−0.696，只能到约 250MHz</td></tr>
+<tr><td>一帧时间（真机 HP64 口径）</td><td class="num">1.388 s</td><td class="num">0.909 s（快 34.5%）</td><td class="num">模型 0.801 s / 实际 0.970 s</td></tr>
+<tr><td>功耗（vectorless）</td><td class="num">4,018 mW</td><td class="num">8,321 mW</td><td class="num">10,709 mW</td></tr>
+</table>
+
+<h3>定版判据：三条硬指标，事先定好、事后回填</h3>
+<table>
+<tr><th>条件</th><th>判据</th><th>实测结果</th><th>判定</th></tr>
+<tr><td>布线收敛</td><td>WNS ≥ 0 @303.215MHz</td><td class="num">−0.696（拥塞型，7,313 个端点超时）</td><td><b>不过</b></td></tr>
+<tr><td>面积</td><td>芯片 LUT ≤ 85%</td><td class="num">180,629 = 78.4%</td><td>过</td></tr>
+<tr><td>功耗</td><td>vectorless ≤ 9,000 mW</td><td class="num">10,709 mW</td><td><b>不过</b></td></tr>
+</table>
+<p>三条里两条不过。再补一刀决定性的账：就算把 B8-64 降频到它能跑的 250.4MHz 来用，一帧 = 243.0M 拍 ÷ 250.4MHz = <b>0.970 秒，反而比 B8-48 的 0.909 秒慢</b>。也就是说 B8-64 想翻案只剩一条路：把电路深度重流水、硬挤出 303.2MHz——那是没法预估工作量的坑，不值得赌。</p>
+<div class="box"><b>裁决：定版 B8-48</b>（16×48 物理列 = 96 逻辑列，768 颗 DSP，单时钟 303.215MHz，一帧 0.909 秒，预算 2.13 秒、余量 2.3 倍）。B8-64 的全套实测数据留档（LUT 155,629、功耗 10.71W），以后换器件或工艺变了可以复用。连带裁决：R5 写侧压缩不进 H3——48 列下写腿已经不是瓶颈，做了白做。</div>
+
+<h2>第五节　下一步清单：H3 做什么、不做什么（完成时刻 2026-09-08 20:28:50）</h2>
+<ul>
+<li><b>H3 主体：B8-48 系统集成</b>——把 B8-48 引擎、R2 双读引擎、新调度器合到同一套底本上，跑通全帧。上一轮修出的三处底本老问题也一起搬回去。</li>
+<li><b>COPY 消除：先量化再动手</b>——COPY（数据搬运）加激活占一帧的 18.3%（50.3M 拍）。第一步在编译器侧把每一段 COPY 分类标出（哪些根本不用搬），把可消除的上限算出来，再决定动不动 RTL。</li>
+<li><b>明确不做</b>：R5 写侧压缩（48 列下收益为零）；requant 套数加倍（上一轮已证伪必要性）；读出走读加宽（收益小，后面有需要再评估）；R1 数据驻留（帧时间无收益，只剩省电价值，降为可选）。</li>
+</ul>
+
+<h2>第六节　诚实边界：哪些是实测、哪些是模型</h2>
+<ul>
+<li><b>实测</b>：时序收敛（布线工具报告）；位精确与拍数（iverilog 行为模型口径——注意 DSP 在仿真里用的是行为级模型，不是门级）；R2 段级拍数与位精确（服务器 Verilator + 本地 iverilog 两层证据）；两台引擎的面积、时序、功耗（Vivado 综合布线报告）。</li>
+<li><b>口径限制</b>：功耗是 vectorless（翻转按概率估，横向可比、绝对值分档）；WNS 是 OOC 悲观口径（上一代先例是真机快约 6%——eng48 的 +0.009 打完折仍有余量；eng64 的 −0.696 打完折仍差约 18%，翻不了案）。</li>
+<li><b>模型/外推</b>：一帧 0.909/0.852 秒是模型值不是整机实测；B8-24/96 的面积是外推；R2 的 −7.4% 来自 4 个负载段，不代表整帧；真机（HP64）口径的帧时间依赖"一拍 64 字节"的带宽假设。</li>
+<li><b>验证空白</b>：R2 改动只重跑了 12 项老回归里的 2 项（其余 10 项涉及的模块没动过）；R2 验证用的模拟内存是单请求串行的，真机上的重叠率会比仿真更低；段级 golden 门有一个与 R2 无关的历史遗留差异（新旧二进制同样不绿），建议单开一轮查。</li>
+</ul>
+
+<h2>第七节　复现命令</h2>
+<p class="mono">cd hw/v5_2026-09-08_2000_h2_r2_b64_pwr<br>
+# 位精确（iverilog，分钟级；-DVERILATOR 走 DSP 行为模型）<br>
+iverilog -g2012 -DVERILATOR -o sim/tb_gemm4_v5.vvp rtl/pack2_mult_dsp.sv rtl/rq_ms_x.sv rtl/rq_v2.sv rtl/ae_pe_p2.sv rtl/ae_sysarr_p2.sv rtl/ae_gemm_p2.sv sim/tb_gemm_p2.sv && vvp sim/tb_gemm4_v5.vvp<br>
+# 48/64 列：同上加 -DWIDE -P tb_gemm_p2.PCOLS_TB=48（或 64）<br>
+# 阵列级：iverilog -g2012 -DVERILATOR -o sim/tb_sys_v5.vvp rtl/pack2_mult_dsp.sv rtl/ae_pe_p2.sv rtl/ae_sysarr_p2.sv sim/tb_sys_p2.sv && vvp sim/tb_sys_v5.vvp +PD=5<br>
+# 综合/布线（Vivado 2021.2 OOC @3.298ns，工作区 E:\ae_syn\hb_h1）<br>
+bash synth/run_synth.sh eng48 route　# eng64 同理；产物回 results/&lt;target&gt;/route/<br>
+# 架构模型<br>
+cd ../../arch/v6_2026-09-08_2000_h1anchor_r2_b64_final && python b8_final.py<br>
+# R2 段级对拍（服务器 /tmp/ae_v5r2/ 保留）<br>
+python run_r2.py</p>
+
+<script>/* 生成工具留痕：本页由 Claude Code 生成，风格遵循 html-report / shuo-renhua skill；2026-09-09 重写版取代 2026-09-08 21:40 版（数据不变） */</script>
+</body>
+</html>

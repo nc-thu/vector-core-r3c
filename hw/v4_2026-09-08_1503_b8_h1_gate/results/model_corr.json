@@ -1,0 +1,37 @@
+{
+ "meta": {
+  "date": "2026-09-08",
+  "lat_beats": 4,
+  "rel_v5": 2,
+  "rel_r3c96": 102,
+  "rel_b8p48": 58,
+  "cal_g": 1.0514078564955154,
+  "ratio108_full_exposure": 1.2693318896390329
+ },
+ "rows": [
+  {
+   "tag": "R3C-96",
+   "gemm_v5_M": 185.2365861548173,
+   "gemm_fix_M": 232.64029243126345,
+   "hp_v5_s": 1.3880936330217497,
+   "hp_fix_s": 1.6269032364295388,
+   "read_bound_groups": 553020,
+   "pct": 25.590898245569594
+  },
+  {
+   "tag": "B8-48",
+   "gemm_v5_M": 185.2365861548173,
+   "gemm_fix_M": 211.26697597599923,
+   "hp_v5_s": 0.9087168713777924,
+   "hp_fix_s": 0.9945648334548068,
+   "read_bound_groups": 449257,
+   "pct": 14.052510015179287
+  }
+ ],
+ "rel_fix_pct": -38.86760987472647,
+ "requant": {
+  "v5_penalty_pct": 10.8,
+  "h1_finding": "NGRP=LOGICAL/4=24 套与 R3C-96 相同、DRAIN 仍 64 拍，v5 的 B3 场景（按物理列定套数）不成立，+10.8% 惩罚取消",
+  "rtl_evidence": "ae_gemm_p2.sv NGRP=LOGICAL/RQ_SH；tb_gemm_p2 PCOLS=48 全宽 96 列位精确全过（W0/W1/W2）"
+ }
+}

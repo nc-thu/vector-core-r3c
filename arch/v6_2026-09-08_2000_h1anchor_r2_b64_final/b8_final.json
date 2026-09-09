@@ -1,0 +1,130 @@
+{
+ "meta": {
+  "date": "2026-09-08",
+  "build": "build_a3",
+  "base": "arch/v5 b8_scan.py 口径复用",
+  "eng48_lut": 118148,
+  "r3c96_chip_lut": 120616
+ },
+ "lut": [
+  {
+   "cols": 24,
+   "eng_lut": 59074,
+   "eng_src": "外推",
+   "chip_lut": 84074,
+   "chip_pct": 36.490451388888886,
+   "v5_eng_est": 75360,
+   "fits_85pct": true
+  },
+  {
+   "cols": 32,
+   "eng_lut": 78765,
+   "eng_src": "外推",
+   "chip_lut": 103765,
+   "chip_pct": 45.036892361111114,
+   "v5_eng_est": 100480,
+   "fits_85pct": true
+  },
+  {
+   "cols": 48,
+   "eng_lut": 118356,
+   "eng_src": "实测",
+   "chip_lut": 143356,
+   "chip_pct": 62.22048611111111,
+   "v5_eng_est": 150720,
+   "fits_85pct": true
+  },
+  {
+   "cols": 64,
+   "eng_lut": 155629,
+   "eng_src": "实测",
+   "chip_lut": 180629,
+   "chip_pct": 78.39800347222223,
+   "v5_eng_est": 200960,
+   "fits_85pct": true
+  },
+  {
+   "cols": 96,
+   "eng_lut": 236296,
+   "eng_src": "外推",
+   "chip_lut": 261296,
+   "chip_pct": 113.40972222222223,
+   "v5_eng_est": 301440,
+   "fits_85pct": false
+  }
+ ],
+ "h2_drain65": [
+  {
+   "cols": 24,
+   "gemm_d65_M": 292.8450649456545,
+   "gemm_delta_pct": 0.25806949331248497,
+   "tb_d65_M": 383.1450649456545,
+   "tb_delta_pct": 0.19712752813694223,
+   "hp_d65_s": 1.2636085449125358
+  },
+  {
+   "cols": 48,
+   "gemm_d65_M": 185.69529963148847,
+   "gemm_delta_pct": 0.2476365421071769,
+   "tb_d65_M": 341.0444306084328,
+   "tb_delta_pct": 0.0,
+   "hp_d65_s": 0.9102297037794584
+  },
+  {
+   "cols": 64,
+   "gemm_d65_M": 153.0751511394731,
+   "gemm_delta_pct": 0.24182138750918902,
+   "tb_d65_M": 336.8875639580529,
+   "tb_delta_pct": 0.0,
+   "hp_d65_s": 0.8026487843262143
+  },
+  {
+   "cols": 96,
+   "gemm_d65_M": 139.89797528310257,
+   "gemm_delta_pct": 0.27448737630273445,
+   "tb_d65_M": 332.7517877821799,
+   "tb_delta_pct": 0.0,
+   "hp_d65_s": 0.7591905917685555
+  }
+ ],
+ "r2_writeside": [
+  {
+   "cols": 48,
+   "tb_R2_M": 275.5365861548173,
+   "tb_R2_s": 0.9087168713777924,
+   "bind": "计算",
+   "w_share_pct": 79.26352106187683,
+   "tb_R5_s": 0.9087168713777924,
+   "r5_gain_pct": 0.0
+  },
+  {
+   "cols": 64,
+   "tb_R2_M": 258.4,
+   "tb_R2_s": 0.8522005837442079,
+   "bind": "写",
+   "w_share_pct": 84.5201238390093,
+   "tb_R5_s": 0.8014309175737174,
+   "r5_gain_pct": 5.957478455063958
+  }
+ ],
+ "measured": {
+  "note": "hw v5 轮综合实测（Vivado 2021.2 OOC @3.298ns=303.215MHz，route stage，2026-09-08 20:45/22:03）；来源 hw/v5_.../results/{eng48,eng64}/route/",
+  "eng_lut": {
+   "48": 118356,
+   "64": 155629
+  },
+  "eng48_wns_ns": 0.009,
+  "eng64_wns_ns": -0.696,
+  "eng64_lut": 155629,
+  "eng64_lut_pct_ooc": 67.55,
+  "eng64_chip_lut_est": 180629,
+  "eng64_chip_lut_pct": 78.4,
+  "eng64_pwr_mw": 10709,
+  "eng48_pwr_mw": 8321,
+  "eng64_tns_ns": -1531.6,
+  "eng64_fail_eps": 7313,
+  "eng64_fmax_mhz": 250.4,
+  "eng64_hp64_at_fmax_s": 0.97,
+  "verdict": "B8-64 三条件两不过（WNS -0.696 FAIL、功耗 10.71W>9W FAIL、LUT 78.4% PASS）且降频 250.4MHz 时 HP64 0.970s > B8-48 0.909s → 定版 B8-48"
+ }
+}

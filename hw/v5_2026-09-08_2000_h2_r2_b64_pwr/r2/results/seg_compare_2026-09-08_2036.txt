@@ -1,0 +1,29 @@
+v5-R2 双读引擎 段级对拍原始输出（服务器 Verilator，2026-09-08 20:36:00）
+每段 base=22_r3c_rtl 原版 / r2=双读引擎版；+MODE=1 +PF=1；bitdiff=RTL dump vs golden
+（预先存在问题，见 notes/findings.md §7：base 与 r2 逐段相同）；overlap=两口同拍服务率。
+bitdiff 直比（cmp dump_seg_*_base.mem dump_seg_*_r2.mem）：4 段全部逐字节一致。
+
+=== seg_0600 ===
+  base cycles=2365     gemm=835      model=2863  bitdiff=2199 rd1=1993 rd2=0    both=0    union=1993  ov=0.0%
+  r2   cycles=2061     gemm=837      model=2863  bitdiff=2199 rd1=1176 rd2=809  both=266  union=1719  ov=15.5%
+  Δcycles=-12.9%  读服务 union: 1993 → 1719
+=== seg_0529 ===
+  base cycles=4381     gemm=1026     model=3159  bitdiff=64   rd1=2284 rd2=0    both=0    union=2284  ov=0.0%
+  r2   cycles=4221     gemm=1026     model=3159  bitdiff=64   rd1=2310 rd2=0    both=0    union=2310  ov=0.0%
+  Δcycles=-3.7%   读服务 union: 2284 → 2310
+=== seg_0602 ===
+  base cycles=51057    gemm=3165     model=26999 bitdiff=3350 rd1=49787 rd2=0    both=0    union=49787 ov=0.0%
+  r2   cycles=48761    gemm=3160     model=26999 bitdiff=3350 rd1=3395  rd2=45870 both=2245 union=47020 ov=4.8%
+  Δcycles=-4.5%   读服务 union: 49787 → 47020
+=== seg_0636 ===
+  base cycles=83844    gemm=30723    model=83683 bitdiff=3928 rd1=76886 rd2=0    both=0    union=76886 ov=0.0%
+  r2   cycles=76192    gemm=30722    model=83683 bitdiff=3928 rd1=15826 rd2=61025 both=7552 union=69299 ov=10.9%
+  Δcycles=-9.1%   读服务 union: 76886 → 69299
+
+合计 base=141647 r2=131235 (-7.4%)；读侧 union 130950→120348 (-8.1%)
+
+MODE/PF 无关性核查（base 二进制，2026-09-08 20:31:22）：
+  seg_0600 MODE=0/PF=0 diff=2199；MODE=1/PF=0 diff=2199；MODE=1/PF=1 diff=2199
+  seg_0636 MODE=0/PF=0 diff=3928；MODE=1/PF=0 diff=3928；MODE=1/PF=1 diff=3928
+旧 vgate 二进制（9 月 1 日构建）同 staging 复跑：seg_0600 diff=4245 → 段级 golden
+门此环境下从未通过，与 R2 无关。

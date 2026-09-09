@@ -1,0 +1,17 @@
+{
+ "note": "hw v5 轮综合实测（Vivado 2021.2 OOC @3.298ns=303.215MHz，route stage，2026-09-08 20:45/22:03）；来源 hw/v5_.../results/{eng48,eng64}/route/",
+ "eng_lut": {"48": 118356, "64": 155629},
+ "eng48_wns_ns": 0.009,
+ "eng64_wns_ns": -0.696,
+ "eng64_lut": 155629,
+ "eng64_lut_pct_ooc": 67.55,
+ "eng64_chip_lut_est": 180629,
+ "eng64_chip_lut_pct": 78.4,
+ "eng64_pwr_mw": 10709,
+ "eng48_pwr_mw": 8321,
+ "eng64_tns_ns": -1531.6,
+ "eng64_fail_eps": 7313,
+ "eng64_fmax_mhz": 250.4,
+ "eng64_hp64_at_fmax_s": 0.970,
+ "verdict": "B8-64 三条件两不过（WNS -0.696 FAIL、功耗 10.71W>9W FAIL、LUT 78.4% PASS）且降频 250.4MHz 时 HP64 0.970s > B8-48 0.909s → 定版 B8-48"
+}

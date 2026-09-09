@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>架构现状与下一步：B8-48 过硬件门，四张牌怎么排 2026-09-08</title>
+<style>
+  body{font-family:"Microsoft YaHei",SimSun,serif;max-width:1000px;margin:24px auto;padding:0 16px;color:#111;background:#fff;line-height:1.75}
+  h1{font-size:22px;border-bottom:2px solid #000;padding-bottom:6px}
+  h2{font-size:18px;border-left:5px solid #000;padding-left:8px;margin-top:32px}
+  h3{font-size:15px;margin-top:22px}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14px}
+  th,td{border:1px solid #444;padding:5px 8px;text-align:left}
+  th{background:#eee}
+  .num{text-align:right;font-variant-numeric:tabular-nums}
+  .mono{font-family:Consolas,monospace;font-size:13px;background:#f4f4f4;padding:1px 4px}
+  .meta{color:#555;font-size:13px}
+  .box{border:1px dashed #888;padding:10px 14px;margin:12px 0;background:#fafafa}
+  .hint{color:#555;font-size:13px;margin:4px 0}
+  svg text{font-family:"Microsoft YaHei",SimSun,serif}
+</style>
+</head>
+<body>
+<h1>架构现状与下一步：B8-48 今天过了硬件门（帧时间 −34.5%、DSP −50%），剩下的墙在读、写、功耗三处，四张牌的账与排序建议</h1>
+<p class="meta">生成时刻：2026-09-08 19:22:00　|　数据来源：架构线 v5 模型 <span class="mono">b8_scan.json</span>（2026-09-08 14:28 定型）+ 硬件线 H1 门实测（2026-09-08 18:10 收官）　|　本页是跨线决策页：给"下一步架构做什么"拍板用</p>
+
+<h2>第零节：先把图景立起来</h2>
+<p>这个项目要做的事：把 HoloBrain 的 0.2B 参数机器人模型放到一块 ZCU104 开发板上实时推理。模型已经量化成 W8A8——权重和激活都是 8 位整数，这样乘加可以直接用 FPGA 里的 DSP 单元算，不用浮点。一帧（两个相机各过一遍网络）的预算是 <strong>2.13 秒</strong>，模型一帧需要 <strong>150.8 GMAC</strong>（约 1508 亿次乘加）。</p>
+<p>板上的 FPGA 芯片是 XCZU7EV，三种关键资源：<strong>DSP</strong>（专用乘加器，全芯片 1,728 颗，最贵的计算单元）、<strong>LUT</strong>（通用逻辑单元，230,400 个）、<strong>BRAM</strong>（片上存储块，312 块）。怎么安排这些资源、在预算内算完一帧，就是架构线要回答的问题。</p>
+<p>三条线各管一段：算法线管精度（今天上午刚收官：部署误差 0.16 全部归因到三个执行 bug，修完距 0.045 的判据还差 11%，下一档备选是 int16/QAT）；架构线管纸面模型——阵列多宽、数据怎么喂、时间花在哪（本页内容）；硬件线管真电路——把架构选型写成 RTL 并综合验证。</p>
+<p>今天两件事按时间排：<strong>14:28 架构线 v5 定型选了 B8-48</strong>（纯模型扫描，2 秒算完全部配置）；<strong>18:10 硬件线 H1 门收官</strong>，B8-48 写成了真 RTL，位精确和资源两条生死线全过，时序差 5% 但已定位到具体路径。所以"现在的架构"有两层：纸面定型的 B8-48，和已经过电路验证的 B8-48——后者还反过来修正了模型的几处假设（见第三节），这些修正直接影响下一步的选择空间。</p>
+
+<h2>第一节：现在的架构长什么样</h2>
+<h3>数据流一句话</h3>
+<p>DDR（板载内存）里的权重和激活由 DMA（专职搬数据的部件，CPU 不用自己复制）搬进片上存储。数据按 16 行一组流进 48 列的脉动阵列算乘加。算完的 27 位累加结果由 requant 电路（饱和 + 重缩放）压回 8 位，先存片上行缓冲，再整块写回 DDR。</p>
+<h3>三个关键机制</h3>
+<p><strong>脉动阵列 16×48，Pack2 打包。</strong>每列一颗 DSP48E2。int8 乘法只占 DSP 乘法器的一半位宽，所以一颗 DSP 一拍能同时算 2 条逻辑列的乘法——48 条物理列当 96 条逻辑列用。这就是 DSP 从 1,536 颗降到 768 颗、计算量却一点不少的原因。</p>
+<p><strong>行组流水。</strong>16 行算一组，喂数和读出两条腿并行：上一组还在往外读结果时，下一组已经在喂数了。每个行组的周期 = max(喂数腿 k+2 拍, 读出腿 68+写回拍)。这套机制是 R3C 轮拿到 GEMM 拍数 −45% 的来源，B8 集成原样继承。</p>
+<p><strong>末脉冲快照。</strong>一组算完的瞬间发一个脉冲，把 DSP 里的 32 位累加器抄进 27 位快照寄存器，累加器立刻清零、开算下一组。B8 的乘法要 6 拍才落进累加器（R3C 只要 2 拍），脉冲必须掐准时机——H1 实测安全窗口只有 {5, 6} 两拍宽，比纸面推导窄 1 拍。</p>
+
+<table>
+<tr><th>项</th><th class="num">R3C-96（现部署基线）</th><th class="num">B8-48（v5 选型，今日过硬件门）</th><th class="num">变化</th></tr>
+<tr><td>物理列 × 逻辑列</td><td class="num">96 × 96</td><td class="num">48 × 96</td><td class="num">物理列 −50%</td></tr>
+<tr><td>DSP</td><td class="num">1,536（占片 88.9%）</td><td class="num">768（44.4%）</td><td class="num">−50%</td></tr>
+<tr><td>接口时钟</td><td class="num">198.5 MHz</td><td class="num">303.2 MHz</td><td class="num">+52.7%</td></tr>
+<tr><td>GEMM 拍数（逻辑列相同）</td><td class="num">185.2M</td><td class="num">185.2M</td><td class="num">持平</td></tr>
+<tr><td>一帧（真机口径模型）</td><td class="num">1.388s（区间至 1.627s）</td><td class="num">0.909s（区间至 0.995s）</td><td class="num">−34.5%~−38.9%</td></tr>
+<tr><td>预算余量（2.13s）</td><td class="num">1.5×</td><td class="num">2.3×</td><td class="num">—</td></tr>
+<tr><td>全引擎 LUT</td><td class="num">120,619（52.4%）</td><td class="num">118,148（51.3%，实测）</td><td class="num">−2.1%</td></tr>
+<tr><td>全帧有效吞吐</td><td class="num">108.6 GMAC/s</td><td class="num">165.9 GMAC/s</td><td class="num">+53%</td></tr>
+<tr><td>阵列利用率（对各自峰值）</td><td class="num">53.0%</td><td class="num">26.5%</td><td class="num">减半（见下）</td></tr>
+</table>
+<p class="hint">这张表怎么看：B8-48 不是"算得更快"，是"用一半 DSP + 同样的逻辑面积，把时钟提上去换时间"。GEMM 拍数一拍没少（逻辑列数一样），纯靠时钟 +52.7% 拿到帧时间 −34.5%。利用率掉到 26.5% 是结构性定价：分母是 B8 完整双相位峰值 931.5 GMAC/s，本映射只用单相位（465.7 GMAC/s），对单相位的利用率其实是 53.0%，和 R3C-96 相同。</p>
+
+<div class="box"><strong>B8-48 一句话总结：</strong>DSP 减半（−50%）、LUT 基本不动（−2.1%），靠时钟 +52.7% 把一帧从 1.388 秒压到 0.909 秒（−34.5%）。省下的 768 颗 DSP 和 LUT 余量，是后面 pcW 并入、B8-64 扩列的空间。H1 还发现一个简化：B8 设计里的 Pump2 第二相位在这个映射下完全闲置，单时钟就够，原计划的双时钟 wrapper 取消。</div>
+
+<h3>H1 门的三条结论（2026-09-08 18:10 收官）</h3>
+<table>
+<tr><th>生死线</th><th>结果</th><th>数字</th></tr>
+<tr><td>位精确（RTL 算的和软件参考逐位一致）</td><td><strong>过</strong></td><td>15 个描述符全 PASS（窄宽 4 列 6 个 + 全宽 48 列 9 个），拍数逐项核对相同</td></tr>
+<tr><td>LUT（每对超 250 即回退）</td><td><strong>过</strong></td><td>每 DSP 对 119.9 LUT，不到 kill 线一半；全引擎 118,148（51.3%）</td></tr>
+<tr><td>时序（303.2 MHz 能不能收）</td><td><strong>差 5%</strong></td><td>布线 WNS −0.169ns（≈288 MHz，OOC 悲观口径）；卡在两条已定位的读出路径，H2 有现成修法；R3C 先例真机比 OOC 快约 6%</td></tr>
+</table>
+<p>顺带修出 R3C 底本三个潜伏 bug（互锁、地址乘法、读出长路径，都已在 v4 轮文件里修好验证，待回移生产代码），还坐实两条模型修正：requant 不用加倍（v5 担心的 +10.8% 惩罚取消）、不需要双时钟。详见 <span class="mono">hw/v4_2026-09-08_1503_b8_h1_gate/</span> 的 H1 报告。</p>
+
+<h3>引擎模块账（面积 × 计算承担）</h3>
+<table>
+<tr><th>模块</th><th class="num">LUT</th><th class="num">DSP</th><th class="num">BRAM</th><th>承担的计算</th><th>模型时间占比（真机口径 275.5M 拍/帧）</th></tr>
+<tr><td>脉动阵列 16×48（含偏斜网）</td><td class="num">92,055</td><td class="num">768</td><td class="num">0</td><td>全部 150.8 GMAC 乘加</td><td>GEMM 185.2M 拍 = 67%</td></tr>
+<tr><td>requant 24 套 + 引擎 FSM + 写回</td><td class="num">26,093</td><td class="num">0</td><td class="num">0</td><td>27 位→8 位重缩放、行组调度、写回寻址</td><td>与 GEMM 重叠不单占（读出腿 68 拍/行组藏在喂数腿下）</td></tr>
+<tr><td>喂数侧：DMA 双引擎 + CTX/WRAM + 调度器（整机口径，R3C 账外推）</td><td class="num">≈25,000</td><td class="num">0</td><td class="num">114.5</td><td>搬数：激活/权重进片，结果出片</td><td>真机口径读 20.1M + 写 9.3M 拍 = 11%，与计算重叠不占关键路径</td></tr>
+<tr><td>激活引擎（ACTV/BIAS/NORM，v2 落地）</td><td class="num">（在上行 2.5 万内）</td><td class="num">0</td><td class="num">0</td><td>非 GEMM 算子：归一化、逐元素、偏置</td><td>COPY+ACTV 50.3M 拍 = 18%（模型按与 GEMM 串行记账）</td></tr>
+</table>
+<p class="hint">这张表怎么看：阵列本体 4 万颗逻辑单元干掉 67% 的时间；第二大头不是任何"大模块"，而是 COPY+ACTV 这 18%——这是第四节牌 4 的目标。requant 那两万多 LUT 买了行组流水能背靠背的前提，时间上完全藏在重叠里。</p>
+
+<h2>第二节：profiling——一帧的时间都花在哪</h2>
+<h3>先分清两个口径</h3>
+<p><strong>TB 平台口径</strong>：仿真验证平台的算法。读、写、计算三类流量在模型里各算各的拍数，一帧 = max(计算, 读, 写) + 40M 拍保守停顿——谁最长谁就是瓶颈。<strong>HP64 真机口径</strong>：真机上 DDR 到 FPGA 走 HP 端口，一口 64 字节/拍，同样的数据量读写只要 20.1M + 9.3M 拍，几乎不排队，一帧基本就是计算时间。</p>
+<p>这两个口径差在哪：TB 口径的"读 301M 拍"不是内存慢，是引擎侧读通道一拍只能吃几个字节；真机 HP 口按字节算只要 20.1M 拍。所以"喂数是墙"只对验证平台成立；真机上计算占 97%。但 TB 口径仍然重要——它是眼下所有 RTL 验证的实际节奏，TB 慢，验证轮次就慢。</p>
+
+<h3>B8-48 一帧的拍数账（@303.2 MHz）</h3>
+<svg viewBox="0 0 880 205" width="100%" role="img" aria-label="B8-48 一帧三类流量拍数与两个口径的一帧拍数">
+  <text x="100" y="30" font-size="13" text-anchor="middle" fill="#555">0</text>
+  <text x="305" y="30" font-size="13" text-anchor="middle" fill="#555">100</text>
+  <text x="511" y="30" font-size="13" text-anchor="middle" fill="#555">200</text>
+  <text x="717" y="30" font-size="13" text-anchor="middle" fill="#555">300 M 拍</text>
+  <line x1="100" y1="36" x2="800" y2="36" stroke="#999" stroke-width="1"/>
+  <!-- 读 bar: X 184.0 + V 117.0 = 301.0 -->
+  <text x="94" y="62" font-size="13" text-anchor="end">读（X 激活 + V 权重）</text>
+  <rect x="100" y="46" width="378" height="20" fill="#ccc" stroke="#444"/>
+  <rect x="478" y="46" width="240" height="20" fill="#999" stroke="#444"/>
+  <text x="726" y="62" font-size="13" fill="#111">301.0M</text>
+  <text x="289" y="61" font-size="12" text-anchor="middle" fill="#111">X 184.0</text>
+  <text x="598" y="61" font-size="12" text-anchor="middle" fill="#fff">V 117.0</text>
+  <!-- 写 bar 218.4 -->
+  <text x="94" y="102" font-size="13" text-anchor="end">写（结果回写 DDR）</text>
+  <rect x="100" y="86" width="449" height="20" fill="#bbb" stroke="#444"/>
+  <text x="557" y="102" font-size="13" fill="#111">218.4M</text>
+  <!-- 计算 bar 235.5 = GEMM 185.2 + COPY/ACTV 50.3 -->
+  <text x="94" y="142" font-size="13" text-anchor="end">计算（GEMM + COPY/ACTV）</text>
+  <rect x="100" y="126" width="381" height="20" fill="#ccc" stroke="#444"/>
+  <rect x="481" y="126" width="103" height="20" fill="#999" stroke="#444"/>
+  <text x="666" y="142" font-size="13" fill="#111">235.5M</text>
+  <text x="290" y="141" font-size="12" text-anchor="middle" fill="#111">GEMM 185.2</text>
+  <text x="533" y="141" font-size="11" text-anchor="middle" fill="#fff">50.3</text>
+  <!-- 两个口径的一帧 -->
+  <line x1="566" y1="36" x2="566" y2="176" stroke="#000" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="573" y="52" font-size="13" fill="#000">HP64 真机一帧 275.5M = 0.909s（计算+θ）</text>
+  <line x1="801" y1="36" x2="801" y2="176" stroke="#555" stroke-width="1.5" stroke-dasharray="2,3"/>
+  <text x="795" y="165" font-size="13" text-anchor="end" fill="#555">TB 平台一帧 341.0M = 1.125s（读+θ）</text>
+</svg>
+<p class="hint">这张图怎么看：三根横条是三类流量各自的拍数，不是相加——它们在时间上重叠，一帧取最长的再停顿 40M 拍。TB 平台（右虚线）被"读"顶在 1.125 秒；真机（左虚线）读写不排队，只剩计算 0.909 秒。读条里 X（激活装载）是固定大头，V（权重装载）随物理列数变少还会再小一点；计算条里 COPY+ACTV 那 50.3M 拍是 GEMM 之外唯一的成块时间。</p>
+
+<table>
+<tr><th>项</th><th class="num">拍数（M）</th><th class="num">折秒</th><th>它是什么</th></tr>
+<tr><td>GEMM 计算</td><td class="num">185.2</td><td class="num">0.611</td><td>阵列乘加，含行组流水开销（185M 拍里纯 MAC 只占 26.5%~53%，其余是行组换组、尾组浪费）</td></tr>
+<tr><td>COPY + ACTV</td><td class="num">50.3</td><td class="num">0.166</td><td>片内拷贝和非 GEMM 算子（归一化/逐元素/偏置），模型按与 GEMM 串行记账</td></tr>
+<tr><td>θ 停顿</td><td class="num">40.0</td><td class="num">0.132</td><td>换段、同步的保守余量</td></tr>
+<tr><td><strong>计算合计（真机一帧）</strong></td><td class="num"><strong>275.5</strong></td><td class="num"><strong>0.909</strong></td><td>真机上读（20.1M）写（9.3M）全被计算盖住</td></tr>
+<tr><td>读 X：CTX 装载</td><td class="num">184.0</td><td class="num">0.607</td><td>激活进片。a3 实测锚点，与列数无关（字节 680MB 驱动）</td></tr>
+<tr><td>读 V：WRAM 装载</td><td class="num">117.0</td><td class="num">0.386</td><td>权重进片。随物理列数变（列少装载慢，串行项变宽）</td></tr>
+<tr><td>写 W：结果回写</td><td class="num">218.4</td><td class="num">0.720</td><td>一帧写回 594MB 中间结果，大头是 ActionHead 去噪循环每个去噪步的中间张量（写流本身没逐项拆账；v3 轮对同族的权重装载流拆过：82% 来自 ActionHead 重装）</td></tr>
+<tr><td><strong>TB 平台一帧</strong></td><td class="num"><strong>341.0</strong></td><td class="num"><strong>1.125</strong></td><td>= max(计算 235.5, 读 301.0, 写 218.4) + θ，<strong>读最慢</strong></td></tr>
+</table>
+
+<h3>选型扫描：从 24 列到 96 列的全景（v5 模型，2026-09-08 14:28）</h3>
+<table>
+<tr><th>配置</th><th class="num">逻辑列</th><th class="num">DSP 占片</th><th class="num">计算拍</th><th class="num">读拍</th><th class="num">TB 秒（平台）</th><th class="num">HP 秒（真机）</th><th class="num">HP vs R3C-96</th><th>LUT</th><th>功耗粗档</th></tr>
+<tr><td>R3C-96（基线）</td><td class="num">96</td><td class="num">1,536 / 88.9%</td><td class="num">235.5</td><td class="num">292.8</td><td class="num">1.676</td><td class="num">1.388</td><td class="num">—</td><td>120,616（52.4%，实测）</td><td>低 4.0W</td></tr>
+<tr><td>B8-24</td><td class="num">48</td><td class="num">384 / 22.2%</td><td class="num">342.4</td><td class="num">317.6</td><td class="num">1.261</td><td class="num">1.261</td><td class="num">−9.1%</td><td>100,360（44%，模型估）</td><td>低 4.3W</td></tr>
+<tr><td><strong>B8-48（已选）</strong></td><td class="num">96</td><td class="num">768 / 44.4%</td><td class="num">235.5</td><td class="num">301.0</td><td class="num">1.125</td><td class="num"><strong>0.909</strong></td><td class="num"><strong>−34.5%</strong></td><td>模型估 175,720（76%）→ 实测引擎 118,148（51%）</td><td>中 7.8W</td></tr>
+<tr><td>B8-64</td><td class="num">128</td><td class="num">1,024 / 59.3%</td><td class="num">203.0</td><td class="num">296.9</td><td class="num">1.111</td><td class="num">0.801</td><td class="num">−42.3%</td><td>模型估 225,960（98%）→ H1 外推整机约 79%（见第三节）</td><td>高 10.2W</td></tr>
+<tr><td>B8-96</td><td class="num">192</td><td class="num">1,536 / 88.9%</td><td class="num">189.8</td><td class="num">292.8</td><td class="num">1.097</td><td class="num">0.758</td><td class="num">−45.4%</td><td>模型估 326,440（142%）→ 外推约 113%，<strong>放不下出局</strong></td><td>高 15.0W</td></tr>
+</table>
+<p class="hint">这张表怎么看：三个信号。① TB 列里 B8 各行几乎不动（1.10~1.26 秒全卡在读写），HP 列才拉开差距——在验证平台上加列几乎白加，真机上才有收益。② HP 列的收益递减很快：B8-48 到手 −34.5%，B8-64 只再多 −7.8 个百分点，B8-96 再多 −3.1 且 LUT 放不下。③ 写拍 218.4M 所有配置相同（写字节数与列数无关），读拍随列宽缓降——读写两侧都不吃"加列"的红利，这是第四节牌 1/牌 2 的由来。</p>
+
+<h2>第三节：H1 实测对模型的修正——为什么下一步的选择变多了</h2>
+<p>v5 定型时靠模型外推 LUT，模型当时把 B8-48 估到全片 76.3%，吓得 B8-64 直接按 98.1% 出局处理。今天 H1 把真电路综合出来了，模型被证明明显悲观：</p>
+<table>
+<tr><th>项</th><th>v5 模型说</th><th>H1 实测说</th><th>差别意味着什么</th></tr>
+<tr><td>每 DSP 对 LUT</td><td class="num">169（拿 B8 集群锚点估）</td><td class="num">119.9（脉动集成实测）</td><td class="num">模型高 29%</td></tr>
+<tr><td>B8-48 全引擎 LUT</td><td class="num">175,720（76.3%）</td><td class="num">118,148（51.3%），整机再加约 2.5 万喂数侧 ≈ 62%</td><td class="num">芯片口径模型悲观约 14 个百分点</td></tr>
+<tr><td>requant 套数</td><td>担心要加倍（帧 +10.8%）</td><td>24 套不用加倍，DRAIN 64 拍不变</td><td>惩罚场景取消，帧账按 0.909s 算</td></tr>
+<tr><td>时钟域</td><td>600/303 双时钟 wrapper</td><td>单时钟 303.2 就够</td><td>省一整块跨域设计</td></tr>
+<tr><td>帧时间</td><td class="num">0.909s 单点</td><td class="num">区间 [0.909, 0.995]s</td><td>放行延迟无法干净分解，给区间更诚实</td></tr>
+</table>
+<p><strong>这个修正的直接后果：B8-64 从"出局"变回"可选"。</strong>用 H1 的实测锚点线性外推（每 PE 119.9 LUT 来自 16×4 条带和 16×48 全宽两个独立综合点，都是 ~120，一致性好）：B8-64 引擎 = 1,024 PE × 119.9 + requant 32 套 ≈ 15.8 万，整机约 18.3 万 ≈ <strong>79%</strong>——放得下，还留 20 个点余量。B8-96 外推约 113%，仍然放不下，出局结论不变。</p>
+<p class="hint">但 B8-64 有两个模型修正不了的前置门：功耗 10.2W 是 vectorless 粗档（误差大，上板红线附近，H4 实测前不能信）；1,024 PE 全阵列的布线退化没人采过点（H2 的集群扩展实验）。所以它是"值得认真考虑"，不是"现在就该上"——见第四节牌 3。</p>
+
+<h2>第四节：下一步架构怎么做——四张牌的账与我的排序建议</h2>
+
+<h3>牌 1：R2 双读引擎（读侧，DMA 一拆二）——不管后面选什么都赚</h3>
+<p>现在 X（激活）和 V（权重）共用一条读通路，排着队 301.0M 拍。给 ctx 和权重各配一台读引擎，读需求变成 max(184.0, 117.0) = 184.0M 拍。路线对比（B8-48，TB 口径）：</p>
+<table>
+<tr><th>路线</th><th class="num">读拍</th><th class="num">TB 一帧</th><th>最慢项</th></tr>
+<tr><td>现状</td><td class="num">301.0M</td><td class="num">1.125s</td><td>读</td></tr>
+<tr><td>R1 CTX 双区驻留 + host 折链</td><td class="num">243.9M</td><td class="num">0.936s</td><td>读</td></tr>
+<tr><td><strong>R2 双读引擎</strong></td><td class="num">184.0M</td><td class="num"><strong>0.909s</strong></td><td><strong>计算（单刀贴地板）</strong></td></tr>
+<tr><td>R3 WRAM 4 组</td><td class="num">243.6M</td><td class="num">0.935s</td><td>读</td></tr>
+<tr><td>R1+R2+R3 全上</td><td class="num">126.9M</td><td class="num">0.909s</td><td>计算</td></tr>
+</table>
+<p>这张表的关键信息：<strong>R2 一个就够把 TB 打到计算地板 0.909 秒（−19.1%），R1/R3 再叠加在时间上没有额外收益</strong>——它们的价值只剩 DDR 字节和功耗（R1 把 ctx 读字节砍 31%，680→469MB，这是笔功耗账不是时间账）。R2 的代价是 DMA 读口改造，RTL 量级中等。真机 HP 口径读侧本来只有 20.1M 拍，R2 对真机帧时间无感——它的价值是让验证平台不再拖后腿：眼下每一轮 RTL 验证都在 TB 节奏上跑，TB 快 19% 就是验证迭代快 19%。</p>
+
+<h3>牌 2：写墙——R2 之后第一个冒头的新问题，做不做取决于要不要 B8-64</h3>
+<p>R2 把读解掉之后，B8-48 的 TB 贴住计算地板，写墙对它不再是事。但更宽的阵列会先撞写：B8-64 加了 R2 之后 TB = 218.4M（写）+ 40M = 258.4M 拍 = <strong>0.852 秒，最慢项从读换成了写</strong>。写的构成：一帧回写 594MB 中间结果，大头是 ActionHead 去噪循环的中间张量——每个去噪步写出去、下一步再读回来。</p>
+<p>两个对应的杠杆：(a) <strong>写侧整形</strong>——现在写回是 16 行 × 列的小块零散写，改成 DDR 喜欢的连续突发（列主序/聚合），DMA 写通道改造；(b) <strong>少写</strong>——自产的中间图尽量驻留片上不落 DDR（这一项同时砍读字节）。两者都是 RTL 侧工作，模型侧能先算清楚收益再动手。结论：B8-48 定版则写墙不急；要上 B8-64 则写墙是必做题。</p>
+
+<h3>牌 3：B8-64 重开——H1 的 LUT 实测把它救回来了，但先过功耗门</h3>
+<p>账面：HP 0.909 → 0.801 秒（再 −11.9%），DSP 1,024 颗（59.3%），LUT 外推 79% 放得下，TB 口径几乎不动（读写顶着）。两个前置门都是硬件线的活：<strong>H4 功耗实测</strong>（10.2W 是高档粗估，85% 功耗本来就在 GEMM 数据通路，3 倍频 × 双列翻转没实测过，上板前必须知道）和 <strong>H2 集群退化采点</strong>（64→256→1,024 PE 的频率退化曲线，B8 线只测过 64 PE 广播集群，1,024 PE 的时钟树收敛没人知道）。收益递减也要看清：B8-96 只比 B8-64 再快 5.4% 且 LUT 113% 放不下，B8-64 就是这条路的终点站。我的倾向：拿到 H4/H2 数据再拍板，不为了 −11.9% 去赌 10W。</p>
+
+<h3>牌 4：计算侧再加速——利用率地板是结构性的，COPY+ACTV 是近处的中等目标</h3>
+<p>利用率 26.5%（对双相位峰值）是地板不是浪费可捡：每个行组的读出腿固定 68 拍，Pump2 第二相位帮不了它。要把闲置的第二相位吃掉，需要同时喂第二个 GEMM 问题（多问题交织/列填充），让两组行组流水错相共享阵列——这是下一代架构（v6）量级的大改，现在的模型没有它的账，动了就是新一轮选型。</p>
+<p>更近的目标是 COPY+ACTV 那 50.3M 拍（真机帧的 18%）：消掉 COPY（自产图不绕 DDR）或者让它与 GEMM 重叠，量级是帧时间再 −7%~−10%。它和牌 2 的"少写"是同一件事的两面（少绕一次 DDR 同时少读少写少拷贝），适合一起设计。</p>
+
+<h3>与硬件线的接口（已在排的活，列在这对齐）</h3>
+<table>
+<tr><th>硬件线任务</th><th>内容</th><th>给架构线回填什么</th></tr>
+<tr><td>H2（下一轮，已排）</td><td>收掉 0.169ns 时序（drain_row 分组寄存 + requant 入口加拍）；集群退化采点；pcW/RTN 并入；三个底本修复回移</td><td>时序收口 → 帧区间 [0.909, 0.995] 收敛；退化曲线 → B8-64 可行性一半</td></tr>
+<tr><td>H4（欠账）</td><td>303 MHz 域功耗实测（SAIF 流程现成）</td><td>B8-64 可行性另一半；7.8W/10.2W 从粗档变实测</td></tr>
+</table>
+
+<div class="box"><strong>我的排序建议：</strong>① <strong>R2 双读引擎</strong>先行（模型账已清、RTL 中等、不管后面选哪张牌它都赚，验证平台先提速 19%）；② <strong>H2 收时序 + H4 功耗</strong>与 ① 并行（硬件线活，数据回来之前架构线不做 B8-64 决定）；③ 拿到功耗和退化数据后拍 <strong>B8-48 vs B8-64 定版</strong>（定 48 则收工进集成，定 64 则牌 2 写墙转必做）；④ COPY 消除按定版结论排进 H3 清单，列填充（v6）放长线。<br><strong>一句话判断：B8-48 帧时间已有 2.3 倍预算余量，当前主要矛盾不是"更快"，是把验证平台的 1.125 秒拖累去掉（R2）、把功耗和退化两个未知数补上（H4/H2）。</strong>任何再加速都排在这三件事后面。</div>
+
+<h2>第五节：诚实的边界</h2>
+<ul>
+<li><strong>0.909s 是模型数不是实测数。</strong>H1 验证的是 RTL 位精确和综合时序，真机帧时间要等集成上板。区间 [0.909, 0.995]s 的宽度来自校准口径无法分解（放行延迟被引擎结构隐藏多少说不清），不是硬件抖动。</li>
+<li><strong>功耗一栏全是 vectorless 粗档。</strong>拿 v1 的 4,465mW 实测按 DSP 数 × 时钟 × 翻转倍数外推，误差大，只有低/中/高分的档位有意义。B8-64 的 10.2W 在 H4 实测前不能当可用数。</li>
+<li><strong>B8-64/96 的 LUT 是线性外推。</strong>每 PE 119.9 LUT 有两个独立综合点背书（16×4 条带、16×48 全宽），但 64 列 requant 32 套的布线、整机胶合逻辑没验过，79% 应读作"量级上放得下"而非承诺。</li>
+<li><strong>读写拍锚点来自 a3 实测标定</strong>（X 184.0 / V 108.1@108 列 / W 218.4M 拍），其余列数按理想值比例外推；HP64 口径假设 HP 口持续 64 字节/拍，真机 DMA 效率（R6）未验。</li>
+<li><strong>利用率 26.5% 的分母是双相位峰值。</strong>本映射只用单相位，对单相位（465.7 GMAC/s）的利用率是 53.0%——两个数都对，别混用。</li>
+<li><strong>算法线若动位宽（int16/QAT），本页全部拍数账要重跑。</strong>b8_scan.py 2 秒出全套表，重跑成本可以忽略；W8A8 之外的账本文没算。</li>
+</ul>
+
+<h2>复现命令</h2>
+<p class="mono"># 选型扫描 + 读压缩路线 + 敏感性（本页第二节、第四节牌 1 全部数字，约 2 秒）<br>
+cd arch/v5_2026-09-08_1414_b8_sizing_read_compress &amp;&amp; python b8_scan.py<br>
+# 帧时间区间修正（0.909~0.995s 的来源）<br>
+python hw/v4_2026-09-08_1503_b8_h1_gate/results/model_corr.py<br>
+# H1 综合实测数（118,148 LUT / WNS −0.169）<br>
+cat hw/v4_2026-09-08_1503_b8_h1_gate/results/eng48/route/{wns.txt,util.rpt}</p>
+<p class="meta">数据文件：arch/v5_2026-09-08_1414_b8_sizing_read_compress/b8_scan.json（本页表格全部来源）　|　H1 报告：hw/v4_2026-09-08_1503_b8_h1_gate/2026-09-08_1600_b8xR3C_H1集成门.html　|　路线编号说明：本页 R1/R2/R3 沿用 v5 页编号；"写侧整形/COPY 消除"在早先 13:12 计划页里编号 R5/R4，两处编号有历史撞车，以名字为准。</p>
+</body>
+</html>

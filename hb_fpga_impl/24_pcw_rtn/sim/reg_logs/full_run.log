@@ -1,0 +1,70 @@
+== gen_vectors
+   [golden] REF==PRIM 帧一 ctx:True ddr:True
+   [golden] 写出 seq.mem (64 条) / ddr_init.mem / expected_* (frames=2)
+== sim_ae
+   [tb] 三遍 dump 完成（compare.py 比 REF/PRIM；prim2 vs prim 逐位 diff）
+   tb_ae.sv:294: $finish called at 203636000 (1ps)
+== compare
+   [cmp] DDR PRIM: PASS (65536 字节一致)
+   [cmp] ==> 全部位精确一致 ✔
+== gen_rq
+   [gen] 相位 D 覆盖：s=8 行 7500（截断退化）、s∈[9,47] 52500；饱和命中 36288 行
+   [gen] m6 量化相对误差: mean=0.00805 max=0.03122 p99=0.03122
+== tb_rq
+   TB_RQ PASS (floor 位精确 + RTN 对神谕位精确)
+   tb_rq.sv:321: $finish called at 1800220000 (1ps)
+== tb_sm16
+   [tb_sm16] 16 用例 5711 元素全部位精确一致 PASS
+   tb_sm16.sv:89: $finish called at 27170000 (1ps)
+== tb_pe_pack
+   TB_PE_PACK PASS (2216 tiles bit-identical to 2x ae_pe)
+   tb_pe_pack.sv:146: $finish called at 6455680000 (1ps)
+== tb_pe_pack_dsp
+   TB_PE_PACK_DSP PASS (2216 tiles bit-identical to 2x ae_pe)
+   tb_pe_pack_dsp.sv:149: $finish called at 6455680000 (1ps)
+== gem_cycles
+   注：总周期只作参考——TB 的 wall-clock 里 softmax/copy 与 GEMM 并行重叠，
+       与本模型串行求和口径不可直接比（perf 投影用串行口径=保守上界）。
+== gen_actv
+   [golden] REF==PRIM 帧一 ctx:True ddr:True
+   [golden] 写出 seq.mem (70 条) / ddr_init.mem / expected_* (frames=1)
+== sim_ae_actv
+   [tb] 三遍 dump 完成（compare.py 比 REF/PRIM；prim2 vs prim 逐位 diff）
+   tb_ae.sv:294: $finish called at 301456000 (1ps)
+== compare_actv
+   [cmp] DDR PRIM: PASS (65536 字节一致)
+   [cmp] ==> 全部位精确一致 ✔
+== gen_lut
+   [gold] rsqrt_lut.mem 已导出（512×15b，RTL $readmemh 用）
+== tb_ae_actv
+   tb_ae_actv.sv:138: $finish called at 381665000 (1ps)
+   [check] PASS — 221184 字节全部位精确（21 用例）
+== gen_pcw
+   [golden] REF==PRIM 帧一 ctx:True ddr:True
+   [golden] 写出 seq.mem (64 条) / ddr_init.mem / expected_* (frames=2)
+== sim_ae_pcw
+   [tb] 三遍 dump 完成（compare.py 比 REF/PRIM；prim2 vs prim 逐位 diff）
+   tb_ae.sv:294: $finish called at 203636000 (1ps)
+== compare_pcw
+   [cmp] DDR PRIM: PASS (65536 字节一致)
+   [cmp] ==> 全部位精确一致 ✔
+
+================ 回归汇总 ================
+  PASS  gen_vectors
+  PASS  sim_ae
+  PASS  compare
+  PASS  gen_rq
+  PASS  tb_rq
+  PASS  tb_sm16
+  PASS  tb_pe_pack
+  PASS  tb_pe_pack_dsp
+  PASS  gem_cycles
+  PASS  gen_actv
+  PASS  sim_ae_actv
+  PASS  compare_actv
+  PASS  gen_lut
+  PASS  tb_ae_actv
+  PASS  gen_pcw
+  PASS  sim_ae_pcw
+  PASS  compare_pcw
+结果: ALL PASS (17 项)
